@@ -61,7 +61,7 @@
     "scenarios": [
       {
         "id": "s",
-        "mode": "mixed",
+        "mode": "characters",
         "narratorVoice": "teller",
         "cast": [
           {},

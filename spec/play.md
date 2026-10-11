@@ -264,8 +264,8 @@ What a generation **can see**:
 
 | Generation | Sees |
 | --- | --- |
-| a character, in `characters` or `mixed` mode | only what that character knows |
-| the narrator, in `characters` or `mixed` mode | everything except content whose explicit `knownBy` doesn't name `narrator` |
+| a character, in `characters` mode | only what that character knows |
+| the narrator, in `characters` mode | everything except content whose explicit `knownBy` doesn't name `narrator` |
 | the single voice, in `narrator` mode | everything |
 
 Knowledge limits what models see, never what people see; secrets between human players are out of scope.

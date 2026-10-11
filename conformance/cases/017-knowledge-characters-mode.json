@@ -1,5 +1,5 @@
 {
-  "description": "Knowledge in mixed mode (Play 7): characters see what they know; the narrator sees everything except content whose explicit knownBy excludes narrator",
+  "description": "Knowledge in characters mode (Play 7): characters see what they know; the narrator sees everything except content whose explicit knownBy excludes narrator",
   "bundle": {
     "troupe": "0.11",
     "kind": "bundle",
@@ -79,7 +79,7 @@
             "text": "keyed on a whisper"
           }
         ],
-        "mode": "mixed"
+        "mode": "characters"
       }
     ]
   },
@@ -137,7 +137,7 @@
   "tests": [
     {
       "type": "select",
-      "name": "Ann in mixed mode",
+      "name": "Ann in characters mode",
       "for": "a",
       "parent": "2",
       "messageId": "3",

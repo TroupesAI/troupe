@@ -104,7 +104,7 @@ The state is flattened to an object with these keys:
 
 | Input | Meaning |
 | --- | --- |
-| `for` | The character being generated for. Omit it for the narrator (in `mixed` mode) or the single voice (in `narrator` mode). |
+| `for` | The character being generated for. Omit it for the narrator (in `characters` mode) or the single voice (in `narrator` mode). |
 | `parent` | The evaluation point: the parent of the message being built. Defaults to the head. |
 | `messageId` | The ID of the message being built; rolls use it. |
 | `maxEntries` | Optional. Fitting (Play 5.5 step 3): drop entries until at most this many remain. |

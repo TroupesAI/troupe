@@ -24,7 +24,7 @@
     "scenarios": [
       {
         "id": "s",
-        "mode": "mixed",
+        "mode": "characters",
         "entries": [
           {
             "id": "gen",

@@ -276,7 +276,7 @@ interface Scenario {
   tagline?: string;
   premise?: string;                // the situation, sent to the model
   briefing?: string;               // for the players; never sent to models
-  mode?: "characters" | "narrator" | "mixed";   // "characters"
+  mode?: "characters" | "narrator";   // "characters"
   cast?: CastMember[];             // one player seat + every bundle character
   worlds?: string[];               // world IDs; every bundle world; [] for none
   openings?: Opening[];            // none = the player writes first
@@ -311,9 +311,8 @@ interface Opening {
 
 ### 6.2 Modes
 
-- **`characters`** generates each model-played character's turns separately.
+- **`characters`** generates each model-played character's turns separately. A narrator MAY also take turns describing the scene; who speaks next is up to the app (Play 2.3).
 - **`narrator`** has one voice write the whole scene, including every character's lines.
-- **`mixed`** is `characters` plus a narrator who MAY take turns describing the scene.
 
 The narrator's style is set with scenario entries placed in `system` with `knownBy: ["narrator"]`.
 
@@ -1132,6 +1131,7 @@ A new session that continues this chronicle starts with `closeness` at 58 and bo
 | Priority means importance; file order is prompt order | Priority doing three jobs | Authors order lore by writing it in order. |
 | Copies with `credits`; export to V3 | Live cross-bundle references, structured provenance; one-way migration | People write attribution as they like; authors can still reach older apps. |
 | No narrator voice | A character that defines the narrator | Narrator-only `system` entries already set its style. |
+| Two modes | A third, `mixed` mode | In `characters` mode the narrator can already take turns, and who speaks next is the app's choice. |
 | Sessions as an exchange snapshot | Prescribing storage, or an append-only log of edits | Apps keep their own databases; chats still move between apps intact, and readers replay no edits or deletions. |
 | No audio, media provenance, music, speaking hints, UI grouping or branch labels in the core | Media and presentation fields | They belong to apps and extensions such as `troupe.media`. |
 | No executable code | Scripts in cards | Scripts in shared cards can steal API keys. |

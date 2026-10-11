@@ -68,7 +68,7 @@ This needs an app that runs the tracker after player messages (Play 3.4). Random
 
 ### A hidden truth
 
-A mystery's culprit is chosen once by an event with one outcome per suspect, `"when": "state.culprit == ''"`, and `culprit` is a `spoiler`. Clues are scenario entries with `knownBy: ["narrator"]` gated on `state.culprit`, so in `mixed` mode the narrator plants them and the suspects never see them. Each suspect carries `{"knownBy": ["<id>", "narrator"], "when": "state.culprit == self"}` for their own guilt. A reveal pairs a private entry with a public one gated on a model-set `bool`, as Format Appendix B.2 does with `master_key` and `key_known`.
+A mystery's culprit is chosen once by an event with one outcome per suspect, `"when": "state.culprit == ''"`, and `culprit` is a `spoiler`. Clues are scenario entries with `knownBy: ["narrator"]` gated on `state.culprit`, so the narrator plants them and the suspects never see them. Each suspect carries `{"knownBy": ["<id>", "narrator"], "when": "state.culprit == self"}` for their own guilt. A reveal pairs a private entry with a public one gated on a model-set `bool`, as Format Appendix B.2 does with `master_key` and `key_known`.
 
 ### Inventory
 

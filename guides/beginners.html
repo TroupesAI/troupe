@@ -534,9 +534,8 @@ footer.colophon { margin-top: 56px; padding-top: 18px; border-top: 1px solid var
       <div class="table-wrap"><table>
         <thead><tr><th>Mode</th><th>How replies are written</th><th>Good for</th></tr></thead>
         <tbody>
-          <tr><td><code>characters</code> (default)</td><td>Each model-played character gets their own turn and their own prompt, seeing only what they know.</td><td>Companions, group chats, secrets that must hold.</td></tr>
+          <tr><td><code>characters</code> (default)</td><td>Each model-played character gets their own turn and their own prompt, seeing only what they know. A narrator may add scene description between them.</td><td>Companions, group chats, secrets that must hold.</td></tr>
           <tr><td><code>narrator</code></td><td>One voice writes the whole scene, all characters included.</td><td>Text adventures, game masters, novel-style stories.</td></tr>
-          <tr><td><code>mixed</code></td><td>Characters take their own turns, and a narrator may add scene description between them.</td><td>Ensemble stories with atmosphere.</td></tr>
         </tbody>
       </table></div>
       <p>The narrator's style is an ordinary entry in the scenario, placed in <code>"system"</code> and known only by the narrator (<a href="#c7">chapter 7</a>).</p>
@@ -865,7 +864,7 @@ footer.colophon { margin-top: 56px; padding-top: 18px; border-top: 1px solid var
         <div class="seg" role="radiogroup" aria-label="Viewpoint">
           <label><input type="radio" name="kv" value="elena" checked><span>Elena</span></label>
           <label><input type="radio" name="kv" value="kai"><span>Kai</span></label>
-          <label><input type="radio" name="kv" value="narrator"><span>Mixed-mode narrator</span></label>
+          <label><input type="radio" name="kv" value="narrator"><span>The narrator</span></label>
           <label><input type="radio" name="kv" value="people"><span>The players</span></label>
         </div>
         <div class="grid-k" style="display:grid; gap:6px;" id="kv-lines"></div>
@@ -874,8 +873,8 @@ footer.colophon { margin-top: 56px; padding-top: 18px; border-top: 1px solid var
       <div class="table-wrap"><table>
         <thead><tr><th>Who is being written for</th><th>What they see</th></tr></thead>
         <tbody>
-          <tr><td>A character (characters or mixed mode)</td><td>Only what that character knows.</td></tr>
-          <tr><td>The narrator in mixed mode</td><td>Everything, except content whose <code>knownBy</code> lists characters but not the narrator.</td></tr>
+          <tr><td>A character (characters mode)</td><td>Only what that character knows.</td></tr>
+          <tr><td>The narrator in characters mode</td><td>Everything, except content whose <code>knownBy</code> lists characters but not the narrator.</td></tr>
           <tr><td>The single voice in narrator mode</td><td>Everything, with restricted content marked ("Known only to Kai:").</td></tr>
           <tr><td>The people playing</td><td>Everything, apart from <code>spoiler</code> values until the end. Knowledge limits what models see, not what people can read.</td></tr>
         </tbody>
@@ -1276,7 +1275,7 @@ footer.colophon { margin-top: 56px; padding-top: 18px; border-top: 1px solid var
   const notes = {
     elena: "Elena hears everything said in her presence, but not Kai's thoughts or his deal.",
     kai: "Kai missed Elena's warning because he had already left. He knows his own secrets, but not Elena's key.",
-    narrator: "A mixed-mode narrator sees all the scenes, but not content whose knownBy leaves the narrator out.",
+    narrator: "The narrator in characters mode sees all the scenes, but not content whose knownBy leaves the narrator out.",
     people: "The people playing can always read everything. Knowledge only limits what the model sees."
   };
   function renderKnowledge() {

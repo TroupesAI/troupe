@@ -535,8 +535,7 @@
         "mode": {
           "enum": [
             "characters",
-            "narrator",
-            "mixed"
+            "narrator"
           ],
           "default": "characters"
         },
