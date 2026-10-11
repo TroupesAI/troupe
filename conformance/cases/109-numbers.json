@@ -1,0 +1,509 @@
+{
+  "description": "Numbers (Play 3.3 step 4; Format 10): recorded number values round to the nearest double to ECMAScript toFixed(6), and macros render numbers with ECMAScript Number.prototype.toString",
+  "bundle": {
+    "troupe": "0.11",
+    "kind": "bundle",
+    "scenarios": [
+      {
+        "id": "s",
+        "variables": [
+          {
+            "id": "x",
+            "type": "number",
+            "by": [
+              "player"
+            ],
+            "description": "d"
+          },
+          {
+            "id": "big",
+            "type": "number",
+            "initial": 1e+21,
+            "description": "d"
+          },
+          {
+            "id": "small",
+            "type": "number",
+            "initial": 1.5e-10,
+            "description": "d"
+          },
+          {
+            "id": "noisy",
+            "type": "number",
+            "initial": 0.30000000000000004,
+            "description": "d"
+          }
+        ]
+      }
+    ]
+  },
+  "session": {
+    "header": {
+      "troupe": "0.11",
+      "kind": "session",
+      "scenario": "s",
+      "seed": "conformanceSeed0001",
+      "characters": [
+        {
+          "id": "p",
+          "name": "Pat",
+          "description": "Pat."
+        }
+      ],
+      "players": [
+        "p"
+      ]
+    },
+    "messages": [
+      {
+        "id": "1",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "set 1"
+          }
+        ],
+        "changes": [
+          {
+            "by": "player",
+            "set": {
+              "x": 0.0078125
+            }
+          }
+        ]
+      },
+      {
+        "id": "2",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "set 2"
+          }
+        ],
+        "changes": [
+          {
+            "by": "player",
+            "set": {
+              "x": -0.0078125
+            }
+          }
+        ],
+        "parent": "1"
+      },
+      {
+        "id": "3",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "set 3"
+          }
+        ],
+        "changes": [
+          {
+            "by": "player",
+            "set": {
+              "x": 0.30000000000000004
+            }
+          }
+        ],
+        "parent": "2"
+      },
+      {
+        "id": "4",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "set 4"
+          }
+        ],
+        "changes": [
+          {
+            "by": "player",
+            "set": {
+              "x": 0.4999999
+            }
+          }
+        ],
+        "parent": "3"
+      },
+      {
+        "id": "5",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "set 5"
+          }
+        ],
+        "changes": [
+          {
+            "by": "player",
+            "set": {
+              "x": 1.23456749
+            }
+          }
+        ],
+        "parent": "4"
+      },
+      {
+        "id": "6",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "set 6"
+          }
+        ],
+        "changes": [
+          {
+            "by": "player",
+            "set": {
+              "x": 5e-07
+            }
+          }
+        ],
+        "parent": "5"
+      },
+      {
+        "id": "7",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "set 7"
+          }
+        ],
+        "changes": [
+          {
+            "by": "player",
+            "set": {
+              "x": -1e-07
+            }
+          }
+        ],
+        "parent": "6"
+      },
+      {
+        "id": "8",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "set 8"
+          }
+        ],
+        "changes": [
+          {
+            "by": "player",
+            "set": {
+              "x": 1.5e-10
+            }
+          }
+        ],
+        "parent": "7"
+      },
+      {
+        "id": "9",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "set 9"
+          }
+        ],
+        "changes": [
+          {
+            "by": "player",
+            "set": {
+              "x": 1e+21
+            }
+          }
+        ],
+        "parent": "8"
+      },
+      {
+        "id": "10",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "set 10"
+          }
+        ],
+        "changes": [
+          {
+            "by": "player",
+            "set": {
+              "x": 1e+20
+            }
+          }
+        ],
+        "parent": "9"
+      },
+      {
+        "id": "11",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "set 11"
+          }
+        ],
+        "changes": [
+          {
+            "by": "player",
+            "set": {
+              "x": 123.456
+            }
+          }
+        ],
+        "parent": "10"
+      },
+      {
+        "id": "12",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "set 12"
+          }
+        ],
+        "changes": [
+          {
+            "by": "player",
+            "set": {
+              "x": 1e-06
+            }
+          }
+        ],
+        "parent": "11"
+      },
+      {
+        "id": "13",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "set 13"
+          }
+        ],
+        "changes": [
+          {
+            "by": "player",
+            "set": {
+              "x": -1.5
+            }
+          }
+        ],
+        "parent": "12"
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "state",
+      "name": "0.0078125 is recorded as 0.007813: an exact binary tie: toFixed takes the larger n",
+      "at": "1",
+      "expect": {
+        "x": 0.007813
+      }
+    },
+    {
+      "type": "macro",
+      "name": "0.007813 renders as 0.007813",
+      "at": "1",
+      "text": "{{state.x}}",
+      "expect": "0.007813"
+    },
+    {
+      "type": "state",
+      "name": "-0.0078125 is recorded as -0.007813: the tie below zero",
+      "at": "2",
+      "expect": {
+        "x": -0.007813
+      }
+    },
+    {
+      "type": "macro",
+      "name": "-0.007813 renders as -0.007813",
+      "at": "2",
+      "text": "{{state.x}}",
+      "expect": "-0.007813"
+    },
+    {
+      "type": "state",
+      "name": "0.30000000000000004 is recorded as 0.3: rounding removes float noise",
+      "at": "3",
+      "expect": {
+        "x": 0.3
+      }
+    },
+    {
+      "type": "macro",
+      "name": "0.3 renders as 0.3",
+      "at": "3",
+      "text": "{{state.x}}",
+      "expect": "0.3"
+    },
+    {
+      "type": "state",
+      "name": "0.4999999 is recorded as 0.5: rounds to six places",
+      "at": "4",
+      "expect": {
+        "x": 0.5
+      }
+    },
+    {
+      "type": "macro",
+      "name": "0.5 renders as 0.5",
+      "at": "4",
+      "text": "{{state.x}}",
+      "expect": "0.5"
+    },
+    {
+      "type": "state",
+      "name": "1.23456749 is recorded as 1.234567: the double just below the halfway point rounds down",
+      "at": "5",
+      "expect": {
+        "x": 1.234567
+      }
+    },
+    {
+      "type": "macro",
+      "name": "1.234567 renders as 1.234567",
+      "at": "5",
+      "text": "{{state.x}}",
+      "expect": "1.234567"
+    },
+    {
+      "type": "state",
+      "name": "5e-07 is recorded as 0: the double nearest 5e-7 lies below the halfway point",
+      "at": "6",
+      "expect": {
+        "x": 0
+      }
+    },
+    {
+      "type": "macro",
+      "name": "0 renders as 0",
+      "at": "6",
+      "text": "{{state.x}}",
+      "expect": "0"
+    },
+    {
+      "type": "state",
+      "name": "-1e-07 is recorded as 0: negative zero renders as 0",
+      "at": "7",
+      "expect": {
+        "x": 0
+      }
+    },
+    {
+      "type": "macro",
+      "name": "0 renders as 0",
+      "at": "7",
+      "text": "{{state.x}}",
+      "expect": "0"
+    },
+    {
+      "type": "state",
+      "name": "1.5e-10 is recorded as 0: below six places, recorded values round to 0",
+      "at": "8",
+      "expect": {
+        "x": 0
+      }
+    },
+    {
+      "type": "macro",
+      "name": "0 renders as 0",
+      "at": "8",
+      "text": "{{state.x}}",
+      "expect": "0"
+    },
+    {
+      "type": "state",
+      "name": "1e+21 is recorded as 1e+21: toString switches to exponent form at 1e21",
+      "at": "9",
+      "expect": {
+        "x": 1e+21
+      }
+    },
+    {
+      "type": "macro",
+      "name": "1e+21 renders as 1e+21",
+      "at": "9",
+      "text": "{{state.x}}",
+      "expect": "1e+21"
+    },
+    {
+      "type": "state",
+      "name": "1e+20 is recorded as 1e+20: below 1e21, all digits",
+      "at": "10",
+      "expect": {
+        "x": 1e+20
+      }
+    },
+    {
+      "type": "macro",
+      "name": "1e+20 renders as 100000000000000000000",
+      "at": "10",
+      "text": "{{state.x}}",
+      "expect": "100000000000000000000"
+    },
+    {
+      "type": "state",
+      "name": "123.456 is recorded as 123.456: plain decimals render as written",
+      "at": "11",
+      "expect": {
+        "x": 123.456
+      }
+    },
+    {
+      "type": "macro",
+      "name": "123.456 renders as 123.456",
+      "at": "11",
+      "text": "{{state.x}}",
+      "expect": "123.456"
+    },
+    {
+      "type": "state",
+      "name": "1e-06 is recorded as 1e-06: the smallest nonzero six-place value",
+      "at": "12",
+      "expect": {
+        "x": 1e-06
+      }
+    },
+    {
+      "type": "macro",
+      "name": "1e-06 renders as 0.000001",
+      "at": "12",
+      "text": "{{state.x}}",
+      "expect": "0.000001"
+    },
+    {
+      "type": "state",
+      "name": "-1.5 is recorded as -1.5: negative values",
+      "at": "13",
+      "expect": {
+        "x": -1.5
+      }
+    },
+    {
+      "type": "macro",
+      "name": "-1.5 renders as -1.5",
+      "at": "13",
+      "text": "{{state.x}}",
+      "expect": "-1.5"
+    },
+    {
+      "type": "macro",
+      "name": "initial values aren't prepared, so they render unrounded",
+      "text": "{{state.big}} {{state.small}} {{state.noisy}}",
+      "expect": "1e+21 1.5e-10 0.30000000000000004"
+    }
+  ]
+}

@@ -1,0 +1,106 @@
+{
+  "description": "Plain keys match whole words (Play 5.3): no letter, digit or mark may touch either end",
+  "tests": [
+    {
+      "type": "match",
+      "key": "cat",
+      "text": "The cat sat.",
+      "expect": true
+    },
+    {
+      "type": "match",
+      "key": "cat",
+      "text": "concatenate",
+      "expect": false
+    },
+    {
+      "type": "match",
+      "key": "cat",
+      "text": "cats",
+      "expect": false
+    },
+    {
+      "type": "match",
+      "key": "cat",
+      "text": "the cat's toy",
+      "expect": true
+    },
+    {
+      "type": "match",
+      "name": "underscore is punctuation (Pc), unlike regex \\b",
+      "key": "cat",
+      "text": "cat_toy",
+      "expect": true
+    },
+    {
+      "type": "match",
+      "key": "cat",
+      "text": "cat9",
+      "expect": false
+    },
+    {
+      "type": "match",
+      "key": "cat",
+      "text": "x-cat-y",
+      "expect": true
+    },
+    {
+      "type": "match",
+      "key": "cat",
+      "text": "CAT!",
+      "expect": true
+    },
+    {
+      "type": "match",
+      "name": "a later occurrence can match after an earlier one fails",
+      "key": "cat",
+      "text": "concat, cat",
+      "expect": true
+    },
+    {
+      "type": "match",
+      "key": "ice cream",
+      "text": "I want ice cream.",
+      "expect": true
+    },
+    {
+      "type": "match",
+      "key": "ice cream",
+      "text": "ice  cream",
+      "expect": false
+    },
+    {
+      "type": "match",
+      "key": "c++",
+      "text": "I write c++ daily",
+      "expect": true
+    },
+    {
+      "type": "match",
+      "name": "a letter touches the start of the occurrence",
+      "key": "c++",
+      "text": "abc++",
+      "expect": false
+    },
+    {
+      "type": "match",
+      "name": "empty keys are ignored",
+      "key": "",
+      "text": "anything",
+      "expect": false
+    },
+    {
+      "type": "match",
+      "key": "naïve",
+      "text": "So NAÏVE.",
+      "expect": true
+    },
+    {
+      "type": "match",
+      "name": "the speaker prefix is part of the scanned text",
+      "key": "elena",
+      "text": "Elena: Sit down.",
+      "expect": true
+    }
+  ]
+}

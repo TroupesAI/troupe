@@ -1,0 +1,120 @@
+{
+  "description": "Weighted group roll among equal top priority, in file order; the subject is <owner>/<group> (Play 4, 5.5)",
+  "bundle": {
+    "troupe": "0.11",
+    "kind": "bundle",
+    "characters": [
+      {
+        "id": "a",
+        "name": "Ann",
+        "description": "Ann."
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s",
+        "cast": [
+          {},
+          {
+            "character": "a"
+          }
+        ],
+        "entries": [
+          {
+            "id": "l1",
+            "group": "loot",
+            "text": "copper"
+          },
+          {
+            "id": "l2",
+            "group": "loot",
+            "weight": 2,
+            "text": "silver"
+          },
+          {
+            "id": "l3",
+            "group": "loot",
+            "weight": 7,
+            "text": "gold"
+          },
+          {
+            "id": "l4",
+            "group": "loot",
+            "priority": 40,
+            "weight": 100,
+            "text": "never"
+          }
+        ]
+      }
+    ]
+  },
+  "session": {
+    "header": {
+      "troupe": "0.11",
+      "kind": "session",
+      "scenario": "s",
+      "seed": "conformanceSeed0001",
+      "characters": [
+        {
+          "id": "p",
+          "name": "Pat",
+          "description": "Pat."
+        }
+      ],
+      "players": [
+        "p"
+      ],
+      "head": "1"
+    },
+    "messages": [
+      {
+        "id": "1",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "Open the chest."
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "select",
+      "name": "m1: roll mod 10 = 2 -> l2",
+      "for": "a",
+      "parent": "1",
+      "messageId": "m1",
+      "expect": {
+        "activated": [
+          "s/l2"
+        ]
+      }
+    },
+    {
+      "type": "select",
+      "name": "m2: roll mod 10 = 0 -> l1",
+      "for": "a",
+      "parent": "1",
+      "messageId": "m2",
+      "expect": {
+        "activated": [
+          "s/l1"
+        ]
+      }
+    },
+    {
+      "type": "select",
+      "name": "m5: roll mod 10 = 6 -> l3",
+      "for": "a",
+      "parent": "1",
+      "messageId": "m5",
+      "expect": {
+        "activated": [
+          "s/l3"
+        ]
+      }
+    }
+  ]
+}

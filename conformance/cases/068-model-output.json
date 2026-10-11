@@ -1,0 +1,359 @@
+{
+  "description": "Model output (Play 3.4): one payload from a tracker or a structured reply; plain replies; speakers and knownBy naming no character are dropped; model text, entries and characters are stored literal",
+  "bundle": {
+    "troupe": "0.11",
+    "kind": "bundle",
+    "characters": [
+      {
+        "id": "a",
+        "name": "Ann",
+        "description": "Ann."
+      },
+      {
+        "id": "b",
+        "name": "Bea",
+        "description": "Bea."
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s",
+        "cast": [
+          {},
+          {
+            "character": "a"
+          },
+          {
+            "character": "b"
+          }
+        ],
+        "variables": [
+          {
+            "id": "mood",
+            "type": "enum",
+            "values": [
+              "calm",
+              "tense"
+            ],
+            "by": [
+              "model"
+            ],
+            "description": "d"
+          },
+          {
+            "id": "gold",
+            "type": "int",
+            "by": [
+              "player"
+            ],
+            "description": "d"
+          },
+          {
+            "id": "edits",
+            "type": "int",
+            "description": "d"
+          }
+        ],
+        "events": [
+          {
+            "id": "count_edits",
+            "when": "ago('gold') == 0",
+            "compute": {
+              "edits": "state.edits + 1"
+            }
+          },
+          {
+            "id": "on_player",
+            "on": "player",
+            "when": "true",
+            "set": {
+              "mood": "tense"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "session": {
+    "header": {
+      "troupe": "0.11",
+      "kind": "session",
+      "scenario": "s",
+      "seed": "conformanceSeed0001",
+      "characters": [
+        {
+          "id": "p",
+          "name": "Pat",
+          "description": "Pat."
+        }
+      ],
+      "players": [
+        "p"
+      ]
+    },
+    "messages": [
+      {
+        "id": "1",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "Hi."
+          }
+        ]
+      },
+      {
+        "id": "2",
+        "parent": "1",
+        "from": "model",
+        "char": "a",
+        "content": [
+          {
+            "speaker": "a",
+            "text": "Hello."
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "output",
+      "name": "a plain reply is one part spoken by the message's char; \\ and {{ are escaped",
+      "reply": {
+        "id": "3",
+        "parent": "2",
+        "char": "a"
+      },
+      "output": "Hello, {{user}}. C:\\temp",
+      "expect": {
+        "message": {
+          "id": "3",
+          "parent": "2",
+          "from": "model",
+          "char": "a",
+          "content": [
+            {
+              "speaker": "a",
+              "text": "Hello, \\{{user}}. C:\\\\temp"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "output",
+      "name": "the narrator's plain reply has no speaker",
+      "reply": {
+        "id": "3",
+        "parent": "2"
+      },
+      "output": "The wind rises.",
+      "expect": {
+        "message": {
+          "id": "3",
+          "parent": "2",
+          "from": "model",
+          "content": [
+            {
+              "text": "The wind rises."
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "output",
+      "name": "a structured reply with a newcomer",
+      "reply": {
+        "id": "3",
+        "parent": "2",
+        "char": "a"
+      },
+      "output": {
+        "parts": [
+          {
+            "speaker": "a",
+            "text": "Who's that?"
+          },
+          {
+            "speaker": "zed",
+            "text": "Unknown speaker dropped."
+          },
+          {
+            "speaker": "rook",
+            "knownBy": [
+              "rook",
+              "ghost"
+            ],
+            "text": "*Rook slips in.*"
+          }
+        ],
+        "changes": {
+          "mood": "tense",
+          "gold": 5,
+          "scene.present": [
+            "p",
+            "a",
+            "b",
+            "rook"
+          ]
+        },
+        "reason": "A stranger arrived.",
+        "entries": [
+          {
+            "id": "met",
+            "knownBy": [
+              "a"
+            ],
+            "text": "Ann met {{user}}."
+          }
+        ],
+        "characters": [
+          {
+            "id": "rook",
+            "name": "Rook",
+            "description": "A {{char}} thief.",
+            "summary": "A thief."
+          }
+        ]
+      },
+      "expect": {
+        "message": {
+          "id": "3",
+          "parent": "2",
+          "from": "model",
+          "char": "a",
+          "content": [
+            {
+              "speaker": "a",
+              "text": "Who's that?"
+            },
+            {
+              "text": "Unknown speaker dropped."
+            },
+            {
+              "speaker": "rook",
+              "knownBy": [
+                "rook"
+              ],
+              "text": "*Rook slips in.*"
+            }
+          ],
+          "changes": [
+            {
+              "by": "model",
+              "set": {
+                "mood": "tense",
+                "scene.present": [
+                  "p",
+                  "a",
+                  "b",
+                  "rook"
+                ]
+              },
+              "reason": "A stranger arrived."
+            }
+          ],
+          "entries": [
+            {
+              "id": "met",
+              "knownBy": [
+                "a"
+              ],
+              "text": "Ann met \\{{user}}."
+            }
+          ]
+        },
+        "dropped": [
+          "gold"
+        ],
+        "characters": [
+          "p",
+          "rook"
+        ]
+      }
+    },
+    {
+      "type": "output",
+      "name": "a tracker extraction on an existing message",
+      "message": "2",
+      "output": {
+        "changes": {
+          "mood": "tense"
+        }
+      },
+      "expect": {
+        "message": {
+          "id": "2",
+          "parent": "1",
+          "from": "model",
+          "char": "a",
+          "content": [
+            {
+              "speaker": "a",
+              "text": "Hello."
+            }
+          ],
+          "changes": [
+            {
+              "by": "model",
+              "set": {
+                "mood": "tense"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "edit",
+      "name": "a player edit after a model message: a records-only system child, then events (on: player events don't run there)",
+      "set": {
+        "gold": 3
+      },
+      "newId": "e1",
+      "expect": {
+        "message": {
+          "id": "e1",
+          "parent": "2",
+          "from": "system",
+          "content": [],
+          "changes": [
+            {
+              "by": "player",
+              "set": {
+                "gold": 3
+              }
+            },
+            {
+              "by": "rules",
+              "event": "count_edits",
+              "set": {
+                "edits": 1
+              }
+            }
+          ]
+        },
+        "events": [
+          {
+            "by": "rules",
+            "event": "count_edits",
+            "set": {
+              "edits": 1
+            }
+          }
+        ],
+        "head": "e1"
+      }
+    },
+    {
+      "type": "scanned",
+      "name": "records-only messages are never scanned",
+      "for": "a",
+      "parent": "2",
+      "depth": 1,
+      "expect": "Ann: Hello."
+    }
+  ]
+}

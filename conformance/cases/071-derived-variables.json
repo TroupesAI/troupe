@@ -1,0 +1,178 @@
+{
+  "description": "Derived variables (Format 8.1; Play 3.2): computed from stored state when read, never recorded; read-only; can't read other derived variables",
+  "bundle": {
+    "troupe": "0.11",
+    "kind": "bundle",
+    "characters": [
+      {
+        "id": "a",
+        "name": "Ann",
+        "description": "Ann."
+      },
+      {
+        "id": "b",
+        "name": "Bea",
+        "description": "Bea."
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s",
+        "cast": [
+          {},
+          {
+            "character": "a"
+          },
+          {
+            "character": "b"
+          }
+        ],
+        "variables": [
+          {
+            "id": "clock",
+            "type": "int",
+            "initial": 30,
+            "oneWay": true,
+            "description": "Hours since the start."
+          },
+          {
+            "id": "day",
+            "type": "int",
+            "derive": "state.clock / 24 + 1",
+            "description": "The day."
+          },
+          {
+            "id": "night",
+            "type": "bool",
+            "derive": "state.clock % 24 >= 20 || state.clock % 24 < 6",
+            "description": "Night time."
+          },
+          {
+            "id": "bad",
+            "type": "int",
+            "derive": "state.day + 1",
+            "description": "Reads another derived variable: never applies."
+          }
+        ],
+        "entries": [
+          {
+            "id": "when_night",
+            "when": "state.night",
+            "text": "It is night on day {{state.day}}."
+          }
+        ]
+      }
+    ]
+  },
+  "session": {
+    "header": {
+      "troupe": "0.11",
+      "kind": "session",
+      "scenario": "s",
+      "seed": "conformanceSeed0001",
+      "characters": [
+        {
+          "id": "p",
+          "name": "Pat",
+          "description": "Pat."
+        }
+      ],
+      "players": [
+        "p"
+      ]
+    },
+    "messages": [
+      {
+        "id": "1",
+        "from": "player",
+        "content": [
+          {
+            "text": "x"
+          }
+        ],
+        "changes": [
+          {
+            "by": "rules",
+            "set": {
+              "clock": 45
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "state",
+      "name": "derived values in the initial state",
+      "expect": {
+        "clock": 30,
+        "day": 2,
+        "night": false
+      }
+    },
+    {
+      "type": "state",
+      "at": "1",
+      "expect": {
+        "clock": 45,
+        "day": 2,
+        "night": true
+      }
+    },
+    {
+      "type": "cel",
+      "at": "1",
+      "expr": "state.day == 2 && state.night",
+      "expect": true
+    },
+    {
+      "type": "select",
+      "for": "a",
+      "parent": "1",
+      "messageId": "2",
+      "expect": {
+        "texts": {
+          "s/when_night": "It is night on day 2."
+        }
+      }
+    },
+    {
+      "type": "macro",
+      "at": "1",
+      "text": "Day {{state.day}}.",
+      "expect": "Day 2."
+    },
+    {
+      "type": "prepare",
+      "name": "a derived variable can't be changed",
+      "by": "rules",
+      "set": {
+        "day": 5,
+        "clock": 50
+      },
+      "expect": {
+        "set": {
+          "clock": 50
+        },
+        "dropped": [
+          "day"
+        ]
+      }
+    },
+    {
+      "type": "check",
+      "expect": {
+        "codes": [
+          "CEL_ERROR"
+        ],
+        "includes": [
+          {
+            "code": "CEL_ERROR",
+            "at": "/scenarios/0/variables/3/derive"
+          }
+        ]
+      }
+    }
+  ]
+}

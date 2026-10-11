@@ -1,0 +1,173 @@
+{
+  "description": "Always-on entries, when, disabled, file order within each slot (Play 5.1, 6)",
+  "bundle": {
+    "troupe": "0.11",
+    "kind": "bundle",
+    "characters": [
+      {
+        "id": "a",
+        "name": "Ann",
+        "description": "Ann.",
+        "entries": [
+          {
+            "id": "a1",
+            "priority": 80,
+            "text": "Ann note."
+          }
+        ]
+      }
+    ],
+    "worlds": [
+      {
+        "id": "w",
+        "name": "World",
+        "entries": [
+          {
+            "id": "w1",
+            "text": "World note."
+          }
+        ]
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s",
+        "cast": [
+          {},
+          {
+            "character": "a"
+          }
+        ],
+        "entries": [
+          {
+            "id": "e1",
+            "position": "system",
+            "priority": 10,
+            "text": "Low system."
+          },
+          {
+            "id": "e2",
+            "position": "system",
+            "priority": 90,
+            "text": "High system."
+          },
+          {
+            "id": "e3",
+            "text": "Context."
+          },
+          {
+            "id": "e4",
+            "position": 2,
+            "priority": 60,
+            "text": "Depth 2, 60."
+          },
+          {
+            "id": "e5",
+            "position": 2,
+            "priority": 70,
+            "text": "Depth 2, 70."
+          },
+          {
+            "id": "e6",
+            "when": "turn > 100",
+            "text": "Never."
+          },
+          {
+            "id": "e7",
+            "disabled": true,
+            "text": "Disabled."
+          },
+          {
+            "id": "e8",
+            "keys": [],
+            "text": "keys: [] is the same as no keys (section 2.2)."
+          }
+        ]
+      }
+    ]
+  },
+  "session": {
+    "header": {
+      "troupe": "0.11",
+      "kind": "session",
+      "scenario": "s",
+      "seed": "conformanceSeed0001",
+      "characters": [
+        {
+          "id": "p",
+          "name": "Pat",
+          "description": "Pat."
+        }
+      ],
+      "players": [
+        "p"
+      ],
+      "head": "1"
+    },
+    "messages": [
+      {
+        "id": "1",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "Hello."
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "select",
+      "for": "a",
+      "parent": "1",
+      "messageId": "2",
+      "expect": {
+        "activated": [
+          "w/w1",
+          "a/a1",
+          "s/e1",
+          "s/e2",
+          "s/e3",
+          "s/e4",
+          "s/e5",
+          "s/e8"
+        ],
+        "system": [
+          "s/e1",
+          "s/e2"
+        ],
+        "context": [
+          "w/w1",
+          "a/a1",
+          "s/e3",
+          "s/e8"
+        ],
+        "depth": [
+          "s/e4",
+          "s/e5"
+        ]
+      }
+    },
+    {
+      "type": "prompt",
+      "name": "depth beyond the history goes first, in file order",
+      "for": "a",
+      "parent": "1",
+      "messageId": "2",
+      "expect": {
+        "system": [
+          "app",
+          "entry:s/e1",
+          "entry:s/e2"
+        ],
+        "history": [
+          "entry:s/e4",
+          "entry:s/e5",
+          "message:1"
+        ]
+      }
+    }
+  ]
+}

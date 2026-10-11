@@ -1,0 +1,120 @@
+{
+  "description": "Dropped lines (Format 12.1, 17.2, 13): a message whose parent names no earlier message is skipped with its descendants (UNKNOWN_MESSAGE); a header that lists chronicles needs an id (SCHEMA)",
+  "bundle": {
+    "troupe": "0.11",
+    "kind": "bundle",
+    "scenarios": [
+      {
+        "id": "s"
+      }
+    ]
+  },
+  "session": {
+    "header": {
+      "troupe": "0.11",
+      "kind": "session",
+      "scenario": "s",
+      "seed": "conformanceSeed0001",
+      "characters": [
+        {
+          "id": "p",
+          "name": "Pat",
+          "description": "Pat."
+        }
+      ],
+      "players": [
+        "p"
+      ]
+    },
+    "messages": [
+      {
+        "id": "1",
+        "from": "player",
+        "content": [
+          {
+            "text": "m1"
+          }
+        ]
+      },
+      {
+        "id": "2",
+        "from": "model",
+        "content": [
+          {
+            "text": "m2"
+          }
+        ],
+        "parent": "1"
+      },
+      {
+        "id": "3",
+        "from": "player",
+        "content": [
+          {
+            "text": "m3"
+          }
+        ],
+        "parent": "x"
+      },
+      {
+        "id": "4",
+        "from": "model",
+        "content": [
+          {
+            "text": "m4"
+          }
+        ],
+        "parent": "3"
+      },
+      {
+        "id": "5",
+        "from": "player",
+        "content": [
+          {
+            "text": "m5"
+          }
+        ],
+        "parent": "2"
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "fold",
+      "name": "message 3 names no parent, so 3 and its child 4 are skipped",
+      "expect": {
+        "ids": [
+          "1",
+          "2",
+          "5"
+        ],
+        "head": "5",
+        "codes": [
+          "UNKNOWN_MESSAGE"
+        ]
+      }
+    },
+    {
+      "type": "parse",
+      "name": "chronicles without an id",
+      "kind": "session",
+      "text": "{\"troupe\": \"0.11\", \"kind\": \"session\", \"scenario\": \"s\", \"seed\": \"conformanceSeed0001\", \"characters\": [{\"id\": \"p\", \"name\": \"Pat\", \"description\": \"Pat.\"}], \"players\": [\"p\"], \"chronicles\": [\"c-kai\"]}\n",
+      "expect": {
+        "ok": false,
+        "codes": [
+          "SCHEMA"
+        ]
+      }
+    },
+    {
+      "type": "parse",
+      "name": "chronicles with an id",
+      "kind": "session",
+      "text": "{\"troupe\": \"0.11\", \"kind\": \"session\", \"scenario\": \"s\", \"seed\": \"conformanceSeed0001\", \"characters\": [{\"id\": \"p\", \"name\": \"Pat\", \"description\": \"Pat.\"}], \"players\": [\"p\"], \"id\": \"sess-1\", \"chronicles\": [\"c-kai\"]}\n",
+      "expect": {
+        "ok": true,
+        "codes": []
+      }
+    }
+  ]
+}

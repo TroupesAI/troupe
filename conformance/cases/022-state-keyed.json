@@ -1,0 +1,255 @@
+{
+  "description": "Keyed and owned variables (Format 8.2, 8.3): of characters (non-player cast), cast, a list and \"*\" (open keys); character-owned variables read as state.<owner>.<id> and own.<id>; computed keys by brackets in CEL",
+  "bundle": {
+    "troupe": "0.11",
+    "kind": "bundle",
+    "characters": [
+      {
+        "id": "a",
+        "name": "Ann",
+        "description": "Ann.",
+        "variables": [
+          {
+            "id": "feelings",
+            "type": "int",
+            "of": "cast",
+            "initial": {
+              "*": 0,
+              "b": 3
+            },
+            "by": [
+              "model"
+            ],
+            "description": "How {{char}} feels about each person."
+          }
+        ]
+      },
+      {
+        "id": "b",
+        "name": "Bea",
+        "description": "Bea."
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s",
+        "variables": [
+          {
+            "id": "trust",
+            "type": "number",
+            "of": "characters",
+            "initial": {
+              "*": 0.5,
+              "a": 0.7
+            },
+            "min": 0,
+            "max": 1,
+            "by": [
+              "model"
+            ],
+            "description": "d"
+          },
+          {
+            "id": "hp",
+            "type": "int",
+            "of": "cast",
+            "initial": 10,
+            "description": "players included"
+          },
+          {
+            "id": "rep",
+            "type": "int",
+            "of": [
+              "watch",
+              "guild"
+            ],
+            "initial": {
+              "guild": 3
+            },
+            "description": "d"
+          },
+          {
+            "id": "inv",
+            "type": "int",
+            "of": "*",
+            "min": 0,
+            "description": "open keys appear when a change sets them"
+          },
+          {
+            "id": "mood",
+            "type": "enum",
+            "values": [
+              "calm",
+              "upset"
+            ],
+            "of": "characters",
+            "initial": "upset",
+            "description": "one value for every key"
+          }
+        ]
+      }
+    ]
+  },
+  "session": {
+    "header": {
+      "troupe": "0.11",
+      "kind": "session",
+      "scenario": "s",
+      "seed": "conformanceSeed0001",
+      "characters": [
+        {
+          "id": "p",
+          "name": "Pat",
+          "description": "Pat."
+        }
+      ],
+      "players": [
+        "p"
+      ]
+    },
+    "messages": [
+      {
+        "id": "1",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "Start."
+          }
+        ],
+        "changes": [
+          {
+            "by": "model",
+            "set": {
+              "trust.b": 0.9,
+              "rep.watch": 2,
+              "mood.a": "calm"
+            }
+          },
+          {
+            "by": "rules",
+            "set": {
+              "hp.p": 7,
+              "inv.torch": 2,
+              "a.feelings.p": 5
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "state",
+      "name": "initial values; open maps start empty",
+      "expect": {
+        "scene.present": [
+          "p",
+          "a",
+          "b"
+        ],
+        "trust.a": 0.7,
+        "trust.b": 0.5,
+        "hp.p": 10,
+        "hp.a": 10,
+        "hp.b": 10,
+        "rep.watch": 0,
+        "rep.guild": 3,
+        "mood.a": "upset",
+        "mood.b": "upset",
+        "a.feelings.p": 0,
+        "a.feelings.a": 0,
+        "a.feelings.b": 3
+      }
+    },
+    {
+      "type": "state",
+      "at": "1",
+      "expect": {
+        "trust.b": 0.9,
+        "rep.watch": 2,
+        "mood.a": "calm",
+        "hp.p": 7,
+        "inv.torch": 2,
+        "a.feelings.p": 5
+      }
+    },
+    {
+      "type": "cel",
+      "name": "own, state.<owner>.<id>, computed keys with brackets, and open keys",
+      "at": "1",
+      "char": "a",
+      "self": "a",
+      "kind": "entry",
+      "expr": "own.feelings[user] == 5 && state.a.feelings.b == 3 && state.trust[char] == 0.7 && state.hp[user] == 7 && 'torch' in state.inv && state.inv.torch == 2 && !('lamp' in state.inv)",
+      "expect": true
+    },
+    {
+      "type": "cel",
+      "name": "CEL has no char/user aliases: .user selects the literal key \"user\"; the player has no trust key",
+      "at": "1",
+      "char": "a",
+      "kind": "entry",
+      "expr": "!has(state.hp.user) && !(user in state.trust) && (user in state.hp)",
+      "expect": true
+    },
+    {
+      "type": "cel",
+      "name": "no alias in CEL: .char is the literal key",
+      "at": "1",
+      "char": "a",
+      "kind": "entry",
+      "expr": "has(state.rep.char)",
+      "expect": false
+    },
+    {
+      "type": "cel",
+      "name": "own is typed per owner: the scenario has no own.feelings",
+      "kind": "entry",
+      "expr": "own.feelings.b == 3",
+      "expect": {
+        "checkError": true
+      }
+    },
+    {
+      "type": "prepare",
+      "name": "keys must exist (open keys must be author IDs); a player has no `characters` key; aliases are for reading",
+      "at": "1",
+      "by": "rules",
+      "set": {
+        "inv.lamp": 1,
+        "rep.army": 1,
+        "trust": 0.2,
+        "trust.zed": 0.1,
+        "trust.p": 0.3,
+        "trust.char": 0.4,
+        "inv.Torch": 1,
+        "a.feelings": 1,
+        "feelings.p": 1
+      },
+      "expect": {
+        "set": {
+          "inv.lamp": 1
+        },
+        "dropped": [
+          "rep.army",
+          "trust",
+          "trust.zed",
+          "trust.p",
+          "trust.char",
+          "inv.Torch",
+          "a.feelings",
+          "feelings.p"
+        ]
+      }
+    },
+    {
+      "type": "macro",
+      "name": "own and owner paths in macros; maps render with names",
+      "at": "1",
+      "char": "a",
+      "text": "{{state.a.feelings.b}} {{state.trust.char}} {{state.hp.user}} | {{state.trust}} | {{state.inv}}",
+      "expect": "3 0.7 7 | Ann: 0.7, Bea: 0.9 | torch: 2"
+    }
+  ]
+}

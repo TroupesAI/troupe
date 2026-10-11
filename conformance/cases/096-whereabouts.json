@@ -1,0 +1,476 @@
+{
+  "description": "Format Appendix C.11, whereabouts and hidden characters: a scenario variable of cast records where each character waits, and an event brings whoever waits at the new location into the scene, keeping those who go along (\"\"); it type-checks, prepares a valid scene.present in cast order, fires at most once per round, and a spoiler cast member stays offstage until the players walk in",
+  "bundle": {
+    "troupe": "0.11",
+    "kind": "bundle",
+    "characters": [
+      {
+        "id": "ann",
+        "name": "Ann",
+        "description": "A guide."
+      },
+      {
+        "id": "ghost",
+        "name": "The Ghost",
+        "description": "A ghost in the cellar."
+      }
+    ],
+    "worlds": [
+      {
+        "id": "w",
+        "name": "W",
+        "locations": [
+          {
+            "id": "street",
+            "name": "Street"
+          },
+          {
+            "id": "hall",
+            "name": "Hall"
+          },
+          {
+            "id": "cellar",
+            "name": "Cellar"
+          }
+        ]
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s",
+        "cast": [
+          {},
+          {
+            "character": "ann"
+          },
+          {
+            "character": "ghost",
+            "spoiler": true
+          }
+        ],
+        "variables": [
+          {
+            "id": "where",
+            "type": "string",
+            "of": "cast",
+            "initial": {
+              "*": "",
+              "ghost": "cellar"
+            },
+            "by": [
+              "model"
+            ],
+            "description": "Where each character stays when not with {{user}}; empty for those who go along."
+          }
+        ],
+        "events": [
+          {
+            "id": "arrive",
+            "when": "ago('scene.location') == 0 && scene.location != ''",
+            "compute": {
+              "scene.present": "scene.present.filter(c, state.where[c] == '') + state.where.filter(c, state.where[c] == scene.location)"
+            }
+          }
+        ],
+        "openings": [
+          {
+            "id": "o",
+            "set": {
+              "scene.location": "street"
+            },
+            "content": [
+              {
+                "speaker": "ann",
+                "text": "This way."
+              }
+            ]
+          },
+          {
+            "id": "street_start",
+            "title": "On the street",
+            "set": {
+              "scene.location": "street"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "session": {
+    "header": {
+      "troupe": "0.11",
+      "kind": "session",
+      "scenario": "s",
+      "seed": "conformanceSeed0001",
+      "characters": [
+        {
+          "id": "p",
+          "name": "Pat",
+          "description": "Pat."
+        }
+      ],
+      "players": [
+        "p"
+      ],
+      "head": "6"
+    },
+    "messages": [
+      {
+        "id": "1",
+        "opening": "o",
+        "from": "system",
+        "content": [
+          {
+            "speaker": "ann",
+            "text": "This way."
+          }
+        ],
+        "changes": [
+          {
+            "by": "rules",
+            "set": {
+              "scene.location": "street",
+              "scene.present": [
+                "p",
+                "ann"
+              ]
+            }
+          },
+          {
+            "by": "rules",
+            "event": "arrive",
+            "set": {
+              "scene.present": [
+                "p",
+                "ann"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "id": "2",
+        "parent": "1",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "Let's check the cellar."
+          }
+        ],
+        "changes": [
+          {
+            "by": "model",
+            "set": {
+              "scene.location": "cellar"
+            }
+          },
+          {
+            "by": "rules",
+            "event": "arrive",
+            "set": {
+              "scene.present": [
+                "p",
+                "ann",
+                "ghost"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "id": "3",
+        "parent": "2",
+        "from": "model",
+        "char": "ann",
+        "content": [
+          {
+            "speaker": "ann",
+            "text": "I'll wait down here."
+          }
+        ],
+        "changes": [
+          {
+            "by": "model",
+            "set": {
+              "where.ann": "cellar"
+            }
+          }
+        ]
+      },
+      {
+        "id": "4",
+        "parent": "3",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "Back up to the hall."
+          }
+        ],
+        "changes": [
+          {
+            "by": "model",
+            "set": {
+              "scene.location": "hall"
+            }
+          },
+          {
+            "by": "rules",
+            "event": "arrive",
+            "set": {
+              "scene.present": [
+                "p"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "id": "5",
+        "parent": "4",
+        "from": "model",
+        "content": [
+          {
+            "text": "The hall is empty."
+          }
+        ]
+      },
+      {
+        "id": "6",
+        "parent": "5",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "Down again."
+          }
+        ],
+        "changes": [
+          {
+            "by": "model",
+            "set": {
+              "scene.location": "cellar"
+            }
+          },
+          {
+            "by": "rules",
+            "event": "arrive",
+            "set": {
+              "scene.present": [
+                "p",
+                "ann",
+                "ghost"
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "check",
+      "name": "the variable and the event type-check",
+      "expect": {
+        "codes": []
+      }
+    },
+    {
+      "type": "state",
+      "name": "the initial whereabouts",
+      "expect": {
+        "where.p": "",
+        "where.ann": "",
+        "where.ghost": "cellar"
+      }
+    },
+    {
+      "type": "start",
+      "name": "at the opening root the location is new: whoever goes along stays, nobody waits on the street",
+      "scenario": "s",
+      "opening": "o",
+      "characters": [
+        {
+          "id": "p",
+          "name": "Pat",
+          "description": "Pat."
+        }
+      ],
+      "expect": {
+        "changes": [
+          {
+            "by": "rules",
+            "set": {
+              "scene.location": "street",
+              "scene.present": [
+                "p",
+                "ann"
+              ]
+            }
+          },
+          {
+            "by": "rules",
+            "event": "arrive",
+            "set": {
+              "scene.present": [
+                "p",
+                "ann"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "type": "start",
+      "name": "an opening without content starts with the whole cast, and the event at the root sends the ghost back to its cellar",
+      "scenario": "s",
+      "opening": "street_start",
+      "characters": [
+        {
+          "id": "p",
+          "name": "Pat",
+          "description": "Pat."
+        }
+      ],
+      "expect": {
+        "changes": [
+          {
+            "by": "rules",
+            "set": {
+              "scene.location": "street",
+              "scene.present": [
+                "p",
+                "ann",
+                "ghost"
+              ]
+            }
+          },
+          {
+            "by": "rules",
+            "event": "arrive",
+            "set": {
+              "scene.present": [
+                "p",
+                "ann"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "type": "events",
+      "name": "walking into the cellar brings in the ghost, in cast order",
+      "at": "2",
+      "expect": {
+        "changes": [
+          {
+            "by": "rules",
+            "event": "arrive",
+            "set": {
+              "scene.present": [
+                "p",
+                "ann",
+                "ghost"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "type": "events",
+      "name": "the location changed in this round, but the event already fired in it",
+      "at": "3",
+      "expect": {
+        "changes": []
+      }
+    },
+    {
+      "type": "events",
+      "name": "leaving for the hall: Ann and the ghost stay in the cellar",
+      "at": "4",
+      "expect": {
+        "changes": [
+          {
+            "by": "rules",
+            "event": "arrive",
+            "set": {
+              "scene.present": [
+                "p"
+              ]
+            }
+          }
+        ],
+        "state": {
+          "scene.present": [
+            "p"
+          ]
+        }
+      }
+    },
+    {
+      "type": "events",
+      "name": "no location change, no firing",
+      "at": "5",
+      "expect": {
+        "changes": []
+      }
+    },
+    {
+      "type": "events",
+      "name": "back in the cellar, both are there again",
+      "at": "6",
+      "expect": {
+        "changes": [
+          {
+            "by": "rules",
+            "event": "arrive",
+            "set": {
+              "scene.present": [
+                "p",
+                "ann",
+                "ghost"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "type": "prompt",
+      "name": "before the cellar, the spoiler ghost is offstage",
+      "for": "ann",
+      "parent": "1",
+      "messageId": "x",
+      "expect": {
+        "people": [
+          "character:ann",
+          "player:p"
+        ]
+      }
+    },
+    {
+      "type": "prompt",
+      "name": "in the cellar, the ghost is present",
+      "for": "ann",
+      "parent": "2",
+      "messageId": "x",
+      "expect": {
+        "people": [
+          "character:ann",
+          "character:ghost",
+          "player:p"
+        ]
+      }
+    },
+    {
+      "type": "cel",
+      "name": "a map's filter yields its keys, so the sum is a list of character IDs",
+      "expr": "state.where.filter(c, state.where[c] == 'cellar') == ['ghost'] && scene.present.filter(c, state.where[c] == '') + ['ghost'] == ['p', 'ann', 'ghost']",
+      "expect": true
+    }
+  ]
+}

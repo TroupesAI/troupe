@@ -1,0 +1,174 @@
+{
+  "description": "YAML authoring source (Format 14.4): YAML 1.2 core schema, JSON-expressible only; tags, anchors, aliases, merge keys and non-string keys are rejected",
+  "bundleYaml": "# A YAML authoring source (19.4)\ntroupe: \"0.11\"\nkind: bundle\ncharacters:\n  - id: mira\n    name: Mira\n    description: |\n      A sarcastic starship engineer.\n      Talks to engines more kindly than to people.\n    entries:\n      - id: ship\n        keys: [Kestrel, ship]\n        when: own.fuel < 3 && 'yes' != 'no'\n        text: The Kestrel is a patched-up freighter.\n    variables:\n      - id: fuel\n        type: int\n        initial: 0o5\n        description: Fuel cells left. yes and no stay strings.\nscenarios:\n  - id: kestrel\n    openings:\n      - id: docked\n        content:\n          - speaker: mira\n            text: \"If you're here about the noise, it's supposed to sound like that.\"\n      - id: shore_leave\n        title: Shore leave\n",
+  "tests": [
+    {
+      "type": "parse",
+      "name": "a YAML bundle means exactly its JSON equivalent",
+      "kind": "yaml",
+      "text": "# A YAML authoring source (19.4)\ntroupe: \"0.11\"\nkind: bundle\ncharacters:\n  - id: mira\n    name: Mira\n    description: |\n      A sarcastic starship engineer.\n      Talks to engines more kindly than to people.\n    entries:\n      - id: ship\n        keys: [Kestrel, ship]\n        when: own.fuel < 3 && 'yes' != 'no'\n        text: The Kestrel is a patched-up freighter.\n    variables:\n      - id: fuel\n        type: int\n        initial: 0o5\n        description: Fuel cells left. yes and no stay strings.\nscenarios:\n  - id: kestrel\n    openings:\n      - id: docked\n        content:\n          - speaker: mira\n            text: \"If you're here about the noise, it's supposed to sound like that.\"\n      - id: shore_leave\n        title: Shore leave\n",
+      "expect": {
+        "ok": true,
+        "equals": {
+          "troupe": "0.11",
+          "kind": "bundle",
+          "characters": [
+            {
+              "id": "mira",
+              "name": "Mira",
+              "description": "A sarcastic starship engineer.\nTalks to engines more kindly than to people.\n",
+              "entries": [
+                {
+                  "id": "ship",
+                  "keys": [
+                    "Kestrel",
+                    "ship"
+                  ],
+                  "when": "own.fuel < 3 && 'yes' != 'no'",
+                  "text": "The Kestrel is a patched-up freighter."
+                }
+              ],
+              "variables": [
+                {
+                  "id": "fuel",
+                  "type": "int",
+                  "initial": 5,
+                  "description": "Fuel cells left. yes and no stay strings."
+                }
+              ]
+            }
+          ],
+          "scenarios": [
+            {
+              "id": "kestrel",
+              "openings": [
+                {
+                  "id": "docked",
+                  "content": [
+                    {
+                      "speaker": "mira",
+                      "text": "If you're here about the noise, it's supposed to sound like that."
+                    }
+                  ]
+                },
+                {
+                  "id": "shore_leave",
+                  "title": "Shore leave"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "parse",
+      "name": "YAML 1.2 core: yes/no/on stay strings",
+      "kind": "yaml",
+      "text": "troupe: \"0.11\"\nkind: bundle\ntags: [yes, no, on]\n",
+      "expect": {
+        "ok": true,
+        "equals": {
+          "troupe": "0.11",
+          "kind": "bundle",
+          "tags": [
+            "yes",
+            "no",
+            "on"
+          ]
+        }
+      }
+    },
+    {
+      "type": "parse",
+      "name": "tags",
+      "kind": "yaml",
+      "text": "troupe: !!str 0.8\nkind: bundle\n",
+      "expect": {
+        "ok": false,
+        "codes": [
+          "PARSE"
+        ]
+      }
+    },
+    {
+      "type": "parse",
+      "name": "anchors and aliases",
+      "kind": "yaml",
+      "text": "troupe: \"0.11\"\nkind: bundle\ntags: &t [a]\nwarnings: *t\n",
+      "expect": {
+        "ok": false,
+        "codes": [
+          "PARSE"
+        ]
+      }
+    },
+    {
+      "type": "parse",
+      "name": "merge keys",
+      "kind": "yaml",
+      "text": "troupe: \"0.11\"\nkind: bundle\nscenarios:\n  - <<: {id: s}\n",
+      "expect": {
+        "ok": false,
+        "codes": [
+          "PARSE"
+        ]
+      }
+    },
+    {
+      "type": "parse",
+      "name": "non-string keys",
+      "kind": "yaml",
+      "text": "troupe: \"0.11\"\nkind: bundle\n1: x\n",
+      "expect": {
+        "ok": false,
+        "codes": [
+          "PARSE"
+        ]
+      }
+    },
+    {
+      "type": "parse",
+      "name": "non-JSON numbers",
+      "kind": "yaml",
+      "text": "troupe: \"0.11\"\nkind: bundle\nscenarios:\n  - id: s\n    variables:\n      - {id: v, type: number, initial: .inf, description: d}\n",
+      "expect": {
+        "ok": false,
+        "codes": [
+          "PARSE"
+        ]
+      }
+    },
+    {
+      "type": "parse",
+      "name": "duplicate keys",
+      "kind": "yaml",
+      "text": "troupe: \"0.11\"\nkind: bundle\nkind: bundle\n",
+      "expect": {
+        "ok": false,
+        "codes": [
+          "PARSE"
+        ]
+      }
+    },
+    {
+      "type": "parse",
+      "name": "the troupe version must be a string: 0.11 unquoted is a number (Format 14.4: quote it)",
+      "kind": "yaml",
+      "text": "troupe: 0.11\nkind: bundle\n",
+      "expect": {
+        "ok": false,
+        "codes": [
+          "SCHEMA"
+        ]
+      }
+    },
+    {
+      "type": "check",
+      "name": "the imported bundle checks clean",
+      "expect": {
+        "codes": []
+      }
+    }
+  ]
+}

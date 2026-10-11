@@ -1,0 +1,113 @@
+{
+  "description": "Validators assert format, so a malformed timestamp is SCHEMA (Format 15); an unknown message field is UNKNOWN_FIELD; named bounds must name non-keyed numeric variables of the same owner (Format 8.1)",
+  "bundle": {
+    "troupe": "0.11",
+    "kind": "bundle",
+    "characters": [
+      {
+        "id": "a",
+        "name": "Ann",
+        "description": "Ann."
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s",
+        "cast": [
+          {},
+          {
+            "character": "a"
+          }
+        ],
+        "variables": [
+          {
+            "id": "rep",
+            "type": "int",
+            "of": [
+              "watch"
+            ],
+            "description": "d"
+          },
+          {
+            "id": "name",
+            "type": "string",
+            "description": "d"
+          },
+          {
+            "id": "x",
+            "type": "int",
+            "max": "rep",
+            "description": "a keyed bound"
+          },
+          {
+            "id": "y",
+            "type": "int",
+            "min": "name",
+            "description": "a string bound"
+          }
+        ]
+      }
+    ]
+  },
+  "session": {
+    "header": {
+      "troupe": "0.11",
+      "kind": "session",
+      "scenario": "s",
+      "seed": "conformanceSeed0001",
+      "characters": [
+        {
+          "id": "p",
+          "name": "Pat",
+          "description": "Pat."
+        }
+      ],
+      "players": [
+        "p"
+      ]
+    },
+    "messages": [
+      {
+        "id": "1",
+        "from": "player",
+        "at": "yesterday",
+        "content": [
+          {
+            "text": "x"
+          }
+        ],
+        "mood": "odd"
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "check",
+      "expect": {
+        "codes": [
+          "SCHEMA",
+          "UNKNOWN_FIELD",
+          "UNKNOWN_VARIABLE"
+        ],
+        "includes": [
+          {
+            "code": "SCHEMA",
+            "at": "message:1/at"
+          },
+          {
+            "code": "UNKNOWN_FIELD",
+            "at": "message:1/mood"
+          },
+          {
+            "code": "UNKNOWN_VARIABLE",
+            "at": "/scenarios/0/variables/2/max"
+          },
+          {
+            "code": "UNKNOWN_VARIABLE",
+            "at": "/scenarios/0/variables/3/min"
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,119 @@
+{
+  "description": "hit() expresses AND, OR and NOT with the same matching rules as keys (Format 7.2, 11.1)",
+  "bundle": {
+    "troupe": "0.11",
+    "kind": "bundle",
+    "characters": [
+      {
+        "id": "a",
+        "name": "Ann",
+        "description": "Ann."
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s",
+        "cast": [
+          {},
+          {
+            "character": "a"
+          }
+        ],
+        "entries": [
+          {
+            "id": "and_not",
+            "keys": [
+              "glass"
+            ],
+            "when": "hit('glass') && !hit('guard')",
+            "text": "no guard"
+          },
+          {
+            "id": "and",
+            "keys": [
+              "glass"
+            ],
+            "when": "hit('case')",
+            "text": "glass and case"
+          },
+          {
+            "id": "not",
+            "when": "!hit('guard')",
+            "text": "keyless NOT"
+          },
+          {
+            "id": "or",
+            "when": "hit('dragon') || hit('case')",
+            "text": "keyless OR"
+          },
+          {
+            "id": "regex",
+            "when": "hit('/gu?ard/')",
+            "text": "regex in hit"
+          },
+          {
+            "id": "word",
+            "when": "hit('las')",
+            "text": "substring is not a word"
+          },
+          {
+            "id": "empty",
+            "when": "hit('')",
+            "text": "empty key never hits"
+          },
+          {
+            "id": "rt_error",
+            "when": "count['nope/missing'] > 0",
+            "text": "runtime error makes the condition false"
+          }
+        ]
+      }
+    ]
+  },
+  "session": {
+    "header": {
+      "troupe": "0.11",
+      "kind": "session",
+      "scenario": "s",
+      "seed": "conformanceSeed0001",
+      "characters": [
+        {
+          "id": "p",
+          "name": "Pat",
+          "description": "Pat."
+        }
+      ],
+      "players": [
+        "p"
+      ],
+      "head": "1"
+    },
+    "messages": [
+      {
+        "id": "1",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "I eye the glass case. A guard dozes nearby."
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "select",
+      "for": "a",
+      "parent": "1",
+      "messageId": "2",
+      "expect": {
+        "activated": [
+          "s/and",
+          "s/or",
+          "s/regex"
+        ]
+      }
+    }
+  ]
+}

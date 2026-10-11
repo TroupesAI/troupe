@@ -1,0 +1,195 @@
+{
+  "description": "Reading a bundle (Format 2.2, 14.1, 17.2): I-JSON with no byte order mark, duplicate member names, surrogate or noncharacter code points, or numbers beyond a double, and a Troupe document of the expected kind. Each violation is PARSE and the file isn't read. A bundle nested 64 deep is within the limits (Format 16)",
+  "tests": [
+    {
+      "type": "parse",
+      "name": "the smallest bundle",
+      "kind": "bundle",
+      "text": "{\"troupe\":\"0.11\",\"kind\":\"bundle\"}",
+      "expect": {
+        "ok": true,
+        "codes": [],
+        "equals": {
+          "troupe": "0.11",
+          "kind": "bundle"
+        }
+      }
+    },
+    {
+      "type": "parse",
+      "name": "not JSON",
+      "kind": "bundle",
+      "text": "{\"troupe\":",
+      "expect": {
+        "ok": false,
+        "codes": [
+          "PARSE"
+        ]
+      }
+    },
+    {
+      "type": "parse",
+      "name": "a duplicate member name",
+      "kind": "bundle",
+      "text": "{\"troupe\":\"0.11\",\"kind\":\"bundle\",\"kind\":\"bundle\"}",
+      "expect": {
+        "ok": false,
+        "codes": [
+          "PARSE"
+        ]
+      }
+    },
+    {
+      "type": "parse",
+      "name": "a duplicate member name inside ext",
+      "kind": "bundle",
+      "text": "{\"troupe\":\"0.11\",\"kind\":\"bundle\",\"ext\":{\"a.b\":{\"x\":1,\"x\":2}}}",
+      "expect": {
+        "ok": false,
+        "codes": [
+          "PARSE"
+        ]
+      }
+    },
+    {
+      "type": "parse",
+      "name": "a byte order mark",
+      "kind": "bundle",
+      "base64": "77u/eyJ0cm91cGUiOiIwLjExIiwia2luZCI6ImJ1bmRsZSJ9",
+      "expect": {
+        "ok": false,
+        "codes": [
+          "PARSE"
+        ]
+      }
+    },
+    {
+      "type": "parse",
+      "name": "invalid UTF-8",
+      "kind": "bundle",
+      "base64": "eyJ0cm91cGUiOiIwLjExIiwia2luZCI6ImJ1bmRsZSIsInRhZ3MiOlsi/yJdfQ==",
+      "expect": {
+        "ok": false,
+        "codes": [
+          "PARSE"
+        ]
+      }
+    },
+    {
+      "type": "parse",
+      "name": "an escaped lone surrogate",
+      "kind": "bundle",
+      "text": "{\"troupe\":\"0.11\",\"kind\":\"bundle\",\"tags\":[\"\\ud800\"]}",
+      "expect": {
+        "ok": false,
+        "codes": [
+          "PARSE"
+        ]
+      }
+    },
+    {
+      "type": "parse",
+      "name": "an escaped surrogate pair is a character",
+      "kind": "bundle",
+      "text": "{\"troupe\":\"0.11\",\"kind\":\"bundle\",\"tags\":[\"\\ud83d\\ude00\"]}",
+      "expect": {
+        "ok": true,
+        "codes": []
+      }
+    },
+    {
+      "type": "parse",
+      "name": "an escaped noncharacter",
+      "kind": "bundle",
+      "text": "{\"troupe\":\"0.11\",\"kind\":\"bundle\",\"tags\":[\"\\uffff\"]}",
+      "expect": {
+        "ok": false,
+        "codes": [
+          "PARSE"
+        ]
+      }
+    },
+    {
+      "type": "parse",
+      "name": "a noncharacter written in UTF-8",
+      "kind": "bundle",
+      "base64": "eyJ0cm91cGUiOiIwLjExIiwia2luZCI6ImJ1bmRsZSIsInRhZ3MiOlsi77eQIl19",
+      "expect": {
+        "ok": false,
+        "codes": [
+          "PARSE"
+        ]
+      }
+    },
+    {
+      "type": "parse",
+      "name": "a number beyond a double",
+      "kind": "bundle",
+      "text": "{\"troupe\":\"0.11\",\"kind\":\"bundle\",\"ext\":{\"a.b\":1e400}}",
+      "expect": {
+        "ok": false,
+        "codes": [
+          "PARSE"
+        ]
+      }
+    },
+    {
+      "type": "parse",
+      "name": "depth 64",
+      "kind": "bundle",
+      "text": "{\"troupe\":\"0.11\",\"kind\":\"bundle\",\"ext\":{\"a.b\":[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]}}",
+      "expect": {
+        "ok": true,
+        "codes": []
+      }
+    },
+    {
+      "type": "parse",
+      "name": "a JSON array isn't a Troupe document",
+      "kind": "bundle",
+      "text": "[]",
+      "expect": {
+        "ok": false,
+        "codes": [
+          "PARSE"
+        ]
+      }
+    },
+    {
+      "type": "parse",
+      "name": "an unknown kind",
+      "kind": "bundle",
+      "text": "{\"troupe\":\"0.11\",\"kind\":\"deck\"}",
+      "expect": {
+        "ok": false,
+        "codes": [
+          "PARSE"
+        ]
+      }
+    },
+    {
+      "type": "parse",
+      "name": "a session header where a bundle is expected",
+      "kind": "bundle",
+      "text": "{\"troupe\":\"0.11\",\"kind\":\"session\",\"scenario\":\"s\",\"seed\":\"k7Qm2xVb9TzR4pLc8NwYfA\"}",
+      "expect": {
+        "ok": false,
+        "codes": [
+          "PARSE"
+        ]
+      }
+    },
+    {
+      "type": "parse",
+      "name": "a missing version fails the schema",
+      "kind": "bundle",
+      "text": "{\"kind\":\"bundle\"}",
+      "expect": {
+        "ok": false,
+        "codes": [
+          "SCHEMA"
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,159 @@
+{
+  "description": "Characters who join during the session (Format 8.3, 12.2; Play 3.2): in the cast after the scenario cast, not present until a change adds them",
+  "bundle": {
+    "troupe": "0.11",
+    "kind": "bundle",
+    "characters": [
+      {
+        "id": "a",
+        "name": "Ann",
+        "description": "Ann."
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s",
+        "cast": [
+          {},
+          {
+            "character": "a"
+          }
+        ],
+        "variables": [
+          {
+            "id": "trust",
+            "type": "number",
+            "of": "characters",
+            "initial": 0.5,
+            "description": "d"
+          }
+        ]
+      }
+    ]
+  },
+  "session": {
+    "header": {
+      "troupe": "0.11",
+      "kind": "session",
+      "scenario": "s",
+      "seed": "conformanceSeed0001",
+      "characters": [
+        {
+          "id": "p",
+          "name": "Pat",
+          "description": "Pat."
+        },
+        {
+          "id": "j",
+          "name": "Jo",
+          "description": "A stranger.",
+          "entries": [
+            {
+              "id": "jn",
+              "text": "Jo's note."
+            }
+          ],
+          "variables": [
+            {
+              "id": "jo_mood",
+              "type": "string",
+              "initial": "wary",
+              "description": "travels with Jo"
+            }
+          ]
+        }
+      ],
+      "players": [
+        "p"
+      ],
+      "head": "2"
+    },
+    "messages": [
+      {
+        "id": "1",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "Who's there?"
+          }
+        ]
+      },
+      {
+        "id": "2",
+        "parent": "1",
+        "from": "model",
+        "char": "a",
+        "content": [
+          {
+            "speaker": "j",
+            "text": "Just me."
+          }
+        ],
+        "changes": [
+          {
+            "by": "model",
+            "set": {
+              "scene.present": [
+                "j",
+                "p",
+                "a"
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "state",
+      "at": "1",
+      "expect": {
+        "scene.present": [
+          "p",
+          "a"
+        ],
+        "trust.j": 0.5,
+        "j.jo_mood": "wary"
+      }
+    },
+    {
+      "type": "state",
+      "at": "2",
+      "expect": {
+        "scene.present": [
+          "p",
+          "a",
+          "j"
+        ]
+      }
+    },
+    {
+      "type": "select",
+      "for": "a",
+      "parent": "1",
+      "messageId": "x",
+      "expect": {
+        "activated": []
+      }
+    },
+    {
+      "type": "select",
+      "for": "a",
+      "parent": "2",
+      "messageId": "x",
+      "expect": {
+        "activated": [
+          "j/jn"
+        ]
+      }
+    },
+    {
+      "type": "check",
+      "expect": {
+        "codes": []
+      }
+    }
+  ]
+}

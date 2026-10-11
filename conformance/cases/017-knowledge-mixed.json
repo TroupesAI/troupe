@@ -1,0 +1,172 @@
+{
+  "description": "Knowledge in mixed mode (Play 7): characters see what they know; the narrator sees everything except content whose explicit knownBy excludes narrator",
+  "bundle": {
+    "troupe": "0.11",
+    "kind": "bundle",
+    "characters": [
+      {
+        "id": "a",
+        "name": "Ann",
+        "description": "Ann.",
+        "entries": [
+          {
+            "id": "secret",
+            "knownBy": [
+              "a"
+            ],
+            "text": "Ann's secret"
+          }
+        ]
+      },
+      {
+        "id": "b",
+        "name": "Bea",
+        "description": "Bea."
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s",
+        "cast": [
+          {},
+          {
+            "character": "a"
+          },
+          {
+            "character": "b"
+          }
+        ],
+        "entries": [
+          {
+            "id": "k_all",
+            "text": "everyone"
+          },
+          {
+            "id": "k_a",
+            "knownBy": [
+              "a"
+            ],
+            "text": "only Ann"
+          },
+          {
+            "id": "k_b",
+            "knownBy": [
+              "b"
+            ],
+            "text": "only Bea"
+          },
+          {
+            "id": "k_none",
+            "knownBy": [
+              "narrator"
+            ],
+            "text": "narrator-only"
+          },
+          {
+            "id": "k_ab",
+            "knownBy": [
+              "a",
+              "b",
+              "p"
+            ],
+            "text": "everyone present, but listed"
+          },
+          {
+            "id": "kv",
+            "keys": [
+              "vault"
+            ],
+            "text": "keyed on a whisper"
+          }
+        ],
+        "mode": "mixed"
+      }
+    ]
+  },
+  "session": {
+    "header": {
+      "troupe": "0.11",
+      "kind": "session",
+      "scenario": "s",
+      "seed": "conformanceSeed0001",
+      "characters": [
+        {
+          "id": "p",
+          "name": "Pat",
+          "description": "Pat."
+        }
+      ],
+      "players": [
+        "p"
+      ],
+      "head": "2"
+    },
+    "messages": [
+      {
+        "id": "1",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "Meet me later."
+          },
+          {
+            "speaker": "p",
+            "knownBy": [
+              "b",
+              "p"
+            ],
+            "text": "(whispering) The vault opens at dawn."
+          }
+        ]
+      },
+      {
+        "id": "2",
+        "parent": "1",
+        "from": "model",
+        "char": "b",
+        "content": [
+          {
+            "speaker": "b",
+            "text": "Understood."
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "select",
+      "name": "Ann in mixed mode",
+      "for": "a",
+      "parent": "2",
+      "messageId": "3",
+      "expect": {
+        "activated": [
+          "a/secret",
+          "s/k_all",
+          "s/k_a",
+          "s/k_ab"
+        ]
+      }
+    },
+    {
+      "type": "select",
+      "name": "the narrator: entries without knownBy or naming narrator",
+      "parent": "2",
+      "messageId": "3",
+      "expect": {
+        "activated": [
+          "s/k_all",
+          "s/k_none"
+        ]
+      }
+    },
+    {
+      "type": "scanned",
+      "name": "the narrator misses the whisper: its explicit knownBy excludes narrator",
+      "parent": "2",
+      "expect": "Bea: Understood.\nPat: Meet me later."
+    }
+  ]
+}

@@ -1,0 +1,274 @@
+{
+  "description": "Reference checks on a session (Format 12, 17.2): openings on roots, the message forest, players, recorded values, events, activations and summaries",
+  "bundle": {
+    "troupe": "0.11",
+    "kind": "bundle",
+    "characters": [
+      {
+        "id": "a",
+        "name": "Ann",
+        "description": "Ann.",
+        "entries": [
+          {
+            "id": "e",
+            "text": "x"
+          }
+        ]
+      },
+      {
+        "id": "b",
+        "name": "Bea",
+        "description": "Bea."
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s",
+        "cast": [
+          {},
+          {
+            "character": "a"
+          },
+          {
+            "character": "b"
+          }
+        ],
+        "variables": [
+          {
+            "id": "hp",
+            "type": "int",
+            "min": 0,
+            "max": 10,
+            "description": "d"
+          }
+        ],
+        "events": [
+          {
+            "id": "ev",
+            "when": "true",
+            "outcomes": [
+              {},
+              {}
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "session": {
+    "header": {
+      "troupe": "0.11",
+      "kind": "session",
+      "scenario": "s",
+      "seed": "conformanceSeed0001",
+      "characters": [
+        {
+          "id": "p",
+          "name": "Pat",
+          "description": "Pat."
+        },
+        {
+          "id": "q",
+          "name": "Quinn",
+          "description": "Quinn."
+        }
+      ],
+      "players": [
+        "p",
+        "q",
+        "b"
+      ],
+      "head": "zz"
+    },
+    "messages": [
+      {
+        "id": "1",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "x"
+          }
+        ],
+        "opening": "missing",
+        "changes": [
+          {
+            "by": "rules",
+            "set": {
+              "hp": 11,
+              "mp": 3
+            }
+          }
+        ]
+      },
+      {
+        "id": "2",
+        "parent": "9",
+        "from": "player",
+        "content": [
+          {
+            "text": "orphan"
+          }
+        ]
+      },
+      {
+        "id": "3",
+        "parent": "1",
+        "from": "model",
+        "char": "a",
+        "activated": [
+          "a/e",
+          "a/nope",
+          "session/later"
+        ],
+        "content": [
+          {
+            "speaker": "ghost",
+            "text": "x"
+          }
+        ],
+        "changes": [
+          {
+            "by": "model",
+            "set": {
+              "hp": "lots",
+              "scene.present": [
+                "a",
+                "zed"
+              ]
+            }
+          },
+          {
+            "by": "rules",
+            "event": "gone",
+            "set": {}
+          },
+          {
+            "by": "rules",
+            "event": "ev",
+            "outcome": 5,
+            "set": {}
+          }
+        ]
+      },
+      {
+        "id": "4",
+        "parent": "3",
+        "from": "player",
+        "content": [
+          {
+            "text": "y"
+          }
+        ],
+        "entries": [
+          {
+            "id": "later",
+            "text": "added here"
+          }
+        ],
+        "summary": {
+          "text": "s",
+          "from": "2"
+        }
+      },
+      {
+        "id": "r2",
+        "from": "system",
+        "content": [
+          {
+            "text": "A second root is fine."
+          }
+        ]
+      },
+      {
+        "id": "zz",
+        "deleted": true
+      },
+      {
+        "head": "nowhere"
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "check",
+      "expect": {
+        "codes": [
+          "INVALID_VALUE",
+          "NOT_PLAYABLE",
+          "UNKNOWN_CHARACTER",
+          "UNKNOWN_MESSAGE",
+          "UNKNOWN_NAME",
+          "UNKNOWN_OPENING",
+          "UNKNOWN_VARIABLE"
+        ],
+        "includes": [
+          {
+            "code": "UNKNOWN_OPENING",
+            "at": "message:1/opening"
+          },
+          {
+            "code": "NOT_PLAYABLE",
+            "at": "header/players/1"
+          },
+          {
+            "code": "UNKNOWN_MESSAGE",
+            "at": "message:2/parent"
+          },
+          {
+            "code": "UNKNOWN_MESSAGE",
+            "at": "header/head"
+          },
+          {
+            "code": "UNKNOWN_MESSAGE",
+            "at": "message:4/summary/from"
+          },
+          {
+            "code": "INVALID_VALUE",
+            "at": "message:1/changes/0/set/hp"
+          },
+          {
+            "code": "UNKNOWN_VARIABLE",
+            "at": "message:1/changes/0/set/mp"
+          },
+          {
+            "code": "INVALID_VALUE",
+            "at": "message:3/changes/0/set/hp"
+          },
+          {
+            "code": "UNKNOWN_CHARACTER",
+            "at": "message:3/changes/0/set/scene.present/1"
+          },
+          {
+            "code": "UNKNOWN_CHARACTER",
+            "at": "message:3/content/0/speaker"
+          },
+          {
+            "code": "UNKNOWN_NAME",
+            "at": "message:3/changes/1/event"
+          },
+          {
+            "code": "INVALID_VALUE",
+            "at": "message:3/changes/2/outcome"
+          },
+          {
+            "code": "UNKNOWN_NAME",
+            "at": "message:3/activated/1"
+          },
+          {
+            "code": "UNKNOWN_NAME",
+            "at": "message:3/activated/2"
+          },
+          {
+            "code": "UNKNOWN_MESSAGE",
+            "at": "line:7/id"
+          },
+          {
+            "code": "UNKNOWN_MESSAGE",
+            "at": "line:8/head"
+          }
+        ]
+      }
+    }
+  ]
+}

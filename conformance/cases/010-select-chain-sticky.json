@@ -1,0 +1,119 @@
+{
+  "description": "A sticky chain entry lets pass 2 run and feeds the chain text (Play 5.5 step 2)",
+  "bundle": {
+    "troupe": "0.11",
+    "kind": "bundle",
+    "characters": [
+      {
+        "id": "a",
+        "name": "Ann",
+        "description": "Ann."
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s",
+        "cast": [
+          {},
+          {
+            "character": "a"
+          }
+        ],
+        "entries": [
+          {
+            "id": "s1",
+            "keys": [
+              "bell"
+            ],
+            "chain": true,
+            "sticky": 3,
+            "scanDepth": 1,
+            "text": "The bell tower hides a ladder."
+          },
+          {
+            "id": "s2",
+            "keys": [
+              "ladder"
+            ],
+            "scanDepth": 1,
+            "text": "The ladder is rotten."
+          }
+        ]
+      }
+    ]
+  },
+  "session": {
+    "header": {
+      "troupe": "0.11",
+      "kind": "session",
+      "scenario": "s",
+      "seed": "conformanceSeed0001",
+      "characters": [
+        {
+          "id": "p",
+          "name": "Pat",
+          "description": "Pat."
+        }
+      ],
+      "players": [
+        "p"
+      ],
+      "head": "3"
+    },
+    "messages": [
+      {
+        "id": "1",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "We hear the bell."
+          }
+        ]
+      },
+      {
+        "id": "2",
+        "parent": "1",
+        "from": "model",
+        "char": "a",
+        "activated": [
+          "s/s1"
+        ],
+        "content": [
+          {
+            "speaker": "a",
+            "text": "Let's look."
+          }
+        ]
+      },
+      {
+        "id": "3",
+        "parent": "2",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "Fine."
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "select",
+      "for": "a",
+      "parent": "3",
+      "messageId": "4",
+      "expect": {
+        "selected": [
+          "s/s1",
+          "s/s2"
+        ],
+        "activated": [
+          "s/s2"
+        ]
+      }
+    }
+  ]
+}

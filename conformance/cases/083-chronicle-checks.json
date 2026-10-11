@@ -1,0 +1,141 @@
+{
+  "description": "Chronicle checks and deletions (Format 13, 17.2): knownBy names the character, the persona or narrator; values name carried variables and are valid; a deletion removes a record",
+  "bundle": {
+    "troupe": "0.11",
+    "kind": "bundle",
+    "characters": [
+      {
+        "id": "mira",
+        "name": "Mira",
+        "description": "A sarcastic starship engineer who talks to engines more kindly than to people.",
+        "entries": [
+          {
+            "id": "style",
+            "position": "system",
+            "text": "Write Mira's replies in first person, short and dry."
+          },
+          {
+            "id": "ship",
+            "keys": [
+              "Kestrel",
+              "ship"
+            ],
+            "text": "The Kestrel is a patched-up freighter Mira has kept flying for nine years."
+          },
+          {
+            "id": "sister",
+            "keys": [
+              "sister",
+              "Juna"
+            ],
+            "text": "Mira's sister Juna went missing near the Veil two years ago."
+          },
+          {
+            "id": "debt",
+            "knownBy": [
+              "mira"
+            ],
+            "text": "Mira owes the Corvane syndicate more than the Kestrel is worth."
+          }
+        ],
+        "openings": [
+          {
+            "id": "docked",
+            "content": [
+              {
+                "speaker": "mira",
+                "text": "*She doesn't look up from the reactor.* If you're here about the noise, it's supposed to sound like that."
+              }
+            ]
+          },
+          {
+            "id": "adrift",
+            "content": [
+              {
+                "text": "The lights flicker. Somewhere aft, something groans."
+              },
+              {
+                "speaker": "mira",
+                "text": "Good news: we're alive. Bad news: everything else."
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "chronicle",
+      "chronicle": {
+        "header": {
+          "troupe": "0.11",
+          "kind": "chronicle",
+          "id": "c-bad",
+          "character": {
+            "id": "mira",
+            "name": "Mira",
+            "description": "d",
+            "variables": [
+              {
+                "id": "closeness",
+                "type": "int",
+                "min": 0,
+                "max": 100,
+                "carry": true,
+                "description": "d"
+              },
+              {
+                "id": "mood",
+                "type": "string",
+                "description": "not carried"
+              }
+            ]
+          }
+        },
+        "records": [
+          {
+            "id": "r1",
+            "entries": [
+              {
+                "id": "x",
+                "knownBy": [
+                  "kai"
+                ],
+                "text": "t"
+              }
+            ],
+            "set": {
+              "closeness": 140,
+              "mood": "ok"
+            }
+          },
+          {
+            "id": "r2",
+            "set": {
+              "closeness": 30
+            }
+          },
+          {
+            "id": "r2",
+            "deleted": true
+          }
+        ]
+      },
+      "expect": {
+        "records": [
+          "r1"
+        ],
+        "values": {
+          "closeness": 140,
+          "mood": "ok"
+        },
+        "codes": [
+          "INVALID_VALUE",
+          "UNKNOWN_CHARACTER",
+          "UNKNOWN_VARIABLE"
+        ]
+      }
+    }
+  ]
+}

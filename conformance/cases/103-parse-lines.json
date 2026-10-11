@@ -1,0 +1,129 @@
+{
+  "description": "Reading sessions and chronicles (Format 12, 12.1, 13, 17.2): lines end with LF or CRLF and the last newline is optional; an unreadable line other than the header is PARSE and skipped; an unreadable header means the file isn't read. ids lists the surviving message or record IDs",
+  "tests": [
+    {
+      "type": "parse",
+      "name": "a session",
+      "kind": "session",
+      "text": "{\"troupe\":\"0.11\",\"kind\":\"session\",\"scenario\":\"s\",\"seed\":\"k7Qm2xVb9TzR4pLc8NwYfA\"}\n{\"id\":\"1\",\"from\":\"player\",\"content\":[{\"text\":\"Hi.\"}]}\n{\"id\":\"2\",\"parent\":\"1\",\"from\":\"model\",\"content\":[{\"text\":\"Hello.\"}]}\n",
+      "expect": {
+        "ok": true,
+        "codes": [],
+        "ids": [
+          "1",
+          "2"
+        ]
+      }
+    },
+    {
+      "type": "parse",
+      "name": "CRLF and no final newline",
+      "kind": "session",
+      "text": "{\"troupe\":\"0.11\",\"kind\":\"session\",\"scenario\":\"s\",\"seed\":\"k7Qm2xVb9TzR4pLc8NwYfA\"}\r\n{\"id\":\"1\",\"from\":\"player\",\"content\":[{\"text\":\"Hi.\"}]}\r\n{\"id\":\"2\",\"parent\":\"1\",\"from\":\"model\",\"content\":[{\"text\":\"Hello.\"}]}",
+      "expect": {
+        "ok": true,
+        "codes": [],
+        "ids": [
+          "1",
+          "2"
+        ]
+      }
+    },
+    {
+      "type": "parse",
+      "name": "an unreadable line is skipped",
+      "kind": "session",
+      "text": "{\"troupe\":\"0.11\",\"kind\":\"session\",\"scenario\":\"s\",\"seed\":\"k7Qm2xVb9TzR4pLc8NwYfA\"}\n{\"id\":\"1\",\"from\":\"player\",\"content\":[{\"text\":\"Hi.\"}]}\n{\"id\":\n{\"id\":\"2\",\"parent\":\"1\",\"from\":\"model\",\"content\":[{\"text\":\"Hello.\"}]}\n",
+      "expect": {
+        "ok": false,
+        "codes": [
+          "PARSE"
+        ],
+        "ids": [
+          "1",
+          "2"
+        ]
+      }
+    },
+    {
+      "type": "parse",
+      "name": "a line with a duplicate member name is skipped",
+      "kind": "session",
+      "text": "{\"troupe\":\"0.11\",\"kind\":\"session\",\"scenario\":\"s\",\"seed\":\"k7Qm2xVb9TzR4pLc8NwYfA\"}\n{\"id\":\"1\",\"from\":\"player\",\"content\":[{\"text\":\"Hi.\"}]}\n{\"id\":\"2\",\"id\":\"3\",\"parent\":\"1\",\"from\":\"model\",\"content\":[]}\n",
+      "expect": {
+        "ok": false,
+        "codes": [
+          "PARSE"
+        ],
+        "ids": [
+          "1"
+        ]
+      }
+    },
+    {
+      "type": "parse",
+      "name": "an unreadable header",
+      "kind": "session",
+      "text": "{\"troupe\":\"0.11\",\n{\"id\":\"1\",\"from\":\"player\",\"content\":[{\"text\":\"Hi.\"}]}\n",
+      "expect": {
+        "ok": false,
+        "codes": [
+          "PARSE"
+        ]
+      }
+    },
+    {
+      "type": "parse",
+      "name": "an empty file",
+      "kind": "session",
+      "text": "",
+      "expect": {
+        "ok": false,
+        "codes": [
+          "PARSE"
+        ]
+      }
+    },
+    {
+      "type": "parse",
+      "name": "a bundle where a session is expected",
+      "kind": "session",
+      "text": "{\"troupe\":\"0.11\",\"kind\":\"bundle\"}\n",
+      "expect": {
+        "ok": false,
+        "codes": [
+          "PARSE"
+        ]
+      }
+    },
+    {
+      "type": "parse",
+      "name": "a chronicle",
+      "kind": "chronicle",
+      "text": "{\"troupe\":\"0.11\",\"kind\":\"chronicle\",\"id\":\"c1\",\"character\":{\"id\":\"mira\",\"name\":\"Mira\",\"description\":\"d\"}}\n{\"id\":\"r1\",\"set\":{}}\n{\"id\":\"r2\",\"set\":{}}\n",
+      "expect": {
+        "ok": true,
+        "codes": [],
+        "ids": [
+          "r1",
+          "r2"
+        ]
+      }
+    },
+    {
+      "type": "parse",
+      "name": "an unreadable chronicle record is skipped",
+      "kind": "chronicle",
+      "text": "{\"troupe\":\"0.11\",\"kind\":\"chronicle\",\"id\":\"c1\",\"character\":{\"id\":\"mira\",\"name\":\"Mira\",\"description\":\"d\"}}\n{\"id\":\"r1\",\n{\"id\":\"r2\",\"set\":{}}\n",
+      "expect": {
+        "ok": false,
+        "codes": [
+          "PARSE"
+        ],
+        "ids": [
+          "r2"
+        ]
+      }
+    }
+  ]
+}

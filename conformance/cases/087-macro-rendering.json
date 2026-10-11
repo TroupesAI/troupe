@@ -1,0 +1,233 @@
+{
+  "description": "Macro resolution and rendering (Format 10): {{char}} in a message part without a speaker or char is left as written; undeclared variables are left as written (UNKNOWN_MACRO), while absent keys, paths below non-maps and owners not in use render as nothing; map keys in declared order; a non-macro {{ keeps only its first {",
+  "bundle": {
+    "troupe": "0.11",
+    "kind": "bundle",
+    "characters": [
+      {
+        "id": "a",
+        "name": "Ann",
+        "description": "Ann."
+      },
+      {
+        "id": "b",
+        "name": "Bea",
+        "description": "Bea."
+      },
+      {
+        "id": "zed",
+        "name": "Zed",
+        "description": "Not in the cast.",
+        "variables": [
+          {
+            "id": "mood",
+            "type": "string",
+            "initial": "calm",
+            "description": "d"
+          }
+        ]
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s",
+        "cast": [
+          {},
+          {
+            "character": "a"
+          },
+          {
+            "character": "b"
+          }
+        ],
+        "variables": [
+          {
+            "id": "trust",
+            "type": "number",
+            "of": "characters",
+            "description": "d"
+          },
+          {
+            "id": "rep",
+            "type": "int",
+            "of": [
+              "watch",
+              "guild",
+              "crown"
+            ],
+            "description": "d"
+          },
+          {
+            "id": "inv",
+            "type": "int",
+            "of": "*",
+            "description": "d"
+          },
+          {
+            "id": "hp",
+            "type": "int",
+            "initial": 5,
+            "description": "d"
+          }
+        ],
+        "entries": [
+          {
+            "id": "e",
+            "text": "{{char}} sees {{state.nothing_here}}."
+          }
+        ]
+      }
+    ]
+  },
+  "session": {
+    "header": {
+      "troupe": "0.11",
+      "kind": "session",
+      "scenario": "s",
+      "seed": "conformanceSeed0001",
+      "characters": [
+        {
+          "id": "p",
+          "name": "Pat",
+          "description": "Pat."
+        }
+      ],
+      "players": [
+        "p"
+      ]
+    },
+    "messages": [
+      {
+        "id": "1",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "x"
+          }
+        ],
+        "changes": [
+          {
+            "by": "rules",
+            "set": {
+              "trust.b": 0.4,
+              "trust.a": 0.9,
+              "rep.crown": 3,
+              "rep.watch": 1,
+              "inv.rope": 1,
+              "inv.axe": 2
+            }
+          }
+        ]
+      },
+      {
+        "id": "2",
+        "parent": "1",
+        "from": "system",
+        "content": [
+          {
+            "text": "{{char}} waits."
+          },
+          {
+            "speaker": "b",
+            "text": "{{char}} nods."
+          }
+        ]
+      },
+      {
+        "id": "3",
+        "parent": "2",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "y"
+          }
+        ],
+        "changes": [
+          {
+            "by": "rules",
+            "set": {
+              "inv.cup": 1
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "prompt",
+      "name": "a system part with no speaker keeps {{char}}; a part with a speaker uses it",
+      "for": "a",
+      "parent": "2",
+      "messageId": "x",
+      "expect": {
+        "lines": {
+          "2": [
+            "{{char}} waits.",
+            "Bea: Bea nods."
+          ]
+        }
+      }
+    },
+    {
+      "type": "macro",
+      "name": "elsewhere {{char}} is the character generated for, or the narrator",
+      "narrator": true,
+      "text": "{{char}}",
+      "expect": "the narrator"
+    },
+    {
+      "type": "macro",
+      "name": "undeclared: left as written",
+      "at": "1",
+      "text": "[{{state.nothing_here}}] [{{own.nope}}]",
+      "owner": "s",
+      "expect": "[{{state.nothing_here}}] [{{own.nope}}]"
+    },
+    {
+      "type": "macro",
+      "name": "declared but nothing to render: an absent key of a \"*\" map, a path below a non-map, an owner not in use",
+      "at": "1",
+      "text": "[{{state.inv.lamp}}] [{{state.hp.x}}] [{{state.zed.mood}}]",
+      "expect": "[] [] []"
+    },
+    {
+      "type": "macro",
+      "name": "character keys in cast order, list keys in declared order, whatever order the changes used",
+      "at": "1",
+      "text": "{{state.trust}} | {{state.rep}}",
+      "expect": "Ann: 0.9, Bea: 0.4 | watch: 1, guild: 0, crown: 3"
+    },
+    {
+      "type": "macro",
+      "name": "\"*\" keys in the order changes first set them",
+      "at": "3",
+      "text": "{{state.inv}}",
+      "expect": "rope: 1, axe: 2, cup: 1"
+    },
+    {
+      "type": "macro",
+      "name": "a non-macro {{ keeps its first { and scanning resumes at the next character",
+      "at": "1",
+      "char": "a",
+      "text": "{{{char}} and {{ char}} and {{{{user}}}}",
+      "expect": "{Ann and {{ char}} and {{Pat}}"
+    },
+    {
+      "type": "check",
+      "expect": {
+        "codes": [
+          "UNKNOWN_MACRO"
+        ],
+        "includes": [
+          {
+            "code": "UNKNOWN_MACRO",
+            "at": "/scenarios/0/entries/0/text"
+          }
+        ]
+      }
+    }
+  ]
+}

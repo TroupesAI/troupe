@@ -1,0 +1,212 @@
+{
+  "description": "Session records and seats (Format 12.1, 12.2): a replacement keeps the original's parent whatever its own says; the head is the last head record naming a surviving message, else the header's head if it survives, else the last surviving message; unlisted player cast members come after the listed players in cast order; scene.location takes any location of the bundle",
+  "bundle": {
+    "troupe": "0.11",
+    "kind": "bundle",
+    "worlds": [
+      {
+        "id": "w1",
+        "name": "Port",
+        "locations": [
+          {
+            "id": "dock",
+            "name": "Dock"
+          }
+        ]
+      },
+      {
+        "id": "w2",
+        "name": "Elsewhere",
+        "locations": [
+          {
+            "id": "moon",
+            "name": "Moon"
+          }
+        ]
+      }
+    ],
+    "characters": [
+      {
+        "id": "a",
+        "name": "Ann",
+        "description": "Ann."
+      },
+      {
+        "id": "b",
+        "name": "Bea",
+        "description": "Bea."
+      },
+      {
+        "id": "c",
+        "name": "Cy",
+        "description": "Cy."
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s",
+        "worlds": [
+          "w1"
+        ],
+        "cast": [
+          {},
+          {
+            "character": "a",
+            "player": true
+          },
+          {
+            "character": "b"
+          },
+          {
+            "character": "c",
+            "player": true
+          }
+        ]
+      }
+    ]
+  },
+  "session": {
+    "header": {
+      "troupe": "0.11",
+      "kind": "session",
+      "scenario": "s",
+      "seed": "conformanceSeed0001",
+      "characters": [
+        {
+          "id": "p",
+          "name": "Pat",
+          "description": "Pat."
+        }
+      ],
+      "players": [
+        "p",
+        "b"
+      ],
+      "head": "2"
+    },
+    "messages": [
+      {
+        "id": "1",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "a"
+          }
+        ]
+      },
+      {
+        "id": "2",
+        "parent": "1",
+        "from": "model",
+        "char": "b",
+        "content": [
+          {
+            "speaker": "b",
+            "text": "b"
+          }
+        ]
+      },
+      {
+        "id": "3",
+        "parent": "1",
+        "from": "model",
+        "char": "b",
+        "content": [
+          {
+            "speaker": "b",
+            "text": "c"
+          }
+        ]
+      },
+      {
+        "id": "4",
+        "parent": "3",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "d"
+          }
+        ]
+      },
+      {
+        "head": "4"
+      },
+      {
+        "id": "3",
+        "parent": "2",
+        "from": "model",
+        "char": "b",
+        "content": [
+          {
+            "speaker": "b",
+            "text": "c, edited"
+          }
+        ]
+      },
+      {
+        "id": "4",
+        "deleted": true
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "fold",
+      "name": "message 3 keeps parent 1; head record 4 was deleted, so the header's head 2 applies",
+      "expect": {
+        "ids": [
+          "1",
+          "2",
+          "3"
+        ],
+        "head": "2",
+        "message": {
+          "id": "3",
+          "parent": "1",
+          "from": "model",
+          "char": "b",
+          "content": [
+            {
+              "speaker": "b",
+              "text": "c, edited"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "cel",
+      "name": "players: listed p and b, then the unlisted player members a and c in cast order",
+      "expr": "players == ['p', 'b', 'a', 'c']",
+      "expect": true
+    },
+    {
+      "type": "prepare",
+      "name": "a location of a bundle world the scenario doesn't use is still a location",
+      "by": "rules",
+      "set": {
+        "scene.location": "moon"
+      },
+      "expect": {
+        "set": {
+          "scene.location": "moon"
+        }
+      }
+    },
+    {
+      "type": "prepare",
+      "by": "rules",
+      "set": {
+        "scene.location": "mars"
+      },
+      "expect": {
+        "set": {},
+        "dropped": [
+          "scene.location"
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,114 @@
+{
+  "description": "Macro parsing (Format 10): {{char}}, {{user}}, {{@id}}, comments, escapes, unknown forms left as written and rescanned from the next character",
+  "bundle": {
+    "troupe": "0.11",
+    "kind": "bundle",
+    "characters": [
+      {
+        "id": "a",
+        "name": "Ann",
+        "description": "Ann."
+      },
+      {
+        "id": "b",
+        "name": "Bea",
+        "description": "Bea."
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s"
+      }
+    ]
+  },
+  "session": {
+    "header": {
+      "troupe": "0.11",
+      "kind": "session",
+      "scenario": "s",
+      "seed": "conformanceSeed0001",
+      "characters": [
+        {
+          "id": "p",
+          "name": "Pat",
+          "description": "Pat."
+        }
+      ],
+      "players": [
+        "p"
+      ],
+      "head": "1"
+    },
+    "messages": [
+      {
+        "id": "1",
+        "from": "player",
+        "content": [
+          {
+            "text": "x"
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "macro",
+      "text": "{{char}} meets {{user}}.",
+      "char": "a",
+      "expect": "Ann meets Pat."
+    },
+    {
+      "type": "macro",
+      "name": "{{char}} with no character is left as written",
+      "text": "{{char}} waits.",
+      "expect": "{{char}} waits."
+    },
+    {
+      "type": "macro",
+      "text": "{{@b}} and {{@zed}}",
+      "expect": "Bea and {{@zed}}"
+    },
+    {
+      "type": "macro",
+      "name": "no spaces outside comments and options",
+      "text": "{{ char }}",
+      "char": "a",
+      "expect": "{{ char }}"
+    },
+    {
+      "type": "macro",
+      "name": "escape",
+      "text": "\\{{char}} is {{char}}",
+      "char": "a",
+      "expect": "{{char}} is Ann"
+    },
+    {
+      "type": "macro",
+      "name": "comments vanish",
+      "text": "a{{// note to authors }}b{{//}}c",
+      "expect": "abc"
+    },
+    {
+      "type": "macro",
+      "name": "unknown macros",
+      "text": "{{foo}} {{char}",
+      "char": "a",
+      "expect": "{{foo}} {{char}"
+    },
+    {
+      "type": "macro",
+      "name": "a stray brace before a macro",
+      "text": "{{{char}}}",
+      "char": "a",
+      "expect": "{Ann}"
+    },
+    {
+      "type": "macro",
+      "name": "state paths are case-sensitive IDs",
+      "text": "{{Char}} {{@A}}",
+      "char": "a",
+      "expect": "{{Char}} {{@A}}"
+    }
+  ]
+}

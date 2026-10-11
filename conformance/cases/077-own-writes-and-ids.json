@@ -1,0 +1,253 @@
+{
+  "description": "Owners write their own variables as own.<id> in their events, recorded as full keys (Format 8.2); an opening's set is written like a recorded change, with full keys only (Format 6.3); entries, variables and events share one ID space per owner, compared in that order, and a variable or event reusing an earlier ID is the duplicate and is dropped (Format 2.3)",
+  "bundle": {
+    "troupe": "0.11",
+    "kind": "bundle",
+    "characters": [
+      {
+        "id": "kai",
+        "name": "Kai",
+        "description": "Kai.",
+        "variables": [
+          {
+            "id": "nerve",
+            "type": "int",
+            "min": 0,
+            "max": 3,
+            "description": "d"
+          }
+        ],
+        "events": [
+          {
+            "id": "steady",
+            "when": "own.nerve > 0",
+            "compute": {
+              "own.nerve": "own.nerve - 1"
+            }
+          },
+          {
+            "id": "nerve",
+            "when": "true",
+            "set": {
+              "own.nerve": 0
+            }
+          }
+        ],
+        "entries": [
+          {
+            "id": "note",
+            "text": "Kai counts his breaths."
+          }
+        ]
+      },
+      {
+        "id": "ida",
+        "name": "Ida",
+        "description": "Ida, in a {{own.mood}} mood.",
+        "entries": [
+          {
+            "id": "mood",
+            "text": "Ida hums."
+          }
+        ],
+        "variables": [
+          {
+            "id": "mood",
+            "type": "int",
+            "description": "d"
+          }
+        ]
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s",
+        "cast": [
+          {},
+          {
+            "character": "kai"
+          },
+          {
+            "character": "ida"
+          }
+        ],
+        "variables": [
+          {
+            "id": "alarm",
+            "type": "bool",
+            "description": "d"
+          }
+        ],
+        "events": [
+          {
+            "id": "alarm",
+            "when": "true"
+          }
+        ],
+        "openings": [
+          {
+            "id": "o",
+            "set": {
+              "kai.nerve": 3,
+              "own.alarm": true
+            },
+            "content": [
+              {
+                "text": "Go."
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "session": {
+    "header": {
+      "troupe": "0.11",
+      "kind": "session",
+      "scenario": "s",
+      "seed": "conformanceSeed0001",
+      "characters": [
+        {
+          "id": "p",
+          "name": "Pat",
+          "description": "Pat."
+        }
+      ],
+      "players": [
+        "p"
+      ]
+    },
+    "messages": [
+      {
+        "id": "1",
+        "from": "player",
+        "content": [
+          {
+            "text": "x"
+          }
+        ],
+        "changes": [
+          {
+            "by": "rules",
+            "set": {
+              "kai.nerve": 2
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "events",
+      "name": "own.nerve in Kai's event is recorded as kai.nerve",
+      "at": "1",
+      "expect": {
+        "changes": [
+          {
+            "by": "rules",
+            "event": "kai/steady",
+            "set": {
+              "kai.nerve": 1
+            }
+          }
+        ]
+      }
+    },
+    {
+      "type": "prepare",
+      "name": "own.<id> resolves for the given owner",
+      "by": "rules",
+      "owner": "kai",
+      "set": {
+        "own.nerve": 1
+      },
+      "expect": {
+        "set": {
+          "kai.nerve": 1
+        }
+      }
+    },
+    {
+      "type": "prepare",
+      "name": "own. without an owner is dropped",
+      "by": "rules",
+      "set": {
+        "own.nerve": 1
+      },
+      "expect": {
+        "set": {},
+        "dropped": [
+          "own.nerve"
+        ]
+      }
+    },
+    {
+      "type": "start",
+      "name": "an opening's own.alarm isn't resolved: it is dropped",
+      "scenario": "s",
+      "opening": "o",
+      "characters": [
+        {
+          "id": "p",
+          "name": "Pat",
+          "description": "Pat."
+        }
+      ],
+      "expect": {
+        "changes": [
+          {
+            "by": "rules",
+            "set": {
+              "kai.nerve": 3,
+              "scene.present": [
+                "p"
+              ]
+            }
+          },
+          {
+            "by": "rules",
+            "event": "kai/steady",
+            "set": {
+              "kai.nerve": 2
+            }
+          }
+        ]
+      }
+    },
+    {
+      "type": "check",
+      "expect": {
+        "codes": [
+          "DUPLICATE_ID",
+          "UNKNOWN_MACRO",
+          "UNKNOWN_VARIABLE"
+        ],
+        "includes": [
+          {
+            "code": "DUPLICATE_ID",
+            "at": "/characters/0/events/1/id"
+          },
+          {
+            "code": "DUPLICATE_ID",
+            "at": "/characters/1/variables/0/id"
+          },
+          {
+            "code": "DUPLICATE_ID",
+            "at": "/scenarios/0/events/0/id"
+          },
+          {
+            "code": "UNKNOWN_VARIABLE",
+            "at": "/scenarios/0/openings/0/set/own.alarm"
+          },
+          {
+            "code": "UNKNOWN_MACRO",
+            "at": "/characters/1/description"
+          }
+        ]
+      },
+      "name": "a variable after an entry with its ID is dropped, so {{own.mood}} names nothing"
+    }
+  ]
+}

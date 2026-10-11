@@ -1,0 +1,221 @@
+{
+  "description": "Set normalization and the scene (Format 8.4; Play 3.3): dedupe, declared order, unlisted members, oneWay sets keep members and accept additions, cast order",
+  "bundle": {
+    "troupe": "0.11",
+    "kind": "bundle",
+    "characters": [
+      {
+        "id": "a",
+        "name": "Ann",
+        "description": "Ann."
+      },
+      {
+        "id": "b",
+        "name": "Bea",
+        "description": "Bea."
+      }
+    ],
+    "worlds": [
+      {
+        "id": "w",
+        "name": "W",
+        "locations": [
+          {
+            "id": "hall",
+            "name": "Hall"
+          }
+        ]
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s",
+        "variables": [
+          {
+            "id": "inv",
+            "type": "set",
+            "values": [
+              "rope",
+              "torch",
+              "key"
+            ],
+            "labels": {
+              "rope": "a coil of rope"
+            },
+            "by": [
+              "model"
+            ],
+            "description": "d"
+          },
+          {
+            "id": "bag",
+            "type": "set",
+            "by": [
+              "model"
+            ],
+            "description": "free-form"
+          },
+          {
+            "id": "seen",
+            "type": "set",
+            "oneWay": true,
+            "initial": [
+              "x",
+              "y"
+            ],
+            "by": [
+              "model"
+            ],
+            "description": "only grows"
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "prepare",
+      "by": "model",
+      "set": {
+        "inv": [
+          "key",
+          "rope",
+          "key"
+        ]
+      },
+      "expect": {
+        "set": {
+          "inv": [
+            "rope",
+            "key"
+          ]
+        }
+      }
+    },
+    {
+      "type": "prepare",
+      "name": "unlisted members are invalid",
+      "by": "model",
+      "set": {
+        "inv": [
+          "rope",
+          "sword"
+        ]
+      },
+      "expect": {
+        "set": {},
+        "dropped": [
+          "inv"
+        ]
+      }
+    },
+    {
+      "type": "prepare",
+      "name": "free-form sets keep their order, without duplicates",
+      "by": "model",
+      "set": {
+        "bag": [
+          "b",
+          "a",
+          "b"
+        ]
+      },
+      "expect": {
+        "set": {
+          "bag": [
+            "b",
+            "a"
+          ]
+        }
+      }
+    },
+    {
+      "type": "prepare",
+      "name": "oneWay set: removed members are kept",
+      "by": "model",
+      "set": {
+        "seen": [
+          "y",
+          "z"
+        ]
+      },
+      "expect": {
+        "set": {
+          "seen": [
+            "x",
+            "y",
+            "z"
+          ]
+        }
+      }
+    },
+    {
+      "type": "prepare",
+      "name": "scene.present in cast order; the model may change the scene",
+      "by": "model",
+      "set": {
+        "scene.present": [
+          "b",
+          "a",
+          "b"
+        ]
+      },
+      "expect": {
+        "set": {
+          "scene.present": [
+            "a",
+            "b"
+          ]
+        }
+      }
+    },
+    {
+      "type": "prepare",
+      "name": "only cast characters",
+      "by": "model",
+      "set": {
+        "scene.present": [
+          "zed"
+        ]
+      },
+      "expect": {
+        "set": {},
+        "dropped": [
+          "scene.present"
+        ]
+      }
+    },
+    {
+      "type": "prepare",
+      "name": "locations",
+      "by": "player",
+      "set": {
+        "scene.location": "nowhere"
+      },
+      "expect": {
+        "set": {},
+        "dropped": [
+          "scene.location"
+        ]
+      }
+    },
+    {
+      "type": "prepare",
+      "by": "player",
+      "set": {
+        "scene.location": ""
+      },
+      "expect": {
+        "set": {
+          "scene.location": ""
+        }
+      }
+    },
+    {
+      "type": "macro",
+      "name": "sets render with labels, joined by ', '",
+      "text": "{{state.seen}} / {{state.inv}}",
+      "expect": "x, y / "
+    }
+  ]
+}

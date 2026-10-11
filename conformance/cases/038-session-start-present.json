@@ -1,0 +1,52 @@
+{
+  "description": "Presence at the start (Format 6.3): without scene.present in set, the players and the opening's speakers are present (Format Appendix B: 'Already caught' starts without Kai)",
+  "bundleFile": "../../examples/lantern-heist.troupe.json",
+  "tests": [
+    {
+      "type": "start",
+      "scenario": "heist",
+      "opening": "caught",
+      "characters": [
+        {
+          "id": "mara",
+          "name": "Mara",
+          "description": "A retired smuggler with a debt to settle."
+        }
+      ],
+      "answers": {
+        "approach": "loud"
+      },
+      "expect": {
+        "changes": [
+          {
+            "by": "rules",
+            "set": {
+              "scene.location": "vault",
+              "bell": 11,
+              "scene.present": [
+                "mara",
+                "elena"
+              ]
+            }
+          },
+          {
+            "by": "player",
+            "set": {
+              "approach": "loud"
+            }
+          }
+        ],
+        "state": {
+          "scene.present": [
+            "mara",
+            "elena"
+          ],
+          "bell": 11,
+          "scene.location": "vault",
+          "approach": "loud"
+        },
+        "head": "1"
+      }
+    }
+  ]
+}

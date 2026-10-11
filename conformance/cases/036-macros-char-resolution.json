@@ -1,0 +1,156 @@
+{
+  "description": "{{char}} (Format 10): the owning character in its own text; in a part, the speaker, else the message's char; otherwise the character generated for, or \"the narrator\" for the narrator. Player and model text never resolves macros.",
+  "bundle": {
+    "troupe": "0.11",
+    "kind": "bundle",
+    "characters": [
+      {
+        "id": "a",
+        "name": "Ann",
+        "description": "Ann.",
+        "entries": [
+          {
+            "id": "own",
+            "text": "{{char}} owns this."
+          }
+        ]
+      },
+      {
+        "id": "b",
+        "name": "Bea",
+        "description": "Bea."
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s",
+        "mode": "mixed",
+        "entries": [
+          {
+            "id": "gen",
+            "text": "{{char}} is generated for."
+          }
+        ],
+        "openings": [
+          {
+            "id": "o",
+            "content": [
+              {
+                "speaker": "a",
+                "text": "{{char}} speaks."
+              },
+              {
+                "text": "{{char}} narrates? {{user}} listens."
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "session": {
+    "header": {
+      "troupe": "0.11",
+      "kind": "session",
+      "scenario": "s",
+      "seed": "conformanceSeed0001",
+      "characters": [
+        {
+          "id": "p",
+          "name": "Pat",
+          "description": "Pat."
+        }
+      ],
+      "players": [
+        "p"
+      ],
+      "head": "2"
+    },
+    "messages": [
+      {
+        "id": "0",
+        "opening": "o",
+        "from": "system",
+        "content": [
+          {
+            "speaker": "a",
+            "text": "{{char}} speaks."
+          },
+          {
+            "text": "{{char}} narrates? {{user}} listens."
+          }
+        ]
+      },
+      {
+        "id": "1",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "{{char}} looks around."
+          }
+        ],
+        "parent": "0"
+      },
+      {
+        "id": "2",
+        "parent": "1",
+        "from": "model",
+        "char": "a",
+        "content": [
+          {
+            "speaker": "b",
+            "text": "{{char}} waves."
+          },
+          {
+            "text": "{{char}} nods."
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "select",
+      "for": "b",
+      "parent": "2",
+      "messageId": "3",
+      "expect": {
+        "texts": {
+          "a/own": "Ann owns this.",
+          "s/gen": "Bea is generated for."
+        }
+      }
+    },
+    {
+      "type": "select",
+      "name": "the narrator: \"the narrator\"",
+      "parent": "2",
+      "messageId": "3",
+      "expect": {
+        "texts": {
+          "a/own": "Ann owns this.",
+          "s/gen": "the narrator is generated for."
+        }
+      }
+    },
+    {
+      "type": "scanned",
+      "name": "player and model text stays literal",
+      "for": "b",
+      "parent": "2",
+      "expect": "Bea: {{char}} waves.\n{{char}} nods.\nPat: {{char}} looks around.\nAnn: Ann speaks.\n{{char}} narrates? Pat listens."
+    },
+    {
+      "type": "prompt",
+      "name": "the narrator in the prompt: \"the narrator\"",
+      "parent": "2",
+      "messageId": "3",
+      "expect": {
+        "texts": {
+          "entry:s/gen": "the narrator is generated for."
+        }
+      }
+    }
+  ]
+}

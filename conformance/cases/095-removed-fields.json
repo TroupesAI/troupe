@@ -1,0 +1,235 @@
+{
+  "description": "Fields the format doesn't define are unknown fields (Format 3, 4, 6, 17.2): bundle license, source and derivedFrom; character and world origin; character references and openings; scenario narratorVoice. Each is UNKNOWN_FIELD, kept and ignored: character openings make no solo scenario, and a narrator voice gives the narrator no character's knowledge",
+  "bundle": {
+    "troupe": "0.11",
+    "kind": "bundle",
+    "license": "CC-BY-4.0",
+    "source": "https://example.com/cellar",
+    "derivedFrom": [
+      "https://example.com/original"
+    ],
+    "characters": [
+      {
+        "id": "ann",
+        "name": "Ann",
+        "description": "A guide.",
+        "origin": {
+          "bundle": "7c1e9a4b",
+          "id": "ann"
+        },
+        "references": [
+          {
+            "src": "refs/ann.png",
+            "kind": "image",
+            "likeness": "fictional"
+          }
+        ],
+        "openings": [
+          {
+            "id": "solo",
+            "content": [
+              {
+                "speaker": "ann",
+                "text": "Just us."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "teller",
+        "name": "The Teller",
+        "description": "An old storyteller.",
+        "entries": [
+          {
+            "id": "t_style",
+            "text": "Speak in riddles."
+          }
+        ]
+      }
+    ],
+    "worlds": [
+      {
+        "id": "w",
+        "name": "W",
+        "origin": {
+          "bundle": "7c1e9a4b",
+          "id": "w"
+        }
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s",
+        "mode": "mixed",
+        "narratorVoice": "teller",
+        "cast": [
+          {},
+          {
+            "character": "ann"
+          }
+        ],
+        "entries": [
+          {
+            "id": "k_teller",
+            "knownBy": [
+              "teller"
+            ],
+            "text": "Known by the Teller only."
+          },
+          {
+            "id": "k_all",
+            "text": "Everyone."
+          }
+        ],
+        "openings": [
+          {
+            "id": "o",
+            "content": [
+              {
+                "speaker": "ann",
+                "text": "Hello."
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "session": {
+    "header": {
+      "troupe": "0.11",
+      "kind": "session",
+      "scenario": "s",
+      "seed": "conformanceSeed0001",
+      "characters": [
+        {
+          "id": "p",
+          "name": "Pat",
+          "description": "Pat."
+        }
+      ],
+      "players": [
+        "p"
+      ],
+      "head": "1"
+    },
+    "messages": [
+      {
+        "id": "1",
+        "opening": "o",
+        "from": "system",
+        "content": [
+          {
+            "speaker": "ann",
+            "text": "Hello."
+          }
+        ],
+        "changes": [
+          {
+            "by": "rules",
+            "set": {
+              "scene.present": [
+                "p",
+                "ann"
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "check",
+      "expect": {
+        "codes": [
+          "UNKNOWN_FIELD"
+        ],
+        "includes": [
+          {
+            "code": "UNKNOWN_FIELD",
+            "at": "/license"
+          },
+          {
+            "code": "UNKNOWN_FIELD",
+            "at": "/source"
+          },
+          {
+            "code": "UNKNOWN_FIELD",
+            "at": "/derivedFrom"
+          },
+          {
+            "code": "UNKNOWN_FIELD",
+            "at": "/characters/0/origin"
+          },
+          {
+            "code": "UNKNOWN_FIELD",
+            "at": "/characters/0/references"
+          },
+          {
+            "code": "UNKNOWN_FIELD",
+            "at": "/characters/0/openings"
+          },
+          {
+            "code": "UNKNOWN_FIELD",
+            "at": "/worlds/0/origin"
+          },
+          {
+            "code": "UNKNOWN_FIELD",
+            "at": "/scenarios/0/narratorVoice"
+          }
+        ]
+      }
+    },
+    {
+      "type": "select",
+      "name": "the narrator: the Teller's entries aren't candidates and knownBy naming the Teller hides an entry",
+      "parent": "1",
+      "messageId": "2",
+      "expect": {
+        "activated": [
+          "s/k_all"
+        ]
+      }
+    },
+    {
+      "type": "prompt",
+      "name": "no narrator item in People",
+      "parent": "1",
+      "messageId": "2",
+      "expect": {
+        "people": [
+          "character:ann",
+          "player:p"
+        ]
+      }
+    },
+    {
+      "type": "start",
+      "name": "the scenario's openings start sessions as usual",
+      "scenario": "s",
+      "opening": "o",
+      "characters": [
+        {
+          "id": "p",
+          "name": "Pat",
+          "description": "Pat."
+        }
+      ],
+      "expect": {
+        "changes": [
+          {
+            "by": "rules",
+            "set": {
+              "scene.present": [
+                "p",
+                "ann"
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

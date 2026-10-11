@@ -1,0 +1,133 @@
+{
+  "description": "Packages (Format 14.3, 16 item 7): bundle.json at the root, sessions under sessions/; absolute paths, .. segments, backslashes, paths outside the grammar, names equal when compared case-insensitively, encryption and symbolic links are PARSE, and the package isn't read",
+  "tests": [
+    {
+      "type": "parse",
+      "name": "a package",
+      "kind": "package",
+      "base64": "UEsDBBQAAAAAAAAAS11dMt2vGgAAABoAAAAIAAAAbWltZXR5cGVhcHBsaWNhdGlvbi92bmQudHJvdXBlK3ppcFBLAwQUAAAACAAAAEtdz1v6+CMAAAAhAAAACwAAAGJ1bmRsZS5qc29uq1YqKcovLUhVslIy0DM0VNJRys7MS1GyUkoqzUvJSVWqBQBQSwECFAMUAAAAAAAAAEtdXTLdrxoAAAAaAAAACAAAAAAAAAAAAAAAgAEAAAAAbWltZXR5cGVQSwECFAMUAAAACAAAAEtdz1v6+CMAAAAhAAAACwAAAAAAAAAAAAAAgAFAAAAAYnVuZGxlLmpzb25QSwUGAAAAAAIAAgBvAAAAjAAAAAAA",
+      "expect": {
+        "ok": true,
+        "codes": []
+      }
+    },
+    {
+      "type": "parse",
+      "name": "a package with a session",
+      "kind": "package",
+      "base64": "UEsDBBQAAAAAAAAAS11dMt2vGgAAABoAAAAIAAAAbWltZXR5cGVhcHBsaWNhdGlvbi92bmQudHJvdXBlK3ppcFBLAwQUAAAACAAAAEtdz1v6+CMAAAAhAAAACwAAAGJ1bmRsZS5qc29uq1YqKcovLUhVslIy0DM0VNJRys7MS1GyUkoqzUvJSVWqBQBQSwMEFAAAAAgAAABLXaS5Hed5AAAAiAAAABQAAABzZXNzaW9ucy9maXJzdC5qc29ubBWMMQvCMBQG9/6Mbw7FilDN5uYgglIEEYcaX+HRNi8kEash/10y3h1cQvTydgSNVd00UBjZvqARKAQWC4VgyPaepciCRKWP7XleL9fnrvtdNu5otqfPbdgjVwlcelkNXmZouKn/koeCERvJRuh7QqQlQuPANfIjV39QSwECFAMUAAAAAAAAAEtdXTLdrxoAAAAaAAAACAAAAAAAAAAAAAAAgAEAAAAAbWltZXR5cGVQSwECFAMUAAAACAAAAEtdz1v6+CMAAAAhAAAACwAAAAAAAAAAAAAAgAFAAAAAYnVuZGxlLmpzb25QSwECFAMUAAAACAAAAEtdpLkd53kAAACIAAAAFAAAAAAAAAAAAAAAgAGMAAAAc2Vzc2lvbnMvZmlyc3QuanNvbmxQSwUGAAAAAAMAAwCxAAAANwEAAAAA",
+      "expect": {
+        "ok": true,
+        "codes": []
+      }
+    },
+    {
+      "type": "parse",
+      "name": "no bundle.json",
+      "kind": "package",
+      "base64": "UEsDBBQAAAAAAAAAS11dMt2vGgAAABoAAAAIAAAAbWltZXR5cGVhcHBsaWNhdGlvbi92bmQudHJvdXBlK3ppcFBLAwQUAAAACAAAAEtdpLkd53kAAACIAAAAFAAAAHNlc3Npb25zL2ZpcnN0Lmpzb25sFYwxC8IwFAb3/oxvDsWKUM3m5iCCUgQRhxpf4dE2LyQRqyH/XTLeHVxC9PJ2BI1V3TRQGNm+oBEoBBYLhWDI9p6lyIJEpY/teV4v1+eu+1027mi2p89t2CNXCVx6WQ1eZmi4qf+Sh4IRG8lG6HtCpCVC48A18iNXf1BLAQIUAxQAAAAAAAAAS11dMt2vGgAAABoAAAAIAAAAAAAAAAAAAACAAQAAAABtaW1ldHlwZVBLAQIUAxQAAAAIAAAAS12kuR3neQAAAIgAAAAUAAAAAAAAAAAAAACAAUAAAABzZXNzaW9ucy9maXJzdC5qc29ubFBLBQYAAAAAAgACAHgAAADrAAAAAAA=",
+      "expect": {
+        "ok": false,
+        "codes": [
+          "PARSE"
+        ]
+      }
+    },
+    {
+      "type": "parse",
+      "name": "a .. segment",
+      "kind": "package",
+      "base64": "UEsDBBQAAAAAAAAAS11dMt2vGgAAABoAAAAIAAAAbWltZXR5cGVhcHBsaWNhdGlvbi92bmQudHJvdXBlK3ppcFBLAwQUAAAACAAAAEtdz1v6+CMAAAAhAAAACwAAAGJ1bmRsZS5qc29uq1YqKcovLUhVslIy0DM0VNJRys7MS1GyUkoqzUvJSVWqBQBQSwMEFAAAAAgAAABLXUO/pqMEAAAAAgAAAAwAAAAuLi9ldmlsLmpzb26rrgUAUEsBAhQDFAAAAAAAAABLXV0y3a8aAAAAGgAAAAgAAAAAAAAAAAAAAIABAAAAAG1pbWV0eXBlUEsBAhQDFAAAAAgAAABLXc9b+vgjAAAAIQAAAAsAAAAAAAAAAAAAAIABQAAAAGJ1bmRsZS5qc29uUEsBAhQDFAAAAAgAAABLXUO/pqMEAAAAAgAAAAwAAAAAAAAAAAAAAIABjAAAAC4uL2V2aWwuanNvblBLBQYAAAAAAwADAKkAAAC6AAAAAAA=",
+      "expect": {
+        "ok": false,
+        "codes": [
+          "PARSE"
+        ]
+      }
+    },
+    {
+      "type": "parse",
+      "name": "an absolute path",
+      "kind": "package",
+      "base64": "UEsDBBQAAAAAAAAAS11dMt2vGgAAABoAAAAIAAAAbWltZXR5cGVhcHBsaWNhdGlvbi92bmQudHJvdXBlK3ppcFBLAwQUAAAACAAAAEtdz1v6+CMAAAAhAAAACwAAAGJ1bmRsZS5qc29uq1YqKcovLUhVslIy0DM0VNJRys7MS1GyUkoqzUvJSVWqBQBQSwMEFAAAAAgAAABLXUO/pqMEAAAAAgAAAAoAAAAvZXZpbC5qc29uq64FAFBLAQIUAxQAAAAAAAAAS11dMt2vGgAAABoAAAAIAAAAAAAAAAAAAACAAQAAAABtaW1ldHlwZVBLAQIUAxQAAAAIAAAAS13PW/r4IwAAACEAAAALAAAAAAAAAAAAAACAAUAAAABidW5kbGUuanNvblBLAQIUAxQAAAAIAAAAS11Dv6ajBAAAAAIAAAAKAAAAAAAAAAAAAACAAYwAAAAvZXZpbC5qc29uUEsFBgAAAAADAAMApwAAALgAAAAAAA==",
+      "expect": {
+        "ok": false,
+        "codes": [
+          "PARSE"
+        ]
+      }
+    },
+    {
+      "type": "parse",
+      "name": "a backslash",
+      "kind": "package",
+      "base64": "UEsDBBQAAAAAAAAAS11dMt2vGgAAABoAAAAIAAAAbWltZXR5cGVhcHBsaWNhdGlvbi92bmQudHJvdXBlK3ppcFBLAwQUAAAACAAAAEtdz1v6+CMAAAAhAAAACwAAAGJ1bmRsZS5qc29uq1YqKcovLUhVslIy0DM0VNJRys7MS1GyUkoqzUvJSVWqBQBQSwMEFAAAAAgAAABLXYMW3IwDAAAAAQAAAAsAAABtZWRpYVxhLnBuZ6sAAFBLAQIUAxQAAAAAAAAAS11dMt2vGgAAABoAAAAIAAAAAAAAAAAAAACAAQAAAABtaW1ldHlwZVBLAQIUAxQAAAAIAAAAS13PW/r4IwAAACEAAAALAAAAAAAAAAAAAACAAUAAAABidW5kbGUuanNvblBLAQIUAxQAAAAIAAAAS12DFtyMAwAAAAEAAAALAAAAAAAAAAAAAACAAYwAAABtZWRpYVxhLnBuZ1BLBQYAAAAAAwADAKgAAAC4AAAAAAA=",
+      "expect": {
+        "ok": false,
+        "codes": [
+          "PARSE"
+        ]
+      }
+    },
+    {
+      "type": "parse",
+      "name": "a segment outside the path grammar",
+      "kind": "package",
+      "base64": "UEsDBBQAAAAAAAAAS11dMt2vGgAAABoAAAAIAAAAbWltZXR5cGVhcHBsaWNhdGlvbi92bmQudHJvdXBlK3ppcFBLAwQUAAAACAAAAEtdz1v6+CMAAAAhAAAACwAAAGJ1bmRsZS5qc29uq1YqKcovLUhVslIy0DM0VNJRys7MS1GyUkoqzUvJSVWqBQBQSwMEFAAAAAgAAABLXYMW3IwDAAAAAQAAAA0AAABtZWRpYS8uaGlkZGVuqwAAUEsBAhQDFAAAAAAAAABLXV0y3a8aAAAAGgAAAAgAAAAAAAAAAAAAAIABAAAAAG1pbWV0eXBlUEsBAhQDFAAAAAgAAABLXc9b+vgjAAAAIQAAAAsAAAAAAAAAAAAAAIABQAAAAGJ1bmRsZS5qc29uUEsBAhQDFAAAAAgAAABLXYMW3IwDAAAAAQAAAA0AAAAAAAAAAAAAAIABjAAAAG1lZGlhLy5oaWRkZW5QSwUGAAAAAAMAAwCqAAAAugAAAAAA",
+      "expect": {
+        "ok": false,
+        "codes": [
+          "PARSE"
+        ]
+      }
+    },
+    {
+      "type": "parse",
+      "name": "names that differ only in case",
+      "kind": "package",
+      "base64": "UEsDBBQAAAAAAAAAS11dMt2vGgAAABoAAAAIAAAAbWltZXR5cGVhcHBsaWNhdGlvbi92bmQudHJvdXBlK3ppcFBLAwQUAAAACAAAAEtdz1v6+CMAAAAhAAAACwAAAGJ1bmRsZS5qc29uq1YqKcovLUhVslIy0DM0VNJRys7MS1GyUkoqzUvJSVWqBQBQSwMEFAAAAAgAAABLXc9b+vgjAAAAIQAAAAsAAABCdW5kbGUuanNvbqtWKinKLy1IVbJSMtAzNFTSUcrOzEtRslJKKs1LyUlVqgUAUEsBAhQDFAAAAAAAAABLXV0y3a8aAAAAGgAAAAgAAAAAAAAAAAAAAIABAAAAAG1pbWV0eXBlUEsBAhQDFAAAAAgAAABLXc9b+vgjAAAAIQAAAAsAAAAAAAAAAAAAAIABQAAAAGJ1bmRsZS5qc29uUEsBAhQDFAAAAAgAAABLXc9b+vgjAAAAIQAAAAsAAAAAAAAAAAAAAIABjAAAAEJ1bmRsZS5qc29uUEsFBgAAAAADAAMAqAAAANgAAAAAAA==",
+      "expect": {
+        "ok": false,
+        "codes": [
+          "PARSE"
+        ]
+      }
+    },
+    {
+      "type": "parse",
+      "name": "an encrypted entry",
+      "kind": "package",
+      "base64": "UEsDBBQAAAAAAAAAS11dMt2vGgAAABoAAAAIAAAAbWltZXR5cGVhcHBsaWNhdGlvbi92bmQudHJvdXBlK3ppcFBLAwQUAAEACAAAAEtdz1v6+CMAAAAhAAAACwAAAGJ1bmRsZS5qc29uq1YqKcovLUhVslIy0DM0VNJRys7MS1GyUkoqzUvJSVWqBQBQSwECFAMUAAAAAAAAAEtdXTLdrxoAAAAaAAAACAAAAAAAAAAAAAAAgAEAAAAAbWltZXR5cGVQSwECFAMUAAEACAAAAEtdz1v6+CMAAAAhAAAACwAAAAAAAAAAAAAAgAFAAAAAYnVuZGxlLmpzb25QSwUGAAAAAAIAAgBvAAAAjAAAAAAA",
+      "expect": {
+        "ok": false,
+        "codes": [
+          "PARSE"
+        ]
+      }
+    },
+    {
+      "type": "parse",
+      "name": "a symbolic link",
+      "kind": "package",
+      "base64": "UEsDBBQAAAAAAAAAS11dMt2vGgAAABoAAAAIAAAAbWltZXR5cGVhcHBsaWNhdGlvbi92bmQudHJvdXBlK3ppcFBLAwQUAAAACAAAAEtdz1v6+CMAAAAhAAAACwAAAGJ1bmRsZS5qc29uq1YqKcovLUhVslIy0DM0VNJRys7MS1GyUkoqzUvJSVWqBQBQSwMEFAAAAAgAAABLXQq5HykNAAAACwAAAAoAAABtZWRpYS9saW5r008tSdYvSCwuLk8BAFBLAQIUAxQAAAAAAAAAS11dMt2vGgAAABoAAAAIAAAAAAAAAAAAAACAAQAAAABtaW1ldHlwZVBLAQIUAxQAAAAIAAAAS13PW/r4IwAAACEAAAALAAAAAAAAAAAAAACAAUAAAABidW5kbGUuanNvblBLAQIUAxQAAAAIAAAAS10KuR8pDQAAAAsAAAAKAAAAAAAAAAAAAAD/oYwAAABtZWRpYS9saW5rUEsFBgAAAAADAAMApwAAAMEAAAAAAA==",
+      "expect": {
+        "ok": false,
+        "codes": [
+          "PARSE"
+        ]
+      }
+    },
+    {
+      "type": "parse",
+      "name": "not a ZIP archive",
+      "kind": "package",
+      "base64": "UEsDBCBub3QgcmVhbGx5",
+      "expect": {
+        "ok": false,
+        "codes": [
+          "PARSE"
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,156 @@
+{
+  "description": "Weighted outcomes (Play 3.3, 4): picked by the outcome roll on the triggering message, recorded by index, effects after the event's",
+  "bundle": {
+    "troupe": "0.11",
+    "kind": "bundle",
+    "characters": [
+      {
+        "id": "a",
+        "name": "Ann",
+        "description": "Ann."
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s",
+        "cast": [
+          {},
+          {
+            "character": "a"
+          }
+        ],
+        "variables": [
+          {
+            "id": "bell",
+            "type": "int",
+            "initial": 6,
+            "description": "d"
+          },
+          {
+            "id": "seen",
+            "type": "bool",
+            "description": "d"
+          }
+        ],
+        "events": [
+          {
+            "id": "patrol2",
+            "when": "true",
+            "set": {
+              "seen": false
+            },
+            "outcomes": [
+              {
+                "weight": 3,
+                "direct": "A patrol passes below."
+              },
+              {
+                "weight": 1,
+                "direct": "A guard looks up.",
+                "set": {
+                  "seen": true
+                },
+                "compute": {
+                  "bell": "state.bell + 1"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "session": {
+    "header": {
+      "troupe": "0.11",
+      "kind": "session",
+      "scenario": "s",
+      "seed": "conformanceSeed0001",
+      "characters": [
+        {
+          "id": "p",
+          "name": "Pat",
+          "description": "Pat."
+        }
+      ],
+      "players": [
+        "p"
+      ],
+      "head": "t1"
+    },
+    "messages": [
+      {
+        "id": "r",
+        "from": "player",
+        "content": [
+          {
+            "text": "Start."
+          }
+        ]
+      },
+      {
+        "id": "t1",
+        "parent": "r",
+        "from": "player",
+        "content": [
+          {
+            "text": "Climb."
+          }
+        ]
+      },
+      {
+        "id": "t3",
+        "parent": "r",
+        "from": "player",
+        "content": [
+          {
+            "text": "Climb."
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "events",
+      "name": "t1: roll mod 4 = 2 -> outcome 0",
+      "at": "t1",
+      "expect": {
+        "changes": [
+          {
+            "by": "rules",
+            "event": "patrol2",
+            "outcome": 0,
+            "set": {
+              "seen": false
+            }
+          }
+        ],
+        "directions": [
+          "A patrol passes below."
+        ]
+      }
+    },
+    {
+      "type": "events",
+      "name": "t3: roll mod 4 = 3 -> outcome 1; the outcome's set replaces the event's",
+      "at": "t3",
+      "expect": {
+        "changes": [
+          {
+            "by": "rules",
+            "event": "patrol2",
+            "outcome": 1,
+            "set": {
+              "seen": true,
+              "bell": 7
+            }
+          }
+        ],
+        "directions": [
+          "A guard looks up."
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,130 @@
+{
+  "description": "Events at the root (Play 2.1, 3.3): a hidden truth chosen at the opening root, where turn is 0; opening macros see the result (Format Appendix C.8)",
+  "bundle": {
+    "troupe": "0.11",
+    "kind": "bundle",
+    "characters": [
+      {
+        "id": "a",
+        "name": "Ann",
+        "description": "Ann."
+      },
+      {
+        "id": "b",
+        "name": "Bea",
+        "description": "Bea."
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s",
+        "mode": "narrator",
+        "variables": [
+          {
+            "id": "culprit",
+            "type": "string",
+            "description": "who did it",
+            "display": "hidden"
+          }
+        ],
+        "events": [
+          {
+            "id": "choose",
+            "when": "turn == 0",
+            "once": true,
+            "outcomes": [
+              {
+                "set": {
+                  "culprit": "a"
+                }
+              },
+              {
+                "set": {
+                  "culprit": "b"
+                }
+              }
+            ],
+            "message": [
+              {
+                "text": "Someone here is lying. (It was {{@state.culprit}}.)"
+              }
+            ]
+          }
+        ],
+        "openings": [
+          {
+            "id": "o",
+            "content": [
+              {
+                "text": "A body in the library. {{state.culprit}}"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "start",
+      "scenario": "s",
+      "opening": "o",
+      "characters": [
+        {
+          "id": "p",
+          "name": "Pat",
+          "description": "Pat."
+        }
+      ],
+      "seed": "conformanceSeed0001",
+      "rootId": "r",
+      "eventMessageId": "r2",
+      "expect": {
+        "messages": [
+          {
+            "id": "r",
+            "from": "system",
+            "content": [
+              {
+                "text": "A body in the library. {{state.culprit}}"
+              }
+            ],
+            "changes": [
+              {
+                "by": "rules",
+                "set": {
+                  "scene.present": [
+                    "p"
+                  ]
+                }
+              },
+              {
+                "by": "rules",
+                "event": "choose",
+                "outcome": 1,
+                "set": {
+                  "culprit": "b"
+                }
+              }
+            ],
+            "opening": "o"
+          },
+          {
+            "id": "r2",
+            "parent": "r",
+            "from": "system",
+            "content": [
+              {
+                "text": "Someone here is lying. (It was {{@state.culprit}}.)"
+              }
+            ]
+          }
+        ],
+        "head": "r2",
+        "rendered": [
+          "A body in the library. b"
+        ]
+      }
+    }
+  ]
+}

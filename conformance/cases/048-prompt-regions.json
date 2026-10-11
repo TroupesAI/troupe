@@ -1,0 +1,107 @@
+{
+  "description": "Prompt slots as data (Play 6): System, Setting, People (offstage summaries when named in the last 4 messages), Context, History; file order within a slot; knowledge applied",
+  "bundleFile": "../../examples/lantern-heist.troupe.json",
+  "sessionFile": "../../examples/lantern-heist.troupe-session.jsonl",
+  "addMessages": [
+    {
+      "id": "5",
+      "parent": "3",
+      "from": "player",
+      "pinned": true,
+      "content": [
+        {
+          "speaker": "mara",
+          "text": "Elena, hold the map."
+        }
+      ]
+    }
+  ],
+  "tests": [
+    {
+      "type": "prompt",
+      "name": "Kai after message 4",
+      "for": "kai",
+      "parent": "4",
+      "messageId": "5x",
+      "expect": {
+        "system": [
+          "app",
+          "entry:heist/style"
+        ],
+        "setting": [
+          "premise",
+          "world:veyra",
+          "location:rooftops",
+          "location:manor"
+        ],
+        "people": [
+          "character:elena",
+          "character:kai",
+          "player:mara",
+          "examples:elena"
+        ],
+        "context": [
+          "entry:veyra/weather_rain",
+          "entry:kai/deal",
+          "entry:heist/clock",
+          "entry:session/stair"
+        ],
+        "history": [
+          "entry:kai/voice",
+          "message:1",
+          "message:2",
+          "message:4"
+        ],
+        "lines": {
+          "4": [
+            "The seventh bell rolls across the harbor.",
+            "Kai: *Kai hesitates, then nods.* Fine. Your plan, boss. For once.",
+            "Kai: *If the Duke's men are early, this ends badly for all of us.*"
+          ]
+        }
+      }
+    },
+    {
+      "type": "prompt",
+      "name": "Elena doesn't see Kai's whispered thought",
+      "for": "elena",
+      "parent": "4",
+      "messageId": "5x",
+      "expect": {
+        "lines": {
+          "4": [
+            "The seventh bell rolls across the harbor.",
+            "Kai: *Kai hesitates, then nods.* Fine. Your plan, boss. For once."
+          ]
+        }
+      }
+    },
+    {
+      "type": "prompt",
+      "name": "branch 3: Kai is offstage and named, so his summary; a pinned message repeats in context",
+      "for": "elena",
+      "parent": "5",
+      "messageId": "6x",
+      "expect": {
+        "people": [
+          "character:elena",
+          "player:mara",
+          "offstage:kai",
+          "examples:elena"
+        ],
+        "context": [
+          "entry:veyra/weather_fog",
+          "entry:elena/master_key",
+          "entry:heist/clock",
+          "pinned:5"
+        ],
+        "history": [
+          "message:1",
+          "message:2",
+          "message:3",
+          "message:5"
+        ]
+      }
+    }
+  ]
+}

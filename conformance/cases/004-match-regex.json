@@ -1,0 +1,71 @@
+{
+  "description": "Regex keys (Play 5.3): RE2, case-insensitive unless cleared, match anywhere",
+  "tests": [
+    {
+      "type": "match",
+      "key": "/dragons?/",
+      "text": "Two DRAGONS circle.",
+      "expect": true
+    },
+    {
+      "type": "match",
+      "key": "/drag/",
+      "text": "Dragonfly",
+      "expect": true
+    },
+    {
+      "type": "match",
+      "key": "/(?-i)Kai/",
+      "text": "kai waves",
+      "expect": false
+    },
+    {
+      "type": "match",
+      "key": "/(?-i)Kai/",
+      "text": "Kai waves",
+      "expect": true
+    },
+    {
+      "type": "match",
+      "name": "RE2 \\b counts _ as a word character",
+      "key": "/\\bcat\\b/",
+      "text": "cat_toy",
+      "expect": false
+    },
+    {
+      "type": "match",
+      "name": "dot does not match newline by default",
+      "key": "/a.c/",
+      "text": "a\nc",
+      "expect": false
+    },
+    {
+      "type": "match",
+      "name": "lookbehind is not RE2: never matches",
+      "key": "/(?<=a)b/",
+      "text": "ab",
+      "expect": false
+    },
+    {
+      "type": "match",
+      "name": "invalid pattern never matches",
+      "key": "/[/",
+      "text": "[",
+      "expect": false
+    },
+    {
+      "type": "match",
+      "name": "the text is NFC-normalized; the pattern is compiled unchanged",
+      "key": "/café/",
+      "text": "café",
+      "expect": true
+    },
+    {
+      "type": "match",
+      "name": "a lone slash is a plain key",
+      "key": "/",
+      "text": "a / b",
+      "expect": true
+    }
+  ]
+}

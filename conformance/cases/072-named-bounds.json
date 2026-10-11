@@ -1,0 +1,157 @@
+{
+  "description": "min and max may name another variable of the same owner, whose current value is the bound (Format 8.1); rounding comes before clamping (Play 3.3 steps 4–5)",
+  "bundle": {
+    "troupe": "0.11",
+    "kind": "bundle",
+    "characters": [
+      {
+        "id": "a",
+        "name": "Ann",
+        "description": "Ann."
+      },
+      {
+        "id": "b",
+        "name": "Bea",
+        "description": "Bea."
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s",
+        "cast": [
+          {},
+          {
+            "character": "a"
+          },
+          {
+            "character": "b"
+          }
+        ],
+        "variables": [
+          {
+            "id": "max_hp",
+            "type": "int",
+            "initial": 20,
+            "description": "d"
+          },
+          {
+            "id": "hp",
+            "type": "int",
+            "min": 0,
+            "max": "max_hp",
+            "initial": 15,
+            "by": [
+              "model"
+            ],
+            "description": "d"
+          },
+          {
+            "id": "ratio",
+            "type": "number",
+            "max": 1.0000004,
+            "description": "A max that isn't on the 6-place grid."
+          },
+          {
+            "id": "broken",
+            "type": "int",
+            "max": "nowhere",
+            "description": "d"
+          }
+        ]
+      }
+    ]
+  },
+  "session": {
+    "header": {
+      "troupe": "0.11",
+      "kind": "session",
+      "scenario": "s",
+      "seed": "conformanceSeed0001",
+      "characters": [
+        {
+          "id": "p",
+          "name": "Pat",
+          "description": "Pat."
+        }
+      ],
+      "players": [
+        "p"
+      ]
+    },
+    "messages": [
+      {
+        "id": "1",
+        "from": "player",
+        "content": [
+          {
+            "text": "x"
+          }
+        ],
+        "changes": [
+          {
+            "by": "rules",
+            "set": {
+              "max_hp": 30
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "prepare",
+      "name": "the bound is max_hp's current value (20)",
+      "by": "rules",
+      "set": {
+        "hp": 25
+      },
+      "expect": {
+        "set": {
+          "hp": 20
+        }
+      }
+    },
+    {
+      "type": "prepare",
+      "name": "after max_hp rises to 30",
+      "at": "1",
+      "by": "rules",
+      "set": {
+        "hp": 25
+      },
+      "expect": {
+        "set": {
+          "hp": 25
+        }
+      }
+    },
+    {
+      "type": "prepare",
+      "name": "round to 6 places first (1.000001), then clamp to max",
+      "by": "rules",
+      "set": {
+        "ratio": 1.0000006
+      },
+      "expect": {
+        "set": {
+          "ratio": 1.0000004
+        }
+      }
+    },
+    {
+      "type": "check",
+      "expect": {
+        "codes": [
+          "UNKNOWN_VARIABLE"
+        ],
+        "includes": [
+          {
+            "code": "UNKNOWN_VARIABLE",
+            "at": "/scenarios/0/variables/3/max"
+          }
+        ]
+      }
+    }
+  ]
+}

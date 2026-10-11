@@ -1,0 +1,221 @@
+{
+  "description": "Rounds (Format 9; Play 3.1, 5.4): turn counts player messages; durations are in rounds, so a group chat behaves like a one-on-one; events fire at most once per round; elapsed",
+  "bundle": {
+    "troupe": "0.11",
+    "kind": "bundle",
+    "characters": [
+      {
+        "id": "a",
+        "name": "Ann",
+        "description": "Ann."
+      },
+      {
+        "id": "b",
+        "name": "Bea",
+        "description": "Bea."
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s",
+        "cast": [
+          {},
+          {
+            "character": "a"
+          },
+          {
+            "character": "b"
+          }
+        ],
+        "entries": [
+          {
+            "id": "reminder",
+            "sticky": 1,
+            "text": "Recorded once, kept for the rest of the round and the next."
+          }
+        ],
+        "variables": [
+          {
+            "id": "beats",
+            "type": "int",
+            "description": "d"
+          }
+        ],
+        "events": [
+          {
+            "id": "beat",
+            "when": "true",
+            "compute": {
+              "beats": "state.beats + 1"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "session": {
+    "header": {
+      "troupe": "0.11",
+      "kind": "session",
+      "scenario": "s",
+      "seed": "conformanceSeed0001",
+      "characters": [
+        {
+          "id": "p",
+          "name": "Pat",
+          "description": "Pat."
+        }
+      ],
+      "players": [
+        "p"
+      ]
+    },
+    "messages": [
+      {
+        "id": "1",
+        "from": "player",
+        "at": "2026-10-09T12:00:00Z",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "Hi both."
+          }
+        ],
+        "changes": [
+          {
+            "by": "rules",
+            "event": "beat",
+            "set": {
+              "beats": 1
+            }
+          }
+        ]
+      },
+      {
+        "id": "2",
+        "parent": "1",
+        "from": "model",
+        "char": "a",
+        "at": "2026-10-09T12:00:30Z",
+        "activated": [
+          "s/reminder"
+        ],
+        "content": [
+          {
+            "speaker": "a",
+            "text": "Hi."
+          }
+        ]
+      },
+      {
+        "id": "3",
+        "parent": "2",
+        "from": "model",
+        "char": "b",
+        "at": "2026-10-09T12:01:00Z",
+        "content": [
+          {
+            "speaker": "b",
+            "text": "Hello."
+          }
+        ]
+      },
+      {
+        "id": "4",
+        "parent": "3",
+        "from": "player",
+        "at": "2026-10-10T12:01:00Z",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "A day later."
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "cel",
+      "at": "3",
+      "expr": "turn == 1 && last.from == 'model' && last.char == 'b'",
+      "expect": true
+    },
+    {
+      "type": "cel",
+      "at": "4",
+      "expr": "turn == 2 && ago('beat') == 1 && ago('s/reminder') == 1",
+      "expect": true
+    },
+    {
+      "type": "cel",
+      "name": "elapsed: seconds since the parent's `at`",
+      "at": "3",
+      "expr": "elapsed == 30",
+      "expect": true
+    },
+    {
+      "type": "cel",
+      "at": "4",
+      "expr": "elapsed == 86400",
+      "expect": true
+    },
+    {
+      "type": "cel",
+      "name": "elapsed is 0 without a parent",
+      "at": "1",
+      "expr": "elapsed == 0",
+      "expect": true
+    },
+    {
+      "type": "events",
+      "name": "Bea's reply is in the same round as the firing: the event waits",
+      "at": "3",
+      "expect": {
+        "changes": []
+      }
+    },
+    {
+      "type": "events",
+      "name": "the next round",
+      "at": "4",
+      "expect": {
+        "changes": [
+          {
+            "by": "rules",
+            "event": "beat",
+            "set": {
+              "beats": 2
+            }
+          }
+        ]
+      }
+    },
+    {
+      "type": "select",
+      "name": "Bea in the same round: d = 0, kept by sticky",
+      "for": "b",
+      "parent": "2",
+      "messageId": "3x",
+      "expect": {
+        "selected": [
+          "s/reminder"
+        ],
+        "activated": []
+      }
+    },
+    {
+      "type": "select",
+      "name": "the next round: d = 1, still kept",
+      "for": "a",
+      "parent": "4",
+      "messageId": "5x",
+      "expect": {
+        "selected": [
+          "s/reminder"
+        ],
+        "activated": []
+      }
+    }
+  ]
+}

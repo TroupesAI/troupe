@@ -1,0 +1,145 @@
+{
+  "description": "Unicode matching (Play 5.3): NFC, simple case folding C+S from Unicode 17.0, L/N/M boundaries, scripts that match anywhere (Hangul included)",
+  "tests": [
+    {
+      "type": "match",
+      "name": "Turkish dotted capital I folds to itself under C+S",
+      "key": "İstanbul",
+      "text": "İSTANBUL",
+      "expect": true
+    },
+    {
+      "type": "match",
+      "name": "İ never folds to i (its mappings are F and T)",
+      "key": "istanbul",
+      "text": "İstanbul",
+      "expect": false
+    },
+    {
+      "type": "match",
+      "key": "İstanbul",
+      "text": "istanbul",
+      "expect": false
+    },
+    {
+      "type": "match",
+      "name": "dotless ı has no folding; I folds to i",
+      "key": "ı",
+      "text": "I",
+      "expect": false
+    },
+    {
+      "type": "match",
+      "name": "final sigma and capital sigma both fold to σ",
+      "key": "σοφός",
+      "text": "ΣΟΦΌΣ",
+      "expect": true
+    },
+    {
+      "type": "match",
+      "key": "ΣΟΦΌΣ",
+      "text": "ο σοφός είπε",
+      "expect": true
+    },
+    {
+      "type": "match",
+      "name": "Kelvin sign (NFC to K, folds to k)",
+      "key": "5k",
+      "text": "It was 5K outside",
+      "expect": true
+    },
+    {
+      "type": "match",
+      "key": "K",
+      "text": "k",
+      "expect": true
+    },
+    {
+      "type": "match",
+      "name": "capital sharp s folds to ß (status S), never to ss",
+      "key": "ß",
+      "text": "ẞ",
+      "expect": true
+    },
+    {
+      "type": "match",
+      "key": "ß",
+      "text": "SS",
+      "expect": false
+    },
+    {
+      "type": "match",
+      "name": "decomposed text is composed by NFC",
+      "key": "café",
+      "text": "the café opens",
+      "expect": true
+    },
+    {
+      "type": "match",
+      "key": "cafe",
+      "text": "the café opens",
+      "expect": false
+    },
+    {
+      "type": "match",
+      "name": "a combining mark without a composition touches the end",
+      "key": "cafe",
+      "text": "cafe̲",
+      "expect": false
+    },
+    {
+      "type": "match",
+      "name": "Han matches anywhere",
+      "key": "東京",
+      "text": "我住在東京都",
+      "expect": true
+    },
+    {
+      "type": "match",
+      "key": "東京",
+      "text": "東 京",
+      "expect": false
+    },
+    {
+      "type": "match",
+      "name": "Katakana matches anywhere",
+      "key": "ラーメン",
+      "text": "とんこつラーメンが好き",
+      "expect": true
+    },
+    {
+      "type": "match",
+      "name": "Thai matches anywhere",
+      "key": "แมว",
+      "text": "ฉันรักแมวมาก",
+      "expect": true
+    },
+    {
+      "type": "match",
+      "name": "a Latin key touching Katakana letters is not a whole word",
+      "key": "Pokémon",
+      "text": "ポケモンPokémonカード",
+      "expect": false
+    },
+    {
+      "type": "match",
+      "name": "Hangul matches anywhere, so particles don't block a key",
+      "key": "고양이",
+      "text": "고양이가",
+      "expect": true
+    },
+    {
+      "type": "match",
+      "name": "digits from other scripts are N",
+      "key": "x",
+      "text": "x٣",
+      "expect": false
+    },
+    {
+      "type": "match",
+      "key": "고양이",
+      "text": "우리 고양이는 귀여워",
+      "expect": true
+    }
+  ]
+}

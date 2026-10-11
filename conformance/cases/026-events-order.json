@@ -1,0 +1,187 @@
+{
+  "description": "Events run once, in order scenario, worlds, characters (cast order); owners' events are named <owner>/<id> and set owned keys <owner>.<id> (Format 2.4, 8.2; Play 3.3)",
+  "bundle": {
+    "troupe": "0.11",
+    "kind": "bundle",
+    "characters": [
+      {
+        "id": "a",
+        "name": "Ann",
+        "description": "Ann.",
+        "variables": [
+          {
+            "id": "aflag",
+            "type": "bool",
+            "description": "d"
+          }
+        ],
+        "events": [
+          {
+            "id": "a_ev",
+            "when": "state.w.wflag && !own.aflag",
+            "set": {
+              "a.aflag": true
+            }
+          }
+        ]
+      }
+    ],
+    "worlds": [
+      {
+        "id": "w",
+        "name": "W",
+        "variables": [
+          {
+            "id": "wflag",
+            "type": "bool",
+            "description": "d"
+          }
+        ],
+        "events": [
+          {
+            "id": "w_ev",
+            "when": "state.n == 2",
+            "set": {
+              "w.wflag": true
+            }
+          }
+        ]
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s",
+        "cast": [
+          {},
+          {
+            "character": "a"
+          }
+        ],
+        "variables": [
+          {
+            "id": "n",
+            "type": "int",
+            "description": "d"
+          },
+          {
+            "id": "m",
+            "type": "int",
+            "description": "d"
+          }
+        ],
+        "events": [
+          {
+            "id": "e1",
+            "when": "state.n == 0",
+            "set": {
+              "n": 1
+            }
+          },
+          {
+            "id": "e2",
+            "when": "state.n == 1",
+            "set": {
+              "n": 2
+            }
+          },
+          {
+            "id": "e3",
+            "when": "count('e1') == 1 && ago('e1') == 0 && ago('n') == 0 && count('n') == 2",
+            "compute": {
+              "m": "state.n * 10"
+            }
+          },
+          {
+            "id": "e4",
+            "when": "state.n == 0",
+            "set": {
+              "m": 99
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "session": {
+    "header": {
+      "troupe": "0.11",
+      "kind": "session",
+      "scenario": "s",
+      "seed": "conformanceSeed0001",
+      "characters": [
+        {
+          "id": "p",
+          "name": "Pat",
+          "description": "Pat."
+        }
+      ],
+      "players": [
+        "p"
+      ],
+      "head": "1"
+    },
+    "messages": [
+      {
+        "id": "1",
+        "from": "player",
+        "content": [
+          {
+            "text": "Go."
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "events",
+      "at": "1",
+      "expect": {
+        "changes": [
+          {
+            "by": "rules",
+            "event": "e1",
+            "set": {
+              "n": 1
+            }
+          },
+          {
+            "by": "rules",
+            "event": "e2",
+            "set": {
+              "n": 2
+            }
+          },
+          {
+            "by": "rules",
+            "event": "e3",
+            "set": {
+              "m": 20
+            }
+          },
+          {
+            "by": "rules",
+            "event": "w/w_ev",
+            "set": {
+              "w.wflag": true
+            }
+          },
+          {
+            "by": "rules",
+            "event": "a/a_ev",
+            "set": {
+              "a.aflag": true
+            }
+          }
+        ],
+        "message": null,
+        "state": {
+          "n": 2,
+          "m": 20,
+          "w.wflag": true,
+          "a.aflag": true
+        }
+      }
+    }
+  ]
+}

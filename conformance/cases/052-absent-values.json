@@ -1,0 +1,146 @@
+{
+  "description": "null, \"\" and [] read like missing fields, except inside state values (Format 2.2); an opening's content is optional, so [] there reads as missing",
+  "bundle": {
+    "troupe": "0.11",
+    "kind": "bundle",
+    "tagline": "",
+    "characters": [
+      {
+        "id": "a",
+        "name": "Ann",
+        "description": "Ann.",
+        "aliases": [],
+        "summary": null,
+        "entries": [
+          {
+            "id": "e",
+            "keys": [],
+            "when": null,
+            "knownBy": [],
+            "text": "everyone knows this"
+          },
+          {
+            "id": "f",
+            "keys": null,
+            "text": "always on"
+          }
+        ]
+      }
+    ],
+    "worlds": [
+      {
+        "id": "w",
+        "name": "W",
+        "locations": [
+          {
+            "id": "hall",
+            "name": "Hall"
+          }
+        ]
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s",
+        "cast": [
+          {},
+          {
+            "character": "a"
+          }
+        ],
+        "worlds": [],
+        "variables": [
+          {
+            "id": "inv",
+            "type": "set",
+            "initial": [],
+            "description": "d"
+          }
+        ],
+        "openings": [
+          {
+            "id": "o",
+            "set": {
+              "scene.location": ""
+            },
+            "content": [
+              {
+                "text": "Hi."
+              }
+            ]
+          },
+          {
+            "id": "o2",
+            "title": "Anywhere",
+            "content": []
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "check",
+      "expect": {
+        "codes": [
+          "SCHEMA"
+        ]
+      }
+    },
+    {
+      "type": "select",
+      "name": "knownBy [] reads as missing: everyone knows e; keys null and keys [] are always-on",
+      "for": "a",
+      "messageId": "1",
+      "expect": {
+        "activated": [
+          "a/e",
+          "a/f"
+        ]
+      }
+    },
+    {
+      "type": "select",
+      "name": "keys [] is always-on: a viewer that sees everything gets e too",
+      "messageId": "1",
+      "expect": {
+        "activated": [
+          "a/e",
+          "a/f"
+        ]
+      }
+    },
+    {
+      "type": "start",
+      "name": "an opening with content [] has no content: a records-only root with the whole cast present",
+      "scenario": "s",
+      "opening": "o2",
+      "characters": [
+        {
+          "id": "p",
+          "name": "Pat",
+          "description": "Pat."
+        }
+      ],
+      "expect": {
+        "root": {
+          "id": "1",
+          "opening": "o2",
+          "from": "system",
+          "content": [],
+          "changes": [
+            {
+              "by": "rules",
+              "set": {
+                "scene.present": [
+                  "p",
+                  "a"
+                ]
+              }
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

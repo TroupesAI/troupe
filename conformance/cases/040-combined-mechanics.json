@@ -1,0 +1,207 @@
+{
+  "description": "Owned mechanics (Format 2.3, 6.4, 8.2): each variable and event keeps its owner, so two owners can share an ID; a scenario variable can't take a character's or world's ID",
+  "bundle": {
+    "troupe": "0.11",
+    "kind": "bundle",
+    "characters": [
+      {
+        "id": "a",
+        "name": "Ann",
+        "description": "Ann.",
+        "variables": [
+          {
+            "id": "time",
+            "type": "int",
+            "initial": 9,
+            "description": "Ann's own time"
+          }
+        ],
+        "events": [
+          {
+            "id": "tick",
+            "when": "true",
+            "compute": {
+              "a.time": "own.time + 1"
+            }
+          }
+        ]
+      }
+    ],
+    "worlds": [
+      {
+        "id": "w",
+        "name": "W",
+        "variables": [
+          {
+            "id": "time",
+            "type": "int",
+            "initial": 1,
+            "description": "the world's clock"
+          }
+        ],
+        "events": [
+          {
+            "id": "tick",
+            "when": "true",
+            "compute": {
+              "w.time": "own.time + 10"
+            }
+          }
+        ]
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s",
+        "cast": [
+          {},
+          {
+            "character": "a"
+          }
+        ],
+        "variables": [
+          {
+            "id": "time",
+            "type": "int",
+            "initial": 100,
+            "description": "the scenario's own time"
+          },
+          {
+            "id": "w",
+            "type": "bool",
+            "description": "clashes with the world's ID"
+          }
+        ],
+        "events": [
+          {
+            "id": "tick",
+            "when": "true",
+            "compute": {
+              "time": "state.time + state.w.time"
+            }
+          }
+        ],
+        "openings": [
+          {
+            "id": "o",
+            "set": {
+              "a.time": 20
+            },
+            "content": [
+              {
+                "text": "Go."
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "session": {
+    "header": {
+      "troupe": "0.11",
+      "kind": "session",
+      "scenario": "s",
+      "seed": "conformanceSeed0001",
+      "characters": [
+        {
+          "id": "p",
+          "name": "Pat",
+          "description": "Pat."
+        }
+      ],
+      "players": [
+        "p"
+      ]
+    },
+    "messages": [
+      {
+        "id": "1",
+        "from": "player",
+        "content": [
+          {
+            "text": "x"
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "state",
+      "expect": {
+        "time": 100,
+        "w.time": 1,
+        "a.time": 9
+      }
+    },
+    {
+      "type": "events",
+      "name": "each owner's tick runs, named tick, w/tick and a/tick",
+      "at": "1",
+      "expect": {
+        "changes": [
+          {
+            "by": "rules",
+            "event": "tick",
+            "set": {
+              "time": 101
+            }
+          },
+          {
+            "by": "rules",
+            "event": "w/tick",
+            "set": {
+              "w.time": 11
+            }
+          },
+          {
+            "by": "rules",
+            "event": "a/tick",
+            "set": {
+              "a.time": 10
+            }
+          }
+        ]
+      }
+    },
+    {
+      "type": "cel",
+      "expr": "count('w/tick') == 0 && ago('a.time') == 1000000000",
+      "at": "1",
+      "expect": true
+    },
+    {
+      "type": "start",
+      "name": "a scenario adjusts a character's starting value through an opening's set",
+      "scenario": "s",
+      "opening": "o",
+      "characters": [
+        {
+          "id": "p",
+          "name": "Pat",
+          "description": "Pat."
+        }
+      ],
+      "expect": {
+        "state": {
+          "a.time": 21
+        }
+      }
+    },
+    {
+      "type": "check",
+      "expect": {
+        "codes": [
+          "DUPLICATE_ID"
+        ],
+        "includes": [
+          {
+            "code": "DUPLICATE_ID",
+            "at": "/scenarios/0/variables/1/id"
+          }
+        ]
+      }
+    }
+  ]
+}

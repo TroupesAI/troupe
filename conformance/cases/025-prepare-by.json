@@ -1,0 +1,147 @@
+{
+  "description": "Who may change a variable (Format 8.1; Play 3.3): player needs by or ask; model needs by; events always may; anyone may change the scene",
+  "bundle": {
+    "troupe": "0.11",
+    "kind": "bundle",
+    "characters": [
+      {
+        "id": "a",
+        "name": "Ann",
+        "description": "Ann."
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s",
+        "cast": [
+          {},
+          {
+            "character": "a"
+          }
+        ],
+        "variables": [
+          {
+            "id": "pv",
+            "type": "int",
+            "by": [
+              "player"
+            ],
+            "description": "d"
+          },
+          {
+            "id": "mv",
+            "type": "int",
+            "by": [
+              "model"
+            ],
+            "description": "d"
+          },
+          {
+            "id": "nv",
+            "type": "int",
+            "description": "nobody besides events"
+          },
+          {
+            "id": "av",
+            "type": "string",
+            "ask": "Your name?",
+            "description": "no by, but ask lets the player set it"
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "prepare",
+      "by": "player",
+      "set": {
+        "pv": 1,
+        "mv": 1,
+        "nv": 1,
+        "scene.present": [
+          "a"
+        ]
+      },
+      "expect": {
+        "set": {
+          "pv": 1,
+          "scene.present": [
+            "a"
+          ]
+        },
+        "dropped": [
+          "mv",
+          "nv"
+        ]
+      }
+    },
+    {
+      "type": "prepare",
+      "by": "model",
+      "set": {
+        "pv": 1,
+        "mv": 1,
+        "nv": 1,
+        "scene.location": ""
+      },
+      "expect": {
+        "set": {
+          "mv": 1,
+          "scene.location": ""
+        },
+        "dropped": [
+          "pv",
+          "nv"
+        ]
+      }
+    },
+    {
+      "type": "prepare",
+      "by": "rules",
+      "set": {
+        "pv": 1,
+        "mv": 1,
+        "nv": 1,
+        "nope": 1
+      },
+      "expect": {
+        "set": {
+          "pv": 1,
+          "mv": 1,
+          "nv": 1
+        },
+        "dropped": [
+          "nope"
+        ]
+      }
+    },
+    {
+      "type": "prepare",
+      "name": "ask lets the player change a variable whatever by says",
+      "by": "player",
+      "set": {
+        "av": "Pat"
+      },
+      "expect": {
+        "set": {
+          "av": "Pat"
+        }
+      }
+    },
+    {
+      "type": "prepare",
+      "name": "but not the model",
+      "by": "model",
+      "set": {
+        "av": "Pat"
+      },
+      "expect": {
+        "set": {},
+        "dropped": [
+          "av"
+        ]
+      }
+    }
+  ]
+}

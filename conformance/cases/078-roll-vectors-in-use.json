@@ -1,0 +1,171 @@
+{
+  "description": "Play 4's event, dice and pick vectors in use at message 5: patrol fails chance 0.3, roll(6) = 4, and the pick is green",
+  "bundle": {
+    "troupe": "0.11",
+    "kind": "bundle",
+    "characters": [
+      {
+        "id": "a",
+        "name": "Ann",
+        "description": "Ann."
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s",
+        "cast": [
+          {},
+          {
+            "character": "a"
+          }
+        ],
+        "variables": [
+          {
+            "id": "foe_hp",
+            "type": "int",
+            "initial": 10,
+            "description": "d"
+          },
+          {
+            "id": "alarm",
+            "type": "enum",
+            "values": [
+              "none",
+              "low",
+              "high"
+            ],
+            "initial": "none",
+            "description": "d"
+          }
+        ],
+        "events": [
+          {
+            "id": "patrol",
+            "when": "true",
+            "chance": 0.3
+          },
+          {
+            "id": "attack",
+            "when": "true",
+            "compute": {
+              "foe_hp": "state.foe_hp - roll(6)"
+            }
+          }
+        ],
+        "entries": [
+          {
+            "id": "sky",
+            "text": "The sky is {{pick::red::blue::green}}."
+          }
+        ]
+      }
+    ]
+  },
+  "session": {
+    "header": {
+      "troupe": "0.11",
+      "kind": "session",
+      "scenario": "s",
+      "seed": "k7Qm2xVb9TzR4pLc8NwYfA",
+      "characters": [
+        {
+          "id": "p",
+          "name": "Pat",
+          "description": "Pat."
+        }
+      ],
+      "players": [
+        "p"
+      ]
+    },
+    "messages": [
+      {
+        "id": "1",
+        "from": "player",
+        "content": [
+          {
+            "text": "a"
+          }
+        ]
+      },
+      {
+        "id": "2",
+        "parent": "1",
+        "from": "model",
+        "char": "a",
+        "content": [
+          {
+            "text": "b"
+          }
+        ]
+      },
+      {
+        "id": "3",
+        "parent": "2",
+        "from": "player",
+        "content": [
+          {
+            "text": "c"
+          }
+        ]
+      },
+      {
+        "id": "4",
+        "parent": "3",
+        "from": "model",
+        "char": "a",
+        "content": [
+          {
+            "text": "d"
+          }
+        ]
+      },
+      {
+        "id": "5",
+        "parent": "4",
+        "from": "player",
+        "content": [
+          {
+            "text": "e"
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "events",
+      "name": "at message 5: patrol's chance fails, attack rolls 4",
+      "at": "5",
+      "expect": {
+        "changes": [
+          {
+            "by": "rules",
+            "event": "attack",
+            "set": {
+              "foe_hp": 6
+            }
+          }
+        ]
+      }
+    },
+    {
+      "type": "macro",
+      "name": "the pick vector: message \"\" and subject red::blue::green#0",
+      "at": "5",
+      "text": "{{pick::red::blue::green}}",
+      "expect": "green"
+    },
+    {
+      "type": "select",
+      "for": "a",
+      "parent": "5",
+      "messageId": "6",
+      "expect": {
+        "texts": {
+          "s/sky": "The sky is green."
+        }
+      }
+    }
+  ]
+}

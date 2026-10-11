@@ -1,0 +1,133 @@
+{
+  "description": "All parts added in one pass form one system message, event parts before outcome parts (Play 3.3 step 5)",
+  "bundle": {
+    "troupe": "0.11",
+    "kind": "bundle",
+    "characters": [
+      {
+        "id": "a",
+        "name": "Ann",
+        "description": "Ann."
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s",
+        "cast": [
+          {},
+          {
+            "character": "a"
+          }
+        ],
+        "events": [
+          {
+            "id": "m1",
+            "when": "true",
+            "message": [
+              {
+                "text": "Thunder."
+              }
+            ]
+          },
+          {
+            "id": "m2",
+            "when": "true",
+            "message": [
+              {
+                "text": "Rain."
+              }
+            ],
+            "outcomes": [
+              {
+                "message": [
+                  {
+                    "speaker": "a",
+                    "text": "*{{char}} shivers.* Did you hear that?"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "m3",
+            "when": "false",
+            "message": [
+              {
+                "text": "Never."
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "session": {
+    "header": {
+      "troupe": "0.11",
+      "kind": "session",
+      "scenario": "s",
+      "seed": "conformanceSeed0001",
+      "characters": [
+        {
+          "id": "p",
+          "name": "Pat",
+          "description": "Pat."
+        }
+      ],
+      "players": [
+        "p"
+      ],
+      "head": "1"
+    },
+    "messages": [
+      {
+        "id": "1",
+        "from": "player",
+        "content": [
+          {
+            "text": "Listen."
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "events",
+      "at": "1",
+      "eventMessageId": "1e",
+      "expect": {
+        "changes": [
+          {
+            "by": "rules",
+            "event": "m1",
+            "set": {}
+          },
+          {
+            "by": "rules",
+            "event": "m2",
+            "outcome": 0,
+            "set": {}
+          }
+        ],
+        "message": {
+          "id": "1e",
+          "parent": "1",
+          "from": "system",
+          "content": [
+            {
+              "text": "Thunder."
+            },
+            {
+              "text": "Rain."
+            },
+            {
+              "speaker": "a",
+              "text": "*{{char}} shivers.* Did you hear that?"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

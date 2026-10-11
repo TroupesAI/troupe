@@ -1,0 +1,81 @@
+{
+  "description": "Witness rule (Play 7): a part is known by its speaker and the characters present before or after its message's changes; part knownBy replaces this",
+  "bundleFile": "../../examples/lantern-heist.troupe.json",
+  "sessionFile": "../../examples/lantern-heist.troupe-session.jsonl",
+  "addMessages": [
+    {
+      "id": "5",
+      "parent": "3",
+      "from": "player",
+      "content": [
+        {
+          "speaker": "mara",
+          "text": "Elena, do you have a way into the vault?"
+        }
+      ]
+    },
+    {
+      "id": "6",
+      "parent": "5",
+      "from": "model",
+      "char": "elena",
+      "content": [
+        {
+          "text": "Kai drops back in through the skylight."
+        }
+      ],
+      "changes": [
+        {
+          "by": "model",
+          "set": {
+            "scene.present": [
+              "mara",
+              "elena",
+              "kai"
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "tests": [
+    {
+      "type": "scanned",
+      "name": "Kai left in message 3, so he missed message 5",
+      "for": "kai",
+      "parent": "5",
+      "expect": "Kai: East stair. Sure. *He's gone before anyone can stop him.*\nMara: We wait for the eighth bell. Kai, you take the east stair.\nRain hammers the slate roofs above the Duke's manor.\nElena: *Elena unrolls a soaked map.* Two guards on the east stair. We go at the eighth bell.\nKai: Or we go now, while they're drunk. *He grins at Mara.* Your call, boss."
+    },
+    {
+      "type": "scanned",
+      "name": "Elena heard it",
+      "for": "elena",
+      "parent": "5",
+      "depth": 1,
+      "expect": "Mara: Elena, do you have a way into the vault?"
+    },
+    {
+      "type": "scanned",
+      "name": "present after the change: Kai witnesses message 6",
+      "for": "kai",
+      "parent": "6",
+      "depth": 2,
+      "expect": "Kai drops back in through the skylight."
+    },
+    {
+      "type": "scanned",
+      "name": "part knownBy replaces the witness rule",
+      "for": "elena",
+      "parent": "4",
+      "depth": 1,
+      "expect": "The seventh bell rolls across the harbor.\nKai: *Kai hesitates, then nods.* Fine. Your plan, boss. For once."
+    },
+    {
+      "type": "scanned",
+      "for": "kai",
+      "parent": "4",
+      "depth": 1,
+      "expect": "The seventh bell rolls across the harbor.\nKai: *Kai hesitates, then nods.* Fine. Your plan, boss. For once.\nKai: *If the Duke's men are early, this ends badly for all of us.*"
+    }
+  ]
+}

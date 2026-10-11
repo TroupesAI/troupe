@@ -1,0 +1,149 @@
+{
+  "description": "Narrator mode (Play 7): the single voice sees everything in use, including content known by characters and narrator-only content; entries of a character outside the cast are never candidates",
+  "bundle": {
+    "troupe": "0.11",
+    "kind": "bundle",
+    "characters": [
+      {
+        "id": "a",
+        "name": "Ann",
+        "description": "Ann."
+      },
+      {
+        "id": "b",
+        "name": "Bea",
+        "description": "Bea."
+      },
+      {
+        "id": "teller",
+        "name": "The Teller",
+        "description": "An old storyteller, outside the cast.",
+        "entries": [
+          {
+            "id": "t_style",
+            "text": "Never a candidate: the Teller isn't in the cast."
+          }
+        ]
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s",
+        "mode": "narrator",
+        "cast": [
+          {},
+          {
+            "character": "a"
+          },
+          {
+            "character": "b"
+          }
+        ],
+        "entries": [
+          {
+            "id": "style",
+            "position": "system",
+            "knownBy": [
+              "narrator"
+            ],
+            "text": "The narrator speaks in riddles."
+          },
+          {
+            "id": "clue",
+            "knownBy": [
+              "narrator"
+            ],
+            "text": "The butler did it."
+          },
+          {
+            "id": "k_a",
+            "knownBy": [
+              "a"
+            ],
+            "text": "Only Ann."
+          },
+          {
+            "id": "k_all",
+            "text": "Everyone."
+          },
+          {
+            "id": "kv",
+            "keys": [
+              "vault"
+            ],
+            "text": "Keyed on a whisper."
+          },
+          {
+            "id": "ks",
+            "keys": [
+              "stage"
+            ],
+            "text": "Keyed on a narrator-only part."
+          }
+        ]
+      }
+    ]
+  },
+  "session": {
+    "header": {
+      "troupe": "0.11",
+      "kind": "session",
+      "scenario": "s",
+      "seed": "conformanceSeed0001",
+      "characters": [
+        {
+          "id": "p",
+          "name": "Pat",
+          "description": "Pat."
+        }
+      ],
+      "players": [
+        "p"
+      ],
+      "head": "1"
+    },
+    "messages": [
+      {
+        "id": "1",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "Hello all."
+          },
+          {
+            "speaker": "p",
+            "knownBy": [
+              "a",
+              "p"
+            ],
+            "text": "(to Ann) The vault opens at dawn."
+          },
+          {
+            "knownBy": [
+              "narrator"
+            ],
+            "text": "(stage note: the lights dim)"
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "select",
+      "messageId": "2",
+      "parent": "1",
+      "expect": {
+        "activated": [
+          "s/style",
+          "s/clue",
+          "s/k_a",
+          "s/k_all",
+          "s/kv",
+          "s/ks"
+        ]
+      }
+    }
+  ]
+}

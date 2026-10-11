@@ -1,0 +1,99 @@
+{
+  "description": "A deleted message ID is never reused (Format 12.1): a later message line with it is DUPLICATE_ID and ignored",
+  "bundle": {
+    "troupe": "0.11",
+    "kind": "bundle",
+    "characters": [
+      {
+        "id": "kai",
+        "name": "Kai",
+        "description": "d"
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s"
+      }
+    ]
+  },
+  "session": {
+    "header": {
+      "troupe": "0.11",
+      "kind": "session",
+      "scenario": "s",
+      "seed": "k7Qm2xVb9TzR4pLc8NwYfA",
+      "characters": [
+        {
+          "id": "p",
+          "name": "Pat",
+          "description": "d"
+        }
+      ],
+      "players": [
+        "p"
+      ]
+    },
+    "messages": [
+      {
+        "id": "1",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "Hi."
+          }
+        ]
+      },
+      {
+        "id": "2",
+        "parent": "1",
+        "from": "model",
+        "char": "kai",
+        "content": [
+          {
+            "speaker": "kai",
+            "text": "Hello."
+          }
+        ]
+      },
+      {
+        "id": "2",
+        "deleted": true
+      },
+      {
+        "id": "2",
+        "parent": "1",
+        "from": "model",
+        "char": "kai",
+        "content": [
+          {
+            "speaker": "kai",
+            "text": "Back again."
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "fold",
+      "expect": {
+        "ids": [
+          "1"
+        ],
+        "head": "1",
+        "codes": [
+          "DUPLICATE_ID"
+        ]
+      }
+    },
+    {
+      "type": "check",
+      "expect": {
+        "codes": [
+          "DUPLICATE_ID"
+        ]
+      }
+    }
+  ]
+}

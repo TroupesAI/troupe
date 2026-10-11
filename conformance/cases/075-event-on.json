@@ -1,0 +1,261 @@
+{
+  "description": "Event on (Format 9; Play 3.3): only after that kind of message; never at an opening root or a records-only system message; a player-first root is a player message",
+  "bundle": {
+    "troupe": "0.11",
+    "kind": "bundle",
+    "characters": [
+      {
+        "id": "a",
+        "name": "Ann",
+        "description": "Ann."
+      },
+      {
+        "id": "b",
+        "name": "Bea",
+        "description": "Bea."
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s",
+        "cast": [
+          {},
+          {
+            "character": "a"
+          },
+          {
+            "character": "b"
+          }
+        ],
+        "variables": [
+          {
+            "id": "n",
+            "type": "int",
+            "description": "d"
+          }
+        ],
+        "events": [
+          {
+            "id": "any",
+            "when": "true",
+            "compute": {
+              "n": "state.n + 1"
+            }
+          },
+          {
+            "id": "after_player",
+            "on": "player",
+            "when": "true"
+          },
+          {
+            "id": "after_model",
+            "on": "model",
+            "when": "true"
+          }
+        ],
+        "openings": [
+          {
+            "id": "o",
+            "content": [
+              {
+                "text": "Begin."
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "session": {
+    "header": {
+      "troupe": "0.11",
+      "kind": "session",
+      "scenario": "s",
+      "seed": "conformanceSeed0001",
+      "characters": [
+        {
+          "id": "p",
+          "name": "Pat",
+          "description": "Pat."
+        }
+      ],
+      "players": [
+        "p"
+      ]
+    },
+    "messages": [
+      {
+        "id": "r",
+        "opening": "o",
+        "from": "system",
+        "content": [
+          {
+            "text": "Begin."
+          }
+        ],
+        "changes": [
+          {
+            "by": "rules",
+            "set": {
+              "scene.present": [
+                "p"
+              ]
+            }
+          },
+          {
+            "by": "rules",
+            "event": "any",
+            "set": {
+              "n": 1
+            }
+          }
+        ]
+      },
+      {
+        "id": "2",
+        "parent": "r",
+        "from": "player",
+        "content": [
+          {
+            "text": "x"
+          }
+        ],
+        "changes": [
+          {
+            "by": "rules",
+            "event": "any",
+            "set": {
+              "n": 2
+            }
+          },
+          {
+            "by": "rules",
+            "event": "after_player",
+            "set": {}
+          }
+        ]
+      },
+      {
+        "id": "3",
+        "parent": "2",
+        "from": "model",
+        "char": "a",
+        "content": [
+          {
+            "text": "y"
+          }
+        ]
+      },
+      {
+        "id": "4",
+        "parent": "3",
+        "from": "system",
+        "content": [],
+        "changes": [
+          {
+            "by": "player",
+            "set": {}
+          }
+        ]
+      },
+      {
+        "id": "p1",
+        "from": "player",
+        "content": [
+          {
+            "text": "I start."
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "events",
+      "name": "opening root",
+      "at": "r",
+      "expect": {
+        "changes": [
+          {
+            "by": "rules",
+            "event": "any",
+            "set": {
+              "n": 1
+            }
+          }
+        ]
+      }
+    },
+    {
+      "type": "events",
+      "name": "after a player message",
+      "at": "2",
+      "expect": {
+        "changes": [
+          {
+            "by": "rules",
+            "event": "any",
+            "set": {
+              "n": 2
+            }
+          },
+          {
+            "by": "rules",
+            "event": "after_player",
+            "set": {}
+          }
+        ]
+      }
+    },
+    {
+      "type": "events",
+      "name": "after a model reply: `any` fired after the player message in this round",
+      "at": "3",
+      "expect": {
+        "changes": [
+          {
+            "by": "rules",
+            "event": "after_model",
+            "set": {}
+          }
+        ]
+      }
+    },
+    {
+      "type": "events",
+      "name": "a records-only system message matches neither, and `any` already fired this round",
+      "at": "4",
+      "expect": {
+        "changes": []
+      }
+    },
+    {
+      "type": "events",
+      "name": "a player-first root runs on: player events",
+      "at": "p1",
+      "expect": {
+        "changes": [
+          {
+            "by": "rules",
+            "event": "any",
+            "set": {
+              "n": 1
+            }
+          },
+          {
+            "by": "rules",
+            "event": "after_player",
+            "set": {}
+          }
+        ]
+      }
+    },
+    {
+      "type": "cel",
+      "name": "turn: player messages on the path, inclusive",
+      "at": "4",
+      "expr": "turn == 1 && ago('any') == 0",
+      "expect": true
+    }
+  ]
+}

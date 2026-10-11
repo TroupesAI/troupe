@@ -1,0 +1,106 @@
+{
+  "description": "A cast member marked player (Format 6.1, 12.2): a predefined bundle character played by a person fills its own seat",
+  "bundle": {
+    "troupe": "0.11",
+    "kind": "bundle",
+    "characters": [
+      {
+        "id": "hero",
+        "name": "Hero",
+        "description": "The story's hero."
+      },
+      {
+        "id": "a",
+        "name": "Ann",
+        "description": "Ann."
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s",
+        "cast": [
+          {
+            "character": "hero",
+            "player": true
+          },
+          {
+            "character": "a"
+          }
+        ],
+        "variables": [
+          {
+            "id": "trust",
+            "type": "number",
+            "of": "characters",
+            "initial": 0.5,
+            "description": "d"
+          }
+        ],
+        "entries": [
+          {
+            "id": "e",
+            "text": "{{user}} meets {{char}}."
+          }
+        ]
+      }
+    ]
+  },
+  "session": {
+    "header": {
+      "troupe": "0.11",
+      "kind": "session",
+      "scenario": "s",
+      "seed": "conformanceSeed0001",
+      "players": [
+        "hero"
+      ]
+    },
+    "messages": [
+      {
+        "id": "1",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "hero",
+            "text": "Hi."
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "state",
+      "expect": {
+        "scene.present": [
+          "hero",
+          "a"
+        ],
+        "trust.a": 0.5
+      }
+    },
+    {
+      "type": "cel",
+      "expr": "players == ['hero'] && !has(state.trust.hero)",
+      "at": "1",
+      "expect": true
+    },
+    {
+      "type": "select",
+      "for": "a",
+      "parent": "1",
+      "messageId": "2",
+      "expect": {
+        "texts": {
+          "s/e": "Hero meets Ann."
+        }
+      }
+    },
+    {
+      "type": "check",
+      "expect": {
+        "codes": []
+      }
+    }
+  ]
+}

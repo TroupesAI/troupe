@@ -1,0 +1,1374 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://troupe.example/schema/0.11/bundle.schema.json",
+  "title": "Troupe bundle",
+  "description": "A Troupe bundle: characters, worlds and scenarios, with publishing metadata stated once.",
+  "type": "object",
+  "required": [
+    "troupe",
+    "kind"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "troupe": {
+      "$ref": "#/$defs/version"
+    },
+    "kind": {
+      "const": "bundle"
+    },
+    "id": {
+      "$ref": "#/$defs/opaqueId"
+    },
+    "name": {
+      "$ref": "#/$defs/nonEmpty"
+    },
+    "version": {
+      "type": "string"
+    },
+    "updated": {
+      "$ref": "#/$defs/timestamp"
+    },
+    "authors": {
+      "$ref": "#/$defs/strings"
+    },
+    "credits": {
+      "type": "string"
+    },
+    "language": {
+      "type": "string"
+    },
+    "tags": {
+      "$ref": "#/$defs/strings"
+    },
+    "rating": {
+      "enum": [
+        "general",
+        "mature",
+        "explicit"
+      ]
+    },
+    "warnings": {
+      "$ref": "#/$defs/strings"
+    },
+    "cover": {
+      "$ref": "#/$defs/image"
+    },
+    "creatorNotes": {
+      "type": "string"
+    },
+    "requires": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/extName"
+      }
+    },
+    "characters": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/character"
+      }
+    },
+    "worlds": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/world"
+      }
+    },
+    "scenarios": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/scenario"
+      }
+    },
+    "ext": {
+      "$ref": "#/$defs/ext"
+    },
+    "tagline": {
+      "type": "string"
+    }
+  },
+  "$defs": {
+    "version": {
+      "description": "Spec version as major.minor, compared as two integers.",
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"
+    },
+    "id": {
+      "description": "An author ID. CEL reserved words are not allowed.",
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]{0,63}$",
+      "not": {
+        "enum": [
+          "as",
+          "break",
+          "const",
+          "continue",
+          "else",
+          "false",
+          "for",
+          "function",
+          "if",
+          "import",
+          "in",
+          "let",
+          "loop",
+          "namespace",
+          "null",
+          "package",
+          "return",
+          "true",
+          "var",
+          "void",
+          "while"
+        ]
+      }
+    },
+    "ownerId": {
+      "description": "A character, world or scenario ID.",
+      "allOf": [
+        {
+          "$ref": "#/$defs/id"
+        },
+        {
+          "not": {
+            "enum": [
+              "char",
+              "user",
+              "narrator",
+              "session",
+              "state",
+              "scene",
+              "players",
+              "own"
+            ]
+          }
+        }
+      ]
+    },
+    "characterId": {
+      "$ref": "#/$defs/ownerId"
+    },
+    "variableId": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/id"
+        },
+        {
+          "not": {
+            "const": "scene"
+          }
+        }
+      ]
+    },
+    "opaqueId": {
+      "description": "A message, bundle, session, chronicle or record ID.",
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_-]{1,64}$"
+    },
+    "ids": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/id"
+      }
+    },
+    "entryRef": {
+      "description": "<owner>/<entryId>, where the owner is a character, world or scenario ID, or session.",
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]{0,63}/[a-z][a-z0-9_]{0,63}$"
+    },
+    "stateKey": {
+      "description": "A variable ID, optionally preceded by an owner and followed by a key; or scene.location / scene.present.",
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]{0,63}(\\.[a-z][a-z0-9_]{0,63}){0,2}$"
+    },
+    "stateValues": {
+      "description": "State keys with absolute values, validated against their declarations.",
+      "type": "object",
+      "propertyNames": {
+        "$ref": "#/$defs/stateKey"
+      }
+    },
+    "nonEmpty": {
+      "type": "string",
+      "minLength": 1
+    },
+    "strings": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "httpsUrl": {
+      "type": "string",
+      "pattern": "^https://."
+    },
+    "cel": {
+      "type": "string",
+      "minLength": 1
+    },
+    "packagePath": {
+      "description": "A relative path inside a package (Format 14.3).",
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_-][A-Za-z0-9._-]*(/[A-Za-z0-9_-][A-Za-z0-9._-]*)*$"
+    },
+    "image": {
+      "description": "A package path, an https URL, or a base64 data URI of a raster image.",
+      "anyOf": [
+        {
+          "$ref": "#/$defs/packagePath"
+        },
+        {
+          "$ref": "#/$defs/httpsUrl"
+        },
+        {
+          "type": "string",
+          "pattern": "^data:image/(png|jpeg|webp|avif|gif);base64,[A-Za-z0-9+/=]+$"
+        }
+      ]
+    },
+    "extName": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9.-]{0,63}$"
+    },
+    "ext": {
+      "description": "Extension data, keyed by extension name.",
+      "type": "object",
+      "propertyNames": {
+        "$ref": "#/$defs/extName"
+      }
+    },
+    "unit": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "character": {
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "description"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/characterId"
+        },
+        "name": {
+          "$ref": "#/$defs/nonEmpty"
+        },
+        "aliases": {
+          "$ref": "#/$defs/strings"
+        },
+        "description": {
+          "type": "string"
+        },
+        "summary": {
+          "type": "string"
+        },
+        "appearance": {
+          "type": "string"
+        },
+        "voice": {
+          "type": "string"
+        },
+        "examples": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "$ref": "#/$defs/line"
+            }
+          }
+        },
+        "entries": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/entry"
+          }
+        },
+        "variables": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/variable"
+          }
+        },
+        "events": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/event"
+          }
+        },
+        "talkativeness": {
+          "$ref": "#/$defs/unit",
+          "default": 0.5
+        },
+        "avatar": {
+          "$ref": "#/$defs/image"
+        },
+        "images": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/image"
+          }
+        },
+        "ext": {
+          "$ref": "#/$defs/ext"
+        }
+      }
+    },
+    "line": {
+      "type": "object",
+      "required": [
+        "text"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "speaker": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]{0,63}$"
+        },
+        "text": {
+          "type": "string"
+        },
+        "ext": {
+          "$ref": "#/$defs/ext"
+        }
+      }
+    },
+    "world": {
+      "type": "object",
+      "required": [
+        "id",
+        "name"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/ownerId"
+        },
+        "name": {
+          "$ref": "#/$defs/nonEmpty"
+        },
+        "description": {
+          "type": "string"
+        },
+        "locations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/location"
+          }
+        },
+        "entries": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/entry"
+          }
+        },
+        "variables": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/variable"
+          }
+        },
+        "events": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/event"
+          }
+        },
+        "ext": {
+          "$ref": "#/$defs/ext"
+        }
+      }
+    },
+    "location": {
+      "type": "object",
+      "required": [
+        "id",
+        "name"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "name": {
+          "$ref": "#/$defs/nonEmpty"
+        },
+        "description": {
+          "type": "string"
+        },
+        "parent": {
+          "$ref": "#/$defs/id"
+        },
+        "image": {
+          "$ref": "#/$defs/image"
+        },
+        "ext": {
+          "$ref": "#/$defs/ext"
+        }
+      }
+    },
+    "entry": {
+      "type": "object",
+      "required": [
+        "id",
+        "text"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "text": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "keys": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "when": {
+          "$ref": "#/$defs/cel"
+        },
+        "scanDepth": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 4
+        },
+        "chain": {
+          "type": "boolean"
+        },
+        "once": {
+          "type": "boolean"
+        },
+        "sticky": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "cooldown": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "chance": {
+          "$ref": "#/$defs/unit",
+          "default": 1
+        },
+        "group": {
+          "$ref": "#/$defs/id"
+        },
+        "weight": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000000,
+          "default": 1
+        },
+        "priority": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100,
+          "default": 50
+        },
+        "position": {
+          "anyOf": [
+            {
+              "enum": [
+                "system",
+                "context",
+                "tracker"
+              ]
+            },
+            {
+              "type": "integer",
+              "minimum": 0
+            }
+          ],
+          "default": "context"
+        },
+        "knownBy": {
+          "$ref": "#/$defs/ids"
+        },
+        "disabled": {
+          "type": "boolean"
+        },
+        "ext": {
+          "$ref": "#/$defs/ext"
+        },
+        "pull": {
+          "type": "boolean"
+        },
+        "carry": {
+          "type": "boolean"
+        }
+      },
+      "dependentRequired": {
+        "pull": [
+          "title"
+        ]
+      }
+    },
+    "scenario": {
+      "type": "object",
+      "required": [
+        "id"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/ownerId"
+        },
+        "name": {
+          "type": "string"
+        },
+        "premise": {
+          "type": "string"
+        },
+        "briefing": {
+          "type": "string"
+        },
+        "mode": {
+          "enum": [
+            "characters",
+            "narrator",
+            "mixed"
+          ],
+          "default": "characters"
+        },
+        "cast": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/castMember"
+          }
+        },
+        "worlds": {
+          "$ref": "#/$defs/ids"
+        },
+        "openings": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/opening"
+          }
+        },
+        "entries": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/entry"
+          }
+        },
+        "variables": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/variable"
+          }
+        },
+        "events": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/event"
+          }
+        },
+        "ext": {
+          "$ref": "#/$defs/ext"
+        },
+        "tagline": {
+          "type": "string"
+        }
+      }
+    },
+    "castMember": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "character": {
+          "$ref": "#/$defs/characterId"
+        },
+        "notes": {
+          "type": "string"
+        },
+        "ext": {
+          "$ref": "#/$defs/ext"
+        },
+        "player": {
+          "type": "boolean"
+        },
+        "spoiler": {
+          "type": "boolean"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "required": [
+              "player"
+            ],
+            "properties": {
+              "player": {
+                "const": true
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "character"
+            ]
+          }
+        }
+      ]
+    },
+    "opening": {
+      "type": "object",
+      "required": [
+        "id"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "title": {
+          "type": "string"
+        },
+        "set": {
+          "$ref": "#/$defs/stateValues"
+        },
+        "content": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/part"
+          }
+        },
+        "ext": {
+          "$ref": "#/$defs/ext"
+        }
+      }
+    },
+    "variable": {
+      "type": "object",
+      "required": [
+        "id",
+        "type",
+        "description"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/variableId"
+        },
+        "type": {
+          "enum": [
+            "bool",
+            "int",
+            "number",
+            "string",
+            "enum",
+            "set"
+          ]
+        },
+        "values": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string"
+          }
+        },
+        "labels": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "min": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "$ref": "#/$defs/id"
+            }
+          ]
+        },
+        "max": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "$ref": "#/$defs/id"
+            }
+          ]
+        },
+        "initial": {
+          "description": "Validity is checked against the declaration (INVALID_VALUE)."
+        },
+        "of": {
+          "anyOf": [
+            {
+              "enum": [
+                "characters",
+                "cast",
+                "others",
+                "*"
+              ]
+            },
+            {
+              "type": "array",
+              "minItems": 1,
+              "uniqueItems": true,
+              "items": {
+                "$ref": "#/$defs/id"
+              }
+            }
+          ]
+        },
+        "description": {
+          "$ref": "#/$defs/nonEmpty"
+        },
+        "by": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "player",
+              "model"
+            ]
+          }
+        },
+        "maxStep": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "oneWay": {
+          "type": "boolean"
+        },
+        "ask": {
+          "$ref": "#/$defs/nonEmpty"
+        },
+        "ext": {
+          "$ref": "#/$defs/ext"
+        },
+        "spoiler": {
+          "type": "boolean"
+        },
+        "derive": {
+          "$ref": "#/$defs/cel"
+        },
+        "carry": {
+          "type": "boolean"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "enum"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "values"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "enum": [
+                  "int",
+                  "number",
+                  "string",
+                  "bool"
+                ]
+              }
+            }
+          },
+          "then": {
+            "not": {
+              "required": [
+                "values"
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "enum": [
+                  "int",
+                  "number",
+                  "string"
+                ]
+              }
+            }
+          },
+          "then": {
+            "not": {
+              "required": [
+                "labels"
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "enum": [
+                  "int",
+                  "number"
+                ]
+              }
+            }
+          },
+          "else": {
+            "not": {
+              "anyOf": [
+                {
+                  "required": [
+                    "min"
+                  ]
+                },
+                {
+                  "required": [
+                    "max"
+                  ]
+                },
+                {
+                  "required": [
+                    "maxStep"
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "int"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "min": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "$ref": "#/$defs/id"
+                  }
+                ]
+              },
+              "max": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "$ref": "#/$defs/id"
+                  }
+                ]
+              },
+              "maxStep": {
+                "type": "integer"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "string"
+              }
+            }
+          },
+          "then": {
+            "not": {
+              "required": [
+                "oneWay"
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "required": [
+              "ask"
+            ]
+          },
+          "then": {
+            "not": {
+              "anyOf": [
+                {
+                  "required": [
+                    "of"
+                  ]
+                },
+                {
+                  "required": [
+                    "derive"
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "required": [
+              "derive"
+            ]
+          },
+          "then": {
+            "not": {
+              "anyOf": [
+                {
+                  "required": [
+                    "initial"
+                  ]
+                },
+                {
+                  "required": [
+                    "by"
+                  ]
+                },
+                {
+                  "required": [
+                    "of"
+                  ]
+                },
+                {
+                  "required": [
+                    "maxStep"
+                  ]
+                },
+                {
+                  "required": [
+                    "oneWay"
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "required": [
+              "of"
+            ],
+            "properties": {
+              "of": {
+                "const": "*"
+              }
+            }
+          },
+          "then": {
+            "not": {
+              "required": [
+                "initial"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "effects": {
+      "description": "Fields shared by events and outcomes.",
+      "type": "object",
+      "properties": {
+        "set": {
+          "$ref": "#/$defs/stateValues"
+        },
+        "compute": {
+          "type": "object",
+          "propertyNames": {
+            "$ref": "#/$defs/stateKey"
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/cel"
+          }
+        },
+        "message": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/part"
+          }
+        },
+        "direct": {
+          "$ref": "#/$defs/nonEmpty"
+        },
+        "end": {
+          "type": "boolean"
+        },
+        "ext": {
+          "$ref": "#/$defs/ext"
+        }
+      }
+    },
+    "event": {
+      "type": "object",
+      "required": [
+        "id",
+        "when"
+      ],
+      "$ref": "#/$defs/effects",
+      "unevaluatedProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "when": {
+          "$ref": "#/$defs/cel"
+        },
+        "once": {
+          "type": "boolean"
+        },
+        "cooldown": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "chance": {
+          "$ref": "#/$defs/unit",
+          "default": 1
+        },
+        "outcomes": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/outcome"
+          }
+        },
+        "on": {
+          "enum": [
+            "player",
+            "model"
+          ]
+        },
+        "call": {
+          "$ref": "#/$defs/call"
+        }
+      },
+      "if": {
+        "required": [
+          "call"
+        ]
+      },
+      "then": {
+        "not": {
+          "required": [
+            "chance"
+          ]
+        }
+      }
+    },
+    "outcome": {
+      "type": "object",
+      "$ref": "#/$defs/effects",
+      "unevaluatedProperties": false,
+      "properties": {
+        "weight": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000000,
+          "default": 1
+        }
+      }
+    },
+    "part": {
+      "oneOf": [
+        {
+          "title": "Text part",
+          "type": "object",
+          "required": [
+            "text"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "type": {
+              "const": "text"
+            },
+            "text": {
+              "type": "string"
+            },
+            "speaker": {
+              "$ref": "#/$defs/id"
+            },
+            "knownBy": {
+              "$ref": "#/$defs/ids"
+            },
+            "ext": {
+              "$ref": "#/$defs/ext"
+            }
+          }
+        },
+        {
+          "title": "Image part",
+          "type": "object",
+          "required": [
+            "type",
+            "src"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "type": {
+              "const": "image"
+            },
+            "src": {
+              "$ref": "#/$defs/image"
+            },
+            "alt": {
+              "type": "string"
+            },
+            "speaker": {
+              "$ref": "#/$defs/id"
+            },
+            "ext": {
+              "$ref": "#/$defs/ext"
+            },
+            "knownBy": {
+              "$ref": "#/$defs/ids"
+            },
+            "generated": {
+              "$ref": "#/$defs/generated"
+            }
+          }
+        },
+        {
+          "title": "Audio part",
+          "type": "object",
+          "required": [
+            "type",
+            "src"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "type": {
+              "const": "audio"
+            },
+            "src": {
+              "$ref": "#/$defs/audio"
+            },
+            "transcript": {
+              "type": "string"
+            },
+            "speaker": {
+              "$ref": "#/$defs/id"
+            },
+            "knownBy": {
+              "$ref": "#/$defs/ids"
+            },
+            "generated": {
+              "$ref": "#/$defs/generated"
+            },
+            "ext": {
+              "$ref": "#/$defs/ext"
+            }
+          }
+        },
+        {
+          "title": "Reasoning part",
+          "type": "object",
+          "required": [
+            "type",
+            "text"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "type": {
+              "const": "reasoning"
+            },
+            "text": {
+              "type": "string"
+            },
+            "ext": {
+              "$ref": "#/$defs/ext"
+            }
+          }
+        },
+        {
+          "title": "Tool part",
+          "type": "object",
+          "required": [
+            "type",
+            "name",
+            "input"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "type": {
+              "const": "tool"
+            },
+            "name": {
+              "type": "string"
+            },
+            "input": true,
+            "output": true,
+            "ext": {
+              "$ref": "#/$defs/ext"
+            }
+          }
+        }
+      ]
+    },
+    "eventName": {
+      "description": "A scenario event ID, or <owner>/<id> for a character's or world's event.",
+      "type": "string",
+      "pattern": "^([a-z][a-z0-9_]{0,63}/)?[a-z][a-z0-9_]{0,63}$"
+    },
+    "limits": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "lines": {
+          "$ref": "#/$defs/strings"
+        },
+        "veils": {
+          "$ref": "#/$defs/strings"
+        },
+        "ext": {
+          "$ref": "#/$defs/ext"
+        }
+      }
+    },
+    "generated": {
+      "type": "object",
+      "required": [
+        "model"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "model": {
+          "type": "string"
+        },
+        "prompt": {
+          "type": "string"
+        },
+        "seed": {
+          "type": "string"
+        },
+        "from": {
+          "$ref": "#/$defs/strings"
+        },
+        "at": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "ext": {
+          "$ref": "#/$defs/ext"
+        }
+      }
+    },
+    "param": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/variable"
+        },
+        {
+          "not": {
+            "anyOf": [
+              {
+                "required": [
+                  "of"
+                ]
+              },
+              {
+                "required": [
+                  "derive"
+                ]
+              },
+              {
+                "required": [
+                  "by"
+                ]
+              },
+              {
+                "required": [
+                  "ask"
+                ]
+              },
+              {
+                "required": [
+                  "carry"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "call": {
+      "type": "object",
+      "required": [
+        "by"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "by": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "player",
+              "model"
+            ]
+          }
+        },
+        "label": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "params": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/param"
+          }
+        },
+        "ext": {
+          "$ref": "#/$defs/ext"
+        }
+      }
+    },
+    "audio": {
+      "description": "A package path, an https URL, or a base64 data URI of an audio file.",
+      "anyOf": [
+        {
+          "$ref": "#/$defs/packagePath"
+        },
+        {
+          "$ref": "#/$defs/httpsUrl"
+        },
+        {
+          "type": "string",
+          "pattern": "^data:audio/(ogg|mpeg|mp4|flac|wav|x-wav);base64,[A-Za-z0-9+/=]+$"
+        }
+      ]
+    }
+  }
+}

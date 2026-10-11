@@ -1,0 +1,202 @@
+{
+  "description": "Format Appendix B.4 continued: the session started from Mira's chronicle is valid with the chronicle's Mira replacing the card's, replays without the chronicle file, offers the memories in the pull catalog rather than selecting them, and writes back a record citing its source with closeness 61 and only the new memory (Format 12.2, 13; Play 5.6)",
+  "bundleFile": "../../examples/mira-card.troupe.json",
+  "session": {
+    "header": {
+      "troupe": "0.11",
+      "kind": "session",
+      "scenario": "kestrel",
+      "seed": "conformanceSeed0001",
+      "id": "s-1009",
+      "chronicles": [
+        "0d4f3a62-5b1e-4c8a-9f27-6a1c2e8b7d40"
+      ],
+      "characters": [
+        {
+          "id": "mara",
+          "name": "Mara",
+          "description": "A courier who keeps the Kestrel stocked."
+        },
+        {
+          "id": "mira",
+          "name": "Mira",
+          "description": "A sarcastic starship engineer who talks to engines more kindly than to people.",
+          "variables": [
+            {
+              "id": "closeness",
+              "type": "int",
+              "min": 0,
+              "max": 100,
+              "by": [
+                "model"
+              ],
+              "carry": true,
+              "description": "How close Mira feels to {{user}}."
+            }
+          ]
+        }
+      ],
+      "players": [
+        "mara"
+      ]
+    },
+    "messages": [
+      {
+        "id": "1",
+        "opening": "docked",
+        "from": "system",
+        "content": [
+          {
+            "speaker": "mira",
+            "text": "*She doesn't look up from the reactor.* If you're here about the noise, it's supposed to sound like that."
+          }
+        ],
+        "entries": [
+          {
+            "id": "lake",
+            "title": "The promise about the lake",
+            "pull": true,
+            "carry": true,
+            "knownBy": [
+              "mira"
+            ],
+            "text": "Mira and Mara saw the frozen lake on Thessa together, as she had promised."
+          },
+          {
+            "id": "juna",
+            "title": "Juna's signal",
+            "pull": true,
+            "carry": true,
+            "knownBy": [
+              "mira"
+            ],
+            "text": "Mara helped Mira trace a signal that might be from her sister Juna."
+          }
+        ],
+        "changes": [
+          {
+            "by": "rules",
+            "set": {
+              "mira.closeness": 58
+            }
+          },
+          {
+            "by": "rules",
+            "set": {
+              "scene.present": [
+                "mara",
+                "mira"
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "addMessages": [
+    {
+      "id": "2",
+      "parent": "1",
+      "from": "player",
+      "content": [
+        {
+          "speaker": "mara",
+          "text": "Brought you a part for the reactor."
+        }
+      ]
+    },
+    {
+      "id": "3",
+      "parent": "2",
+      "from": "model",
+      "char": "mira",
+      "content": [
+        {
+          "speaker": "mira",
+          "text": "You remembered."
+        }
+      ],
+      "changes": [
+        {
+          "by": "model",
+          "set": {
+            "mira.closeness": 61
+          }
+        }
+      ],
+      "entries": [
+        {
+          "id": "part",
+          "carry": true,
+          "knownBy": [
+            "mira"
+          ],
+          "text": "Mara brought Mira a reactor part."
+        }
+      ]
+    }
+  ],
+  "tests": [
+    {
+      "type": "check",
+      "expect": {
+        "codes": []
+      }
+    },
+    {
+      "type": "state",
+      "at": "1",
+      "expect": {
+        "mira.closeness": 58,
+        "scene.present": [
+          "mara",
+          "mira"
+        ]
+      }
+    },
+    {
+      "type": "select",
+      "for": "mira",
+      "parent": "1",
+      "messageId": "x2",
+      "expect": {
+        "catalog": [
+          "session/lake",
+          "session/juna"
+        ],
+        "activated": []
+      }
+    },
+    {
+      "type": "chronicle",
+      "name": "writing back at message 3",
+      "chronicleFile": "../../examples/mira.troupe-chronicle.jsonl",
+      "writeBack": {
+        "head": "3",
+        "id": "r3"
+      },
+      "expect": {
+        "record": {
+          "id": "r3",
+          "source": {
+            "session": "s-1009",
+            "message": "3"
+          },
+          "entries": [
+            {
+              "id": "part",
+              "carry": true,
+              "knownBy": [
+                "mira"
+              ],
+              "text": "Mara brought Mira a reactor part."
+            }
+          ],
+          "set": {
+            "closeness": 61
+          }
+        }
+      }
+    }
+  ]
+}

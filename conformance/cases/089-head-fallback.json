@@ -1,0 +1,146 @@
+{
+  "description": "The head (Format 12.1): when neither a head record nor the header's head names a surviving message, it is the last surviving message added",
+  "bundle": {
+    "troupe": "0.11",
+    "kind": "bundle",
+    "worlds": [
+      {
+        "id": "w1",
+        "name": "Port",
+        "locations": [
+          {
+            "id": "dock",
+            "name": "Dock"
+          }
+        ]
+      },
+      {
+        "id": "w2",
+        "name": "Elsewhere",
+        "locations": [
+          {
+            "id": "moon",
+            "name": "Moon"
+          }
+        ]
+      }
+    ],
+    "characters": [
+      {
+        "id": "a",
+        "name": "Ann",
+        "description": "Ann."
+      },
+      {
+        "id": "b",
+        "name": "Bea",
+        "description": "Bea."
+      },
+      {
+        "id": "c",
+        "name": "Cy",
+        "description": "Cy."
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s",
+        "worlds": [
+          "w1"
+        ],
+        "cast": [
+          {},
+          {
+            "character": "a",
+            "player": true
+          },
+          {
+            "character": "b"
+          },
+          {
+            "character": "c",
+            "player": true
+          }
+        ]
+      }
+    ]
+  },
+  "session": {
+    "header": {
+      "troupe": "0.11",
+      "kind": "session",
+      "scenario": "s",
+      "seed": "conformanceSeed0001",
+      "characters": [
+        {
+          "id": "p",
+          "name": "Pat",
+          "description": "Pat."
+        }
+      ],
+      "players": [
+        "p",
+        "b"
+      ],
+      "head": "9"
+    },
+    "messages": [
+      {
+        "id": "1",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "a"
+          }
+        ]
+      },
+      {
+        "id": "2",
+        "parent": "1",
+        "from": "model",
+        "char": "b",
+        "content": [
+          {
+            "speaker": "b",
+            "text": "b"
+          }
+        ]
+      },
+      {
+        "id": "3",
+        "parent": "1",
+        "from": "model",
+        "char": "b",
+        "content": [
+          {
+            "speaker": "b",
+            "text": "c"
+          }
+        ]
+      },
+      {
+        "head": "3"
+      },
+      {
+        "id": "3",
+        "deleted": true
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "fold",
+      "expect": {
+        "ids": [
+          "1",
+          "2"
+        ],
+        "head": "2",
+        "codes": [
+          "UNKNOWN_MESSAGE"
+        ]
+      }
+    }
+  ]
+}

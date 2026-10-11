@@ -1,0 +1,13 @@
+{
+  "name": "troupe-spec",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "check": "bun scripts/check.ts",
+    "examples": "bun scripts/check.ts --write-examples"
+  },
+  "devDependencies": {
+    "ajv": "^8.20.0",
+    "ajv-formats": "^3.0.1"
+  }
+}

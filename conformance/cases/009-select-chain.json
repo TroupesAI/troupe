@@ -1,0 +1,143 @@
+{
+  "description": "Chain passes (Play 5.5 step 2): chain text is cumulative; keyless entries match in every pass; a false when waits for the next pass; non-chain entries add nothing",
+  "bundle": {
+    "troupe": "0.11",
+    "kind": "bundle",
+    "characters": [
+      {
+        "id": "a",
+        "name": "Ann",
+        "description": "Ann."
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s",
+        "cast": [
+          {},
+          {
+            "character": "a"
+          }
+        ],
+        "entries": [
+          {
+            "id": "c1",
+            "keys": [
+              "castle"
+            ],
+            "chain": true,
+            "text": "The castle has a hidden moat."
+          },
+          {
+            "id": "c2",
+            "keys": [
+              "moat"
+            ],
+            "chain": true,
+            "text": "The moat is full of eels."
+          },
+          {
+            "id": "c3",
+            "keys": [
+              "eels"
+            ],
+            "text": "Eels bite."
+          },
+          {
+            "id": "c5",
+            "keys": [
+              "hidden"
+            ],
+            "text": "Selected in pass 2 from c1's text."
+          },
+          {
+            "id": "c6",
+            "keys": [
+              "hidden"
+            ],
+            "when": "hit('eels')",
+            "text": "Pass 2: hit('eels') is false, so it waits; pass 3's cumulative chain text has eels."
+          },
+          {
+            "id": "c7",
+            "when": "hit('moat')",
+            "text": "Keyless: matches in every pass; hit('moat') becomes true with pass 2's chain text."
+          },
+          {
+            "id": "c9",
+            "keys": [
+              "castle"
+            ],
+            "text": "The tower has a portcullis."
+          },
+          {
+            "id": "c10",
+            "keys": [
+              "portcullis"
+            ],
+            "text": "c9 has no chain, so this never activates."
+          },
+          {
+            "id": "c11",
+            "keys": [
+              "eels"
+            ],
+            "when": "hit('hidden')",
+            "text": "Pass 3 sees c1's and c2's texts together (cumulative chain text)."
+          }
+        ]
+      }
+    ]
+  },
+  "session": {
+    "header": {
+      "troupe": "0.11",
+      "kind": "session",
+      "scenario": "s",
+      "seed": "conformanceSeed0001",
+      "characters": [
+        {
+          "id": "p",
+          "name": "Pat",
+          "description": "Pat."
+        }
+      ],
+      "players": [
+        "p"
+      ],
+      "head": "1"
+    },
+    "messages": [
+      {
+        "id": "1",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "We approach the castle."
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "select",
+      "for": "a",
+      "parent": "1",
+      "messageId": "2",
+      "expect": {
+        "activated": [
+          "s/c1",
+          "s/c2",
+          "s/c3",
+          "s/c5",
+          "s/c6",
+          "s/c7",
+          "s/c9",
+          "s/c11"
+        ]
+      }
+    }
+  ]
+}

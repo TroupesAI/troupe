@@ -1,0 +1,101 @@
+{
+  "description": "Event chance uses the triggering message's ID and the event ID (Play 4)",
+  "bundle": {
+    "troupe": "0.11",
+    "kind": "bundle",
+    "characters": [
+      {
+        "id": "a",
+        "name": "Ann",
+        "description": "Ann."
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s",
+        "cast": [
+          {},
+          {
+            "character": "a"
+          }
+        ],
+        "events": [
+          {
+            "id": "storm",
+            "when": "true",
+            "chance": 0.5
+          },
+          {
+            "id": "never",
+            "when": "true",
+            "chance": 0
+          }
+        ]
+      }
+    ]
+  },
+  "session": {
+    "header": {
+      "troupe": "0.11",
+      "kind": "session",
+      "scenario": "s",
+      "seed": "conformanceSeed0001",
+      "characters": [
+        {
+          "id": "p",
+          "name": "Pat",
+          "description": "Pat."
+        }
+      ],
+      "players": [
+        "p"
+      ],
+      "head": "t1"
+    },
+    "messages": [
+      {
+        "id": "t1",
+        "from": "player",
+        "content": [
+          {
+            "text": "x"
+          }
+        ]
+      },
+      {
+        "id": "t2",
+        "parent": "t1",
+        "from": "player",
+        "content": [
+          {
+            "text": "y"
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "events",
+      "name": "t1: 0.352 < 0.5",
+      "at": "t1",
+      "expect": {
+        "changes": [
+          {
+            "by": "rules",
+            "event": "storm",
+            "set": {}
+          }
+        ]
+      }
+    },
+    {
+      "type": "events",
+      "name": "t2: 0.775 >= 0.5",
+      "at": "t2",
+      "expect": {
+        "changes": []
+      }
+    }
+  ]
+}

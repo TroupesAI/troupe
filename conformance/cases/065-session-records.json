@@ -1,0 +1,164 @@
+{
+  "description": "Append-only session records (Format 12.1): a repeated id replaces a message and keeps its parent; a deletion removes descendants; head records move the head; the head defaults to the last message added",
+  "bundle": {
+    "troupe": "0.11",
+    "kind": "bundle",
+    "characters": [
+      {
+        "id": "a",
+        "name": "Ann",
+        "description": "Ann."
+      },
+      {
+        "id": "b",
+        "name": "Bea",
+        "description": "Bea."
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s",
+        "cast": [
+          {},
+          {
+            "character": "a"
+          },
+          {
+            "character": "b"
+          }
+        ]
+      }
+    ]
+  },
+  "session": {
+    "header": {
+      "troupe": "0.11",
+      "kind": "session",
+      "scenario": "s",
+      "seed": "conformanceSeed0001",
+      "characters": [
+        {
+          "id": "p",
+          "name": "Pat",
+          "description": "Pat."
+        }
+      ],
+      "players": [
+        "p"
+      ]
+    },
+    "messages": [
+      {
+        "id": "1",
+        "from": "player",
+        "content": [
+          {
+            "text": "one"
+          }
+        ]
+      },
+      {
+        "id": "2",
+        "parent": "1",
+        "from": "model",
+        "char": "a",
+        "content": [
+          {
+            "text": "two"
+          }
+        ]
+      },
+      {
+        "id": "3",
+        "parent": "2",
+        "from": "player",
+        "content": [
+          {
+            "text": "three"
+          }
+        ]
+      },
+      {
+        "id": "2b",
+        "parent": "1",
+        "from": "model",
+        "char": "b",
+        "content": [
+          {
+            "text": "other"
+          }
+        ]
+      },
+      {
+        "id": "2",
+        "parent": "2b",
+        "from": "model",
+        "char": "a",
+        "content": [
+          {
+            "text": "two, edited"
+          }
+        ]
+      },
+      {
+        "head": "3"
+      },
+      {
+        "id": "2b",
+        "deleted": true
+      },
+      {
+        "id": "4",
+        "parent": "3",
+        "from": "model",
+        "char": "a",
+        "content": [
+          {
+            "text": "four"
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "fold",
+      "expect": {
+        "ids": [
+          "1",
+          "2",
+          "3",
+          "4"
+        ],
+        "head": "3",
+        "codes": [],
+        "message": {
+          "id": "2",
+          "parent": "1",
+          "from": "model",
+          "char": "a",
+          "content": [
+            {
+              "text": "two, edited"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "select",
+      "name": "the head is the last head record",
+      "for": "a",
+      "messageId": "x",
+      "expect": {
+        "activated": []
+      }
+    },
+    {
+      "type": "check",
+      "expect": {
+        "codes": []
+      }
+    }
+  ]
+}

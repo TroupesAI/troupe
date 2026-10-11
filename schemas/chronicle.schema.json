@@ -1,0 +1,137 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://troupe.example/schema/0.11/chronicle.schema.json",
+  "title": "Troupe chronicle line",
+  "description": "Each line of a Troupe chronicle file: the header first, then records and deletions.",
+  "oneOf": [
+    {
+      "$ref": "#/$defs/header"
+    },
+    {
+      "$ref": "#/$defs/record"
+    },
+    {
+      "$ref": "#/$defs/deletion"
+    }
+  ],
+  "$defs": {
+    "header": {
+      "type": "object",
+      "required": [
+        "troupe",
+        "kind",
+        "id",
+        "character"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "$schema": {
+          "type": "string"
+        },
+        "troupe": {
+          "$ref": "bundle.schema.json#/$defs/version"
+        },
+        "kind": {
+          "const": "chronicle"
+        },
+        "id": {
+          "$ref": "bundle.schema.json#/$defs/opaqueId"
+        },
+        "character": {
+          "$ref": "bundle.schema.json#/$defs/character"
+        },
+        "persona": {
+          "$ref": "bundle.schema.json#/$defs/character"
+        },
+        "bundle": {
+          "$ref": "bundle.schema.json#/$defs/opaqueId"
+        },
+        "limits": {
+          "$ref": "bundle.schema.json#/$defs/limits"
+        },
+        "ext": {
+          "$ref": "bundle.schema.json#/$defs/ext"
+        }
+      }
+    },
+    "record": {
+      "type": "object",
+      "required": [
+        "id"
+      ],
+      "additionalProperties": false,
+      "not": {
+        "anyOf": [
+          {
+            "required": [
+              "kind"
+            ]
+          },
+          {
+            "required": [
+              "deleted"
+            ]
+          }
+        ]
+      },
+      "properties": {
+        "id": {
+          "$ref": "bundle.schema.json#/$defs/opaqueId"
+        },
+        "at": {
+          "$ref": "bundle.schema.json#/$defs/timestamp"
+        },
+        "source": {
+          "type": "object",
+          "required": [
+            "session",
+            "message"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "session": {
+              "$ref": "bundle.schema.json#/$defs/opaqueId"
+            },
+            "message": {
+              "$ref": "bundle.schema.json#/$defs/opaqueId"
+            },
+            "ext": {
+              "$ref": "bundle.schema.json#/$defs/ext"
+            }
+          }
+        },
+        "entries": {
+          "type": "array",
+          "items": {
+            "$ref": "bundle.schema.json#/$defs/entry"
+          }
+        },
+        "set": {
+          "$ref": "bundle.schema.json#/$defs/stateValues"
+        },
+        "reason": {
+          "type": "string"
+        },
+        "ext": {
+          "$ref": "bundle.schema.json#/$defs/ext"
+        }
+      }
+    },
+    "deletion": {
+      "type": "object",
+      "required": [
+        "id",
+        "deleted"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "bundle.schema.json#/$defs/opaqueId"
+        },
+        "deleted": {
+          "const": true
+        }
+      }
+    }
+  }
+}

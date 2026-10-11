@@ -1,0 +1,179 @@
+{
+  "description": "Keys over the scan window: scanDepth, speaker names in scanned text, scanDepth 0 (Play 3.1, 5.2, 5.5)",
+  "bundle": {
+    "troupe": "0.11",
+    "kind": "bundle",
+    "characters": [
+      {
+        "id": "a",
+        "name": "Ann",
+        "description": "Ann."
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s",
+        "cast": [
+          {},
+          {
+            "character": "a"
+          }
+        ],
+        "entries": [
+          {
+            "id": "k1",
+            "keys": [
+              "dragon"
+            ],
+            "text": "k1"
+          },
+          {
+            "id": "k2",
+            "keys": [
+              "dragon"
+            ],
+            "scanDepth": 5,
+            "text": "k2"
+          },
+          {
+            "id": "k3",
+            "keys": [
+              "gold"
+            ],
+            "scanDepth": 1,
+            "text": "k3"
+          },
+          {
+            "id": "k4",
+            "keys": [
+              "gold"
+            ],
+            "scanDepth": 2,
+            "text": "k4"
+          },
+          {
+            "id": "k5",
+            "keys": [
+              "shh"
+            ],
+            "scanDepth": 0,
+            "text": "k5"
+          },
+          {
+            "id": "k6",
+            "keys": [
+              "ann"
+            ],
+            "scanDepth": 1,
+            "text": "k6: the speaker's name is scanned"
+          }
+        ]
+      }
+    ]
+  },
+  "session": {
+    "header": {
+      "troupe": "0.11",
+      "kind": "session",
+      "scenario": "s",
+      "seed": "conformanceSeed0001",
+      "characters": [
+        {
+          "id": "p",
+          "name": "Pat",
+          "description": "Pat."
+        }
+      ],
+      "players": [
+        "p"
+      ],
+      "head": "5"
+    },
+    "messages": [
+      {
+        "id": "1",
+        "from": "system",
+        "content": [
+          {
+            "text": "The dragon sleeps."
+          }
+        ]
+      },
+      {
+        "id": "2",
+        "parent": "1",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "We sneak past."
+          }
+        ]
+      },
+      {
+        "id": "3",
+        "parent": "2",
+        "from": "model",
+        "char": "a",
+        "content": [
+          {
+            "speaker": "a",
+            "text": "Quiet now."
+          }
+        ]
+      },
+      {
+        "id": "4",
+        "parent": "3",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "Look, gold!"
+          }
+        ]
+      },
+      {
+        "id": "5",
+        "parent": "4",
+        "from": "model",
+        "char": "a",
+        "content": [
+          {
+            "speaker": "a",
+            "text": "Shh."
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "select",
+      "for": "a",
+      "parent": "5",
+      "messageId": "6",
+      "expect": {
+        "activated": [
+          "s/k2",
+          "s/k4",
+          "s/k6"
+        ]
+      }
+    },
+    {
+      "type": "scanned",
+      "for": "a",
+      "parent": "5",
+      "depth": 2,
+      "expect": "Ann: Shh.\nPat: Look, gold!"
+    },
+    {
+      "type": "scanned",
+      "for": "a",
+      "parent": "5",
+      "depth": 0,
+      "expect": ""
+    }
+  ]
+}

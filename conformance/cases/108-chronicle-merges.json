@@ -1,0 +1,152 @@
+{
+  "description": "Chronicles' limits are added to the session's without duplicates, in order, and an opening without content starts with every character in the session's cast present, chronicle characters included (Format 6.3; Play 2.2)",
+  "bundle": {
+    "troupe": "0.11",
+    "kind": "bundle",
+    "characters": [
+      {
+        "id": "kai",
+        "name": "Kai",
+        "description": "The bundle's Kai."
+      },
+      {
+        "id": "ann",
+        "name": "Ann",
+        "description": "Ann."
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s",
+        "cast": [
+          {},
+          {
+            "character": "kai"
+          },
+          {
+            "character": "ann"
+          }
+        ],
+        "openings": [
+          {
+            "id": "street",
+            "title": "On the street"
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "start",
+      "name": "two chronicles, one for a character with no bundle character",
+      "scenario": "s",
+      "opening": "street",
+      "characters": [
+        {
+          "id": "p",
+          "name": "Pat",
+          "description": "d"
+        }
+      ],
+      "chronicles": [
+        {
+          "header": {
+            "troupe": "0.11",
+            "kind": "chronicle",
+            "id": "c-zed",
+            "character": {
+              "id": "zed",
+              "name": "Zed",
+              "description": "A drifter.",
+              "variables": [
+                {
+                  "id": "mood",
+                  "type": "string",
+                  "carry": true,
+                  "description": "d"
+                }
+              ]
+            },
+            "limits": {
+              "lines": [
+                "gore"
+              ],
+              "veils": [
+                "romance"
+              ]
+            }
+          },
+          "records": [
+            {
+              "id": "r1",
+              "set": {
+                "mood": "calm"
+              }
+            }
+          ]
+        },
+        {
+          "header": {
+            "troupe": "0.11",
+            "kind": "chronicle",
+            "id": "c-kai",
+            "character": {
+              "id": "kai",
+              "name": "Kai",
+              "description": "Kai, remembered."
+            },
+            "limits": {
+              "lines": [
+                "gore",
+                "spiders"
+              ]
+            }
+          },
+          "records": []
+        }
+      ],
+      "expect": {
+        "changes": [
+          {
+            "by": "rules",
+            "set": {
+              "zed.mood": "calm"
+            }
+          },
+          {
+            "by": "rules",
+            "set": {
+              "scene.present": [
+                "p",
+                "kai",
+                "ann",
+                "zed"
+              ]
+            }
+          }
+        ],
+        "characters": [
+          "p",
+          "zed",
+          "kai"
+        ],
+        "header": {
+          "chronicles": [
+            "c-zed",
+            "c-kai"
+          ],
+          "limits": {
+            "lines": [
+              "gore",
+              "spiders"
+            ],
+            "veils": [
+              "romance"
+            ]
+          }
+        }
+      }
+    }
+  ]
+}

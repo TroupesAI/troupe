@@ -1,0 +1,620 @@
+{
+  "description": "Starting from a chronicle (Play 2.2): values are validated and only carried keys kept; persona keys go to the player's character; a character with no bundle character joins the cast and is present; limits join the session's; writing back keeps only keys a change on the path set, reverses the persona key, and skips root entries unchanged from how the start copied them",
+  "bundle": {
+    "troupe": "0.11",
+    "kind": "bundle",
+    "characters": [
+      {
+        "id": "ann",
+        "name": "Ann",
+        "description": "Ann."
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s",
+        "cast": [
+          {},
+          {
+            "character": "ann"
+          }
+        ],
+        "openings": [
+          {
+            "id": "o",
+            "content": [
+              {
+                "text": "Rain."
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "session": {
+    "header": {
+      "troupe": "0.11",
+      "kind": "session",
+      "id": "sess-9",
+      "scenario": "s",
+      "seed": "conformanceSeed0001",
+      "chronicles": [
+        "c-kai"
+      ],
+      "characters": [
+        {
+          "id": "you",
+          "name": "Rae",
+          "description": "A courier."
+        },
+        {
+          "id": "kai",
+          "name": "Kai",
+          "description": "A drifter.",
+          "variables": [
+            {
+              "id": "feelings",
+              "type": "int",
+              "of": "cast",
+              "min": -10,
+              "max": 10,
+              "carry": true,
+              "description": "d"
+            },
+            {
+              "id": "mood",
+              "type": "string",
+              "description": "not carried"
+            },
+            {
+              "id": "level",
+              "type": "int",
+              "carry": true,
+              "derive": "1",
+              "description": "derived, never carried"
+            }
+          ]
+        }
+      ],
+      "players": [
+        "you"
+      ],
+      "limits": {
+        "lines": [
+          "gore"
+        ],
+        "veils": [
+          "romance"
+        ]
+      }
+    },
+    "messages": [
+      {
+        "id": "1",
+        "opening": "o",
+        "from": "system",
+        "content": [
+          {
+            "text": "Rain."
+          }
+        ],
+        "entries": [
+          {
+            "id": "met",
+            "carry": true,
+            "text": "Kai met Mara at the docks.",
+            "knownBy": [
+              "kai"
+            ]
+          }
+        ],
+        "changes": [
+          {
+            "by": "rules",
+            "set": {
+              "kai.feelings.you": 7
+            }
+          },
+          {
+            "by": "rules",
+            "set": {
+              "scene.present": [
+                "you",
+                "kai"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "id": "2",
+        "parent": "1",
+        "from": "player",
+        "content": [
+          {
+            "text": "Hello again."
+          }
+        ],
+        "changes": [
+          {
+            "by": "model",
+            "set": {
+              "kai.feelings.you": 9
+            }
+          }
+        ],
+        "entries": [
+          {
+            "id": "storm",
+            "carry": true,
+            "text": "Kai and Rae sheltered from a storm."
+          },
+          {
+            "id": "ann_secret",
+            "carry": true,
+            "knownBy": [
+              "ann"
+            ],
+            "text": "Ann's secret."
+          },
+          {
+            "id": "scratch",
+            "text": "Not carried."
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "chronicle",
+      "chronicle": {
+        "header": {
+          "troupe": "0.11",
+          "kind": "chronicle",
+          "id": "c-kai",
+          "character": {
+            "id": "kai",
+            "name": "Kai",
+            "description": "A drifter.",
+            "variables": [
+              {
+                "id": "feelings",
+                "type": "int",
+                "of": "cast",
+                "min": -10,
+                "max": 10,
+                "carry": true,
+                "description": "d"
+              },
+              {
+                "id": "mood",
+                "type": "string",
+                "description": "not carried"
+              },
+              {
+                "id": "level",
+                "type": "int",
+                "carry": true,
+                "derive": "1",
+                "description": "derived, never carried"
+              }
+            ]
+          },
+          "persona": {
+            "id": "mara",
+            "name": "Mara",
+            "description": "d"
+          },
+          "limits": {
+            "lines": [
+              "gore"
+            ],
+            "veils": [
+              "romance"
+            ]
+          }
+        },
+        "records": [
+          {
+            "id": "r1",
+            "entries": [
+              {
+                "id": "met",
+                "carry": true,
+                "text": "Kai met Mara at the docks."
+              }
+            ],
+            "set": {
+              "feelings.mara": 7,
+              "mood": "glum",
+              "level": 3
+            }
+          }
+        ]
+      },
+      "expect": {
+        "values": {
+          "feelings.mara": 7,
+          "mood": "glum",
+          "level": 3
+        },
+        "codes": [
+          "UNKNOWN_VARIABLE"
+        ]
+      }
+    },
+    {
+      "type": "start",
+      "scenario": "s",
+      "opening": "o",
+      "characters": [
+        {
+          "id": "you",
+          "name": "Rae",
+          "description": "A courier."
+        }
+      ],
+      "chronicles": [
+        {
+          "header": {
+            "troupe": "0.11",
+            "kind": "chronicle",
+            "id": "c-kai",
+            "character": {
+              "id": "kai",
+              "name": "Kai",
+              "description": "A drifter.",
+              "variables": [
+                {
+                  "id": "feelings",
+                  "type": "int",
+                  "of": "cast",
+                  "min": -10,
+                  "max": 10,
+                  "carry": true,
+                  "description": "d"
+                },
+                {
+                  "id": "mood",
+                  "type": "string",
+                  "description": "not carried"
+                },
+                {
+                  "id": "level",
+                  "type": "int",
+                  "carry": true,
+                  "derive": "1",
+                  "description": "derived, never carried"
+                }
+              ]
+            },
+            "persona": {
+              "id": "mara",
+              "name": "Mara",
+              "description": "d"
+            },
+            "limits": {
+              "lines": [
+                "gore"
+              ],
+              "veils": [
+                "romance"
+              ]
+            }
+          },
+          "records": [
+            {
+              "id": "r1",
+              "entries": [
+                {
+                  "id": "met",
+                  "carry": true,
+                  "text": "Kai met Mara at the docks."
+                }
+              ],
+              "set": {
+                "feelings.mara": 7,
+                "mood": "glum",
+                "level": 3
+              }
+            }
+          ]
+        }
+      ],
+      "expect": {
+        "changes": [
+          {
+            "by": "rules",
+            "set": {
+              "kai.feelings.you": 7
+            }
+          },
+          {
+            "by": "rules",
+            "set": {
+              "scene.present": [
+                "you",
+                "kai"
+              ]
+            }
+          }
+        ],
+        "entries": [
+          {
+            "id": "met",
+            "carry": true,
+            "text": "Kai met Mara at the docks.",
+            "knownBy": [
+              "kai"
+            ]
+          }
+        ],
+        "characters": [
+          "you",
+          "kai"
+        ],
+        "header": {
+          "limits": {
+            "lines": [
+              "gore"
+            ],
+            "veils": [
+              "romance"
+            ]
+          },
+          "chronicles": [
+            "c-kai"
+          ]
+        }
+      }
+    },
+    {
+      "type": "start",
+      "name": "two chronicles: one rules change holds both characters' values; ann replaces the bundle's ann by ID",
+      "scenario": "s",
+      "opening": "o",
+      "characters": [
+        {
+          "id": "you",
+          "name": "Rae",
+          "description": "A courier."
+        }
+      ],
+      "chronicles": [
+        {
+          "header": {
+            "troupe": "0.11",
+            "kind": "chronicle",
+            "id": "c-kai",
+            "character": {
+              "id": "kai",
+              "name": "Kai",
+              "description": "A drifter.",
+              "variables": [
+                {
+                  "id": "feelings",
+                  "type": "int",
+                  "of": "cast",
+                  "min": -10,
+                  "max": 10,
+                  "carry": true,
+                  "description": "d"
+                },
+                {
+                  "id": "mood",
+                  "type": "string",
+                  "description": "not carried"
+                },
+                {
+                  "id": "level",
+                  "type": "int",
+                  "carry": true,
+                  "derive": "1",
+                  "description": "derived, never carried"
+                }
+              ]
+            },
+            "persona": {
+              "id": "mara",
+              "name": "Mara",
+              "description": "d"
+            },
+            "limits": {
+              "lines": [
+                "gore"
+              ],
+              "veils": [
+                "romance"
+              ]
+            }
+          },
+          "records": [
+            {
+              "id": "r1",
+              "entries": [
+                {
+                  "id": "met",
+                  "carry": true,
+                  "text": "Kai met Mara at the docks."
+                }
+              ],
+              "set": {
+                "feelings.mara": 7,
+                "mood": "glum",
+                "level": 3
+              }
+            }
+          ]
+        },
+        {
+          "header": {
+            "troupe": "0.11",
+            "kind": "chronicle",
+            "id": "c-ann",
+            "character": {
+              "id": "ann",
+              "name": "Ann",
+              "description": "Ann, older now.",
+              "variables": [
+                {
+                  "id": "rank",
+                  "type": "int",
+                  "carry": true,
+                  "description": "d"
+                }
+              ]
+            }
+          },
+          "records": [
+            {
+              "id": "r1",
+              "set": {
+                "rank": 3
+              }
+            }
+          ]
+        }
+      ],
+      "expect": {
+        "changes": [
+          {
+            "by": "rules",
+            "set": {
+              "kai.feelings.you": 7,
+              "ann.rank": 3
+            }
+          },
+          {
+            "by": "rules",
+            "set": {
+              "scene.present": [
+                "you",
+                "kai"
+              ]
+            }
+          }
+        ],
+        "characters": [
+          "you",
+          "kai",
+          "ann"
+        ],
+        "header": {
+          "chronicles": [
+            "c-kai",
+            "c-ann"
+          ]
+        },
+        "state": {
+          "ann.rank": 3
+        }
+      }
+    },
+    {
+      "type": "prompt",
+      "for": "ann",
+      "parent": "2",
+      "messageId": "3",
+      "expect": {
+        "system": [
+          "app",
+          "limits"
+        ]
+      }
+    },
+    {
+      "type": "chronicle",
+      "name": "writing back at message 2",
+      "chronicle": {
+        "header": {
+          "troupe": "0.11",
+          "kind": "chronicle",
+          "id": "c-kai",
+          "character": {
+            "id": "kai",
+            "name": "Kai",
+            "description": "A drifter.",
+            "variables": [
+              {
+                "id": "feelings",
+                "type": "int",
+                "of": "cast",
+                "min": -10,
+                "max": 10,
+                "carry": true,
+                "description": "d"
+              },
+              {
+                "id": "mood",
+                "type": "string",
+                "description": "not carried"
+              },
+              {
+                "id": "level",
+                "type": "int",
+                "carry": true,
+                "derive": "1",
+                "description": "derived, never carried"
+              }
+            ]
+          },
+          "persona": {
+            "id": "mara",
+            "name": "Mara",
+            "description": "d"
+          },
+          "limits": {
+            "lines": [
+              "gore"
+            ],
+            "veils": [
+              "romance"
+            ]
+          }
+        },
+        "records": [
+          {
+            "id": "r1",
+            "entries": [
+              {
+                "id": "met",
+                "carry": true,
+                "text": "Kai met Mara at the docks."
+              }
+            ],
+            "set": {
+              "feelings.mara": 7,
+              "mood": "glum",
+              "level": 3
+            }
+          }
+        ]
+      },
+      "writeBack": {
+        "head": "2",
+        "id": "r2"
+      },
+      "expect": {
+        "record": {
+          "id": "r2",
+          "source": {
+            "session": "sess-9",
+            "message": "2"
+          },
+          "entries": [
+            {
+              "id": "storm",
+              "carry": true,
+              "text": "Kai and Rae sheltered from a storm."
+            }
+          ],
+          "set": {
+            "feelings.mara": 9
+          }
+        }
+      }
+    }
+  ]
+}

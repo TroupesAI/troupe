@@ -1,0 +1,183 @@
+{
+  "description": "Chronicle edges (Play 2.1 step 4; Format 13, 17.2): without an opening, the chronicles' values come first on the root, before the first message's own changes; a chronicle deletion that names no record is UNKNOWN_MESSAGE",
+  "bundle": {
+    "troupe": "0.11",
+    "kind": "bundle",
+    "characters": [
+      {
+        "id": "ann",
+        "name": "Ann",
+        "description": "Ann."
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s",
+        "cast": [
+          {},
+          {
+            "character": "ann"
+          }
+        ],
+        "variables": [
+          {
+            "id": "bell",
+            "type": "int",
+            "by": [
+              "player"
+            ],
+            "description": "d"
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "start",
+      "name": "no opening: chronicle values, then the first message's changes",
+      "scenario": "s",
+      "characters": [
+        {
+          "id": "you",
+          "name": "Rae",
+          "description": "A courier."
+        }
+      ],
+      "chronicles": [
+        {
+          "header": {
+            "troupe": "0.11",
+            "kind": "chronicle",
+            "id": "c-kai",
+            "character": {
+              "id": "kai",
+              "name": "Kai",
+              "description": "A drifter.",
+              "variables": [
+                {
+                  "id": "feelings",
+                  "type": "int",
+                  "of": "cast",
+                  "min": -10,
+                  "max": 10,
+                  "carry": true,
+                  "description": "d"
+                }
+              ]
+            },
+            "persona": {
+              "id": "mara",
+              "name": "Mara",
+              "description": "d"
+            }
+          },
+          "records": [
+            {
+              "id": "r1",
+              "set": {
+                "feelings.mara": 7
+              }
+            }
+          ]
+        }
+      ],
+      "firstMessage": {
+        "from": "player",
+        "content": [
+          {
+            "speaker": "you",
+            "text": "Hello."
+          }
+        ],
+        "changes": [
+          {
+            "by": "player",
+            "set": {
+              "bell": 3
+            }
+          }
+        ]
+      },
+      "expect": {
+        "changes": [
+          {
+            "by": "rules",
+            "set": {
+              "kai.feelings.you": 7
+            }
+          },
+          {
+            "by": "player",
+            "set": {
+              "bell": 3
+            }
+          }
+        ],
+        "characters": [
+          "you",
+          "kai"
+        ],
+        "state": {
+          "bell": 3,
+          "kai.feelings.you": 7
+        }
+      }
+    },
+    {
+      "type": "chronicle",
+      "name": "a deletion naming no record is reported and ignored",
+      "chronicle": {
+        "header": {
+          "troupe": "0.11",
+          "kind": "chronicle",
+          "id": "c-kai",
+          "character": {
+            "id": "kai",
+            "name": "Kai",
+            "description": "A drifter.",
+            "variables": [
+              {
+                "id": "feelings",
+                "type": "int",
+                "of": "cast",
+                "min": -10,
+                "max": 10,
+                "carry": true,
+                "description": "d"
+              }
+            ]
+          },
+          "persona": {
+            "id": "mara",
+            "name": "Mara",
+            "description": "d"
+          }
+        },
+        "records": [
+          {
+            "id": "r1",
+            "set": {
+              "feelings.mara": 7
+            }
+          },
+          {
+            "id": "r9",
+            "deleted": true
+          }
+        ]
+      },
+      "expect": {
+        "records": [
+          "r1"
+        ],
+        "values": {
+          "feelings.mara": 7
+        },
+        "codes": [
+          "UNKNOWN_MESSAGE"
+        ]
+      }
+    }
+  ]
+}

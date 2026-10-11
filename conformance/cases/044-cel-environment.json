@@ -1,0 +1,278 @@
+{
+  "description": "The CEL environment (Format 11.1) at Format Appendix B's messages: turn, opening, scenario, self, last, scene.within, computed keys with brackets, count() and ago(), cross-type comparison, RE2, the function allowlist",
+  "bundleFile": "../../examples/lantern-heist.troupe.json",
+  "sessionFile": "../../examples/lantern-heist.troupe-session.jsonl",
+  "tests": [
+    {
+      "type": "cel",
+      "expr": "turn == 1",
+      "at": "4",
+      "expect": true,
+      "name": "turn counts rounds: player messages on the path"
+    },
+    {
+      "type": "cel",
+      "expr": "turn == 0",
+      "at": "1",
+      "expect": true,
+      "name": "an opening root is round 0"
+    },
+    {
+      "type": "cel",
+      "expr": "opening == 'rooftop_briefing'",
+      "at": "4",
+      "expect": true,
+      "name": "opening is the path root's opening"
+    },
+    {
+      "type": "cel",
+      "expr": "scenario == 'heist'",
+      "at": "4",
+      "expect": true
+    },
+    {
+      "type": "cel",
+      "expr": "players == ['mara']",
+      "at": "4",
+      "expect": true
+    },
+    {
+      "type": "cel",
+      "expr": "char == ''",
+      "at": "4",
+      "expect": true,
+      "name": "char is empty for events"
+    },
+    {
+      "type": "cel",
+      "expr": "self == 'kai'",
+      "at": "4",
+      "expect": true,
+      "name": "self is the expression's owner",
+      "self": "kai"
+    },
+    {
+      "type": "cel",
+      "expr": "last.from == 'model' && last.char == 'kai'",
+      "at": "4",
+      "expect": true,
+      "name": "last is the evaluation point message"
+    },
+    {
+      "type": "cel",
+      "expr": "last.from == 'player' && last.char == ''",
+      "at": "2",
+      "expect": true,
+      "name": "last.char is empty when the message has no char"
+    },
+    {
+      "type": "cel",
+      "expr": "scene.within == ['rooftops', 'manor'] && 'manor' in scene.within",
+      "at": "4",
+      "expect": true,
+      "name": "scene.within: the location and its ancestors"
+    },
+    {
+      "type": "cel",
+      "expr": "state.trust[char] == 0.5 && !has(state.trust.char)",
+      "at": "4",
+      "expect": true,
+      "name": "maps keyed by characters are read with brackets; .char is the literal key",
+      "char": "kai",
+      "kind": "entry"
+    },
+    {
+      "type": "cel",
+      "expr": "state.trust.kai >= 0.5 && state.bell > 6.5",
+      "at": "4",
+      "expect": true,
+      "name": "cross-type ordering"
+    },
+    {
+      "type": "cel",
+      "expr": "state.bell == 7.0 && state.bell != 7.5",
+      "at": "4",
+      "expect": true,
+      "name": "cross-type equality"
+    },
+    {
+      "type": "cel",
+      "expr": "count('veyra/weather_rain') == 1 && ago('veyra/weather_rain') == 0",
+      "at": "4",
+      "expect": true,
+      "name": "count/ago of entries from activated"
+    },
+    {
+      "type": "cel",
+      "expr": "ago('heist/style') == 0 && count('heist/confess') == 0 && ago('heist/confess') == 1000000000",
+      "at": "4",
+      "expect": true
+    },
+    {
+      "type": "cel",
+      "expr": "ago('bell') == 0 && ago('trust.kai') == 0 && count('scene.present') == 1 && ago('scene.present') == 1",
+      "at": "4",
+      "expect": true,
+      "name": "change keys: the root's opening change counts; ago is in rounds"
+    },
+    {
+      "type": "cel",
+      "expr": "ago('scene.present') == 0 && count('scene.present') == 2 && ago('bell') == 1000000000",
+      "at": "3",
+      "expect": true
+    },
+    {
+      "type": "cel",
+      "expr": "count('approach') == 1 && ago('approach') == 1",
+      "at": "4",
+      "expect": true,
+      "name": "the answer on the root is a change"
+    },
+    {
+      "type": "cel",
+      "expr": "count('patrol') == 0 && ago('patrol') == 1000000000",
+      "at": "4",
+      "expect": true
+    },
+    {
+      "type": "cel",
+      "expr": "count('nowhere/x') == 0 && ago('nowhere/x') == 1000000000",
+      "at": "4",
+      "expect": true,
+      "name": "unknown names: 0 and 1000000000, no error"
+    },
+    {
+      "type": "cel",
+      "expr": "!('kai' in scene.present)",
+      "at": "3",
+      "expect": true
+    },
+    {
+      "type": "cel",
+      "expr": "'Kai'.matches('(?i)^kai$')",
+      "at": "4",
+      "expect": true,
+      "name": "matches() uses RE2 syntax"
+    },
+    {
+      "type": "cel",
+      "expr": "{'a': 1}['b'] == 1 || true",
+      "at": "4",
+      "expect": true,
+      "name": "runtime errors: || absorbs them (CEL commutative logic)"
+    },
+    {
+      "type": "cel",
+      "expr": "{'a': 1}['b'] == 1",
+      "at": "4",
+      "expect": false,
+      "name": "a runtime error makes a condition false"
+    },
+    {
+      "type": "cel",
+      "expr": "state.trust.kai - 1",
+      "kind": "event",
+      "expect": {
+        "checkError": true
+      },
+      "name": "arithmetic does not mix int and double"
+    },
+    {
+      "type": "cel",
+      "expr": "state.trust.kai - 0.1 > 0.0",
+      "kind": "event",
+      "expect": {
+        "checkError": false
+      }
+    },
+    {
+      "type": "cel",
+      "expr": "state.bell + 1",
+      "kind": "event",
+      "expect": {
+        "checkError": true
+      },
+      "name": "conditions must be bool"
+    },
+    {
+      "type": "cel",
+      "expr": "roll(6) > 3",
+      "kind": "event",
+      "expect": {
+        "checkError": true
+      },
+      "name": "roll() is for compute only"
+    },
+    {
+      "type": "cel",
+      "expr": "hit('x')",
+      "kind": "event",
+      "expect": {
+        "checkError": true
+      },
+      "name": "hit() is for entries only"
+    },
+    {
+      "type": "cel",
+      "expr": "hit('x')",
+      "kind": "entry",
+      "expect": {
+        "checkError": false
+      }
+    },
+    {
+      "type": "cel",
+      "expr": "state.nope",
+      "kind": "event",
+      "expect": {
+        "checkError": true
+      },
+      "name": "undeclared variables fail the type check"
+    },
+    {
+      "type": "cel",
+      "expr": "count(1) > 0",
+      "kind": "event",
+      "expect": {
+        "checkError": true
+      },
+      "name": "count() takes a string"
+    },
+    {
+      "type": "cel",
+      "expr": "'abc'.indexOf('b') == 1",
+      "kind": "event",
+      "expect": {
+        "checkError": true
+      },
+      "name": "only the listed functions: no strings extension"
+    },
+    {
+      "type": "cel",
+      "expr": "timestamp('2026-01-01T00:00:00Z') < timestamp('2027-01-01T00:00:00Z')",
+      "kind": "event",
+      "expect": {
+        "checkError": true
+      },
+      "name": "no timestamps"
+    },
+    {
+      "type": "cel",
+      "expr": "b'ab' == b'ab'",
+      "kind": "event",
+      "expect": {
+        "checkError": true
+      },
+      "name": "no bytes"
+    },
+    {
+      "type": "cel",
+      "expr": "[1, 2, 3].exists(x, x > 2) && [1, 2].all(x, x > 0) && size([1].map(x, x * 2)) == 1 && [1, 2].filter(x, x > 1) == [2] && 'ab'.contains('a')",
+      "kind": "event",
+      "expect": {
+        "checkError": false
+      },
+      "name": "standard macros and functions"
+    }
+  ]
+}

@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://troupe.example/schema/0.11/session-header.schema.json",
+  "title": "Troupe session header",
+  "description": "The first line of a Troupe session file.",
+  "type": "object",
+  "required": [
+    "troupe",
+    "kind",
+    "scenario",
+    "seed"
+  ],
+  "dependentRequired": {
+    "chronicles": [
+      "id"
+    ]
+  },
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "troupe": {
+      "$ref": "bundle.schema.json#/$defs/version"
+    },
+    "kind": {
+      "const": "session"
+    },
+    "id": {
+      "$ref": "bundle.schema.json#/$defs/opaqueId"
+    },
+    "bundle": {
+      "$ref": "bundle.schema.json#/$defs/opaqueId"
+    },
+    "chronicles": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "bundle.schema.json#/$defs/opaqueId"
+      }
+    },
+    "limits": {
+      "$ref": "bundle.schema.json#/$defs/limits"
+    },
+    "scenario": {
+      "$ref": "bundle.schema.json#/$defs/id"
+    },
+    "seed": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_-]{16,64}$"
+    },
+    "timezone": {
+      "type": "string",
+      "minLength": 1
+    },
+    "characters": {
+      "type": "array",
+      "items": {
+        "$ref": "bundle.schema.json#/$defs/character"
+      }
+    },
+    "players": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "bundle.schema.json#/$defs/id"
+      }
+    },
+    "worlds": {
+      "type": "array",
+      "items": {
+        "$ref": "bundle.schema.json#/$defs/world"
+      }
+    },
+    "head": {
+      "$ref": "bundle.schema.json#/$defs/opaqueId"
+    },
+    "ext": {
+      "$ref": "bundle.schema.json#/$defs/ext"
+    }
+  }
+}

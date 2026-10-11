@@ -1,0 +1,190 @@
+{
+  "description": "of: \"others\" (every cast character except the owner, players included) and open \"*\" maps: no initial, absent keys read as the default, setting the default removes a key (Format 8.3)",
+  "bundle": {
+    "troupe": "0.11",
+    "kind": "bundle",
+    "characters": [
+      {
+        "id": "a",
+        "name": "Ann",
+        "description": "Ann.",
+        "variables": [
+          {
+            "id": "feelings",
+            "type": "int",
+            "of": "others",
+            "initial": {
+              "*": 0,
+              "b": 5
+            },
+            "description": "d"
+          }
+        ]
+      },
+      {
+        "id": "b",
+        "name": "Bea",
+        "description": "Bea."
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s",
+        "cast": [
+          {},
+          {
+            "character": "a"
+          },
+          {
+            "character": "b"
+          }
+        ],
+        "variables": [
+          {
+            "id": "inv",
+            "type": "int",
+            "of": "*",
+            "min": 0,
+            "description": "d"
+          }
+        ],
+        "events": [
+          {
+            "id": "loot",
+            "when": "!('torch' in state.inv)",
+            "set": {
+              "inv.torch": 2,
+              "inv.rope": 0
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "session": {
+    "header": {
+      "troupe": "0.11",
+      "kind": "session",
+      "scenario": "s",
+      "seed": "conformanceSeed0001",
+      "characters": [
+        {
+          "id": "p",
+          "name": "Pat",
+          "description": "Pat."
+        }
+      ],
+      "players": [
+        "p"
+      ]
+    },
+    "messages": [
+      {
+        "id": "1",
+        "from": "player",
+        "content": [
+          {
+            "text": "x"
+          }
+        ]
+      },
+      {
+        "id": "2",
+        "parent": "1",
+        "from": "model",
+        "char": "a",
+        "content": [
+          {
+            "text": "y"
+          }
+        ],
+        "changes": [
+          {
+            "by": "rules",
+            "set": {
+              "inv.torch": 0,
+              "inv.rope_coil": 1
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "state",
+      "name": "Ann's feelings toward the others, players included, not herself",
+      "expect": {
+        "a.feelings.p": 0,
+        "a.feelings.b": 5
+      },
+      "absent": [
+        "a.feelings.a"
+      ]
+    },
+    {
+      "type": "events",
+      "name": "setting an open key to the default records it, and the key reads as absent",
+      "at": "1",
+      "expect": {
+        "changes": [
+          {
+            "by": "rules",
+            "event": "loot",
+            "set": {
+              "inv.torch": 2,
+              "inv.rope": 0
+            }
+          }
+        ],
+        "state": {
+          "inv.torch": 2
+        }
+      }
+    },
+    {
+      "type": "state",
+      "name": "setting inv.torch to 0 removed it",
+      "at": "2",
+      "expect": {
+        "inv.rope_coil": 1
+      },
+      "absent": [
+        "inv.torch"
+      ]
+    },
+    {
+      "type": "cel",
+      "at": "2",
+      "expr": "!('torch' in state.inv) && state.inv.rope_coil == 1",
+      "expect": true
+    },
+    {
+      "type": "macro",
+      "name": "keys that aren't characters render with underscores as spaces",
+      "at": "2",
+      "text": "{{state.inv}}",
+      "expect": "rope coil: 1"
+    },
+    {
+      "type": "prepare",
+      "name": "an absent open key's current value is the default",
+      "at": "2",
+      "by": "rules",
+      "set": {
+        "inv.lamp": 3
+      },
+      "expect": {
+        "set": {
+          "inv.lamp": 3
+        }
+      }
+    },
+    {
+      "type": "check",
+      "expect": {
+        "codes": []
+      }
+    }
+  ]
+}

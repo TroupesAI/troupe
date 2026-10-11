@@ -1,0 +1,140 @@
+{
+  "description": "Hidden messages are never scanned and do not count toward scanDepth (Format 12.4; Play 3.1, 5.2)",
+  "bundle": {
+    "troupe": "0.11",
+    "kind": "bundle",
+    "characters": [
+      {
+        "id": "a",
+        "name": "Ann",
+        "description": "Ann."
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s",
+        "cast": [
+          {},
+          {
+            "character": "a"
+          }
+        ],
+        "entries": [
+          {
+            "id": "h1",
+            "keys": [
+              "secret"
+            ],
+            "text": "h1"
+          },
+          {
+            "id": "h2",
+            "keys": [
+              "dragon"
+            ],
+            "scanDepth": 3,
+            "text": "h2"
+          }
+        ]
+      }
+    ]
+  },
+  "session": {
+    "header": {
+      "troupe": "0.11",
+      "kind": "session",
+      "scenario": "s",
+      "seed": "conformanceSeed0001",
+      "characters": [
+        {
+          "id": "p",
+          "name": "Pat",
+          "description": "Pat."
+        }
+      ],
+      "players": [
+        "p"
+      ],
+      "head": "4"
+    },
+    "messages": [
+      {
+        "id": "1",
+        "from": "system",
+        "content": [
+          {
+            "text": "A dragon appears."
+          }
+        ]
+      },
+      {
+        "id": "2",
+        "parent": "1",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "Run!"
+          }
+        ]
+      },
+      {
+        "id": "3",
+        "parent": "2",
+        "from": "player",
+        "hidden": true,
+        "content": [
+          {
+            "speaker": "p",
+            "text": "(secret note)"
+          }
+        ]
+      },
+      {
+        "id": "4",
+        "parent": "3",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "Hide."
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "select",
+      "for": "a",
+      "parent": "4",
+      "messageId": "5",
+      "expect": {
+        "activated": [
+          "s/h2"
+        ]
+      }
+    },
+    {
+      "type": "scanned",
+      "for": "a",
+      "parent": "4",
+      "depth": 3,
+      "expect": "Pat: Hide.\nPat: Run!\nA dragon appears."
+    },
+    {
+      "type": "prompt",
+      "name": "hidden messages are not in history",
+      "for": "a",
+      "parent": "4",
+      "messageId": "5",
+      "expect": {
+        "history": [
+          "message:1",
+          "message:2",
+          "message:4"
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,52 @@
+{
+  "description": "Strict schemas, lenient readers (Format 15, 17.2): unknown fields are UNKNOWN_FIELD warnings, located at the field, and the file is still read",
+  "bundle": {
+    "troupe": "0.11",
+    "kind": "bundle",
+    "futureField": true,
+    "characters": [
+      {
+        "id": "a",
+        "name": "Ann",
+        "description": "Ann.",
+        "mystery": 1,
+        "ext": {
+          "acme.mood": {
+            "x": 1
+          }
+        }
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s",
+        "cast": [
+          {},
+          {
+            "character": "a"
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "check",
+      "expect": {
+        "codes": [
+          "UNKNOWN_FIELD"
+        ],
+        "includes": [
+          {
+            "code": "UNKNOWN_FIELD",
+            "at": "/futureField"
+          },
+          {
+            "code": "UNKNOWN_FIELD",
+            "at": "/characters/0/mystery"
+          }
+        ]
+      }
+    }
+  ]
+}

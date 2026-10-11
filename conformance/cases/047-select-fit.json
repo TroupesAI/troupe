@@ -1,0 +1,167 @@
+{
+  "description": "Fitting (Play 5.5 step 3): drop entries below priority 100, lowest first, later file order first among ties; priority 100 is never dropped and failure to fit fails generation",
+  "bundle": {
+    "troupe": "0.11",
+    "kind": "bundle",
+    "characters": [
+      {
+        "id": "a",
+        "name": "Ann",
+        "description": "Ann."
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s",
+        "cast": [
+          {},
+          {
+            "character": "a"
+          }
+        ],
+        "entries": [
+          {
+            "id": "f1",
+            "priority": 90,
+            "text": "f1"
+          },
+          {
+            "id": "f2",
+            "priority": 10,
+            "text": "f2"
+          },
+          {
+            "id": "f3",
+            "priority": 10,
+            "text": "f3"
+          },
+          {
+            "id": "f4",
+            "priority": 50,
+            "text": "f4"
+          },
+          {
+            "id": "f5",
+            "priority": 0,
+            "sticky": 9,
+            "text": "kept by sticky; dropped first"
+          },
+          {
+            "id": "limits",
+            "priority": 100,
+            "text": "never dropped"
+          }
+        ]
+      }
+    ]
+  },
+  "session": {
+    "header": {
+      "troupe": "0.11",
+      "kind": "session",
+      "scenario": "s",
+      "seed": "conformanceSeed0001",
+      "characters": [
+        {
+          "id": "p",
+          "name": "Pat",
+          "description": "Pat."
+        }
+      ],
+      "players": [
+        "p"
+      ],
+      "head": "2"
+    },
+    "messages": [
+      {
+        "id": "1",
+        "from": "player",
+        "content": [
+          {
+            "text": "x"
+          }
+        ]
+      },
+      {
+        "id": "2",
+        "parent": "1",
+        "from": "model",
+        "char": "a",
+        "activated": [
+          "s/f5"
+        ],
+        "content": [
+          {
+            "text": "y"
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "select",
+      "for": "a",
+      "parent": "2",
+      "messageId": "3",
+      "maxEntries": 3,
+      "expect": {
+        "selected": [
+          "s/f1",
+          "s/f4",
+          "s/limits"
+        ],
+        "dropped": [
+          "s/f5",
+          "s/f3",
+          "s/f2"
+        ],
+        "activated": [
+          "s/f1",
+          "s/f4",
+          "s/limits"
+        ],
+        "failed": false
+      }
+    },
+    {
+      "type": "select",
+      "for": "a",
+      "parent": "2",
+      "messageId": "3",
+      "maxEntries": 5,
+      "expect": {
+        "dropped": [
+          "s/f5"
+        ],
+        "activated": [
+          "s/f1",
+          "s/f2",
+          "s/f3",
+          "s/f4",
+          "s/limits"
+        ],
+        "failed": false
+      }
+    },
+    {
+      "type": "select",
+      "name": "priority 100 doesn't fit: generation fails",
+      "for": "a",
+      "parent": "2",
+      "messageId": "3",
+      "maxEntries": 0,
+      "expect": {
+        "dropped": [
+          "s/f5",
+          "s/f3",
+          "s/f2",
+          "s/f4",
+          "s/f1"
+        ],
+        "failed": true
+      }
+    }
+  ]
+}

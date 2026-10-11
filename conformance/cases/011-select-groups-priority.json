@@ -1,0 +1,132 @@
+{
+  "description": "Groups (Play 5.5): the highest priority wins without a roll; losers are excluded and add no chain text; a later pass can't add to a group that has a winner",
+  "bundle": {
+    "troupe": "0.11",
+    "kind": "bundle",
+    "characters": [
+      {
+        "id": "a",
+        "name": "Ann",
+        "description": "Ann."
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s",
+        "cast": [
+          {},
+          {
+            "character": "a"
+          }
+        ],
+        "entries": [
+          {
+            "id": "g1",
+            "group": "g",
+            "priority": 60,
+            "text": "g1 wins group g"
+          },
+          {
+            "id": "g2",
+            "group": "g",
+            "priority": 40,
+            "weight": 1000,
+            "text": "lower priority never competes, whatever its weight"
+          },
+          {
+            "id": "g3",
+            "group": "g",
+            "priority": 60,
+            "keys": [
+              "never"
+            ],
+            "text": "doesn't match, so not a contender"
+          },
+          {
+            "id": "g4",
+            "group": "h",
+            "priority": 90,
+            "keys": [
+              "marks"
+            ],
+            "text": "g4 wins group h"
+          },
+          {
+            "id": "g5",
+            "group": "h",
+            "priority": 50,
+            "chain": true,
+            "text": "the zebra key"
+          },
+          {
+            "id": "g6",
+            "keys": [
+              "zebra"
+            ],
+            "text": "would need g5's chain text"
+          },
+          {
+            "id": "g7",
+            "chain": true,
+            "text": "plain words"
+          },
+          {
+            "id": "g8",
+            "group": "g",
+            "priority": 100,
+            "keys": [
+              "plain"
+            ],
+            "text": "matches in pass 2, but group g already has g1"
+          }
+        ]
+      }
+    ]
+  },
+  "session": {
+    "header": {
+      "troupe": "0.11",
+      "kind": "session",
+      "scenario": "s",
+      "seed": "conformanceSeed0001",
+      "characters": [
+        {
+          "id": "p",
+          "name": "Pat",
+          "description": "Pat."
+        }
+      ],
+      "players": [
+        "p"
+      ],
+      "head": "1"
+    },
+    "messages": [
+      {
+        "id": "1",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "X marks the spot."
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "select",
+      "for": "a",
+      "parent": "1",
+      "messageId": "2",
+      "expect": {
+        "activated": [
+          "s/g1",
+          "s/g4",
+          "s/g7"
+        ]
+      }
+    }
+  ]
+}

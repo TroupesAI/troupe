@@ -1,0 +1,147 @@
+{
+  "description": "Player and model text never resolves macros, and stores {{ as \\{{ (Format 10); {{user}} is the speaker of the latest player message (multiplayer)",
+  "bundle": {
+    "troupe": "0.11",
+    "kind": "bundle",
+    "characters": [
+      {
+        "id": "a",
+        "name": "Ann",
+        "description": "Ann."
+      },
+      {
+        "id": "b",
+        "name": "Bea",
+        "description": "Bea."
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s",
+        "cast": [
+          {},
+          {},
+          {
+            "character": "a"
+          },
+          {
+            "character": "b"
+          }
+        ],
+        "entries": [
+          {
+            "id": "greet",
+            "text": "{{char}} answers {{user}}."
+          }
+        ]
+      }
+    ]
+  },
+  "session": {
+    "header": {
+      "troupe": "0.11",
+      "kind": "session",
+      "scenario": "s",
+      "seed": "conformanceSeed0001",
+      "characters": [
+        {
+          "id": "p",
+          "name": "Pat",
+          "description": "Pat."
+        },
+        {
+          "id": "q",
+          "name": "Quin",
+          "description": "Quin."
+        }
+      ],
+      "players": [
+        "p",
+        "q"
+      ]
+    },
+    "messages": [
+      {
+        "id": "1",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "I type \\{{char}} on purpose."
+          }
+        ]
+      },
+      {
+        "id": "2",
+        "parent": "1",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "q",
+            "text": "Me too!"
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "select",
+      "name": "{{user}} is Quin, who spoke last",
+      "for": "a",
+      "parent": "2",
+      "messageId": "3",
+      "expect": {
+        "texts": {
+          "s/greet": "Ann answers Quin."
+        }
+      }
+    },
+    {
+      "type": "select",
+      "name": "{{user}} is Pat at message 1",
+      "for": "a",
+      "parent": "1",
+      "messageId": "2x",
+      "expect": {
+        "texts": {
+          "s/greet": "Ann answers Pat."
+        }
+      }
+    },
+    {
+      "type": "scanned",
+      "for": "a",
+      "parent": "2",
+      "expect": "Quin: Me too!\nPat: I type {{char}} on purpose."
+    },
+    {
+      "type": "prompt",
+      "for": "a",
+      "parent": "2",
+      "messageId": "3",
+      "expect": {
+        "lines": {
+          "1": [
+            "Pat: I type {{char}} on purpose."
+          ]
+        }
+      }
+    },
+    {
+      "type": "cel",
+      "name": "the user alias follows the same rule",
+      "at": "2",
+      "char": "a",
+      "kind": "entry",
+      "expr": "players == ['p', 'q']",
+      "expect": true
+    },
+    {
+      "type": "check",
+      "expect": {
+        "codes": []
+      }
+    }
+  ]
+}

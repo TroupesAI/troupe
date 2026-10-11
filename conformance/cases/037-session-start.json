@@ -1,0 +1,113 @@
+{
+  "description": "Starting a session (Play 2.1): the opening becomes a root that records a rules change (its set plus the starting scene.present), then a player change with the answers; events run at the root. Reproduces Format Appendix B.3's first line.",
+  "bundleFile": "../../examples/lantern-heist.troupe.json",
+  "tests": [
+    {
+      "type": "start",
+      "scenario": "heist",
+      "opening": "rooftop_briefing",
+      "characters": [
+        {
+          "id": "mara",
+          "name": "Mara",
+          "description": "A retired smuggler with a debt to settle."
+        }
+      ],
+      "answers": {
+        "approach": "quiet"
+      },
+      "seed": "k7Qm2xVb9TzR4pLc8NwYfA",
+      "expect": {
+        "root": {
+          "id": "1",
+          "opening": "rooftop_briefing",
+          "from": "system",
+          "content": [
+            {
+              "text": "Rain hammers the slate roofs above the Duke's manor."
+            },
+            {
+              "speaker": "elena",
+              "text": "*Elena unrolls a soaked map.* Two guards on the east stair. We go at the eighth bell."
+            },
+            {
+              "speaker": "kai",
+              "text": "Or we go now, while they're drunk. *He grins at {{user}}.* Your call, boss."
+            }
+          ],
+          "changes": [
+            {
+              "by": "rules",
+              "set": {
+                "scene.location": "rooftops",
+                "scene.present": [
+                  "mara",
+                  "elena",
+                  "kai"
+                ]
+              }
+            },
+            {
+              "by": "player",
+              "set": {
+                "approach": "quiet"
+              }
+            }
+          ]
+        },
+        "head": "1",
+        "questions": [],
+        "state": {
+          "scene.location": "rooftops",
+          "scene.present": [
+            "mara",
+            "elena",
+            "kai"
+          ],
+          "bell": 6,
+          "trust.elena": 0.7,
+          "trust.kai": 0.4,
+          "approach": "quiet",
+          "key_revealed": false,
+          "kai_confessed": false
+        },
+        "rendered": [
+          "Rain hammers the slate roofs above the Duke's manor.",
+          "*Elena unrolls a soaked map.* Two guards on the east stair. We go at the eighth bell.",
+          "Or we go now, while they're drunk. *He grins at Mara.* Your call, boss."
+        ]
+      }
+    },
+    {
+      "type": "start",
+      "name": "unanswered questions are reported, and no player change is recorded",
+      "scenario": "heist",
+      "opening": "rooftop_briefing",
+      "characters": [
+        {
+          "id": "mara",
+          "name": "Mara",
+          "description": "A retired smuggler with a debt to settle."
+        }
+      ],
+      "expect": {
+        "questions": [
+          "approach"
+        ],
+        "changes": [
+          {
+            "by": "rules",
+            "set": {
+              "scene.location": "rooftops",
+              "scene.present": [
+                "mara",
+                "elena",
+                "kai"
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

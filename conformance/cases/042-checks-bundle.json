@@ -1,0 +1,287 @@
+{
+  "description": "Reference checks on a bundle (Format 17.2): each broken reference reports its code",
+  "bundle": {
+    "troupe": "0.11",
+    "kind": "bundle",
+    "requires": [
+      "acme.scripts"
+    ],
+    "characters": [
+      {
+        "id": "a",
+        "name": "Ann",
+        "description": "Hi {{@zed}}.",
+        "examples": [
+          [
+            {
+              "speaker": "zed",
+              "text": "?"
+            }
+          ]
+        ],
+        "entries": [
+          {
+            "id": "e1",
+            "knownBy": [
+              "ghost"
+            ],
+            "text": "x"
+          },
+          {
+            "id": "e2",
+            "keys": [
+              "/[/"
+            ],
+            "text": "bad regex"
+          },
+          {
+            "id": "e3",
+            "when": "state.trust + 1",
+            "text": "not a bool"
+          },
+          {
+            "id": "e4",
+            "when": "count('nowhere/x') > 0 || ago('no_event') < 3 || ago('trust.a') < 3",
+            "text": "lookups"
+          },
+          {
+            "id": "e1",
+            "text": "duplicate entry"
+          },
+          {
+            "id": "e5",
+            "knownBy": [
+              "narrator",
+              "a"
+            ],
+            "text": "narrator is a valid knownBy ID"
+          }
+        ]
+      },
+      {
+        "id": "b",
+        "name": "Bea",
+        "description": "Bea."
+      }
+    ],
+    "worlds": [
+      {
+        "id": "w",
+        "name": "W",
+        "locations": [
+          {
+            "id": "l1",
+            "name": "L1",
+            "parent": "l2"
+          },
+          {
+            "id": "l2",
+            "name": "L2",
+            "parent": "l1"
+          },
+          {
+            "id": "l3",
+            "name": "L3",
+            "parent": "nowhere"
+          }
+        ]
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s",
+        "cast": [
+          {},
+          {
+            "character": "a"
+          },
+          {
+            "character": "b"
+          },
+          {
+            "character": "ghost"
+          }
+        ],
+        "worlds": [
+          "w",
+          "atlantis"
+        ],
+        "variables": [
+          {
+            "id": "trust",
+            "type": "number",
+            "of": "characters",
+            "min": 0,
+            "max": 1,
+            "initial": {
+              "a": 2,
+              "ghost": 0.5
+            },
+            "description": "d"
+          },
+          {
+            "id": "phase",
+            "type": "enum",
+            "values": [
+              "one",
+              "two"
+            ],
+            "initial": "three",
+            "description": "d"
+          }
+        ],
+        "events": [
+          {
+            "id": "ev",
+            "when": "true",
+            "set": {
+              "nope": 1,
+              "phase": "four",
+              "scene.location": "mars"
+            },
+            "compute": {
+              "trust.a": "state.trust.a - 1",
+              "trust.b": "'high'"
+            }
+          }
+        ],
+        "openings": [
+          {
+            "id": "o",
+            "set": {
+              "scene.present": [
+                "a",
+                "zed"
+              ]
+            },
+            "content": [
+              {
+                "speaker": "zed",
+                "text": "{{unknown}}"
+              }
+            ]
+          }
+        ],
+        "entries": [
+          {
+            "id": "hint",
+            "knownBy": [
+              "ghost_voice"
+            ],
+            "text": "Only the ghost voice knows."
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "check",
+      "expect": {
+        "codes": [
+          "CEL_ERROR",
+          "DUPLICATE_ID",
+          "INVALID_VALUE",
+          "MISSING_EXTENSION",
+          "REGEX_ERROR",
+          "UNKNOWN_CHARACTER",
+          "UNKNOWN_LOCATION",
+          "UNKNOWN_MACRO",
+          "UNKNOWN_NAME",
+          "UNKNOWN_VARIABLE",
+          "UNKNOWN_WORLD"
+        ],
+        "includes": [
+          {
+            "code": "MISSING_EXTENSION",
+            "at": "/requires/0"
+          },
+          {
+            "code": "UNKNOWN_CHARACTER",
+            "at": "/scenarios/0/cast/3/character"
+          },
+          {
+            "code": "UNKNOWN_CHARACTER",
+            "at": "/characters/0/entries/0/knownBy/0"
+          },
+          {
+            "code": "UNKNOWN_CHARACTER",
+            "at": "/scenarios/0/variables/0/initial/ghost"
+          },
+          {
+            "code": "UNKNOWN_CHARACTER",
+            "at": "/scenarios/0/openings/0/content/0/speaker"
+          },
+          {
+            "code": "UNKNOWN_CHARACTER",
+            "at": "/characters/0/examples/0/0/speaker"
+          },
+          {
+            "code": "UNKNOWN_WORLD",
+            "at": "/scenarios/0/worlds/1"
+          },
+          {
+            "code": "UNKNOWN_LOCATION",
+            "at": "/worlds/0/locations/2/parent"
+          },
+          {
+            "code": "UNKNOWN_LOCATION",
+            "at": "/worlds/0/locations/0/parent"
+          },
+          {
+            "code": "UNKNOWN_LOCATION",
+            "at": "/scenarios/0/events/0/set/scene.location"
+          },
+          {
+            "code": "DUPLICATE_ID",
+            "at": "/characters/0/entries/4/id"
+          },
+          {
+            "code": "REGEX_ERROR",
+            "at": "/characters/0/entries/1/keys/0"
+          },
+          {
+            "code": "CEL_ERROR",
+            "at": "/characters/0/entries/2/when"
+          },
+          {
+            "code": "CEL_ERROR",
+            "at": "/scenarios/0/events/0/compute/trust.b"
+          },
+          {
+            "code": "INVALID_VALUE",
+            "at": "/scenarios/0/variables/0/initial/a"
+          },
+          {
+            "code": "INVALID_VALUE",
+            "at": "/scenarios/0/variables/1/initial"
+          },
+          {
+            "code": "INVALID_VALUE",
+            "at": "/scenarios/0/events/0/set/phase"
+          },
+          {
+            "code": "UNKNOWN_VARIABLE",
+            "at": "/scenarios/0/events/0/set/nope"
+          },
+          {
+            "code": "UNKNOWN_MACRO",
+            "at": "/characters/0/description"
+          },
+          {
+            "code": "UNKNOWN_MACRO",
+            "at": "/scenarios/0/openings/0/content/0/text"
+          },
+          {
+            "code": "UNKNOWN_NAME",
+            "at": "/characters/0/entries/3/when"
+          },
+          {
+            "code": "UNKNOWN_CHARACTER",
+            "at": "/scenarios/0/entries/0/knownBy/0"
+          }
+        ]
+      }
+    }
+  ]
+}
