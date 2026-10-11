@@ -4,7 +4,7 @@
 
 Troupe is an open file format for AI roleplay: characters, the worlds they live in, the scenarios that bring them together, the mechanics that drive a story, and the chat sessions played from them. One file can hold a single character or a full multi-character story.
 
-This document defines the files and what every field means. [Troupe Play](play.md) defines how apps play them, so that every app gives the model the same inputs and records the same outcomes.
+This document defines the files and what every field means. [Troupe Play](play.md) defines how apps play them, so that every app gives the model the same content and records the same outcomes.
 
 > **Status.** This is a draft. Breaking changes are allowed until 1.0. Schema URLs use the placeholder host `troupe.example`. A conformance suite accompanies this draft.
 

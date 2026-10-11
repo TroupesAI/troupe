@@ -2,7 +2,7 @@
 
 **Version 0.11 (draft)** · October 11, 2026
 
-This document defines how an app plays Troupe files: how it starts and continues a session, computes state, runs events, rolls dice, activates entries, fills a prompt and applies knowledge. Apps that follow it give the model the same inputs and record the same outcomes for the same files, seed and message IDs. [Troupe Format](format.md) defines the files and comes first.
+This document defines how an app plays Troupe files: how it starts and continues a session, computes state, runs events, rolls dice, activates entries, fills a prompt and applies knowledge. Apps that follow it give the model the same content and record the same outcomes for the same files, seed and message IDs; formatting and the order of prompt slots stay the app's. [Troupe Format](format.md) defines the files and comes first.
 
 > **Status.** This is a draft. Breaking changes are allowed until 1.0. It has the same version as Troupe Format.
 
@@ -55,7 +55,11 @@ Swiping to another opening creates another root, starting again from step 4.
 
 ### 2.2 Continuing chronicles
 
-- **Starting.** A session that continues a chronicle lists it in `chronicles` and copies the chronicle's `character` into the header's `characters`, where it replaces the bundle character with the same ID (Format 12.2). The character keeps that ID for life, so bundle references to it still work. A chronicle character with no bundle character joins the cast and is present at the start (section 2.1). `persona` is offered as the player's character for the first seat, and the chronicle's `limits` are added to the session's `lines` and `veils`, without duplicates, in order. Its `memories` are copied onto the root as session entries, a memory without `knownBy` getting the character's, and the `values` of all its chronicles are recorded on the root in one `{"by": "rules"}` change, before any other change (section 2.1). The session never needs the chronicle file to replay.
+- **Starting.** A session that continues a chronicle lists it in `chronicles`.
+  - The chronicle's `character` is copied into the header's `characters`, where it replaces the bundle character with the same ID (Format 12.2). The character keeps that ID for life, so bundle references to it still work. A chronicle character with no bundle character joins the cast and is present at the start (section 2.1).
+  - `persona` is offered as the player's character for the first seat, and the chronicle's `limits` are added to the session's `lines` and `veils`, without duplicates, in order.
+  - Its `memories` are copied onto the root as session entries, a memory without `knownBy` getting the character's, and the `values` of all its chronicles are recorded on the root in one `{"by": "rules"}` change, before any other change (section 2.1).
+  - The session never needs the chronicle file to replay.
 - **Persona keys.** Keys of carried keyed variables that name the persona are rewritten to the session's first player's character, and back to the persona's ID when written back.
 - **Writing back.** Apps write back to the chronicle when they choose, such as when a conversation pauses, by rewriting it from the head path. `values` keeps only carried keys, and takes the latest value of each carried key that a change on the path set. Each carried session entry on the path, the latest version of its ID, replaces the memory with that ID or is added after the others, and with `disabled` removes it; root entries unchanged from how the start copied them are skipped. With several chronicles in a session, each has a distinct character; a carried entry goes to the chronicle of every character in its `knownBy`, or to all of them without `knownBy`, and clashing entry IDs from different chronicles are renamed on the root.
 
@@ -297,4 +301,4 @@ A conforming **app** reads files as a conforming reader (Format 17.1), and also 
 | SHA-256 rolls over seed, message and subject | A sequential generator | Order-independent, exact in JavaScript, fresh on regeneration. |
 | Recorded activations; sticky not re-recorded | Recomputing history | Timers continue in any app, and run out. |
 | Batch passes; cumulative chain text | Per-entry loops, grouping after chaining | Order-independent selection; losing entries never activate others. |
-| Core plays cards; Full adds mechanics; partial apps refuse | One level, or fallbacks | Simple apps are easy and still play imported cards; no app tells a different story. |
+| Core plays cards; Full adds mechanics; partial apps refuse | One level, or fallbacks | Apps without mechanics still play imported cards, and no app tells a different story. Core still needs CEL, RE2 and exact entry selection. |

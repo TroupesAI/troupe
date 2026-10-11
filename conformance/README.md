@@ -213,7 +213,7 @@ Every field of `expect` is optional:
 
 ### 4.12 `check`: reference checks (Format 17.2)
 
-The runner validates the bundle and the session's raw records against the schemas, then runs every reference check.
+The runner validates the bundle and the session's raw lines against the schemas, then runs every reference check.
 
 | Input | Meaning |
 | --- | --- |
@@ -232,7 +232,7 @@ Locations:
 | --- | --- | --- |
 | In the bundle | A JSON Pointer, with array indices | `/scenarios/0/events/1/when` |
 | In a session header | `header/<pointer>` | `header/players` |
-| In a message (schema failures of message records included) | `message:<id>/<pointer within the message>` | `message:3/changes/0/set/hp` |
+| In a message (its schema failures included) | `message:<id>/<pointer within the message>` | `message:3/changes/0/set/hp` |
 | In a chronicle | `chronicle/<pointer>` | `chronicle/values/closeness` |
 
 A diagnostic about one value points at that value: a list item at its index (`/requires/0`), a duplicate ID at the duplicate's `id` (`/characters/1/id`), a reference at the field holding it (`/scenarios/0/cast/2/character`). For keys inside `set`, the pointer segment is the key as written (`/set/scene.present`).

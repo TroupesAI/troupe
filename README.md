@@ -9,7 +9,7 @@ An open file format for AI roleplay: characters, the worlds they live in, the sc
 | | |
 | --- | --- |
 | [Troupe Format](spec/format.md) | The files and what every field means: bundles, characters, worlds, scenarios, entries, variables, events, sessions and chronicles. |
-| [Troupe Play](spec/play.md) | How apps play the files, so that every app gives the model the same inputs: starting sessions, state and events, rolls, entry activation, prompt contents and knowledge. |
+| [Troupe Play](spec/play.md) | How apps play the files, so that every app gives the model the same content: starting sessions, state and events, rolls, entry activation, prompt contents and knowledge. |
 | [Schemas](schemas/) | JSON Schemas, normative for structure (Format Appendix A). |
 | [Conformance suite](conformance/) | Language-neutral test cases and the [protocol](conformance/README.md) a test runner follows. |
 | [Examples](examples/) | The spec's worked examples as files. |

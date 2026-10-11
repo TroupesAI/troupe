@@ -273,7 +273,7 @@ footer.colophon { margin-top: 56px; padding-top: 18px; border-top: 1px solid var
       <li><a href="#c6"><span>6</span>Scenarios</a></li>
       <li><a href="#c7"><span>7</span>Entries</a></li>
       <li><a href="#c8"><span>8</span>Variables</a></li>
-      <li><a href="#c9"><span>9</span>Events and actions</a></li>
+      <li><a href="#c9"><span>9</span>Events</a></li>
       <li><a href="#c10"><span>10</span>Conditions</a></li>
       <li><a href="#c11"><span>11</span>Macros</a></li>
     </ol>
@@ -285,7 +285,7 @@ footer.colophon { margin-top: 56px; padding-top: 18px; border-top: 1px solid var
       <li><a href="#c15"><span>15</span>The model's reply as data</a></li>
       <li><a href="#c16"><span>16</span>Dice you can trust</a></li>
       <li><a href="#c17"><span>17</span>Chronicles</a></li>
-      <li><a href="#c18"><span>18</span>Media, limits, safety</a></li>
+      <li><a href="#c18"><span>18</span>Limits and safety</a></li>
     </ol>
     <h2>Part 4 · The bigger picture</h2>
     <ol>
@@ -409,7 +409,7 @@ footer.colophon { margin-top: 56px; padding-top: 18px; border-top: 1px solid var
         <tbody>
           <tr><td><strong>Entries</strong></td><td>Any piece of text the model should read when certain conditions hold: lore, rules, secrets, goals, memories.</td><td><a href="#c7">7</a></td></tr>
           <tr><td><strong>Variables</strong></td><td>Numbers, flags and lists the story keeps track of, like health, trust or time of day.</td><td><a href="#c8">8</a></td></tr>
-          <tr><td><strong>Events</strong></td><td>Rules that react to the story ("when the twelfth bell rings, close the gates"), or actions players and the model can trigger.</td><td><a href="#c9">9</a></td></tr>
+          <tr><td><strong>Events</strong></td><td>Rules that react to the story ("when the twelfth bell rings, close the gates").</td><td><a href="#c9">9</a></td></tr>
           <tr><td><strong>Conditions</strong></td><td>Small yes-or-no formulas that decide when entries and events apply.</td><td><a href="#c10">10</a></td></tr>
           <tr><td><strong>Sessions</strong></td><td>The saved chat, with a record of everything that happened.</td><td><a href="#c14">14</a></td></tr>
           <tr><td><strong>Chronicles</strong></td><td>A character's memories carried from one session to the next.</td><td><a href="#c17">17</a></td></tr>
@@ -494,14 +494,11 @@ footer.colophon { margin-top: 56px; padding-top: 18px; border-top: 1px solid var
           <tr><td><code>description</code></td><td>The model, whenever the character is in the scene</td><td>Everything needed to play them: looks, personality, background, how they talk. Headings like "## Personality" are fine.</td></tr>
           <tr><td><code>summary</code></td><td>The model, when the character is mentioned but not present</td><td>One or two sentences, so the model knows who people are talking about.</td></tr>
           <tr><td><code>examples</code></td><td>The model</td><td>Short sample exchanges that show the character's voice. <code>char</code> is this character, <code>user</code> the player's.</td></tr>
-          <tr><td><code>appearance</code></td><td>Image generators</td><td>Only what they look like, for consistent pictures. Not sent to the chat model.</td></tr>
-          <tr><td><code>voice</code></td><td>Speech generators</td><td>Only how they sound, for text-to-speech.</td></tr>
           <tr><td><code>aliases</code></td><td>The app</td><td>Other names (a full name, a title), so mentions are recognized.</td></tr>
         </tbody>
       </table></div>
       <ul>
         <li><strong><code>avatar</code> and <code>images</code></strong> are pictures, including expressions such as <code>happy</code> or <code>angry</code>, optionally grouped by outfit (<code>winter/happy</code>).</li>
-        <li><strong><code>talkativeness</code></strong> (0 to 1) hints how often the character speaks up in a group.</li>
         <li><strong>The player's own character</strong>, often called a persona, is an ordinary character too. It's usually stored in the saved chat rather than the bundle.</li>
       </ul>
     </section>
@@ -668,7 +665,7 @@ footer.colophon { margin-top: 56px; padding-top: 18px; border-top: 1px solid var
           <svg viewBox="0 0 760 220" role="img" aria-label="Rules, players and the model can all propose changes. Each change passes guardrails for type, range, step size, direction and permission, then is recorded on a message. The state at any point is the starting values plus the recorded changes along the story path.">
             <defs><marker id="a4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="ah"/></marker></defs>
             <rect class="bx" x="20" y="14" width="190" height="50" rx="8"/><text class="tb" x="34" y="36">Rules</text><text class="ts" x="34" y="53">openings and events, always</text>
-            <rect class="bx" x="20" y="84" width="190" height="50" rx="8"/><text class="tb" x="34" y="106">Players</text><text class="ts" x="34" y="123">choices, edits, answers</text>
+            <rect class="bx" x="20" y="84" width="190" height="50" rx="8"/><text class="tb" x="34" y="106">Players</text><text class="ts" x="34" y="123">edits, answers</text>
             <rect class="bx" x="20" y="154" width="190" height="50" rx="8"/><text class="tb" x="34" y="176">The model</text><text class="ts" x="34" y="193">a tracker reading the story</text>
             <path class="ln" d="M210 39 C 245 39, 250 109, 282 109" marker-end="url(#a4)"/>
             <path class="ln" d="M210 109 L 282 109" marker-end="url(#a4)"/>
@@ -703,11 +700,11 @@ footer.colophon { margin-top: 56px; padding-top: 18px; border-top: 1px solid var
     </section>
 
     <section class="chapter" id="c9">
-      <div class="chapter-title"><span class="no">9</span><h3>Events and actions</h3></div>
+      <div class="chapter-title"><span class="no">9</span><h3>Events</h3></div>
       <div class="concept">
         <span class="term">Event</span>
         <dl>
-          <dt>What it is</dt><dd>A rule of the form "when this is true, do that", or an action someone can trigger.</dd>
+          <dt>What it is</dt><dd>A rule of the form "when this is true, do that".</dd>
           <dt>What it's for</dt><dd>Story beats, consequences, random encounters, endings, and game moves, without any code.</dd>
         </dl>
       </div>
@@ -733,35 +730,16 @@ footer.colophon { margin-top: 56px; padding-top: 18px; border-top: 1px solid var
       </table></div>
       <p>Dice are written <code>roll(20)</code> inside <code>compute</code>. All the rules that fire after one message run in a single, fixed order, and they can't trigger each other in an endless loop.</p>
 
-      <h4>Callable events: actions, tools and choices</h4>
-      <p>An event with <code>call</code> doesn't fire on its own. Instead, it's offered as an action: the model can call it as a tool (a function the app lets the model request), and players can pick it like a menu choice. This is how a game master checks whether a lockpick works, and how a visual novel offers a choice.</p>
-      <div class="fig-box">
-        <figure>
-          <svg viewBox="0 0 760 200" role="img" aria-label="The model calls pick_lock with difficulty 15. The app checks the action is available, rolls a 17, and records the result. It returns 'the lock opens' to the model, which then narrates the success.">
-            <defs><marker id="a5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="ah"/></marker></defs>
-            <rect class="bx-spot" x="20" y="60" width="150" height="80" rx="8"/><text class="tb mid" x="95" y="94">Model</text><text class="ts mid" x="95" y="112">writing a reply</text>
-            <rect class="bx-soft" x="300" y="40" width="200" height="120" rx="8"/><text class="tb mid" x="400" y="66">The app</text>
-            <text class="ts mid" x="400" y="88">is it available here?</text><text class="ts mid" x="400" y="106">roll(20) = 17 ≥ 15</text><text class="ts mid" x="400" y="124">record the change</text>
-            <rect class="bx-ok" x="600" y="60" width="140" height="80" rx="8"/><text class="tb mid" x="670" y="94">Session</text><text class="ts mid" x="670" y="112">picked: true, args</text>
-            <path class="ln" d="M170 78 L 296 78" marker-end="url(#a5)"/><text class="t mid" x="233" y="70">1 · calls pick_lock(15)</text>
-            <path class="ln" d="M296 122 L 174 122" marker-end="url(#a5)"/><text class="t mid" x="233" y="142">2 · "the lock opens"</text>
-            <path class="ln" d="M500 100 L 596 100" marker-end="url(#a5)"/><text class="ts mid" x="548" y="92">saved</text>
-            <text class="t mid" x="95" y="176">3 · narrates the success</text>
-          </svg>
-          <figcaption>The model asks, the rules decide, and the model narrates the result. The app rolls the die from the session's seed and records the resulting change, so the model can't alter it.</figcaption>
-        </figure>
-      </div>
-<pre><code>{ "id": "pick_lock", "when": "scene.location == 'vault'",
-  "call": { "by": ["model", "player"], "label": "Pick the lock",
-            "description": "Call when someone tries to open a locked door or chest.",
-            "params": [{ "id": "difficulty", "type": "int", "min": 5, "max": 25, "description": "How hard the lock is." }] },
-  "compute": { "picked": "roll(20) >= args.difficulty" },
+      <h4>Checks and dice</h4>
+      <p>A check rolls when someone tries something risky, and the reply narrates the result. The tracker notes what the player is attempting, and an event marked <code>on: "player"</code> rolls for it before anyone replies:</p>
+<pre><code>{ "id": "pick_lock", "on": "player", "when": "state.attempt == 'lock'",
+  "set": { "attempt": "none" },
+  "compute": { "picked": "roll(20) >= 12" },
   "direct": "The lock {{state.picked}}. Narrate it." }</code></pre>
       <ul>
-        <li><code>call.by</code> says who may use it; <code>label</code> is the text players see; <code>description</code> tells the model when to call it.</li>
-        <li><code>params</code> are the action's inputs, read as <code>args.difficulty</code>; they get the same type checks as variables.</li>
-        <li>It's only offered while <code>when</code> holds, so a lock can only be picked in the vault.</li>
+        <li><code>attempt</code> is a variable the tracker sets when the player tries to pick a lock; the event sets it back.</li>
         <li><code>picked</code> is a yes-or-no variable declared in the scenario, with the labels "opens" and "holds", so the direction reads "The lock opens."</li>
+        <li>The app rolls the die from the session's seed and records the result, so the model can't change it.</li>
       </ul>
     </section>
 
@@ -801,7 +779,7 @@ footer.colophon { margin-top: 56px; padding-top: 18px; border-top: 1px solid var
             <tr><td><code>elapsed</code>, <code>hour</code>, <code>weekday</code></td><td>Seconds since the previous message; the player's local hour and day.</td></tr>
             <tr><td><code>count(name)</code>, <code>ago(name)</code></td><td>How often, and how many rounds ago, an event fired, an entry activated or a value changed.</td></tr>
             <tr><td><code>hit(word)</code></td><td>In entries: whether a word appears in the recent messages.</td></tr>
-            <tr><td><code>roll(n)</code>, <code>args.x</code></td><td>In events: a die from 1 to n; an action's inputs.</td></tr>
+            <tr><td><code>roll(n)</code></td><td>In events: a die from 1 to n.</td></tr>
             <tr><td><code>min</code>, <code>max</code>, <code>abs</code>, <code>size</code>, <code>contains</code>…</td><td>A short list of standard functions.</td></tr>
           </tbody>
         </table></div>
@@ -842,11 +820,11 @@ footer.colophon { margin-top: 56px; padding-top: 18px; border-top: 1px solid var
     <section class="chapter" id="c12">
       <div class="chapter-title"><span class="no">12</span><h3>A turn, step by step</h3></div>
       <ol class="pipeline">
-        <li><b>A player writes, or picks a choice</b><span>Choices are callable events offered to the player.</span></li>
+        <li><b>A player writes</b><span>Their message is the start of a new round.</span></li>
         <li><b>Rules run</b><span>Events that apply after player messages run before anyone replies, so one marked <code>on: "player"</code> can roll for what the player attempted.</span></li>
         <li><b>Entries activate</b><span>Keywords, conditions, timing and groups decide which entries to include, the same way in every app.</span></li>
         <li><b>The prompt is assembled</b><span>Into five slots, shown below.</span></li>
-        <li><b>The model replies</b><span>As plain text, or as structured data with speakers, changes and actions (<a href="#c15">chapter 15</a>).</span></li>
+        <li><b>The model replies</b><span>As plain text, or as structured data with speakers and changes (<a href="#c15">chapter 15</a>).</span></li>
         <li><b>The tracker updates state</b><span>A model reads the reply and updates the values it's allowed to change.</span></li>
         <li><b>Rules run again</b><span>After the reply and its tracking, events react: change values, add narration, direct the next reply, or end the story.</span></li>
       </ol>
@@ -934,7 +912,7 @@ footer.colophon { margin-top: 56px; padding-top: 18px; border-top: 1px solid var
           <li><strong>A tree, not a list.</strong> Swipes and branches are siblings under the same parent, and each opening is its own root, so greetings can be swiped too.</li>
           <li><strong>The head</strong> is the message you're currently at; the story so far is the path from a root to it.</li>
           <li><strong>Branches never share state:</strong> health lost on one branch is still intact on the other.</li>
-          <li><strong>Appendable.</strong> Apps can save by adding lines instead of rewriting the file, which makes autosave cheap and crash-safe.</li>
+          <li><strong>A snapshot.</strong> Apps store chats however they like, and write the whole file, one message per line, to export or share a chat.</li>
         </ul>
       </div>
       <ul>
@@ -945,9 +923,9 @@ footer.colophon { margin-top: 56px; padding-top: 18px; border-top: 1px solid var
       <div class="table-wrap"><table>
         <thead><tr><th>Field</th><th>What it's for</th></tr></thead>
         <tbody>
-          <tr><td><code>content</code></td><td>The message itself: text, images, audio, with speakers.</td></tr>
+          <tr><td><code>content</code></td><td>The message itself: text and images, with speakers.</td></tr>
           <tr><td><code>from</code>, <code>char</code>, <code>author</code></td><td>Written by a player, the model or the system; which character it was written for; which person wrote it.</td></tr>
-          <tr><td><code>changes</code></td><td>The variable changes it caused, and which rule or action made them.</td></tr>
+          <tr><td><code>changes</code></td><td>The variable changes it caused, and which rule made them.</td></tr>
           <tr><td><code>activated</code></td><td>Which entries newly activated for it.</td></tr>
           <tr><td><code>entries</code></td><td>Entries added from this point on: an author's note, a memory, a fact learned.</td></tr>
           <tr><td><code>summary</code></td><td>A short summary of earlier messages, which can stand in for them when space is tight.</td></tr>
@@ -970,7 +948,7 @@ footer.colophon { margin-top: 56px; padding-top: 18px; border-top: 1px solid var
     { "speaker": "kai", "text": "*Kai nods.* Fine. Your plan, boss." },
     { "speaker": "kai", "knownBy": ["kai"], "text": "*If the Duke's men are early, this ends badly.*" }
 ] }</code></pre>
-      <p>The same package can also carry value changes, new memories, newly introduced characters and actions the model wants to call.</p>
+      <p>The same package can also carry value changes, new memories and newly introduced characters.</p>
       <h4>The tracker</h4>
       <p>Values can change with either kind of reply. The <strong>tracker</strong> is a separate, often cheaper model call that reads the latest messages, along with each variable's description, range and current value, and reports only what changed. Its changes pass the same guardrails as everything else. Entries placed <code>"tracker"</code> give it extra guidance.</p>
       <div class="note info"><b>Conditions in plain words</b>To react to something hard to detect, like "Elena has told the crew about the key", make it a yes-or-no variable that the model may set and that only moves forward (<code>oneWay</code>), with that sentence as its description. The tracker flips it when it happens, and from then on it's a recorded fact.</div>
@@ -1002,7 +980,7 @@ footer.colophon { margin-top: 56px; padding-top: 18px; border-top: 1px solid var
       </div>
       <div class="fig-box">
         <figure>
-          <svg viewBox="0 0 760 200" role="img" aria-label="When a chat starts, the chronicle's character, memories and values are copied onto the first message. The chat plays normally. When it pauses, values that changed and new memories are written back to the chronicle, each citing the message it came from.">
+          <svg viewBox="0 0 760 200" role="img" aria-label="When a chat starts, the chronicle's character, memories and values are copied onto the first message. The chat plays normally. When it pauses, values that changed and new memories are written back to the chronicle.">
             <defs><marker id="a6" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="ah"/></marker></defs>
             <rect class="bx-ok" x="20" y="40" width="210" height="120" rx="10"/><text class="tb" x="36" y="66">Chronicle</text>
             <text class="ts" x="36" y="88">Mira's definition</text><text class="ts" x="36" y="106">memory: the lake promise</text><text class="ts" x="36" y="124">memory: Juna's signal</text><text class="ts" x="36" y="142">closeness: 58</text>
@@ -1010,7 +988,7 @@ footer.colophon { margin-top: 56px; padding-top: 18px; border-top: 1px solid var
             <text class="ts" x="436" y="88">first message carries the memories</text><text class="ts" x="436" y="106">and starts closeness at 58</text><text class="ts" x="436" y="124">plays normally; memories are pulled</text><text class="ts" x="436" y="142">into the prompt when they matter</text>
             <path class="ln" d="M230 72 L 416 72" marker-end="url(#a6)"/><text class="t mid" x="323" y="64">copied in at the start</text>
             <path class="ln" d="M416 128 L 234 128" marker-end="url(#a6)"/><text class="t mid" x="323" y="120">written back on pause</text>
-            <text class="ts mid" x="323" y="148">changed values and new memories,</text><text class="ts mid" x="323" y="162">each citing its source message</text>
+            <text class="ts mid" x="323" y="148">changed values and new memories</text>
           </svg>
           <figcaption>The chat never depends on the chronicle file to replay: everything it needs is copied in at the start. Only what changed goes back.</figcaption>
         </figure>
@@ -1018,17 +996,15 @@ footer.colophon { margin-top: 56px; padding-top: 18px; border-top: 1px solid var
       <ul>
         <li>Mark a character's variables and memory entries with <code>carry</code> to keep them in the chronicle.</li>
         <li>Memories are ordinary entries, usually with <code>pull</code> and a <code>title</code>, so thousands of them can exist without crowding every prompt.</li>
-        <li>People can read, edit and delete every memory. Deleting a message can prompt the app to forget memories that came from it.</li>
+        <li>People can read, edit and delete every memory.</li>
         <li>A long friendship can run as many short chats with one chronicle, instead of one endless chat.</li>
       </ul>
     </section>
 
     <section class="chapter" id="c18">
-      <div class="chapter-title"><span class="no">18</span><h3>Media, limits and safety</h3></div>
+      <div class="chapter-title"><span class="no">18</span><h3>Limits and safety</h3></div>
       <ul>
-        <li><strong>Audio messages</strong> are parts with a <code>transcript</code>, which is what text models read and what lore keywords match against.</li>
-        <li><strong>Generated media</strong> records how it was made (<code>generated</code>: which model, prompt and seed), and apps keep media files unchanged, so authenticity labels embedded in them survive.</li>
-        <li><strong>Player limits:</strong> the people playing can set <code>lines</code> (never show this) and <code>veils</code> (may happen, but only offscreen). Apps apply them to every generation, images and voice included, and never drop them to save space.</li>
+        <li><strong>Player limits:</strong> the people playing can set <code>lines</code> (never show this) and <code>veils</code> (may happen, but only offscreen). Apps apply them to every generation, media included, and never drop them to save space.</li>
       </ul>
       <h4>Built-in safety for shared files</h4>
       <div class="table-wrap"><table>
@@ -1057,9 +1033,8 @@ footer.colophon { margin-top: 56px; padding-top: 18px; border-top: 1px solid var
         <tbody>
           <tr><td><code>.troupe.json</code></td><td>A bundle as one file; pictures are links or embedded.</td></tr>
           <tr><td><code>.troupe</code></td><td>A package (a ZIP): the bundle, its pictures, and optionally saved chats and chronicles.</td></tr>
-          <tr><td><code>.troupe-session.jsonl</code></td><td>One saved chat in JSON Lines (one JSON record per line).</td></tr>
-          <tr><td><code>.troupe-chronicle.jsonl</code></td><td>One character's chronicle.</td></tr>
-          <tr><td><code>.troupe.yaml</code></td><td>A bundle written in YAML, which is easier to write by hand (comments, readable long text). It means the same as the JSON.</td></tr>
+          <tr><td><code>.troupe-session.jsonl</code></td><td>One saved chat in JSON Lines (one message per line).</td></tr>
+          <tr><td><code>.troupe-chronicle.json</code></td><td>One character's chronicle.</td></tr>
           <tr><td>A PNG picture with the bundle hidden inside it</td><td>Optional, for sharing on image sites, with a V3 copy alongside so older apps can read it too.</td></tr>
         </tbody>
       </table></div>
@@ -1087,7 +1062,7 @@ footer.colophon { margin-top: 56px; padding-top: 18px; border-top: 1px solid var
           <tr><td>a chat file with swipes</td><td>a session, with swipes as siblings</td></tr>
         </tbody>
       </table></div>
-      <p class="cite">Appendix E of Format maps the common fields (unmapped ones are reported and kept), and defines a lossy export of a single character back to V3.</p>
+      <p class="cite"><a href="character-cards.md">Character Card V2/V3 and Troupe</a> maps the common fields (unmapped ones are reported and kept), and describes a lossy export of a single character back to V3.</p>
     </section>
 
     <section class="chapter" id="c21">
@@ -1115,7 +1090,7 @@ footer.colophon { margin-top: 56px; padding-top: 18px; border-top: 1px solid var
 
     <section class="chapter" id="c22">
       <div class="chapter-title"><span class="no">22</span><h3>Status and road to 1.0</h3></div>
-      <p>Version 0.11 is a draft; breaking changes are allowed until 1.0. Troupe is specified in two documents: <a href="#format">Format</a> defines the files, and <a href="#play">Play</a> defines how apps play them. A conformance suite checks implementations against both. Appendix G of Format lists what 1.0 still needs and the extensions planned after it.</p>
+      <p>Version 0.11 is a draft; breaking changes are allowed until 1.0. Troupe is specified in two documents: <a href="#format">Format</a> defines the files, and <a href="#play">Play</a> defines how apps play them. A conformance suite checks implementations against both. Appendix D of Format lists what 1.0 still needs and the extensions planned after it.</p>
     </section>
 
     <div class="part-head" id="glossary">
@@ -1126,7 +1101,6 @@ footer.colophon { margin-top: 56px; padding-top: 18px; border-top: 1px solid var
       <dt>Activation</dt><dd>An entry being included in a prompt. Recorded in the message's <code>activated</code> list.</dd>
       <dt>Branch</dt><dd>A different path from an earlier message; branches never share state.</dd>
       <dt>Bundle</dt><dd>The file an author shares, holding characters, worlds and scenarios.</dd>
-      <dt>Callable event</dt><dd>An event offered as an action that the model or players can trigger.</dd>
       <dt>Cast</dt><dd>Who takes part in a scenario, including player seats.</dd>
       <dt>CEL</dt><dd>Common Expression Language: the small, safe formula language used for conditions.</dd>
       <dt>Character card</dt><dd>A file describing a character so any app can play them; Character Card V2/V3 is today's common format.</dd>
@@ -1134,7 +1108,7 @@ footer.colophon { margin-top: 56px; padding-top: 18px; border-top: 1px solid var
       <dt>Context window</dt><dd>How much text a model can read at once.</dd>
       <dt>Core / Full</dt><dd>The two levels of app support: Core plays cards and lore; Full adds variables and events.</dd>
       <dt>Entry</dt><dd>Text the model reads when its conditions hold.</dd>
-      <dt>Event</dt><dd>A rule that reacts to the story, or an action someone can trigger.</dd>
+      <dt>Event</dt><dd>A rule that reacts to the story.</dd>
       <dt>Greeting</dt><dd>A character's first message; in Troupe, an opening.</dd>
       <dt>Head</dt><dd>The message a chat is currently at.</dd>
       <dt>knownBy</dt><dd>The list of characters who know an entry or a line.</dd>
