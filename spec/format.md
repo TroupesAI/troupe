@@ -2,7 +2,7 @@
 
 **Version 0.11 (draft)** · October 11, 2026
 
-Troupe is an open file format for AI roleplay: characters, the worlds they live in, the scenarios that bring them together, the mechanics that drive a story, and the chat sessions played from them. One file can hold a single character or a full multi-character story.
+Troupe is an open file format for AI roleplay: characters, the worlds they live in, the scenarios that bring them together, the mechanics that drive a story, and sessions: the chats people play, exported so any app can continue them. One file can hold a single character or a full multi-character story.
 
 This document defines the files and what every field means. [Troupe Play](play.md) defines how apps play them, so that every app gives the model the same content and records the same outcomes.
 
