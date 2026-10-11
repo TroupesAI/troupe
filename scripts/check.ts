@@ -61,7 +61,7 @@ const extra = readdirSync(join(root, "examples")).filter((f) => !(f in examples)
 if (extra.length) fail(`examples/ has files the spec doesn't define: ${extra.join(", ")}`);
 
 // Every complete bundle written as a json block in the spec and guides
-for (const doc of ["spec/format.md", "spec/play.md", "guides/authoring.md", "guides/character-cards.md"]) {
+for (const doc of ["spec/format.md", "spec/play.md", "guides/authoring.md", "guides/character-cards.md", "guides/beginners.md"]) {
   const text = read(doc);
   for (const m of text.matchAll(/```json\n([\s\S]*?)\n```/g)) {
     let value: unknown;
@@ -109,7 +109,7 @@ const slug = (heading: string) =>
     .trim()
     .replace(/\s/g, "-");
 const anchors = (path: string) => new Set([...read(path).matchAll(/^#{1,6} (.+)$/gm)].map((m) => slug(m[1])));
-const markdown = ["README.md", "CONTRIBUTING.md", "SECURITY.md", "AGENTS.md", "CHANGELOG.md", "spec/format.md", "spec/play.md", "guides/implementers.md", "guides/authoring.md", "guides/character-cards.md", "conformance/README.md"];
+const markdown = ["README.md", "CONTRIBUTING.md", "SECURITY.md", "AGENTS.md", "CHANGELOG.md", "spec/format.md", "spec/play.md", "guides/implementers.md", "guides/authoring.md", "guides/character-cards.md", "guides/beginners.md", "conformance/README.md"];
 for (const doc of markdown) {
   const text = read(doc).replace(/```[\s\S]*?```/g, "");
   for (const m of text.matchAll(/\]\(([^)\s]+)\)/g)) {

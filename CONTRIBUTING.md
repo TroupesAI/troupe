@@ -4,7 +4,7 @@
 
 - **[Troupe Format](spec/format.md)**: what a file contains and what each field means. Authors, editors, validators and converters need nothing else.
 - **[Troupe Play](spec/play.md)**: behavior that decides what the model receives or what a session records, so every app plays a file the same way.
-- **Guides** ([authoring](guides/authoring.md), [implementer's](guides/implementers.md), [Character Card V2/V3](guides/character-cards.md), [beginner's](guides/beginners.html)): patterns, advice and mappings that don't affect interoperability, such as presentation, UX and when to run a tracker. They are informative and don't use RFC 2119 keywords.
+- **Guides** ([authoring](guides/authoring.md), [implementer's](guides/implementers.md), [Character Card V2/V3](guides/character-cards.md), [beginner's](guides/beginners.md)): patterns, advice and mappings that don't affect interoperability, such as presentation, UX and when to run a tracker. They are informative and don't use RFC 2119 keywords.
 
 Libraries and apps live in their own repositories. This one holds no implementation code; `scripts/check.ts` only checks the repository.
 
@@ -28,7 +28,7 @@ Requires [Bun](https://bun.sh). `bun install`, then `bun run check` runs what CI
 
 Format and Play share one version, `major.minor`. A minor version bump changes, together:
 
-- the version line of `spec/format.md` and `spec/play.md`, and the beginner's guide's masthead, hero and smallest-card example;
+- the version line of `spec/format.md` and `spec/play.md`, and the bundles in the guides;
 - every schema `$id` (`https://troupe.example/schema/<minor>/…`) and `troupe` in every example and case.
 
 The changelog records each version.
