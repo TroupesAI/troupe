@@ -1,5 +1,5 @@
 {
-  "description": "Strict schemas, lenient readers (Format 15, 17.2): unknown fields are UNKNOWN_FIELD warnings, located at the field, and the file is still read",
+  "description": "Strict schemas, lenient readers (Format 15, 17.2): unknown fields are UNKNOWN_FIELD warnings, located at the field, and the file is still read; a part's fields are those of the interface its type selects",
   "bundle": {
     "troupe": "0.11",
     "kind": "bundle",
@@ -25,6 +25,17 @@
           {
             "character": "a"
           }
+        ],
+        "openings": [
+          {
+            "id": "o",
+            "content": [
+              {
+                "text": "Hi.",
+                "src": "hi.png"
+              }
+            ]
+          }
         ]
       }
     ]
@@ -44,6 +55,10 @@
           {
             "code": "UNKNOWN_FIELD",
             "at": "/characters/0/mystery"
+          },
+          {
+            "code": "UNKNOWN_FIELD",
+            "at": "/scenarios/0/openings/0/content/0/src"
           }
         ]
       }
