@@ -262,7 +262,7 @@ The text of a `character:<id>` item is the character's resolved `description`; i
 Every field of `expect` is optional:
 
 - each slot name, compared as the full list of item strings in order
-- `lines`, a subset map from history message ID to its lines: each visible part as `<speaker name>: <text>`, or `<text>` without a speaker. Text is macro-resolved in author messages and literal in player and model messages. Image parts render as `[image]` or `[image: <alt>]`, with `alt` macro-resolved in author messages; Reasoning and tool parts, hidden messages and records-only system messages are left out.
+- `lines`, a subset map from history message ID to its lines: each visible part as `<speaker name>: <text>`, or `<text>` without a speaker. Text is macro-resolved in author messages and literal in player and model messages. Image parts render as `[image]` or `[image: <alt>]`, with `alt` macro-resolved in author messages; Hidden messages and records-only system messages are left out.
 - `texts`, a subset map from item string to the item's resolved text
 - `directions`, the resolved direction texts
 

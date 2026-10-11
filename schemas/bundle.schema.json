@@ -1129,49 +1129,6 @@
               "$ref": "#/$defs/ids"
             }
           }
-        },
-        {
-          "title": "Reasoning part",
-          "type": "object",
-          "required": [
-            "type",
-            "text"
-          ],
-          "additionalProperties": false,
-          "properties": {
-            "type": {
-              "const": "reasoning"
-            },
-            "text": {
-              "type": "string"
-            },
-            "ext": {
-              "$ref": "#/$defs/ext"
-            }
-          }
-        },
-        {
-          "title": "Tool part",
-          "type": "object",
-          "required": [
-            "type",
-            "name",
-            "input"
-          ],
-          "additionalProperties": false,
-          "properties": {
-            "type": {
-              "const": "tool"
-            },
-            "name": {
-              "type": "string"
-            },
-            "input": true,
-            "output": true,
-            "ext": {
-              "$ref": "#/$defs/ext"
-            }
-          }
         }
       ]
     },

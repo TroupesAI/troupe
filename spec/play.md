@@ -198,7 +198,7 @@ This is also the **file order**; within an owner, entries keep their array order
 
 ### 5.2 Scanned text
 
-An entry's scanned text is built from the last `scanDepth` messages on the path that aren't hidden and have content, newest first. Each text part that the generation can see, in array order, contributes `<speaker name>: <text>`, or its text when it has no speaker, with comments removed and author macros resolved. Contributions are joined with `\n`. Reasoning, image and tool parts are never scanned. A key that names a character therefore matches whenever that character speaks.
+An entry's scanned text is built from the last `scanDepth` messages on the path that aren't hidden and have content, newest first. Each text part that the generation can see, in array order, contributes `<speaker name>: <text>`, or its text when it has no speaker, with comments removed and author macros resolved. Contributions are joined with `\n`. Image parts are never scanned. A key that names a character therefore matches whenever that character speaks.
 
 ### 5.3 Matching
 

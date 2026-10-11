@@ -651,9 +651,7 @@ interface Message {
 
 type Part =                         // every part MAY also carry ext
   | { type?: "text"; text: string; speaker?: string; knownBy?: string[] }
-  | { type: "image"; src: string; alt?: string; speaker?: string; knownBy?: string[] }
-  | { type: "reasoning"; text: string }
-  | { type: "tool"; name: string; input: Json; output?: Json };
+  | { type: "image"; src: string; alt?: string; speaker?: string; knownBy?: string[] };
 
 interface Change {
   by: "rules" | "player" | "model";
@@ -697,7 +695,6 @@ A message may add entries, owned by `session`. They are candidates from that mes
 - **`summary`** condenses the messages from `from` to its message, and MAY stand in for them in history. Without `knownBy`, it is known by the characters who know every part it covers. Editing or deleting a covered message MUST remove it. Apps MAY rebuild summaries, or leave them out when exporting.
 - **`limits`** belong to the people playing, and apps apply them to every generation (Play 6).
 - **Image parts** reach models that accept images, and other models through `alt`.
-- **`reasoning`** parts are shown or sent back only if the user opts in; **`tool`** parts are kept for reference.
 - **Records-only messages.** A system message with empty `content` carries only records, such as player edits (Play 3.3): it is not sent to models, not scanned, and not counted for `scanDepth` or numeric positions.
 
 ### 12.5 Renaming
@@ -1131,6 +1128,7 @@ A new session that continues this chronicle starts with `closeness` at 58 and bo
 | Priority means importance; file order is prompt order | Priority doing three jobs | Authors order lore by writing it in order. |
 | Copies with `credits`; export to V3 | Live cross-bundle references, structured provenance; one-way migration | People write attribution as they like; authors can still reach older apps. |
 | No narrator voice | A character that defines the narrator | Narrator-only `system` entries already set its style. |
+| No reasoning or tool parts | Provider transcripts in messages | They mean nothing to the story; apps that keep them use `ext`. |
 | Two modes | A third, `mixed` mode | In `characters` mode the narrator can already take turns, and who speaks next is the app's choice. |
 | Sessions as an exchange snapshot | Prescribing storage, or an append-only log of edits | Apps keep their own databases; chats still move between apps intact, and readers replay no edits or deletions. |
 | No audio, media provenance, music, speaking hints, UI grouping or branch labels in the core | Media and presentation fields | They belong to apps and extensions such as `troupe.media`. |
