@@ -136,7 +136,7 @@
               "scene.location": "mars"
             },
             "compute": {
-              "trust.a": "state.trust.a - 1",
+              "trust.a": "state.trust.a - 1.0",
               "trust.b": "'high'"
             }
           }

@@ -121,7 +121,7 @@ MUST, MUST NOT, SHOULD, SHOULD NOT and MAY are used as described in RFC 2119 and
 
 ### 2.2 Values
 
-- Writers MUST write I-JSON (RFC 7493): UTF-8 without a byte order mark, no duplicate member names, no surrogate or noncharacter code points, written or escaped, numbers that fit an IEEE 754 double, integers within ±(2^53 − 1). Readers parse UTF-8 JSON (RFC 8259) and need not detect the rest.
+- Writers MUST write I-JSON (RFC 7493): UTF-8 without a byte order mark, no duplicate member names, no surrogate or noncharacter code points, written or escaped, numbers that fit an IEEE 754 double, integers within ±(2^53 − 1). Readers parse UTF-8 JSON (RFC 8259) and need not check the other I-JSON constraints.
 - Writers MUST NOT write `null` in a field this spec defines. Readers MUST treat `null`, `""` and `[]` in an optional field like a missing field, except in state values and `scenario.worlds`, where `""` and `[]` are values.
 - **Defaults are normative.** Every default stated in these documents or their TypeScript comments applies when a field is absent. Every boolean defaults to `false`.
 
@@ -156,7 +156,7 @@ MUST, MUST NOT, SHOULD, SHOULD NOT and MAY are used as described in RFC 2119 and
 
 ### 2.5 Text
 
-Model-facing text is Markdown (CommonMark 0.31.2). Apps never render raw HTML (section 16); they MAY render GFM tables and strikethrough. A **field** is one JSON string value. Timestamps are RFC 3339 in UTC, ending in `Z`, and language tags BCP 47 in canonical case.
+Model-facing text is Markdown (CommonMark 0.31.2). Apps never render raw HTML (section 16); they MAY render GFM tables and strikethrough. A **field** is one JSON string value. Timestamps are RFC 3339 in UTC, with an uppercase `T` and ending in `Z`, and language tags BCP 47 in canonical case.
 
 ### 2.6 How to read this document
 
@@ -175,7 +175,7 @@ interface Bundle {
   $schema?: string;
   troupe: string;                  // spec version, e.g. "0.11"
   kind: "bundle";
-  id?: string;                     // lets sessions and chronicles find the bundle
+  id?: string;                     // a random ID, such as a UUID; lets sessions and chronicles find the bundle
   name?: string;                   // the title; the first scenario's own name, else the first character's
   tagline?: string;                // one line for listings
   version?: string;                // for people: "1.2", "winter edit"
@@ -319,7 +319,7 @@ The narrator's style is set with scenario entries placed in `system` with `known
 
 ### 6.4 What a session uses
 
-The entries, variables and events **in use** in a session are those of the scenario, its worlds, the session's worlds, every cast character, and the session's own entries. Each keeps its owner, so two characters can both have a `mood` without sharing it.
+The entries, variables and events **in use** in a session are those of the scenario, its worlds, the session's worlds, every cast character, and the session's own entries, each from the message that adds it, on that message's path (section 12.3). Each keeps its owner, so two characters can both have a `mood` without sharing it.
 
 ---
 
@@ -379,7 +379,7 @@ interface Entry {
 
 - `"system"`: standing direction, such as tone, rules or an author's note.
 - `"context"` (default): what the model needs to know.
-- `"tracker"`: guidance for the model tracker only (Play 3.4), such as how to judge time passing.
+- `"tracker"`: guidance only for the model that updates state (Play 3.4), such as how to judge time passing.
 - A number *d*: inside history, with *d* history messages after it; 0 is after the last.
 
 ### 7.4 Knowledge
@@ -419,7 +419,7 @@ interface Variable {
 - **Types.** `bool`, `int`, `number` and `string` hold one JSON value. `enum` holds one of `values`. `set` holds distinct strings: members of `values` when given, otherwise any strings. For `int`, numeric `min`, `max` and `maxStep` are integers. `string` variables can't be `oneWay`.
 - **Defaults.** Without `initial`: `false`; `0` raised to `min` or lowered to `max`; `""`; the first of `values`; `[]`.
 - **`description`** is written for authors and models alike. A model that updates state receives it as its instructions: "How much this character trusts {{user}}. Rises when promises are kept; falls on lies."
-- **`by`.** Openings and events may always change a variable. `player` lets people change it through their interface; `model` lets the model tracker change it (Play 3.4).
+- **`by`.** Openings and events may always change a variable. `player` lets people change it through their interface; `model` lets the model that updates state change it (Play 3.4).
 - **`min` and `max`** may name another numeric variable of the same owner that is neither keyed nor derived, such as `"max": "max_hp"`; its current value is the bound.
 - **`maxStep`** limits each change from the model; **`oneWay`** lets numbers only rise, a bool only turn true, a set only gain members, and an enum only move later in `values`. Both apply to each key of a keyed variable. Starting values are exempt.
 - **`derive`** makes a read-only variable computed from other state whenever it is read, such as `"derive": "state.clock / 24 + 1"` for the day. Derived variables have no `initial`, `by`, `ask`, `of`, `maxStep` or `oneWay`, can't be changed, and can't read other derived variables.
@@ -465,7 +465,7 @@ Opening and event `set`, `compute` and recorded changes write state by key:
 
 - **Keys** are a scenario variable's ID, or an owner and a variable ID, followed by a key for keyed variables: `bell`, `trust.kai`, `kai.nerve`, `kai.feelings.elena`, `scene.location`, `scene.present`.
 - **Values** are absolute; a reader applies them without evaluating anything.
-- **Validity.** A value is valid if its key names a variable in use that isn't derived, and an allowed key, and the value has the variable's type, uses only listed members, is finite, and is an integer for `int`. A number outside `min` and `max` is still valid; it is clamped (Play 3.2, 3.3). `scene.location` is a location ID of the bundle or session, or `""`; `scene.present` lists cast characters.
+- **Validity.** A value is valid if its key names a variable in use that isn't derived, and an allowed key, and the value has the variable's type, uses only listed members, is finite, and is an integer for `int`. A numeric value outside `min` and `max` is still valid; it is clamped (Play 3.2, 3.3). `scene.location` is a location ID of the bundle or session, or `""`; `scene.present` lists cast characters.
 
 ---
 
@@ -750,7 +750,7 @@ A single-file bundle MAY be embedded in a PNG for image hosts: one `iTXt` chunk 
 ## 15. Extensions and versioning
 
 - **Extensions.** Every object that a Troupe document defines with an interface MAY carry `ext`, keyed by an extension name matching `^[a-z0-9][a-z0-9.-]{0,63}$`, such as `risu.regex`. The `troupe.` prefix is reserved for the draft extensions of Appendix D. Apps MUST NOT add fields anywhere else.
-- **Unknown fields.** Readers MUST ignore fields and extensions they don't understand. They MUST keep `ext` unchanged through load, save and export, and MAY drop other unknown fields. The schemas reject unknown properties to catch typos. A property is unknown when its object's interface doesn't define it; for a part, the interface its `type` selects. Each is an `UNKNOWN_FIELD` warning located at the property, and `SCHEMA` is judged with unknown properties removed, so readers never reject a file only for them. Validators assert `format`, so timestamps must be valid RFC 3339.
+- **Unknown fields.** Readers MUST ignore fields and extensions they don't understand. They MUST keep `ext` unchanged through load, save and export; other unknown fields are dropped when the file is written. The schemas reject unknown properties to catch typos. A property is unknown when its object's interface doesn't define it; for a part, the interface its `type` selects. Each is an `UNKNOWN_FIELD` warning located at the property, and `SCHEMA` is judged with unknown properties removed, so readers never reject a file only for them. Validators assert `format`, so timestamps must be valid RFC 3339.
 - **Versions** are `major.minor`, compared as two integers, so `0.10` is newer than `0.9`. A reader refuses a file of another major version (`UNSUPPORTED_VERSION`). From 1.0, minor versions only add what older readers can safely ignore: readers MUST open every file of their major version and SHOULD warn about a newer minor. Before 1.0, any minor version may break: a reader fully supports only its own, SHOULD warn about any other (`UNSUPPORTED_VERSION`), and MAY still read it.
 
 ---
@@ -796,17 +796,17 @@ Messages are never dropped for a failed check, except the lines that `PARSE` and
 | Code | Check | Consequence |
 | --- | --- | --- |
 | `PARSE` | The input is UTF-8 JSON (section 2.2) or JSON Lines, a Troupe document of a known `kind`, within the limits the reader enforces (section 16), and a safe package (section 16 item 7) or PNG (section 14.4) | The file isn't read; in a session, an unreadable line other than the header is skipped |
-| `UNSUPPORTED_VERSION` | `troupe` is the reader's own version (section 15) | Another major version isn't read; another minor version is a warning (from 1.0, only a newer one) |
+| `UNSUPPORTED_VERSION` | `troupe`, when present, is the reader's own version (section 15); a missing `troupe` is only `SCHEMA` | Another major version isn't read; another minor version is a warning (from 1.0, only a newer one) |
 | `SCHEMA` | The document validates against its schema, apart from unknown properties (section 15) | The reader MAY refuse the file |
 | `UNKNOWN_FIELD` | Every property is known to the reader's schema (section 15) | A warning |
 | `DUPLICATE_ID` | IDs are unique as section 2.3 and section 12.1 require | The first is kept; a scenario variable that clashes with a character or world is ignored instead (section 2.3), and two replacements of one character make the session unplayable (section 12.2) |
 | `UNKNOWN_SCENARIO` | The header's `scenario` names a scenario | The session can't be played |
-| `UNKNOWN_CHARACTER` | Cast members, `knownBy` (where `narrator` is also allowed), speakers, example speakers (or `char`, `user`), message `char` and character keys name characters in the bundle or session; a memory's `knownBy` names its chronicle's character, persona or `narrator` | The ID is ignored; a cast member or example exchange naming it is skipped |
+| `UNKNOWN_CHARACTER` | Cast members, `knownBy` (where `narrator` is also allowed), speakers, example speakers (or `char`, `user`), message `char`, members of `scene.present` values and character keys name characters in the bundle or session; a memory's `knownBy` names its chronicle's character, persona or `narrator` | The ID is ignored; a cast member or example exchange naming it is skipped |
 | `UNKNOWN_WORLD` | `scenario.worlds` names bundle worlds | The ID is ignored |
 | `UNKNOWN_LOCATION` | Locations in values and `parent` exist, without cycles | The value is invalid; the parent is ignored |
 | `UNKNOWN_OPENING` | A root's `opening` exists | `opening` reads as `""` |
 | `UNKNOWN_NAME` | `activated` and `event` references, and literal names in `count` and `ago`, name entries, events or keys in use | Ignored; an event's values still apply |
-| `UNKNOWN_VARIABLE` | Keys in openings, events, changes and chronicle values, exist and aren't derived, and variables named by `min` and `max` are valid bounds (section 8.1); a chronicle's value keys name carried variables of its character (section 13) | The key or bound is dropped |
+| `UNKNOWN_VARIABLE` | Keys in openings, events, changes and chronicle values exist and aren't derived, and variables named by `min` and `max` are valid bounds (section 8.1); a chronicle's value keys name carried variables of its character (section 13) | The key or bound is dropped |
 | `INVALID_VALUE` | `initial`, opening and event `set` values, recorded values, chronicle values and `outcome` indexes are valid | The value is dropped |
 | `UNKNOWN_MESSAGE` | `parent`, the header's `head` and summary `from` name messages, and `from` is on the path to its summary | The head or summary is ignored; a message with an unknown `parent` is skipped with its descendants |
 | `INVALID_PLAYER` | `players` names header characters or cast members, with no more header characters than seats | The ID is ignored |
@@ -1110,7 +1110,7 @@ A new session that continues this chronicle starts with `closeness` at 58 and bo
 | Priority means importance; file order is prompt order | Priority doing three jobs | Authors order lore by writing it in order. |
 | Copies with `credits` | Live cross-bundle references, structured provenance | People write attribution as they like. |
 | `id` only links sessions and chronicles to their bundle | Rules for forks, translations and release order | Nothing could check them. |
-| A PNG holds only the bundle | A Character Card V3 copy beside it | Compatibility with other formats is a choice for exporters, not a duty of every writer. |
+| No required Character Card V3 chunk in a PNG | Writers embedding a V3 copy beside the bundle | Compatibility with other formats is a choice for exporters, not a duty of every writer. |
 | No narrator voice | A character that defines the narrator | Narrator-only `system` entries already set its style. |
 | No reasoning or tool parts | Provider transcripts in messages | They mean nothing to the story; apps that keep them use `ext`. |
 | Two modes | A third, `mixed` mode | In `characters` mode the narrator can already take turns, and who speaks next is the app's choice. |
@@ -1119,11 +1119,13 @@ A new session that continues this chronicle starts with `closeness` at 58 and bo
 | No executable code | Scripts in cards | Scripts in shared cards can steal API keys. |
 | Strict schemas, lenient readers | Either everywhere | Writers catch typos; readers stay forward compatible. |
 | Readers must keep only `ext` | Keeping every unknown field, and stamping the newer version | Apps add data only in `ext`, so other unknown fields are typos or come from a version the reader doesn't support. |
+| No `requires` and no rules for extension data | Files declaring extensions they need; duties on extension authors | An app that lacks an extension ignores its data, and nothing could check those duties. |
+| Standard ZIP checks | Rejecting multi-disk archives, overlapping entries and headers that disagree | A standard ZIP library reads packages; the size, count and ratio caps bound a hostile archive. |
 | Writers write I-JSON; readers use a standard JSON parser | Readers rejecting everything I-JSON forbids | No app needs its own parser. |
-| Apps keep brought-in IDs unique their own way | Prescribed renaming of macros and CEL | Nothing refers to a brought-in character or world yet, so how it gets a fresh ID concerns only the app. |
+| Apps keep brought-in IDs unique their own way | Prescribed renaming of macros and CEL | Only the brought-in object refers to its own ID, so how it gets a fresh one concerns only the app. |
 | Writers stay within the limits; readers may accept more | Exact limits, or minimums only | Every conforming file opens in every app, and apps can still be generous. |
 | Before 1.0, readers support only their own minor version and warn about others | Opening every minor version as compatible | Drafts break between minors; a warning says why a file may misbehave, without stranding it. |
-| Timestamps in UTC with `Z` | Any offset | One zone and one spelling, so apps compare instants without time zone data. |
+| Timestamps in UTC with `Z` | Any offset | One zone and one form, so apps compare instants without time zone data. |
 
 ---
 

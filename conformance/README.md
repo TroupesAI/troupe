@@ -88,7 +88,7 @@ Each test has `type`, an optional `name` and `note` (informative), the inputs be
 | Input | Meaning |
 | --- | --- |
 | `key` | An entry key: plain, or regex when it has at least three characters and starts and ends with `/`. |
-| `text` | The text to match, before NFC normalization. |
+| `text` | The text the key is matched against, before NFC normalization. |
 
 `expect` is a boolean: whether the key matches the text.
 
@@ -235,7 +235,7 @@ Every field of `expect` is optional:
 The runner validates the bundle and the session's raw lines against the schemas, then runs every reference check.
 
 - `expect.codes` is the sorted list of distinct diagnostic codes reported. It is compared exactly.
-- Each session line after the header is validated against `message.schema.json`. A chronicle is validated against `chronicle.schema.json`. Validators assert `format`, so a malformed timestamp is `SCHEMA`.
+- Each session line after the header is validated against `message.schema.json`. Validators assert `format`, so a malformed timestamp is `SCHEMA`.
 - `SCHEMA` covers schema failures, such as `null` in a field the spec defines. `""` and `[]` in optional fields read as missing (Format 2.2) for every other operation, but the raw document still fails the schema where it sets `minLength` or `minItems`, which is reported as `SCHEMA`.
 - `UNKNOWN_FIELD` (Format 15) is located at the property itself (`/characters/0/mystery`).
 - `check` tests don't use `PARSE` or `UNSUPPORTED_VERSION`; `parse` tests (section 4.14) cover reading.
@@ -248,7 +248,6 @@ Locations:
 | In the bundle | A JSON Pointer, with array indices | `/scenarios/0/events/1/when` |
 | In a session header | `header/<pointer>` | `header/players` |
 | In a message (its schema failures included) | `message:<id>/<pointer within the message>` | `message:3/changes/0/set/hp` |
-| In a chronicle | `chronicle/<pointer>` | `chronicle/values/closeness` |
 
 A diagnostic about one value points at that value: a list item at its index (`/scenarios/0/worlds/1`), a duplicate ID at the duplicate's `id` (`/characters/1/id`), a reference at the field holding it (`/scenarios/0/cast/2/character`). For keys inside `set`, the pointer segment is the key as written (`/set/scene.present`).
 
@@ -335,7 +334,7 @@ Every field of `expect` is optional:
 - `expect.codes` is optional: the sorted distinct codes from validating the chronicle against `chronicle.schema.json` and checking it (Format 13). A value key of a keyed variable has exactly one key segment.
 - `expect.memories` and `expect.values` are the chronicle's `memories` and `values` after writing back from the path to `head` (Play 2.2).
 
-Starting from a chronicle (section 4.11 input `chronicle`) follows Play 2.2. The chronicle's character is added to the header's `characters` after the test's own `characters`. When the test brings no `characters`, its `persona` fills the first seat and comes first in the header's `characters`.
+Starting from a chronicle (section 4.11 input `chronicle`) follows Play 2.2. The chronicle's character is added to the header's `characters` after the test's own `characters`. When the test brings no `characters`, its `persona` fills the first seat without a `character` and comes first in the header's `characters`.
 
 ### 4.18 `edit`: player edits to state (Play 3.3)
 

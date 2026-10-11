@@ -38,8 +38,9 @@ const format = read("spec/format.md");
 const block = (heading: string, lang: string): string => {
   const at = format.indexOf(heading);
   if (at < 0) throw new Error(`spec/format.md has no heading "${heading}"`);
+  const next = format.indexOf("\n#", at + heading.length);
   const fence = format.indexOf("```" + lang + "\n", at);
-  if (fence < 0) throw new Error(`spec/format.md has no ${lang} block after "${heading}"`);
+  if (fence < 0 || (next >= 0 && fence > next)) throw new Error(`spec/format.md has no ${lang} block after "${heading}"`);
   const start = fence + lang.length + 4;
   return format.slice(start, format.indexOf("\n```", start)) + "\n";
 };
@@ -67,7 +68,7 @@ if (readmeCard !== examples["elena-card.troupe.json"]) fail("README.md: the firs
 const extra = readdirSync(join(root, "examples")).filter((f) => !(f in examples));
 if (extra.length) fail(`examples/ has files the spec doesn't define: ${extra.join(", ")}`);
 
-// Every complete bundle written as a json block in a Markdown document
+// Every complete bundle written as a json block in a Markdown document; sessions and chronicles there too, for their version
 const docBundles: { where: string; troupe?: string }[] = [];
 for (const doc of markdown) {
   const text = read(doc);
@@ -78,9 +79,10 @@ for (const doc of markdown) {
     } catch {
       continue; // fragments such as a single entry or event
     }
-    if ((value as { kind?: string })?.kind === "bundle") {
+    const kind = (value as { kind?: string })?.kind;
+    if (kind === "bundle" || kind === "session" || kind === "chronicle") {
       const line = text.slice(0, m.index).split("\n").length;
-      validate("bundle.schema.json", value, `${doc}:${line}`);
+      if (kind === "bundle") validate("bundle.schema.json", value, `${doc}:${line}`);
       docBundles.push({ where: `${doc}:${line}`, troupe: (value as { troupe?: string }).troupe });
     }
   }
@@ -150,14 +152,20 @@ for (const doc of markdown) {
   }
 }
 
-// Section citations: "Format 7.2" and "Play 3.3" anywhere, and "section 7.2" within a spec document
-const sections = (path: string) => new Set([...read(path).matchAll(/^#{2,3} (\d+(?:\.\d+)?)[. ]/gm)].map((m) => m[1]));
+// Section citations: "Format 7.2", "Play 3.3", "Format Appendix B.2" and lists such as "Format 2.2, 14 and 16" anywhere,
+// and "section 7.2" within a spec document
+const sections = (path: string) =>
+  new Set([...read(path).matchAll(/^#{2,3} (?:Appendix )?(\d+(?:\.\d+)?|[A-Z](?:\.\d+)?)[.: ]/gm)].map((m) => m[1]));
 const specSections: Record<string, Set<string>> = { Format: sections("spec/format.md"), Play: sections("spec/play.md") };
+const num = String.raw`(?:\d+(?:\.\d+)*|[A-E](?:\.\d+)*)(?![\w.]*\d)`;
+const list = String.raw`${num}(?:(?:,| and) ${num})*`;
 const cite = (where: string, text: string, own?: string) => {
-  for (const m of text.matchAll(/\b(Format|Play) (\d+(?:\.\d+)?)\b/g))
-    if (!specSections[m[1]].has(m[2])) fail(`${where}: cites ${m[1]} ${m[2]}, which doesn't exist`);
-  if (own) for (const m of text.matchAll(/\bsections? (\d+(?:\.\d+)?)\b(?! of Troupe)/g))
-    if (!specSections[own].has(m[1])) fail(`${where}: cites section ${m[1]}, which doesn't exist`);
+  const check = (doc: string, items: string) => {
+    for (const n of items.split(/,| and /).map((s) => s.trim()))
+      if (!specSections[doc].has(n)) fail(`${where}: cites ${doc} ${n}, which doesn't exist`);
+  };
+  for (const m of text.matchAll(new RegExp(String.raw`\b(Format|Play) (?:Appendix )?(${list})`, "g"))) check(m[1], m[2]);
+  if (own) for (const m of text.matchAll(new RegExp(String.raw`\bsections? (${list})(?! of Troupe)`, "g"))) check(own, m[1]);
 };
 for (const doc of markdown) cite(doc, read(doc), { "spec/format.md": "Format", "spec/play.md": "Play" }[doc]);
 for (const f of cases) cite(`conformance/cases/${f}`, read(`conformance/cases/${f}`));

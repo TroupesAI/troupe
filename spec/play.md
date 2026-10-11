@@ -38,7 +38,7 @@ Format 2 applies here, including requirement keywords. "Format 7.2" means sectio
 ### 2.1 Starting
 
 1. Generate a `seed` of at least 96 random bits, such as 16 bytes in base64url.
-2. Fill the player seats. A character, world or location the app brings into the session needs an ID that is unique there (Format 2.3) and, unless it is meant as a replacement (Format 12.2), isn't a bundle character's; how the app ensures this is its own choice.
+2. Fill the player seats. A character, world or location the app brings into the session needs an ID that Format 2.3 allows in the session: unique, except for a character meant as a replacement (Format 12.2). How the app ensures this is its own choice.
 3. Ask the questions of variables with `ask`.
 4. Create a root message for the chosen opening: `from: "system"`, with `opening` set and the content copied as written, or empty for an opening without `content`. It records these changes, in order:
    1. when the session continues a chronicle, its values in one `{"by": "rules", "set": …}` change (section 2.2);
@@ -57,9 +57,9 @@ Swiping to another opening creates another root, starting again from step 4.
 
 - **Starting.** A session continues at most one chronicle, named by `chronicle`.
   - The chronicle's `character` is copied into the header's `characters`, where it replaces the bundle character with the same ID (Format 12.2). The character keeps that ID for life, so bundle references to it still work. When the character has no bundle character, it joins the cast and is present at the start (section 2.1).
-  - `persona` fills the first seat unless the people playing bring another character, and the chronicle's `limits` are added to the session's `lines` and `veils`, without duplicates, in order.
+  - `persona` fills the first seat without a `character` unless the people playing bring another character, and the chronicle's `limits` are added to the session's `lines` and `veils`, without duplicates, in order.
   - Its `memories` are copied onto the root as session entries, a memory without `knownBy` getting the character's, and its `values` are recorded on the root in one `{"by": "rules"}` change, keyed with the character's ID (`mira.closeness`), before any other change (section 2.1).
-  - Values and memories name the persona by its ID, so they apply only when the persona plays with that ID (section 2.1 step 2).
+  - Value keys and memory `knownBy` IDs that name the persona take effect only when the persona plays with its own ID (section 2.1 step 2).
   - The session never needs the chronicle file to replay.
 - **Writing back.** Apps write back to the chronicle when they choose, such as when a conversation pauses, by rewriting it from the head path.
   - `values` keeps only carried keys, keyed without the owner, and takes the latest value of each carried key that a change on the path set.
@@ -132,7 +132,7 @@ interface ModelOutput {
 ```
 
 - **Tracker.** A separate model call or a tool call reads the messages since the last extraction on the path and returns everything but `parts`. Its input is, for each variable whose `by` includes `model`, its key, type, `values` or range, `description` and current value; the scene, with location names and the cast; entries placed in `tracker` whose `when` holds; and the messages, with full knowledge.
-- **Structured reply.** The story model returns the whole payload in its reply. For the narrator and the single voice, its System slot also carries the tracker's input other than the messages, so it knows which values it may change. Variables have no `knownBy`, so a character's generation in `characters` mode gets no tracker input, and apps keep only the `parts` of its reply.
+- **Structured reply.** The story model returns the whole payload in its reply. For the narrator and the single voice, the System slot also carries the tracker's input other than the messages, so it knows which values it may change. Variables have no `knownBy`, so a character's generation in `characters` mode gets no tracker input, and apps keep only the `parts` of its reply.
 - **Plain reply.** Without structure, the reply is one text part whose `speaker` is the message's `char`, or none for the narrator. Apps MUST NOT guess `knownBy` from plain text.
 
 Apps apply a payload in this order: `characters` join the header; `parts` are stored, dropping speakers and `knownBy` IDs that name no character in the session, newcomers included; `changes` are recorded as `{"by": "model", …}`, prepared as in section 3.3, on the newest message covered; and `entries` become session entries on the same message. An extraction that finds nothing SHOULD record `{"by": "model", "set": {}}`, which marks where the next one starts. Failure is not fatal. The event pass after a message waits for any extraction the app runs on it.
@@ -223,7 +223,7 @@ Entries kept by `sticky` are not recorded again, so stickiness runs out.
 ### 5.5 Steps
 
 1. **Sticky.** Candidates kept by `sticky` whose `when` holds are selected. If several share a group, the highest `priority` stays, ties broken by file order; the others are excluded for this message.
-2. **Selection.** Four phases apply to every candidate not selected in step 1, each phase finishing before the next:
+2. **Selection.** Four phases apply to every candidate not selected or excluded in step 1, each phase finishing before the next:
    1. **Match.** A candidate matches if a key matches its scanned text. An entry without `keys` or `pull` always matches.
    2. **Filter.** A matching candidate is excluded if its `when` is false, it is in cooldown, it is `once` and already recorded, or it fails its `chance` roll.
    3. **Group.** For each group of an owner with no selected entry, the remaining candidates with the highest `priority` compete, and one wins by a weighted group roll; the group's other remaining candidates are excluded. Candidates of a group that already has a selected entry are excluded.
@@ -285,7 +285,7 @@ A conforming **app** reads files as a conforming reader (Format 17.1), and also 
 | Decision | Instead of | Why |
 | --- | --- | --- |
 | Story fixed, fitting a recorded baseline | Specifying only content, or only procedures | Outcomes replay exactly, and better fitting can come later. |
-| Identical entry selection is a MUST | Leaving selection to each app | Sessions replay exactly, and the conformance suite can test selection. |
+| Identical entry selection is a MUST | Leaving selection to each app | Every app gives the model the same lore for the same file and session, and the conformance suite can test selection. |
 | Events in a single pass, once per round, one message per pass | Cascading rules | Deterministic, terminating, no accidental branches. |
 | Witness knowledge, `["narrator"]` | Everyone knows everything; `[]` | Offstage characters miss events; no empty-list footgun. |
 | Presence from openings, offstage summaries on mention | Everyone present, every summary | Casts and rosters scale. |
@@ -294,5 +294,5 @@ A conforming **app** reads files as a conforming reader (Format 17.1), and also 
 | SHA-256 rolls over seed, message and subject | A sequential generator | Order-independent, exact in JavaScript, fresh on regeneration. |
 | Recorded activations; sticky not re-recorded | Recomputing history | Timers continue in any app, and run out. |
 | Entries in the order worlds, characters, scenario; events and questions scenario first | One owner order everywhere | Within a slot, entries read from the setting to the people to the scenario's own; the scenario runs the story, so its events and questions come first. |
-| One selection pass, no recursion | Entries whose text activates other entries | Selection stays simple and order-independent; shared keys and `pull` reach related lore. |
+| One selection step, no recursion | Entries whose text activates other entries | Selection stays simple and order-independent; shared keys and `pull` reach related lore. |
 | One conformance level | Core apps without mechanics | Every app plays every file the same way; a level for apps without mechanics only mattered for importing cards. |

@@ -96,7 +96,7 @@ Mark the ghost's cast member `spoiler`, and nobody sees it in the cast list befo
 
 ### Companions that remember
 
-Give a companion `carry` variables for the relationship, such as `{"id": "closeness", "type": "int", "min": 0, "max": 100, "by": ["model"], "carry": true, "description": "How close {{char}} feels to {{user}}."}`, and let the tracker add memories as session entries with `carry` and `pull`. A chronicle (Format 13) then takes both into every later session, in any app.
+Give a companion `carry` variables for the relationship, such as `{"id": "closeness", "type": "int", "min": 0, "max": 100, "by": ["model"], "carry": true, "description": "How close {{char}} feels to {{user}}."}`, and let the tracker add memories as session entries with `carry`, and `pull` with a `title`. A chronicle (Format 13) then takes both into every later session, in any app.
 
 ### Time awareness
 

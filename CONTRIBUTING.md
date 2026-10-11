@@ -15,14 +15,14 @@ A normative change lands in one change set:
 1. the text in `spec/format.md` or `spec/play.md`, with the rationale in Format Appendix C or Play Appendix A when it's a design decision;
 2. the affected `schemas/`;
 3. at least one conformance case in `conformance/cases` (format: [conformance/README.md](conformance/README.md));
-4. `examples/`, when Format 1.4 or Appendix B changes (`bun run examples` re-extracts them);
+4. `examples/`, when Format 1.4 or Appendix B changes (`bun run examples` re-extracts them), and the README's first example when Format 1.4 changes;
 5. `guides/`, when the change affects what they say.
 
 When the spec doesn't decide a question, fix the text; never record a reading only in a case. Compute expected rolls independently of the implementation you test with.
 
 ## Checks
 
-Requires [Bun](https://bun.sh). `bun install`, then `bun run check` runs what CI runs: the schemas compile; the examples, and every complete bundle in a Markdown document, validate; `examples/` matches the spec; the version agrees everywhere; cases parse; and relative links, anchors and section citations resolve.
+Requires [Bun](https://bun.sh). `bun install`, then `bun run check` runs what CI runs: the schemas compile; the examples, and every complete bundle in a Markdown document, validate; `examples/` and the README's first example match the spec; the version agrees everywhere; cases parse, are named `<area>/<topic>.json` and name files that exist; and relative links, anchors and `Format`/`Play`/section citations resolve.
 
 ## Versions
 
@@ -34,4 +34,4 @@ Format and Play share one version, `major.minor`. A minor version bump changes, 
 - `conformance/cases/parsing/versions.json`, whose inputs name the versions around the current one;
 - a new changelog heading.
 
-`bun run check` reports any version it finds out of step, except in dates, comments, raw `parse` inputs and the changelog.
+`bun run check` reports a version out of step in the version lines, schema URLs, examples, cases, and JSON blocks in Markdown. Raw `parse` inputs and other text need a look by hand.

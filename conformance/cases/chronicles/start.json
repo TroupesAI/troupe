@@ -1,5 +1,5 @@
 {
-  "description": "Starting from a chronicle (Play 2.2): values are validated and only carried keys kept; when no character is brought, the persona fills the first seat with its own ID; a character with no bundle character joins the cast and is present; the chronicle's limits join the session's; writing back sets only keys a change on the path set, keeps only carried keys, trims a memory's knownBy to the character, the persona and narrator, and skips root entries unchanged from how the start copied them",
+  "description": "Starting from a chronicle (Play 2.2): values are validated and only carried keys kept; when no character is brought, the persona fills the first seat with its own ID, and otherwise values keyed to it don't apply; a character with no bundle character joins the cast and is present; the chronicle's limits join the session's; writing back sets only keys a change on the path set, keeps only carried keys, trims a memory's knownBy to the character, narrator and the persona, and skips root entries unchanged from how the start copied them",
   "bundle": {
     "kind": "bundle",
     "characters": [
@@ -145,8 +145,10 @@
             "id": "storm",
             "carry": true,
             "knownBy": [
+              "ann",
               "kai",
-              "ann"
+              "narrator",
+              "mara"
             ],
             "text": "Kai and Mara sheltered from a storm."
           },
@@ -234,6 +236,7 @@
     },
     {
       "type": "start",
+      "name": "the persona fills the seat",
       "scenario": "s",
       "opening": "o",
       "chronicle": {
@@ -342,6 +345,106 @@
       }
     },
     {
+      "type": "start",
+      "name": "another character takes the seat: a value keyed to the persona doesn't apply",
+      "scenario": "s",
+      "opening": "o",
+      "chronicle": {
+        "kind": "chronicle",
+        "id": "c-kai",
+        "character": {
+          "id": "kai",
+          "name": "Kai",
+          "description": "A drifter.",
+          "variables": [
+            {
+              "id": "feelings",
+              "type": "int",
+              "of": "cast",
+              "min": -10,
+              "max": 10,
+              "carry": true,
+              "description": "d"
+            },
+            {
+              "id": "mood",
+              "type": "string",
+              "description": "not carried"
+            },
+            {
+              "id": "level",
+              "type": "int",
+              "carry": true,
+              "derive": "1",
+              "description": "derived, never carried"
+            }
+          ]
+        },
+        "persona": {
+          "id": "mara",
+          "name": "Mara",
+          "description": "d"
+        },
+        "limits": {
+          "lines": [
+            "gore"
+          ],
+          "veils": [
+            "romance"
+          ]
+        },
+        "memories": [
+          {
+            "id": "met",
+            "carry": true,
+            "text": "Kai met Mara at the docks."
+          }
+        ],
+        "values": {
+          "feelings.mara": 7,
+          "feelings.ann": 2,
+          "mood": "glum",
+          "level": 3
+        }
+      },
+      "expect": {
+        "changes": [
+          {
+            "by": "rules",
+            "set": {
+              "kai.feelings.ann": 2
+            }
+          },
+          {
+            "by": "rules",
+            "set": {
+              "scene.present": [
+                "you",
+                "kai"
+              ]
+            }
+          }
+        ],
+        "characters": [
+          "you",
+          "kai"
+        ],
+        "header": {
+          "chronicle": "c-kai",
+          "players": [
+            "you"
+          ]
+        }
+      },
+      "characters": [
+        {
+          "id": "you",
+          "name": "Rae",
+          "description": "A courier."
+        }
+      ]
+    },
+    {
       "type": "prompt",
       "for": "ann",
       "parent": "2",
@@ -427,7 +530,9 @@
             "id": "storm",
             "carry": true,
             "knownBy": [
-              "kai"
+              "kai",
+              "narrator",
+              "mara"
             ],
             "text": "Kai and Mara sheltered from a storm."
           }

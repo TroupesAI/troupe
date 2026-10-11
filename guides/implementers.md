@@ -13,7 +13,7 @@ This guide is informative. It collects advice for apps that show and play Troupe
 
 ## Telling people what's wrong
 
-- **Diagnostics.** Show authors the checks a reader reports (Format 17.2), especially unknown macros, which are left as written, and conditions that fail at runtime, which count as false.
+- **Diagnostics.** Show authors the checks a reader reports (Format 17.2), especially unknown macros, which are left as written. Also show conditions that fail at runtime, which count as false (Format 11.2).
 - **Exporting** to another format loses data ([Character Card V2/V3 and Troupe](character-cards.md)). Show people what was left out.
 
 ## Play

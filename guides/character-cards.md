@@ -18,7 +18,7 @@ Each card becomes a bundle with one character and a scenario `main` that holds i
 | `post_history_instructions` | An entry with `position: 0` and `knownBy: ["<id>"]` |
 | `extensions.depth_prompt` | An entry at its depth with `knownBy: ["<id>"]`; the role is dropped |
 | `extensions.talkativeness` | `ext` |
-| `creator_notes`, `tags`, `creator`, `character_version` | The scenario's `briefing`, `tags`, `authors`, `version` |
+| `creator_notes`, `tags`, `creator`, `character_version` | The scenario's `briefing`; the bundle's `tags`, `authors`, `version` |
 | `source` | Links in `credits` |
 | `assets` icon / background | `avatar` / a location `image`; other assets in `ext` |
 | Lorebook entries | Character entries, or a world named after the book |
@@ -40,7 +40,7 @@ Each card becomes a bundle with one character and a scenario `main` that holds i
 | `{{char}}`, `{{user}}`, `{{// …}}` | the same |
 | `<bot>`, `<user>` | `{{char}}`, `{{user}}` |
 | `{{pick::…}}`, `{{random::…}}` | `{{pick::…}}`, fixed for the session |
-| Recursion, other macros, decorators, regex scripts | Reported; the source is kept in `ext`. Give an entry that recursion activated the keys of the entries that mention it. |
+| Recursion, other macros, decorators, regex scripts | Reported; the source is kept in `ext`. To replace recursion, add to an entry the keys of the entries whose text mentions it. |
 | SillyTavern chat JSONL | A session: `is_user` lines become `player` messages, `name` becomes `speaker`, swipes become siblings |
 
 ## Exporting to Character Card V3
