@@ -245,7 +245,7 @@ The heist runs on a clock: the harbor bells. A **variable** holds state like thi
 
 - **`type`** is `bool`, `int`, `number`, `string`, `enum` (one of `values`) or `set` (a list of distinct strings, such as an inventory).
 - **`description`** is written for authors and the model alike. The model reads it as its instructions when it updates the value.
-- **`by: ["model"]`** lets the **tracker** change the value. The tracker is a model call, often cheaper than the story model, that reads the latest messages and reports what changed. Without `by`, only openings and events (chapter 7) change a variable.
+- **`by: ["model"]`** lets the **tracker** change the value. The tracker is a model call, often cheaper than the story model, that reads the latest messages and reports what changed. Without `by`, only openings, events (chapter 7) and answers to `ask` change a variable.
 - **`min`, `max`, `maxStep` and `oneWay`** are guardrails: the bell stays between 6 and 12, moves at most 2 at a time, and never goes back.
 - **`of: "characters"`** keeps one value per character, read as `state.trust.kai`.
 - **`ask`** puts a question to the player when the chat starts; `labels` name the choices.
@@ -271,7 +271,7 @@ A character can carry its own variables into any story. Kai declares `nerve`, an
 | --- | --- |
 | `state.bell >= 10` | the tenth bell or later has rung |
 | `scene.location == 'vault'` | the scene is in the vault (strings use single quotes) |
-| `state.trust.kai >= 0.8 && hour < 6` | Kai trusts the player and it is before 6 a.m. where they are |
+| `state.trust.kai >= 0.8 && hour >= 0 && hour < 6` | Kai trusts the player and it is before 6 a.m. where they are |
 | `opening == 'harbor' && turn == 0` | the chat started at the harbor and nobody has replied yet |
 | `hit('glass') && !hit('guard')` | in an entry: "glass" was mentioned and "guard" wasn't |
 
@@ -335,7 +335,7 @@ The people playing can set **limits**: `lines`, things never to show, and `veils
 
 A companion needs only a character and a small scenario, like the first card in chapter 2. What makes a companion feel real is memory, and Troupe keeps memory in a **chronicle**: a file that carries one character's current definition, memories and relationship from one chat to the next, and from one app to another.
 
-Mark what should be kept with `carry`. A variable for closeness:
+Mark what should be kept with `carry`. A variable for closeness goes in the character's own `variables`:
 
 ```json
 { "id": "closeness", "type": "int", "min": 0, "max": 100, "by": ["model"], "carry": true,

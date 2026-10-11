@@ -39,7 +39,7 @@ An entry on the character shows its feelings toward the player's character: `{"i
 ### Clocks, fronts and derived time
 
 ```text
-{ "id": "alarm_tick", "when": "ago('alarm_tick') >= 3", "compute": { "alarm": "state.alarm + 1" } },
+{ "id": "alarm_tick", "when": "turn > 0 && ago('alarm_tick') >= 3", "compute": { "alarm": "state.alarm + 1" } },
 { "id": "alarm_full", "when": "state.alarm >= 4", "once": true, "direct": "The alarm bells start ringing. Guards flood the halls." }
 ```
 
@@ -108,4 +108,4 @@ A one-way `enum` `chapter`, with entries gated on it, keeps a canon character fr
 
 ### Group chats from several bundles
 
-Copy the characters into a new bundle, credit their authors in `credits`, add a scenario with a cast, and rename clashing IDs. In a bundle, a renamed ID appears in cast members, `knownBy`, speakers, example speakers, `scenario.worlds`, location `parent`, `of` lists, keyed variable keys, keys and `scene` values in openings and events, `{{@id}}`, `{{state.<id>…}}` and `{{@state.<id>…}}` macros, and CEL member paths such as `state.kai.nerve`; string literals in CEL that name it need a look too. Each character brings its own entries, variables and events, and keeps using them through `own` and `self`.
+Copy the characters into a new bundle, credit their authors in `credits`, add a scenario with a cast, and rename clashing IDs. In a bundle, a renamed ID appears in cast members, `knownBy`, speakers, example speakers, `scenario.worlds`, location `parent`, `of` lists, keyed variable keys, keys and `scene` values in openings and events, `{{@id}}`, `state` and `own` macro paths at any segment, with or without `@` (`{{state.trust.kai}}`, `{{own.feelings.kai}}`), and CEL member paths such as `state.kai.nerve`; string literals in CEL that name it need a look too. Each character brings its own entries, variables and events, and keeps using them through `own` and `self`.
