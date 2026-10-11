@@ -1,5 +1,5 @@
 {
-  "description": "Append-only session records (Format 12.1): a repeated id replaces a message and keeps its parent; a deletion removes descendants; head records move the head; the head defaults to the last message added",
+  "description": "Session lines (Format 12.1): each line after the header is a message, in file order; the header's head is the head",
   "bundle": {
     "troupe": "0.11",
     "kind": "bundle",
@@ -45,7 +45,8 @@
       ],
       "players": [
         "p"
-      ]
+      ],
+      "head": "3"
     },
     "messages": [
       {
@@ -64,7 +65,7 @@
         "char": "a",
         "content": [
           {
-            "text": "two"
+            "text": "two, edited"
           }
         ]
       },
@@ -77,58 +78,17 @@
             "text": "three"
           }
         ]
-      },
-      {
-        "id": "2b",
-        "parent": "1",
-        "from": "model",
-        "char": "b",
-        "content": [
-          {
-            "text": "other"
-          }
-        ]
-      },
-      {
-        "id": "2",
-        "parent": "2b",
-        "from": "model",
-        "char": "a",
-        "content": [
-          {
-            "text": "two, edited"
-          }
-        ]
-      },
-      {
-        "head": "3"
-      },
-      {
-        "id": "2b",
-        "deleted": true
-      },
-      {
-        "id": "4",
-        "parent": "3",
-        "from": "model",
-        "char": "a",
-        "content": [
-          {
-            "text": "four"
-          }
-        ]
       }
     ]
   },
   "tests": [
     {
-      "type": "fold",
+      "type": "read",
       "expect": {
         "ids": [
           "1",
           "2",
-          "3",
-          "4"
+          "3"
         ],
         "head": "3",
         "codes": [],
@@ -147,7 +107,7 @@
     },
     {
       "type": "select",
-      "name": "the head is the last head record",
+      "name": "the head is the header's head",
       "for": "a",
       "messageId": "x",
       "expect": {

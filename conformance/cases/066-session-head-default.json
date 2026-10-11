@@ -1,5 +1,5 @@
 {
-  "description": "Without head records or a header head, the head is the last message added (Format 12.1)",
+  "description": "Without a header head, the head is the last message (Format 12.1)",
   "bundle": {
     "troupe": "0.11",
     "kind": "bundle",
@@ -76,19 +76,16 @@
             "text": "another root"
           }
         ]
-      },
-      {
-        "id": "2",
-        "deleted": true
       }
     ]
   },
   "tests": [
     {
-      "type": "fold",
+      "type": "read",
       "expect": {
         "ids": [
           "1",
+          "2",
           "1b"
         ],
         "head": "1b"

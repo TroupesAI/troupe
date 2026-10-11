@@ -2,16 +2,151 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://troupe.example/schema/0.11/message.schema.json",
   "title": "Troupe message",
-  "description": "Every line after the first in a Troupe session file: a message, a deletion or a head record.",
-  "oneOf": [
+  "description": "Every line after the first in a Troupe session file: a message.",
+  "type": "object",
+  "required": [
+    "id",
+    "from",
+    "content"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "$ref": "bundle.schema.json#/$defs/opaqueId"
+    },
+    "parent": {
+      "$ref": "bundle.schema.json#/$defs/opaqueId"
+    },
+    "opening": {
+      "$ref": "bundle.schema.json#/$defs/id"
+    },
+    "from": {
+      "enum": [
+        "player",
+        "model",
+        "system"
+      ]
+    },
+    "char": {
+      "$ref": "bundle.schema.json#/$defs/id"
+    },
+    "author": {
+      "type": "string",
+      "minLength": 1
+    },
+    "content": {
+      "type": "array",
+      "items": {
+        "$ref": "bundle.schema.json#/$defs/part"
+      }
+    },
+    "at": {
+      "$ref": "bundle.schema.json#/$defs/timestamp"
+    },
+    "model": {
+      "type": "string"
+    },
+    "stopped": {
+      "type": "boolean"
+    },
+    "changes": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/change"
+      }
+    },
+    "activated": {
+      "description": "Entries that activated for this message, in file order.",
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "bundle.schema.json#/$defs/entryRef"
+      }
+    },
+    "entries": {
+      "type": "array",
+      "items": {
+        "$ref": "bundle.schema.json#/$defs/entry"
+      }
+    },
+    "summary": {
+      "type": "object",
+      "required": [
+        "text",
+        "from"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "text": {
+          "type": "string"
+        },
+        "from": {
+          "$ref": "bundle.schema.json#/$defs/opaqueId"
+        },
+        "knownBy": {
+          "$ref": "bundle.schema.json#/$defs/ids"
+        },
+        "ext": {
+          "$ref": "bundle.schema.json#/$defs/ext"
+        }
+      }
+    },
+    "pinned": {
+      "type": "boolean"
+    },
+    "hidden": {
+      "type": "boolean"
+    },
+    "ext": {
+      "$ref": "bundle.schema.json#/$defs/ext"
+    }
+  },
+  "dependentSchemas": {
+    "opening": {
+      "not": {
+        "required": [
+          "parent"
+        ]
+      }
+    }
+  },
+  "allOf": [
     {
-      "$ref": "#/$defs/message"
+      "if": {
+        "not": {
+          "properties": {
+            "from": {
+              "const": "system"
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "content": {
+            "minItems": 1
+          }
+        }
+      }
     },
     {
-      "$ref": "#/$defs/deletion"
-    },
-    {
-      "$ref": "#/$defs/headRecord"
+      "if": {
+        "properties": {
+          "content": {
+            "maxItems": 0
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "changes"
+        ],
+        "properties": {
+          "from": {
+            "const": "system"
+          }
+        }
+      }
     }
   ],
   "$defs": {
@@ -71,182 +206,6 @@
           "by": {
             "const": "rules"
           }
-        }
-      }
-    },
-    "message": {
-      "type": "object",
-      "required": [
-        "id",
-        "from",
-        "content"
-      ],
-      "additionalProperties": false,
-      "properties": {
-        "id": {
-          "$ref": "bundle.schema.json#/$defs/opaqueId"
-        },
-        "parent": {
-          "$ref": "bundle.schema.json#/$defs/opaqueId"
-        },
-        "opening": {
-          "$ref": "bundle.schema.json#/$defs/id"
-        },
-        "from": {
-          "enum": [
-            "player",
-            "model",
-            "system"
-          ]
-        },
-        "char": {
-          "$ref": "bundle.schema.json#/$defs/id"
-        },
-        "author": {
-          "type": "string",
-          "minLength": 1
-        },
-        "content": {
-          "type": "array",
-          "items": {
-            "$ref": "bundle.schema.json#/$defs/part"
-          }
-        },
-        "at": {
-          "$ref": "bundle.schema.json#/$defs/timestamp"
-        },
-        "model": {
-          "type": "string"
-        },
-        "stopped": {
-          "type": "boolean"
-        },
-        "changes": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/change"
-          }
-        },
-        "activated": {
-          "description": "Entries that activated for this message, in file order.",
-          "type": "array",
-          "uniqueItems": true,
-          "items": {
-            "$ref": "bundle.schema.json#/$defs/entryRef"
-          }
-        },
-        "entries": {
-          "type": "array",
-          "items": {
-            "$ref": "bundle.schema.json#/$defs/entry"
-          }
-        },
-        "summary": {
-          "type": "object",
-          "required": [
-            "text",
-            "from"
-          ],
-          "additionalProperties": false,
-          "properties": {
-            "text": {
-              "type": "string"
-            },
-            "from": {
-              "$ref": "bundle.schema.json#/$defs/opaqueId"
-            },
-            "knownBy": {
-              "$ref": "bundle.schema.json#/$defs/ids"
-            },
-            "ext": {
-              "$ref": "bundle.schema.json#/$defs/ext"
-            }
-          }
-        },
-        "pinned": {
-          "type": "boolean"
-        },
-        "hidden": {
-          "type": "boolean"
-        },
-        "ext": {
-          "$ref": "bundle.schema.json#/$defs/ext"
-        }
-      },
-      "dependentSchemas": {
-        "opening": {
-          "not": {
-            "required": [
-              "parent"
-            ]
-          }
-        }
-      },
-      "allOf": [
-        {
-          "if": {
-            "not": {
-              "properties": {
-                "from": {
-                  "const": "system"
-                }
-              }
-            }
-          },
-          "then": {
-            "properties": {
-              "content": {
-                "minItems": 1
-              }
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "content": {
-                "maxItems": 0
-              }
-            }
-          },
-          "then": {
-            "required": [
-              "changes"
-            ],
-            "properties": {
-              "from": {
-                "const": "system"
-              }
-            }
-          }
-        }
-      ]
-    },
-    "deletion": {
-      "type": "object",
-      "required": [
-        "id",
-        "deleted"
-      ],
-      "additionalProperties": false,
-      "properties": {
-        "id": {
-          "$ref": "bundle.schema.json#/$defs/opaqueId"
-        },
-        "deleted": {
-          "const": true
-        }
-      }
-    },
-    "headRecord": {
-      "type": "object",
-      "required": [
-        "head"
-      ],
-      "additionalProperties": false,
-      "properties": {
-        "head": {
-          "$ref": "bundle.schema.json#/$defs/opaqueId"
         }
       }
     }

@@ -1,5 +1,5 @@
 {
-  "description": "A deleted message ID is never reused (Format 12.1): a later message line with it is DUPLICATE_ID and ignored",
+  "description": "A message ID appears once (Format 12.1): a later line with it is DUPLICATE_ID and skipped",
   "bundle": {
     "troupe": "0.11",
     "kind": "bundle",
@@ -58,17 +58,12 @@
       },
       {
         "id": "2",
-        "deleted": true
-      },
-      {
-        "id": "2",
         "parent": "1",
         "from": "model",
         "char": "kai",
         "content": [
           {
-            "speaker": "kai",
-            "text": "Back again."
+            "text": "again"
           }
         ]
       }
@@ -76,12 +71,13 @@
   },
   "tests": [
     {
-      "type": "fold",
+      "type": "read",
       "expect": {
         "ids": [
-          "1"
+          "1",
+          "2"
         ],
-        "head": "1",
+        "head": "2",
         "codes": [
           "DUPLICATE_ID"
         ]

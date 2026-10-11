@@ -1,6 +1,6 @@
 # Troupe conformance cases
 
-This folder holds the conformance suite for the Troupe spec. Each case is a language-neutral JSON file in `cases/`. Any implementation can run the suite by reading each case, setting up its inputs, performing each test's operation, and comparing the result with `expect`. Both libraries in this repository run it as part of their tests.
+This folder holds the conformance suite for the Troupe spec. Each case is a language-neutral JSON file in `cases/`. Any implementation can run the suite by reading each case, setting up its inputs, performing each test's operation, and comparing the result with `expect`. Libraries live in their own repositories and run it as part of their tests.
 
 This document is the contract between the cases and a runner. When a case and this document disagree, report it as a bug in the suite.
 
@@ -15,9 +15,9 @@ A case file is one JSON object:
 | `bundle` | object | The bundle, as a JSON document. |
 | `bundleFile` | string | Instead of `bundle`: a path to a bundle JSON file, relative to the case file. |
 | `bundleYaml` | string | Instead of `bundle`: a YAML authoring source (Format 14.4), imported as the bundle. |
-| `session` | object | Optional. `{"header": SessionHeader, "messages": [record, …]}`. `messages` lists the session's record lines after the header in file order: messages, `{"id", "deleted": true}` deletions and `{"head"}` records (Format 12.1). |
+| `session` | object | Optional. `{"header": SessionHeader, "messages": [Message, …]}`. `messages` lists the session's lines after the header, in file order (Format 12.1). |
 | `sessionFile` | string | Instead of `session`: a path to a `.jsonl` session file, relative to the case file. |
-| `addMessages` | array | Optional. Records appended after the session's own records. |
+| `addMessages` | array | Optional. Messages appended after the session's own messages. |
 | `extend` | array | Optional. Generated filler messages, appended after `addMessages` (section 3). |
 | `tests` | array | The tests (section 4). |
 
@@ -27,11 +27,11 @@ If no bundle is given, the bundle is `{"troupe": <the spec version>, "kind": "bu
 
 Every test starts from a fresh copy of the case's inputs. Tests don't affect each other.
 
-1. **Absent values.** Apply Format 2.2 to the bundle, the session header and every record: `null`, `""` and `[]` in optional fields read as missing. State values (`set`, `initial`) and call arguments (`args`) keep `""` and `[]`. `scenario.worlds` keeps `[]`. Required text fields (an entry's or part's `text`, a character's `description`) and message `content` keep `""` and `[]`; an opening's `content` is optional, so `[]` there reads as missing.
-2. **Folding.** Fold the session records as a reader does (Format 12.1): a new ID adds a message, a repeated ID replaces it, a deletion removes a message and its descendants, and the head is the last head record, else the header's `head`, else the last surviving message added.
+1. **Absent values.** Apply Format 2.2 to the bundle, the session header and every message: `null`, `""` and `[]` in optional fields read as missing. State values (`set`, `initial`) and call arguments (`args`) keep `""` and `[]`. `scenario.worlds` keeps `[]`. Required text fields (an entry's or part's `text`, a character's `description`) and message `content` keep `""` and `[]`; an opening's `content` is optional, so `[]` there reads as missing.
+2. **Reading.** Read the session lines as a reader does (Format 12.1, 17.2): a line repeating an earlier message's ID is skipped, a message whose `parent` names no earlier message is skipped with its descendants, and the head is the header's `head` if it names a message, else the last message.
 3. **The story.** The session's `scenario` names the scenario. Without a session, a test may name it with `scenario`; otherwise use the bundle's first scenario. Header characters replace bundle characters as Format 12.2 says.
 
-`check` tests skip steps 1 and 2 on their own copy and validate the raw inputs (section 4.12). `fold` tests fold the raw records themselves.
+`check` tests skip steps 1 and 2 on their own copy and validate the raw inputs (section 4.12). `read` tests read the raw lines themselves.
 
 ## 3. Generated filler (`extend`)
 
@@ -221,7 +221,7 @@ The runner validates the bundle and the session's raw records against the schema
 | `core` | Optional boolean. Also run the Core check, which reports `MECHANICS`. |
 
 - `expect.codes` is the sorted list of distinct diagnostic codes reported. It is compared exactly.
-- Each session line is validated against the schema branch its shape selects: a deletion if it has `deleted`, a head record if it has `head` and no `id`, else a message; chronicle lines likewise (header if it has `kind`, deletion if it has `deleted`, else record). Validators assert `format`, so a malformed timestamp is `SCHEMA`.
+- Each session line after the header is validated against `message.schema.json`. Chronicle lines are validated against the schema branch their shape selects: header if it has `kind`, deletion if it has `deleted`, else record. Validators assert `format`, so a malformed timestamp is `SCHEMA`.
 - `SCHEMA` covers schema failures, such as `null` in a field the spec defines. `""` and `[]` in optional fields read as missing (Format 2.2) for every other operation, but the raw document still fails the schema where it sets `minLength` or `minItems`, which is reported as `SCHEMA`.
 - `UNKNOWN_FIELD` (Format 15) is located at the property itself (`/characters/0/mystery`).
 - `check` tests don't use `PARSE` or `UNSUPPORTED_VERSION`; `parse` tests (section 4.14) cover reading.
@@ -234,7 +234,6 @@ Locations:
 | In the bundle | A JSON Pointer, with array indices | `/scenarios/0/events/1/when` |
 | In a session header | `header/<pointer>` | `header/players` |
 | In a message (schema failures of message records included) | `message:<id>/<pointer within the message>` | `message:3/changes/0/set/hp` |
-| A deletion or head record, or a chronicle line | `line:<n>/<pointer>`, where *n* is the 1-based line in the file and the header is line 1 | `line:7/id` |
 | A record of a chronicle, once folded (the chronicle checks) | `record:<id>/<pointer>` | `record:r2/set/closeness` |
 
 A diagnostic about one value points at that value: a list item at its index (`/requires/0`), a duplicate ID at the duplicate's `id` (`/characters/1/id`), a reference at the field holding it (`/scenarios/0/cast/2/character`). For keys inside `set`, the pointer segment is the key as written (`/set/scene.present`).
@@ -276,23 +275,23 @@ Every field of `expect` is optional:
 | `text` | The input as a string, encoded as UTF-8 to get its bytes. |
 | `base64` | Instead of `text`: the input's bytes, in base64. Used for bytes that aren't valid UTF-8 text and for binary formats. |
 
-The reader parses the bytes, checks the version, validates against the schema (unknown properties as `UNKNOWN_FIELD`, Format 15) and, for sessions and chronicles, folds the records. For a package it reads `bundle.json` and every session and chronicle in it.
+The reader parses the bytes, checks the version, validates against the schema (unknown properties as `UNKNOWN_FIELD`, Format 15) and, for sessions, reads the messages (Format 12.1). For a package it reads `bundle.json` and every session and chronicle in it.
 
 Every field of `expect` is optional:
 
 - `ok` is whether a document is read with no error diagnostics. A newer minor version or an unknown field is a warning, so the input is still `ok`.
 - `codes` is the sorted list of distinct codes reported, compared exactly.
 - `equals` is the bundle read, for `bundle`, `yaml` and `png`, after absent values read as missing (Format 2.2).
-- `ids` is, for `session`, the surviving message IDs in line order, and for `chronicle`, the surviving record IDs in the order they were first added.
+- `ids` is, for `session`, the IDs of the messages read, in line order, and for `chronicle`, the surviving record IDs in the order they were first added.
 
-### 4.15 `fold`: session records (Format 12.1)
+### 4.15 `read`: session lines (Format 12.1)
 
-The test folds the case's raw session records.
+The test reads the case's raw session lines.
 
-- `expect.ids` is the surviving message IDs in line order.
-- `expect.head` is the head, or `null`: the last head record naming a surviving message, else the header's `head` if it survives, else the last surviving message added. A replacement keeps the original's `parent`, whatever its own says.
+- `expect.ids` is the IDs of the messages read, in line order.
+- `expect.head` is the head, or `null` when there are no messages: the header's `head` if it names a message, else the last message.
 - `expect.codes` is the sorted distinct codes reported.
-- `expect.message` is the surviving message with that `id`.
+- `expect.message` is the message read with that `id`.
 
 ### 4.16 `output`: model output (Play 3.4)
 

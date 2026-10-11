@@ -1,5 +1,5 @@
 {
-  "description": "Session records and seats (Format 12.1, 12.2): a replacement keeps the original's parent whatever its own says; the head is the last head record naming a surviving message, else the header's head if it survives, else the last surviving message; unlisted player cast members come after the listed players in cast order; scene.location takes any location of the bundle",
+  "description": "Session lines and seats (Format 12.1, 12.2): the header's head is the head; unlisted player cast members come after the listed players in cast order; scene.location takes any location of the bundle",
   "bundle": {
     "troupe": "0.11",
     "kind": "bundle",
@@ -118,62 +118,20 @@
             "text": "c"
           }
         ]
-      },
-      {
-        "id": "4",
-        "parent": "3",
-        "from": "player",
-        "content": [
-          {
-            "speaker": "p",
-            "text": "d"
-          }
-        ]
-      },
-      {
-        "head": "4"
-      },
-      {
-        "id": "3",
-        "parent": "2",
-        "from": "model",
-        "char": "b",
-        "content": [
-          {
-            "speaker": "b",
-            "text": "c, edited"
-          }
-        ]
-      },
-      {
-        "id": "4",
-        "deleted": true
       }
     ]
   },
   "tests": [
     {
-      "type": "fold",
-      "name": "message 3 keeps parent 1; head record 4 was deleted, so the header's head 2 applies",
+      "type": "read",
+      "name": "the header's head",
       "expect": {
         "ids": [
           "1",
           "2",
           "3"
         ],
-        "head": "2",
-        "message": {
-          "id": "3",
-          "parent": "1",
-          "from": "model",
-          "char": "b",
-          "content": [
-            {
-              "speaker": "b",
-              "text": "c, edited"
-            }
-          ]
-        }
+        "head": "2"
       }
     },
     {

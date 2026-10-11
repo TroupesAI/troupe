@@ -617,9 +617,9 @@ state.trust[char] >= 0.8 && hour < 6
 
 ## 12. Session format
 
-A session is a JSON Lines file: a header line, then one record per line. Messages form a forest: each opening tried is a root, swipes and branches are siblings, and the transcript is the path from a root to the head. Every line ends with `\n`; readers also accept `\r\n` and a missing final newline.
+A session is a JSON Lines file: a header line, then one message per line. Messages form a forest: each opening tried is a root, swipes and branches are siblings, and the transcript is the path from a root to the head. Every line ends with `\n`; readers also accept `\r\n` and a missing final newline.
 
-This is an exchange format. Apps store chats however they like, and read and write this form to import, export, back up and share them. Because it records every outcome (rolls, activations, changes), another app can continue a session exactly where it left off.
+This is an exchange format. Apps store chats however they like, and write this form whole, as a snapshot, to export, back up and share them. Because it records every outcome (rolls, activations, changes), another app can continue a session exactly where it left off.
 
 ```ts
 interface SessionHeader {
@@ -636,7 +636,7 @@ interface SessionHeader {
   characters?: Character[];        // players', joiners', newcomers' and replacements (section 12.2)
   players?: string[];              // characters people control, in seat order
   worlds?: World[];                // lore packs added to the session
-  head?: string;                   // the last message on the current path
+  head?: string;                   // the last message on the current path; the last message
   ext?: Ext;
 }
 
@@ -700,15 +700,12 @@ interface Summary {
 }
 ```
 
-### 12.1 Records
+### 12.1 Messages
 
-Each line after the header is a message, or one of two small records:
-
-- **A message** whose `id` is new adds it. One whose `id` repeats an earlier message's replaces that message entirely and keeps the original's `parent`, whatever its own says.
-- **`{"id": "<id>", "deleted": true}`** deletes that message and its descendants. A deleted ID is never reused: a later message line with it is `DUPLICATE_ID` and ignored.
-- **`{"head": "<id>"}`** moves the head.
-
-Writers MAY append records as a session changes, or rewrite the file compactly. When more than one device or person writes a session, message IDs MUST be globally unique, such as UUIDv7. Changing the header, such as its `limits` or `characters`, means rewriting the file. Readers fold the lines in order. The head is the last head record that names a surviving message, else the header's `head` if it survives, else the last surviving message added. Every `parent` names a message on an earlier line. Message IDs MUST be preserved, because rolls depend on them.
+- Every `parent` names a message on an earlier line.
+- A message ID appears once in a session.
+- The head is the header's `head`, or the last message when it is absent.
+- Message IDs MUST be preserved, because rolls depend on them. An app MUST NOT give a new message the ID of one it deleted, and SHOULD use random IDs, such as UUIDv7, when more than one device or person writes a session.
 
 ### 12.2 Players and cast
 
@@ -864,7 +861,7 @@ Messages are never dropped for a failed check, except the lines that `PARSE` and
 | `UNSUPPORTED_VERSION` | `troupe` is the reader's own version (section 15) | Another major version isn't read; another minor version is a warning |
 | `SCHEMA` | The document validates against its schema, apart from unknown properties (section 15) | The reader MAY refuse the file |
 | `UNKNOWN_FIELD` | Every property is known to the reader's schema (section 15) | A warning; the field is kept |
-| `DUPLICATE_ID` | IDs are unique as section 2.3 requires, and no message reuses a deleted ID (section 12.1) | The first is kept; a scenario variable that clashes with a character or world is ignored instead (section 2.3), and two replacements of one character make the session unplayable (section 12.2) |
+| `DUPLICATE_ID` | IDs are unique as section 2.3 and section 12.1 require | The first is kept; a scenario variable that clashes with a character or world is ignored instead (section 2.3), and two replacements of one character make the session unplayable (section 12.2) |
 | `UNKNOWN_SCENARIO` | The header's `scenario` names a scenario | The session can't be played |
 | `UNKNOWN_CHARACTER` | Cast members, `players`, `knownBy` (where `narrator` is also allowed), speakers, example speakers (or `char`, `user`), message `char` and character keys name characters in the bundle or session; a chronicle entry's `knownBy` names its character, its persona or `narrator` | The ID is ignored; a cast member or example exchange naming it is skipped |
 | `UNKNOWN_WORLD` | `scenario.worlds` names bundle worlds | The ID is ignored |
@@ -873,7 +870,7 @@ Messages are never dropped for a failed check, except the lines that `PARSE` and
 | `UNKNOWN_NAME` | `activated` and `event` references, and literal names in `count` and `ago`, name entries, events or keys in use | Ignored; an event's values still apply |
 | `UNKNOWN_VARIABLE` | Keys in openings, events, changes and chronicle records, and variables named by `min` and `max`, exist and aren't derived; a chronicle record's keys name carried variables of its character (section 13) | The key or bound is dropped |
 | `INVALID_VALUE` | `initial`, opening and event `set` values, recorded values, chronicle record values and `outcome` indexes are valid | The value is dropped |
-| `UNKNOWN_MESSAGE` | `parent`, the head, deletions and summary `from` name messages, and `from` is on the path to its summary; a chronicle deletion names a record | The record or summary is ignored; a message with an unknown `parent` is skipped with its descendants |
+| `UNKNOWN_MESSAGE` | `parent`, the header's `head` and summary `from` name messages, and `from` is on the path to its summary; a chronicle deletion names a record | The head or summary is ignored; a message with an unknown `parent` is skipped with its descendants |
 | `INVALID_CALL` | A recorded call names a callable event that was available, with valid `args` | The call's values still apply; the firing isn't counted |
 | `NOT_PLAYABLE` | `players` names header characters or cast members, with no more header characters than seats | The extra ID is ignored |
 | `CEL_ERROR` | Every expression parses and type-checks | The item never applies |
@@ -892,7 +889,7 @@ The JSON Schema 2020-12 files are normative for structure. Each `$id` is the URL
 | --- | --- |
 | [`bundle.schema.json`](../schemas/bundle.schema.json) | A bundle, and the definitions the other schemas share |
 | [`session-header.schema.json`](../schemas/session-header.schema.json) | The first line of a session |
-| [`message.schema.json`](../schemas/message.schema.json) | Every later line of a session: a message, a deletion or a head record |
+| [`message.schema.json`](../schemas/message.schema.json) | Every later line of a session: a message |
 | [`chronicle.schema.json`](../schemas/chronicle.schema.json) | Each line of a chronicle: the header, a record or a deletion |
 | [`model-output.schema.json`](../schemas/model-output.schema.json) | A model's structured reply or tracker result (Play 3.4) |
 
@@ -1382,10 +1379,9 @@ A bundle's first character exports with a lossy mapping: `name`, `description`, 
 | Durations in rounds | Messages | The same file behaves the same in solo and group chats. |
 | Player and model text stays literal | Resolving macros everywhere | No hidden state leaks through model output or prompt attacks. |
 | Priority means importance; file order is prompt order | Priority doing three jobs | Authors order lore by writing it in order. |
-| Append-only sessions | Rewriting the whole file | Cheap autosave, crash safety, and a path to sync. |
 | Copies with `credits`; export to V3 | Live cross-bundle references, structured provenance; one-way migration | People write attribution as they like; authors can still reach older apps. |
 | No narrator voice | A character that defines the narrator | Narrator-only `system` entries already set its style. |
-| Sessions as an exchange format | Prescribing storage | Apps keep their own databases; chats still move between apps intact. |
+| Sessions as an exchange snapshot | Prescribing storage, or an append-only log of edits | Apps keep their own databases; chats still move between apps intact, and readers replay no edits or deletions. |
 | No music, UI grouping or branch labels in the core | Presentation fields | They belong to apps and extensions. |
 | YAML source | A Markdown mini-language | Readable authoring with no new semantics. |
 | No executable code | Scripts in cards | Scripts in shared cards can steal API keys. |
@@ -1403,7 +1399,7 @@ A bundle's first character exports with a lossy mapping: `name`, `description`, 
 Version 1.0 is tagged when:
 
 1. the schemas are published at a real domain;
-2. the conformance suite covers every roll purpose, weighted picks, three-pass chains, the root witness case, keyed-variable preparation, derived variables, event timing, callable events, chronicles and append-only sessions;
+2. the conformance suite covers every roll purpose, weighted picks, three-pass chains, the root witness case, keyed-variable preparation, derived variables, event timing, callable events, chronicles and session files;
 3. two independent implementations, at least one not in JavaScript, pass it;
 4. the V2/V3 importer and exporter run against a corpus of real cards, including SillyTavern regex flags;
 5. real multi-character and stat-tracking cards are ported with their authors.

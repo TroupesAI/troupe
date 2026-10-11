@@ -1,5 +1,5 @@
 {
-  "description": "The head (Format 12.1): when neither a head record nor the header's head names a surviving message, it is the last surviving message added",
+  "description": "The head (Format 12.1): a header head that names no message is UNKNOWN_MESSAGE, and the head is the last message",
   "bundle": {
     "troupe": "0.11",
     "kind": "bundle",
@@ -118,25 +118,19 @@
             "text": "c"
           }
         ]
-      },
-      {
-        "head": "3"
-      },
-      {
-        "id": "3",
-        "deleted": true
       }
     ]
   },
   "tests": [
     {
-      "type": "fold",
+      "type": "read",
       "expect": {
         "ids": [
           "1",
-          "2"
+          "2",
+          "3"
         ],
-        "head": "2",
+        "head": "3",
         "codes": [
           "UNKNOWN_MESSAGE"
         ]

@@ -179,13 +179,6 @@
             "text": "A second root is fine."
           }
         ]
-      },
-      {
-        "id": "zz",
-        "deleted": true
-      },
-      {
-        "head": "nowhere"
       }
     ]
   },
@@ -258,14 +251,6 @@
           {
             "code": "UNKNOWN_NAME",
             "at": "message:3/activated/2"
-          },
-          {
-            "code": "UNKNOWN_MESSAGE",
-            "at": "line:7/id"
-          },
-          {
-            "code": "UNKNOWN_MESSAGE",
-            "at": "line:8/head"
           }
         ]
       }

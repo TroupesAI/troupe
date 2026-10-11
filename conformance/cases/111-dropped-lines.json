@@ -80,7 +80,7 @@
   },
   "tests": [
     {
-      "type": "fold",
+      "type": "read",
       "name": "message 3 names no parent, so 3 and its child 4 are skipped",
       "expect": {
         "ids": [
