@@ -349,7 +349,7 @@
     },
     {
       "type": "scanned",
-      "name": "records-only messages are never scanned",
+      "name": "a scan of depth 1 from message 2 sees only message 2",
       "for": "a",
       "parent": "2",
       "depth": 1,

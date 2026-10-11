@@ -1,5 +1,5 @@
 {
-  "description": "Unicode matching (Play 5.3): NFC, simple case folding C+S from Unicode 17.0, L/N/M boundaries, scripts that match anywhere (Hangul included)",
+  "description": "Unicode matching (Play 5.3): NFC, simple case folding C+S (Unicode 15.1 or later), L/N/M boundaries, scripts that match anywhere (Hangul included)",
   "tests": [
     {
       "type": "match",

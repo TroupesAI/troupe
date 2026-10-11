@@ -321,7 +321,7 @@ The test reads the case's raw session lines.
 | `message` | Instead of `reply`: an existing message, for a tracker extraction. |
 | `output` | A string for a plain reply, or a `ModelOutput` object. |
 
-The output is applied in this order: parts (model text stored escaped, Format 10; speakers and `knownBy` IDs naming no character dropped), newcomers in `characters` added to the header, `changes` prepared and recorded as `{"by": "model", "set", "reason"?}`, then `entries` added as session entries.
+The output is applied in this order: newcomers in `characters` added to the header, parts (model text stored escaped, Format 10; speakers and `knownBy` IDs naming no character dropped, newcomers included), `changes` prepared and recorded as `{"by": "model", "set", "reason"?}`, then `entries` added as session entries.
 
 Every field of `expect` is optional:
 
@@ -338,7 +338,7 @@ Every field of `expect` is optional:
 | `writeBack` | Optional. `{head}`: write back to the chronicle from the case's session at `head`. |
 
 - `expect.codes` is optional: the sorted distinct codes from validating the chronicle against `chronicle.schema.json` and checking it (Format 13). A value key of a keyed variable has exactly one key segment.
-- `expect.memories` and `expect.values` are the chronicle's `memories` and `values` after writing back (Play 2.2). `values` keeps only carried keys, keyed without the owner. A carried session entry on the path to `head` whose `knownBy` is absent or names the character, the latest version of each ID, replaces the memory with that ID or is added after the others, in the order the IDs first appear.
+- `expect.memories` and `expect.values` are the chronicle's `memories` and `values` after writing back (Play 2.2). `values` keeps only carried keys, keyed without the owner. A carried session entry on the path to `head` whose `knownBy` is absent or names the character, the latest version of each ID, keeps in `knownBy` only the character, `narrator` and the persona, replaces the memory with that ID or is added after the others, in the order the IDs first appear, and with `disabled` removes it. Root entries unchanged from how the start copied them are skipped.
 
 Starting from a chronicle (section 4.11 input `chronicle`) follows Play 2.2. The chronicle's character is added to the header's `characters` after the test's own `characters`. When the test brings no `characters`, its `persona` fills the first seat.
 

@@ -65,7 +65,7 @@
         "char": "a",
         "content": [
           {
-            "text": "two, edited"
+            "text": "two"
           }
         ]
       },
@@ -99,7 +99,7 @@
           "char": "a",
           "content": [
             {
-              "text": "two, edited"
+              "text": "two"
             }
           ]
         }

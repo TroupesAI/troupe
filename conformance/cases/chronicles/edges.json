@@ -1,5 +1,5 @@
 {
-  "description": "Chronicle edges (Play 2.1 step 4, 2.2): without an opening, the chronicles' values come first on the root, before the first message's own changes, and a chronicle character with no bundle character is present, recorded by that change",
+  "description": "Chronicle edges (Play 2.1 step 4, 2.2): without an opening, the chronicle's values come first on the root, before the first message's own changes, and a chronicle character with no bundle character is present, recorded by that change",
   "bundle": {
     "troupe": "0.11",
     "kind": "bundle",

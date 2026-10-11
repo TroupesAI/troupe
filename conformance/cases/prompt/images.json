@@ -1,5 +1,5 @@
 {
-  "description": "Media (Format 10, 12.4; Play 5.2, 6): an image part reaches text models through its alt, which resolves macros in author content, and is never scanned; a message's author is kept and never sent",
+  "description": "Media (Format 10, 12.4; Play 5.2, 6): an image part reaches text models through its alt, which resolves macros in author content, and is never scanned",
   "bundle": {
     "troupe": "0.11",
     "kind": "bundle",

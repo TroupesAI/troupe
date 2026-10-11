@@ -24,7 +24,7 @@
             "id": "culprit",
             "type": "string",
             "description": "who did it",
-            "display": "hidden"
+            "spoiler": true
           }
         ],
         "events": [

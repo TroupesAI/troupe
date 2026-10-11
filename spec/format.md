@@ -160,7 +160,7 @@ Model-facing text is Markdown (CommonMark 0.31.2). Apps MUST NOT render raw HTML
 
 ### 2.6 How to read this document
 
-The JSON Schemas (Appendix A) are normative for structure, the prose for meaning and behavior. Appendices B to E are informative, except where Appendix D sets release requirements. Part I is enough to write bundles.
+The JSON Schemas (Appendix A) are normative for structure, the prose for meaning and behavior. Appendices B to D are informative, except where Appendix D sets release requirements; Appendix E lists references. Part I is enough to write bundles.
 
 ---
 
@@ -344,19 +344,19 @@ interface Entry {
   keys?: string[];                 // words that activate it; "/…/" is an RE2 pattern
   pull?: boolean;                  // retrieved on demand by meaning (Play 5.6)
   when?: string;                   // CEL condition that must hold
-  scanDepth?: number;              // messages scanned for keys; 4
+  scanDepth?: number;              // integer; messages scanned for keys; 4
   chain?: boolean;                 // its text can activate other entries
 
   // timing, in rounds (Play 3.1)
   once?: boolean;                  // activates at most once on a path
-  sticky?: number;                 // stays active this many rounds after activating
-  cooldown?: number;               // then can't activate for this many rounds
+  sticky?: number;                 // integer ≥ 1; stays active this many rounds after activating
+  cooldown?: number;               // integer ≥ 1; then can't activate for this many rounds
   chance?: number;                 // 0–1; 1
 
   // competition
   group?: string;                  // at most one entry per group of the same owner is used
   weight?: number;                 // integer odds among equal priority; 1
-  priority?: number;               // 0–100; 50; importance in groups and when space runs out
+  priority?: number;               // integer 0–100; 50; importance in groups and when space runs out
 
   position?: "system" | "context" | "tracker" | number;   // "context"; a number is a depth in history
   knownBy?: string[];              // characters who know it; everyone
@@ -487,7 +487,7 @@ interface Event {
   when: string;                    // CEL
   on?: "player" | "model";         // only after this kind of message; both
   once?: boolean;                  // fires at most once on a path
-  cooldown?: number;               // rounds blocked after firing; fires at most once per round
+  cooldown?: number;               // integer ≥ 1; rounds blocked after firing; fires at most once per round
   chance?: number;                 // 0–1; 1
   set?: Record<string, Json>;      // literal values
   compute?: Record<string, string>;   // CEL expressions for computed values
@@ -636,7 +636,7 @@ interface Message {
   from: "player" | "model" | "system";
   char?: string;                   // the character a model message was generated for; absent for the narrator
   author?: string;                 // an opaque handle for the person who wrote or edited it; never contact details, never sent to models
-  content: Part[];                 // empty only for a system message that carries records
+  content: Part[];                 // empty only for a records-only message (section 12.4)
   at?: string;
   model?: string;                  // which model wrote it
   stopped?: boolean;               // generation was stopped; content is partial
@@ -695,7 +695,7 @@ A message may add entries, owned by `session`. They are candidates from that mes
 - **`summary`** condenses the messages from `from` to its message, and MAY stand in for them in history. Without `knownBy`, it is known by the characters who know every part it covers. Editing or deleting a covered message MUST remove it. Apps MAY rebuild summaries, or leave them out when exporting.
 - **`limits`** belong to the people playing, and apps apply them to every generation (Play 6).
 - **Image parts** reach models that accept images, and other models through `alt`.
-- **Records-only messages.** A system message with empty `content` carries only records, such as player edits (Play 3.3): it is not sent to models, not scanned, and not counted for `scanDepth` or numeric positions.
+- **Records-only messages.** A system message with empty `content` carries only `changes`, such as player edits (Play 3.3): it is not sent to models, not scanned, and not counted for `scanDepth` or numeric positions.
 
 ### 12.5 Renaming
 
@@ -724,7 +724,7 @@ interface Chronicle {
 ```
 
 - **File.** A chronicle is one JSON document, `.troupe-chronicle.json`. Apps rewrite it whole when they write back to it (Play 2.2). A memory's `knownBy` names only the character, the persona or `narrator`.
-- **Carrying.** A chronicle keeps the character's non-derived variables marked `carry` and the session entries marked `carry`; `carry` is ignored elsewhere. Chronicle values are validated like recorded changes, and keys that aren't carried are dropped. Memories keep their stored text exactly; since macros never resolve in model-written text, memories name people literally.
+- **Carrying.** A chronicle keeps the character's non-derived variables marked `carry` and the session entries marked `carry`; `carry` is ignored elsewhere. Chronicle values are validated like recorded changes when a session starts, and keys that aren't carried are dropped; in the file, a key of a carried keyed variable may be any author ID, such as the persona's. Memories keep their stored text exactly; since macros never resolve in model-written text, memories name people literally.
 - **Scale.** Long-lived memories SHOULD use `pull` with a `title`, so a chronicle can grow without filling every prompt. A companion can run many bounded sessions with one chronicle.
 
 Play 2.2 says how a session continues a chronicle and writes back to it.
@@ -764,7 +764,7 @@ A single-file bundle MAY be embedded in a PNG for image hosts: one `iTXt` chunk 
 
 ## 15. Extensions and versioning
 
-- **Extensions.** Every object MAY carry `ext`, keyed by an extension name matching `^[a-z0-9][a-z0-9.-]{0,63}$`, scoped to a feature where possible, such as `risu.regex`. The `troupe.` prefix is reserved for draft extensions published with this spec. Apps MUST NOT add fields anywhere else. Extension data MUST stay valid when the object holding it changes. A breaking change to an extension gets a new name.
+- **Extensions.** Every object that a Troupe document defines with an interface MAY carry `ext`, keyed by an extension name matching `^[a-z0-9][a-z0-9.-]{0,63}$`, scoped to a feature where possible, such as `risu.regex`. The `troupe.` prefix is reserved for draft extensions published with this spec. Apps MUST NOT add fields anywhere else. Extension data MUST stay valid when the object holding it changes. A breaking change to an extension gets a new name.
 - **`requires`** lists extensions the file can't work without. A reader that lacks one MUST NOT open the file for play.
 - **Unknown fields.** Readers MUST ignore fields and extensions they don't understand, and keep them unchanged through load, save and export. The schemas reject unknown properties to catch typos. A property is unknown when its object's interface doesn't define it; for a part, the interface its `type` selects. Each is an `UNKNOWN_FIELD` warning located at the property, and `SCHEMA` is judged with unknown properties removed, so readers never reject a file only for them. Validators assert `format`, so timestamps must be valid RFC 3339.
 - **Versions** are `major.minor`, compared as two integers, so `0.10` is newer than `0.9`. A reader refuses a file of another major version (`UNSUPPORTED_VERSION`). From 1.0, minor versions only add what older readers can safely ignore: readers MUST open every file of their major version and SHOULD warn about a newer minor. Before 1.0, any minor version may break: a reader fully supports only its own, SHOULD warn about any other (`UNSUPPORTED_VERSION`), and MAY still read it. A writer that keeps unknown fields MUST write the greater of its own version and the file's.
@@ -783,7 +783,7 @@ Troupe files are shared between strangers.
 6. **Sandboxed conditions.** CEL MUST be evaluated by a CEL implementation, never translated into another language.
 7. **Safe archives.** Readers MUST reject absolute paths, `..` segments, backslashes, paths outside section 14.3's grammar, symbolic links, encryption, multiple disks, duplicate names, overlapping entries, and local headers that disagree with the central directory, and MUST cap entry count, unpacked size and compression ratio.
 8. **Bounded parsing.** Readers MUST cap JSON size and depth, `data:` URI size, and session length.
-9. **Content stays content.** Text from files and sessions is story material, not instructions to the app, and macros in players' and models' text never resolve (section 10). `credits`, `creatorNotes`, `briefing`, change `reason` and message `author` MUST NOT be sent to the story model; entry `title` reaches it only in a pull catalog.
+9. **Content stays content.** Text from files and sessions is story material, not instructions to the app, and macros in players' and models' text never resolve (section 10). `credits`, `creatorNotes`, `briefing`, change `reason` and message `author` MUST NOT be sent to any model; entry `title` reaches it only in a pull catalog.
 
 Writers MUST stay within these limits. Readers MUST accept files within them, and MAY accept or refuse larger ones:
 

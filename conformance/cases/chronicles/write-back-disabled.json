@@ -1,0 +1,220 @@
+{
+  "description": "Writing back (Play 2.2): a carried session entry with disabled removes the memory with its ID",
+  "bundle": {
+    "troupe": "0.11",
+    "kind": "bundle",
+    "characters": [
+      {
+        "id": "ann",
+        "name": "Ann",
+        "description": "Ann."
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s",
+        "cast": [
+          {},
+          {
+            "character": "ann"
+          }
+        ],
+        "openings": [
+          {
+            "id": "o",
+            "content": [
+              {
+                "text": "Rain."
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "session": {
+    "header": {
+      "troupe": "0.11",
+      "kind": "session",
+      "id": "sess-9",
+      "scenario": "s",
+      "seed": "conformanceSeed0001",
+      "chronicle": "c-kai",
+      "characters": [
+        {
+          "id": "you",
+          "name": "Rae",
+          "description": "A courier."
+        },
+        {
+          "id": "kai",
+          "name": "Kai",
+          "description": "A drifter.",
+          "variables": [
+            {
+              "id": "feelings",
+              "type": "int",
+              "of": "cast",
+              "min": -10,
+              "max": 10,
+              "carry": true,
+              "description": "d"
+            },
+            {
+              "id": "mood",
+              "type": "string",
+              "description": "not carried"
+            },
+            {
+              "id": "level",
+              "type": "int",
+              "carry": true,
+              "derive": "1",
+              "description": "derived, never carried"
+            }
+          ]
+        }
+      ],
+      "players": [
+        "you"
+      ],
+      "limits": {
+        "lines": [
+          "gore"
+        ],
+        "veils": [
+          "romance"
+        ]
+      }
+    },
+    "messages": [
+      {
+        "id": "1",
+        "opening": "o",
+        "from": "system",
+        "content": [
+          {
+            "text": "Rain."
+          }
+        ],
+        "entries": [
+          {
+            "id": "met",
+            "carry": true,
+            "text": "Kai met Mara at the docks.",
+            "knownBy": [
+              "kai"
+            ]
+          }
+        ],
+        "changes": [
+          {
+            "by": "rules",
+            "set": {
+              "kai.feelings.you": 7
+            }
+          },
+          {
+            "by": "rules",
+            "set": {
+              "scene.present": [
+                "you",
+                "kai"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "id": "2",
+        "parent": "1",
+        "from": "model",
+        "char": "kai",
+        "content": [
+          {
+            "speaker": "kai",
+            "text": "Forget the docks."
+          }
+        ],
+        "entries": [
+          {
+            "id": "met",
+            "carry": true,
+            "disabled": true,
+            "text": "Kai met Mara at the docks."
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "chronicle",
+      "name": "met is disabled at message 2",
+      "chronicle": {
+        "troupe": "0.11",
+        "kind": "chronicle",
+        "id": "c-kai",
+        "character": {
+          "id": "kai",
+          "name": "Kai",
+          "description": "A drifter.",
+          "variables": [
+            {
+              "id": "feelings",
+              "type": "int",
+              "of": "cast",
+              "min": -10,
+              "max": 10,
+              "carry": true,
+              "description": "d"
+            },
+            {
+              "id": "mood",
+              "type": "string",
+              "description": "not carried"
+            },
+            {
+              "id": "level",
+              "type": "int",
+              "carry": true,
+              "derive": "1",
+              "description": "derived, never carried"
+            }
+          ]
+        },
+        "persona": {
+          "id": "mara",
+          "name": "Mara",
+          "description": "d"
+        },
+        "limits": {
+          "lines": [
+            "gore"
+          ],
+          "veils": [
+            "romance"
+          ]
+        },
+        "memories": [
+          {
+            "id": "met",
+            "carry": true,
+            "text": "Kai met Mara at the docks."
+          }
+        ],
+        "values": {
+          "feelings.mara": 7,
+          "mood": "glum",
+          "level": 3
+        }
+      },
+      "writeBack": {
+        "head": "2"
+      },
+      "expect": {
+        "memories": []
+      }
+    }
+  ]
+}
