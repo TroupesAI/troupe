@@ -1,0 +1,251 @@
+{
+  "description": "elapsed is rounded down and 0 for a negative gap (Format 11.1); CEL takes only bool, int, double, string, list and map values (Format 11.2)",
+  "bundle": {
+    "troupe": "0.11",
+    "kind": "bundle",
+    "characters": [
+      {
+        "id": "a",
+        "name": "Ann",
+        "description": "Ann.",
+        "examples": [
+          [
+            {
+              "speaker": "user",
+              "text": "Hi."
+            },
+            {
+              "speaker": "char",
+              "text": "Ann here."
+            }
+          ]
+        ],
+        "variables": [
+          {
+            "id": "hp",
+            "type": "int",
+            "max": 200,
+            "description": "d"
+          }
+        ],
+        "events": [
+          {
+            "id": "hit",
+            "when": "true",
+            "compute": {
+              "own.hp": "roll(100)"
+            }
+          }
+        ]
+      },
+      {
+        "id": "b",
+        "name": "Bea",
+        "description": "Bea.",
+        "summary": "Bea is out on the docks.",
+        "examples": [
+          [
+            {
+              "speaker": "user",
+              "text": "Hi."
+            },
+            {
+              "speaker": "char",
+              "text": "Bea here."
+            }
+          ]
+        ]
+      },
+      {
+        "id": "d",
+        "name": "Dov",
+        "description": "Dov."
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s",
+        "cast": [
+          {},
+          {
+            "character": "a"
+          },
+          {
+            "character": "b"
+          },
+          {
+            "character": "d"
+          }
+        ],
+        "variables": [
+          {
+            "id": "zero",
+            "type": "int",
+            "description": "d"
+          },
+          {
+            "id": "ratio",
+            "type": "int",
+            "derive": "100 / state.zero",
+            "description": "fails at runtime"
+          }
+        ],
+        "entries": [
+          {
+            "id": "glow",
+            "chain": true,
+            "text": "The lantern glows."
+          },
+          {
+            "id": "x",
+            "keys": [
+              "lantern"
+            ],
+            "when": "hit('lantern')",
+            "sticky": 5,
+            "text": "X."
+          }
+        ]
+      }
+    ]
+  },
+  "session": {
+    "header": {
+      "troupe": "0.11",
+      "kind": "session",
+      "scenario": "s",
+      "seed": "conformanceSeed0001",
+      "characters": [
+        {
+          "id": "p",
+          "name": "Pat",
+          "description": "Pat.",
+          "examples": [
+            [
+              {
+                "speaker": "user",
+                "text": "Hi."
+              },
+              {
+                "speaker": "char",
+                "text": "Pat here."
+              }
+            ]
+          ]
+        }
+      ],
+      "players": [
+        "p"
+      ]
+    },
+    "messages": [
+      {
+        "id": "1",
+        "from": "player",
+        "at": "2026-10-09T10:00:00.900Z",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "Where are Bea and Dov?"
+          }
+        ],
+        "changes": [
+          {
+            "by": "rules",
+            "set": {
+              "scene.present": [
+                "p",
+                "a"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "id": "2",
+        "parent": "1",
+        "from": "model",
+        "char": "a",
+        "at": "2026-10-09T10:00:02.100Z",
+        "activated": [
+          "s/glow",
+          "s/x"
+        ],
+        "content": [
+          {
+            "speaker": "a",
+            "text": "Out."
+          }
+        ]
+      },
+      {
+        "id": "3",
+        "parent": "2",
+        "from": "player",
+        "at": "2026-10-09T09:59:00Z",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "Hm."
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "cel",
+      "name": "1.2 seconds round down to 1",
+      "at": "2",
+      "expr": "elapsed == 1",
+      "expect": true
+    },
+    {
+      "type": "cel",
+      "name": "a negative gap is 0",
+      "at": "3",
+      "expr": "elapsed == 0",
+      "expect": true
+    },
+    {
+      "type": "cel",
+      "expr": "state.zero != null",
+      "expect": {
+        "checkError": true
+      }
+    },
+    {
+      "type": "cel",
+      "expr": "1u == 1u",
+      "expect": {
+        "checkError": true
+      }
+    },
+    {
+      "type": "cel",
+      "expr": "b'x' == b'x'",
+      "expect": {
+        "checkError": true
+      }
+    },
+    {
+      "type": "cel",
+      "expr": "timestamp('2026-01-01T00:00:00Z') == timestamp('2026-01-01T00:00:00Z')",
+      "expect": {
+        "checkError": true
+      }
+    },
+    {
+      "type": "cel",
+      "expr": "duration('1s') == duration('1s')",
+      "expect": {
+        "checkError": true
+      }
+    },
+    {
+      "type": "cel",
+      "expr": "[1, 2] == [1, 2] && {'a': 1.5}['a'] == 1.5",
+      "expect": true
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 {
   "description": "Core (Play 8.1): a card without mechanics plays in a Core app; scene keys in an opening's set are not mechanics",
-  "bundleFile": "../../examples/mira-card.troupe.json",
+  "bundleFile": "../../../examples/mira-card.troupe.json",
   "tests": [
     {
       "type": "check",

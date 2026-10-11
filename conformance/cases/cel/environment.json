@@ -1,7 +1,7 @@
 {
   "description": "The CEL environment (Format 11.1) at Format Appendix B's messages: turn, opening, scenario, self, last, scene.within, computed keys with brackets, count() and ago(), cross-type comparison, RE2, the function allowlist",
-  "bundleFile": "../../examples/lantern-heist.troupe.json",
-  "sessionFile": "../../examples/lantern-heist.troupe-session.jsonl",
+  "bundleFile": "../../../examples/lantern-heist.troupe.json",
+  "sessionFile": "../../../examples/lantern-heist.troupe-session.jsonl",
   "tests": [
     {
       "type": "cel",

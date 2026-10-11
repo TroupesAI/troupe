@@ -1,7 +1,7 @@
 {
   "description": "Format Appendix B: every checkable claim about The Lantern Heist and its session",
-  "bundleFile": "../../examples/lantern-heist.troupe.json",
-  "sessionFile": "../../examples/lantern-heist.troupe-session.jsonl",
+  "bundleFile": "../../../examples/lantern-heist.troupe.json",
+  "sessionFile": "../../../examples/lantern-heist.troupe-session.jsonl",
   "tests": [
     {
       "type": "check",

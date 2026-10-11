@@ -6,7 +6,28 @@ This document is the contract between the cases and a runner. When a case and th
 
 ## 1. Case files
 
-A case file is one JSON object:
+Cases live in `cases/<area>/<topic>.json`, one folder per area of the spec:
+
+| Area | Covers |
+| --- | --- |
+| `rolls` | Roll vectors and roll subjects (Play 4) |
+| `matching` | Key matching (Play 5.3) |
+| `selection` | Entry selection, pulling and fitting (Play 5) |
+| `knowledge` | Who knows what (Play 7) |
+| `state` | State, keyed and derived variables, rounds and change preparation (Format 8; Play 3.1–3.3) |
+| `events` | Event passes (Format 9; Play 3.3) |
+| `macros` | Macro parsing and rendering (Format 10) |
+| `cel` | Conditions (Format 11) |
+| `starting` | Starting a session from an opening (Play 2.1) |
+| `sessions` | Session lines, the head, players and the cast (Format 12) |
+| `prompt` | Prompt slots (Play 6) |
+| `model-output` | Model output and its schema (Play 3.4) |
+| `chronicles` | Chronicles (Format 13; Play 2.2) |
+| `checks` | Reference checks, unknown fields and Core (Format 15, 17.2; Play 8.1) |
+| `parsing` | Reading raw files (Format 2.2, 14, 16) |
+| `examples` | The spec's worked examples and the authoring guide's patterns |
+
+The order of cases doesn't matter. A case file is one JSON object:
 
 | Field | Type | Meaning |
 | --- | --- | --- |
@@ -348,7 +369,7 @@ The edit is prepared as a `player` change (Play 3.3) against the state at the he
 
 ## 6. Adding cases
 
-- Name a case `NNN-topic.json`, numbered after the last case.
+- Put a case in the folder for its area, named after its topic: `selection/chain.json`.
 - Prefer small inline bundles.
 - Compute every expected roll independently, outside the implementation under test.
 - When an expectation depends on ambiguous spec text, fix the spec text rather than recording a reading in the case.

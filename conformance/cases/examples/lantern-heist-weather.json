@@ -1,7 +1,7 @@
 {
   "description": "Format Appendix B: 'The chosen weather then stays for 6 rounds, and cooldown keeps it out for the next 4' (rain, recorded by message 4 in round 1)",
-  "bundleFile": "../../examples/lantern-heist.troupe.json",
-  "sessionFile": "../../examples/lantern-heist.troupe-session.jsonl",
+  "bundleFile": "../../../examples/lantern-heist.troupe.json",
+  "sessionFile": "../../../examples/lantern-heist.troupe-session.jsonl",
   "extend": [
     {
       "from": "4",

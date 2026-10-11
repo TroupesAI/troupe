@@ -2,7 +2,7 @@
 //   - the schemas compile, and the examples and every complete bundle in a Markdown document validate;
 //   - examples/ matches the examples in spec/format.md (--write-examples rewrites them);
 //   - the spec version agrees across the documents, schema $ids and examples;
-//   - every conformance case is valid JSON;
+//   - every conformance case is valid JSON, named <area>/<topic>.json, and the files it names exist;
 //   - relative Markdown links and #anchors resolve.
 import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
@@ -93,14 +93,20 @@ for (const [name, text] of Object.entries(examples)) {
   if (first.troupe !== version) fail(`examples/${name}: troupe is ${first.troupe}, not ${version}`);
 }
 
-// Conformance cases
-for (const f of readdirSync(join(root, "conformance/cases"))) {
-  if (!/^\d{3}-[a-z0-9-]+\.json$/.test(f)) fail(`conformance/cases/${f}: name isn't NNN-topic.json`);
+// Conformance cases: cases/<area>/<topic>.json, valid JSON, and files they name exist
+const cases = (readdirSync(join(root, "conformance/cases"), { recursive: true }) as string[]).filter((f) => f.endsWith(".json")).sort();
+for (const f of cases) {
+  const path = `conformance/cases/${f}`;
+  if (!/^[a-z0-9-]+\/[a-z0-9-]+\.json$/.test(f)) fail(`${path}: isn't <area>/<topic>.json`);
+  let value: Record<string, unknown>;
   try {
-    JSON.parse(read(`conformance/cases/${f}`));
+    value = JSON.parse(read(path));
   } catch (e) {
-    fail(`conformance/cases/${f}: ${(e as Error).message}`);
+    fail(`${path}: ${(e as Error).message}`);
+    continue;
   }
+  for (const m of JSON.stringify(value).matchAll(/"(?:bundle|session|chronicle)File":"([^"]+)"/g))
+    if (!existsSync(join(root, dirname(path), m[1]))) fail(`${path}: ${m[1]} doesn't exist`);
 }
 
 // Markdown links
@@ -128,4 +134,4 @@ if (problems.length) {
   console.error(problems.join("\n"));
   process.exit(1);
 }
-console.log(`ok: ${schemaFiles.length} schemas, ${Object.keys(examples).length} examples, ${readdirSync(join(root, "conformance/cases")).length} cases, ${markdown.length} documents`);
+console.log(`ok: ${schemaFiles.length} schemas, ${Object.keys(examples).length} examples, ${cases.length} cases, ${markdown.length} documents`);

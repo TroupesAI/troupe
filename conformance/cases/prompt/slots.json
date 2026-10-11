@@ -1,7 +1,7 @@
 {
   "description": "Prompt slots as data (Play 6): System, Setting, People (offstage summaries when named in the last 4 messages), Context, History; file order within a slot; knowledge applied",
-  "bundleFile": "../../examples/lantern-heist.troupe.json",
-  "sessionFile": "../../examples/lantern-heist.troupe-session.jsonl",
+  "bundleFile": "../../../examples/lantern-heist.troupe.json",
+  "sessionFile": "../../../examples/lantern-heist.troupe-session.jsonl",
   "addMessages": [
     {
       "id": "5",

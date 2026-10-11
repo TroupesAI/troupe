@@ -1,7 +1,7 @@
 {
   "description": "Witness rule (Play 7): a part is known by its speaker and the characters present before or after its message's changes; part knownBy replaces this",
-  "bundleFile": "../../examples/lantern-heist.troupe.json",
-  "sessionFile": "../../examples/lantern-heist.troupe-session.jsonl",
+  "bundleFile": "../../../examples/lantern-heist.troupe.json",
+  "sessionFile": "../../../examples/lantern-heist.troupe-session.jsonl",
   "addMessages": [
     {
       "id": "5",

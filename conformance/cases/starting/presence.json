@@ -1,6 +1,6 @@
 {
   "description": "Presence at the start (Play 2.1): without scene.present in set, the players and the opening's speakers are present (Format Appendix B: 'Already caught' starts without Kai)",
-  "bundleFile": "../../examples/lantern-heist.troupe.json",
+  "bundleFile": "../../../examples/lantern-heist.troupe.json",
   "tests": [
     {
       "type": "start",

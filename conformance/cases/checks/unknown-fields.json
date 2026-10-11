@@ -1,8 +1,9 @@
 {
-  "description": "Fields the format doesn't define are unknown fields (Format 3, 4, 6, 17.2): bundle license, source and derivedFrom; character and world origin; character references and openings; scenario narratorVoice. Each is UNKNOWN_FIELD, kept and ignored: character openings make no solo scenario, and a narrator voice gives the narrator no character's knowledge",
+  "description": "Strict schemas, lenient readers (Format 3, 4, 6, 15, 17.2): fields the format doesn't define are UNKNOWN_FIELD warnings, located at the field, kept and ignored, and the file is still read; a part's fields are those of the interface its type selects. Among them are fields other formats use: bundle license, source and derivedFrom, character and world origin, character references and openings, and a scenario's narratorVoice: character openings make no solo scenario, and a character named as narratorVoice is an ordinary character",
   "bundle": {
     "troupe": "0.11",
     "kind": "bundle",
+    "futureField": true,
     "license": "CC-BY-4.0",
     "source": "https://example.com/cellar",
     "derivedFrom": [
@@ -34,7 +35,13 @@
               }
             ]
           }
-        ]
+        ],
+        "mystery": 1,
+        "ext": {
+          "acme.mood": {
+            "x": 1
+          }
+        }
       },
       {
         "id": "teller",
@@ -88,7 +95,8 @@
             "content": [
               {
                 "speaker": "ann",
-                "text": "Hello."
+                "text": "Hello.",
+                "src": "hi.png"
               }
             ]
           }
@@ -147,6 +155,18 @@
           "UNKNOWN_FIELD"
         ],
         "includes": [
+          {
+            "code": "UNKNOWN_FIELD",
+            "at": "/futureField"
+          },
+          {
+            "code": "UNKNOWN_FIELD",
+            "at": "/characters/0/mystery"
+          },
+          {
+            "code": "UNKNOWN_FIELD",
+            "at": "/scenarios/0/openings/0/content/0/src"
+          },
           {
             "code": "UNKNOWN_FIELD",
             "at": "/license"

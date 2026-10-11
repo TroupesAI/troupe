@@ -1,7 +1,7 @@
 {
   "description": "Openings are roots (Format 6.3, 12; Play 2.1): each opening tried is a root; swiping adds another; opening, turn and state belong to the path's root",
-  "bundleFile": "../../examples/lantern-heist.troupe.json",
-  "sessionFile": "../../examples/lantern-heist.troupe-session.jsonl",
+  "bundleFile": "../../../examples/lantern-heist.troupe.json",
+  "sessionFile": "../../../examples/lantern-heist.troupe-session.jsonl",
   "addMessages": [
     {
       "id": "c1",

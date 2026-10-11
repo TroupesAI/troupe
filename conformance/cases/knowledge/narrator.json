@@ -1,5 +1,5 @@
 {
-  "description": "Knowledge for the narrator in characters mode: everything except content whose explicit knownBy doesn't name narrator (Play 7)",
+  "description": "Knowledge in characters mode (Play 7): characters see what they know; the narrator sees everything except content whose explicit knownBy doesn't name narrator, in entries, scanned text and the prompt",
   "bundle": {
     "troupe": "0.11",
     "kind": "bundle",
@@ -78,7 +78,8 @@
             ],
             "text": "keyed on a whisper"
           }
-        ]
+        ],
+        "mode": "characters"
       }
     ]
   },
@@ -136,7 +137,22 @@
   "tests": [
     {
       "type": "select",
-      "name": "character-private and listed entries are hidden; entries without knownBy and narrator entries are seen",
+      "name": "Ann in characters mode",
+      "for": "a",
+      "parent": "2",
+      "messageId": "3",
+      "expect": {
+        "activated": [
+          "a/secret",
+          "s/k_all",
+          "s/k_a",
+          "s/k_ab"
+        ]
+      }
+    },
+    {
+      "type": "select",
+      "name": "the narrator: entries without knownBy or naming narrator",
       "parent": "2",
       "messageId": "3",
       "expect": {
@@ -148,7 +164,7 @@
     },
     {
       "type": "scanned",
-      "name": "a part whose knownBy leaves out the narrator isn't scanned",
+      "name": "the narrator misses the whisper: its explicit knownBy excludes narrator",
       "parent": "2",
       "expect": "Bea: Understood.\nPat: Meet me later."
     },
