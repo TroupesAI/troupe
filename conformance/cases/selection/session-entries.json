@@ -1,7 +1,6 @@
 {
   "description": "Session entries (Format 12.3; Play 5.1): candidates from their message onward on its path; same ID replaces in place (order of first appearance); disabled removes",
   "bundle": {
-    "troupe": "0.11",
     "kind": "bundle",
     "characters": [
       {
@@ -24,7 +23,6 @@
   },
   "session": {
     "header": {
-      "troupe": "0.11",
       "kind": "session",
       "scenario": "s",
       "seed": "conformanceSeed0001",

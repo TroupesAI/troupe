@@ -1,7 +1,6 @@
 {
   "description": "ask (Format 8.1; Play 2.1): questions are asked when a session starts, in the order scenario, worlds, characters, then declaration order; answers are player changes on the root, whatever by says",
   "bundle": {
-    "troupe": "0.11",
     "kind": "bundle",
     "characters": [
       {

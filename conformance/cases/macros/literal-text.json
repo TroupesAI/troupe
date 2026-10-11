@@ -1,7 +1,6 @@
 {
   "description": "Player and model text never resolves macros, and stores {{ as \\{{ (Format 10); {{user}} is the speaker of the latest player message (multiplayer)",
   "bundle": {
-    "troupe": "0.11",
     "kind": "bundle",
     "characters": [
       {
@@ -39,7 +38,6 @@
   },
   "session": {
     "header": {
-      "troupe": "0.11",
       "kind": "session",
       "scenario": "s",
       "seed": "conformanceSeed0001",

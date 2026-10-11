@@ -1,7 +1,6 @@
 {
   "description": "Session lines and seats (Format 12.1, 12.2): the header's head is the head; unlisted player cast members come after the listed players in cast order; scene.location takes any location of the bundle",
   "bundle": {
-    "troupe": "0.11",
     "kind": "bundle",
     "worlds": [
       {
@@ -67,7 +66,6 @@
   },
   "session": {
     "header": {
-      "troupe": "0.11",
       "kind": "session",
       "scenario": "s",
       "seed": "conformanceSeed0001",

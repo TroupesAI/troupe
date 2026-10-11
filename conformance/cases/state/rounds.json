@@ -1,7 +1,6 @@
 {
   "description": "Rounds (Format 9; Play 3.1, 5.4): turn counts player messages; durations are in rounds, so a group chat behaves like a one-on-one; events fire at most once per round; elapsed",
   "bundle": {
-    "troupe": "0.11",
     "kind": "bundle",
     "characters": [
       {
@@ -55,7 +54,6 @@
   },
   "session": {
     "header": {
-      "troupe": "0.11",
       "kind": "session",
       "scenario": "s",
       "seed": "conformanceSeed0001",

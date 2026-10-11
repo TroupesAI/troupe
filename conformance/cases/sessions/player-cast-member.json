@@ -1,7 +1,6 @@
 {
   "description": "A cast member marked player (Format 6.1, 12.2): a predefined bundle character played by a person fills its own seat",
   "bundle": {
-    "troupe": "0.11",
     "kind": "bundle",
     "characters": [
       {
@@ -47,7 +46,6 @@
   },
   "session": {
     "header": {
-      "troupe": "0.11",
       "kind": "session",
       "scenario": "s",
       "seed": "conformanceSeed0001",

@@ -1,7 +1,6 @@
 {
   "description": "roll() subjects use the compute key as written, own.<id> included (Play 4)",
   "bundle": {
-    "troupe": "0.11",
     "kind": "bundle",
     "characters": [
       {
@@ -110,7 +109,6 @@
   },
   "session": {
     "header": {
-      "troupe": "0.11",
       "kind": "session",
       "scenario": "s",
       "seed": "conformanceSeed0001",

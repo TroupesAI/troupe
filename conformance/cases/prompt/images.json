@@ -1,7 +1,6 @@
 {
   "description": "Media (Format 10, 12.4; Play 5.2, 6): an image part reaches text models through its alt, which resolves macros in author content, and is never scanned",
   "bundle": {
-    "troupe": "0.11",
     "kind": "bundle",
     "characters": [
       {
@@ -68,7 +67,6 @@
   },
   "session": {
     "header": {
-      "troupe": "0.11",
       "kind": "session",
       "scenario": "s",
       "seed": "conformanceSeed0001",

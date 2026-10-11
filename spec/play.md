@@ -293,5 +293,6 @@ A conforming **app** reads files as a conforming reader (Format 17.1), and also 
 | Prompt slots, not a fixed order | One mandated order | Apps keep prompt caches warm with long contexts. |
 | SHA-256 rolls over seed, message and subject | A sequential generator | Order-independent, exact in JavaScript, fresh on regeneration. |
 | Recorded activations; sticky not re-recorded | Recomputing history | Timers continue in any app, and run out. |
+| Entries in the order worlds, characters, scenario; events and questions scenario first | One owner order everywhere | Within a slot, entries read from the setting to the people to the scenario's own; the scenario runs the story, so its events and questions come first. |
 | One selection pass, no recursion | Entries whose text activates other entries | Selection stays simple and order-independent; shared keys and `pull` reach related lore. |
 | One conformance level | Core apps without mechanics | Every app plays every file the same way; a level for apps without mechanics only mattered for importing cards. |

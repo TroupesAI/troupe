@@ -1,7 +1,6 @@
 {
   "description": "once: an entry recorded on the path never activates again; sticky (in rounds) still keeps it (Play 5.4)",
   "bundle": {
-    "troupe": "0.11",
     "kind": "bundle",
     "characters": [
       {
@@ -37,7 +36,6 @@
   },
   "session": {
     "header": {
-      "troupe": "0.11",
       "kind": "session",
       "scenario": "s",
       "seed": "conformanceSeed0001",

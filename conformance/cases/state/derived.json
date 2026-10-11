@@ -1,7 +1,6 @@
 {
   "description": "Derived variables (Format 8.1; Play 3.2): computed from stored state when read, never recorded; read-only; can't read other derived variables",
   "bundle": {
-    "troupe": "0.11",
     "kind": "bundle",
     "characters": [
       {
@@ -66,7 +65,6 @@
   },
   "session": {
     "header": {
-      "troupe": "0.11",
       "kind": "session",
       "scenario": "s",
       "seed": "conformanceSeed0001",

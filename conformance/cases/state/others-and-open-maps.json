@@ -1,7 +1,6 @@
 {
   "description": "of: \"others\" (every cast character except the owner, players included) and open \"*\" maps: no initial, absent keys read as the default, setting the default removes a key (Format 8.3)",
   "bundle": {
-    "troupe": "0.11",
     "kind": "bundle",
     "characters": [
       {
@@ -63,7 +62,6 @@
   },
   "session": {
     "header": {
-      "troupe": "0.11",
       "kind": "session",
       "scenario": "s",
       "seed": "conformanceSeed0001",

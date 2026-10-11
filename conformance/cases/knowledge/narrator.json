@@ -1,7 +1,6 @@
 {
   "description": "Knowledge in characters mode (Play 7): characters see what they know; the narrator sees everything except content whose explicit knownBy doesn't name narrator, in entries, scanned text and the prompt",
   "bundle": {
-    "troupe": "0.11",
     "kind": "bundle",
     "characters": [
       {
@@ -85,7 +84,6 @@
   },
   "session": {
     "header": {
-      "troupe": "0.11",
       "kind": "session",
       "scenario": "s",
       "seed": "conformanceSeed0001",

@@ -1,7 +1,6 @@
 {
   "description": "State macros (Format 10): labels, numbers as ECMAScript toString, booleans, lists, maps, char/user path segments, {{@state.x}}, the state at a message",
   "bundle": {
-    "troupe": "0.11",
     "kind": "bundle",
     "characters": [
       {
@@ -103,7 +102,6 @@
   },
   "session": {
     "header": {
-      "troupe": "0.11",
       "kind": "session",
       "scenario": "s",
       "seed": "conformanceSeed0001",

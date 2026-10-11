@@ -1,7 +1,6 @@
 {
   "description": "Characters who join during the session (Format 8.3, 12.2; Play 3.2): in the cast after the scenario cast, not present until a change adds them",
   "bundle": {
-    "troupe": "0.11",
     "kind": "bundle",
     "characters": [
       {
@@ -33,7 +32,6 @@
   },
   "session": {
     "header": {
-      "troupe": "0.11",
       "kind": "session",
       "scenario": "s",
       "seed": "conformanceSeed0001",

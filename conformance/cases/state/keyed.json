@@ -1,7 +1,6 @@
 {
   "description": "Keyed and owned variables (Format 8.2, 8.3): of characters (non-player cast), cast, a list and \"*\" (open keys); character-owned variables read as state.<owner>.<id> and own.<id>; computed keys by brackets in CEL",
   "bundle": {
-    "troupe": "0.11",
     "kind": "bundle",
     "characters": [
       {
@@ -92,7 +91,6 @@
   },
   "session": {
     "header": {
-      "troupe": "0.11",
       "kind": "session",
       "scenario": "s",
       "seed": "conformanceSeed0001",

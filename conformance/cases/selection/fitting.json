@@ -1,7 +1,6 @@
 {
   "description": "Fitting (Play 5.5 step 3): drop entries below priority 100, lowest first, later file order first among ties; priority 100 is never dropped and failure to fit fails generation",
   "bundle": {
-    "troupe": "0.11",
     "kind": "bundle",
     "characters": [
       {
@@ -57,7 +56,6 @@
   },
   "session": {
     "header": {
-      "troupe": "0.11",
       "kind": "session",
       "scenario": "s",
       "seed": "conformanceSeed0001",

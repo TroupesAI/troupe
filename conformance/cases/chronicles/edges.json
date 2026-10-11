@@ -1,7 +1,6 @@
 {
   "description": "Chronicle edges (Play 2.1 step 4, 2.2): without an opening, the chronicle's values come first on the root, before the first message's own changes; the persona fills the first seat; a chronicle character with no bundle character is present, recorded by that change",
   "bundle": {
-    "troupe": "0.11",
     "kind": "bundle",
     "characters": [
       {
@@ -38,7 +37,6 @@
       "name": "no opening: chronicle values and presence, then the first message's changes",
       "scenario": "s",
       "chronicle": {
-        "troupe": "0.11",
         "kind": "chronicle",
         "id": "c-kai",
         "character": {

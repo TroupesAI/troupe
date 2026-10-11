@@ -1,7 +1,6 @@
 {
   "description": "Directions apply while no model message follows the trigger; end finishes the path (Play 3.3 step 6)",
   "bundle": {
-    "troupe": "0.11",
     "kind": "bundle",
     "characters": [
       {
@@ -55,7 +54,6 @@
   },
   "session": {
     "header": {
-      "troupe": "0.11",
       "kind": "session",
       "scenario": "s",
       "seed": "conformanceSeed0001",

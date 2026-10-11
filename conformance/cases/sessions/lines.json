@@ -1,7 +1,6 @@
 {
   "description": "Session lines (Format 12.1): each line after the header is a message, in file order; the header's head is the head",
   "bundle": {
-    "troupe": "0.11",
     "kind": "bundle",
     "characters": [
       {
@@ -32,7 +31,6 @@
   },
   "session": {
     "header": {
-      "troupe": "0.11",
       "kind": "session",
       "scenario": "s",
       "seed": "conformanceSeed0001",

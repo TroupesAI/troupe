@@ -300,16 +300,7 @@ An **event** is a story beat written as a rule: when a condition holds, change v
 - **`outcomes`** pick one weighted alternative each time the event fires: three times in four the patrol passes, once in four it costs the crew an hour.
 - **`set` takes plain values and `compute` takes formulas.** Write `"set": {"bell": 11}` but `"compute": {"bell": "state.bell + 1"}`.
 
-A dice check works the same way. The tracker notes what the player is attempting, and an event rolls for it before the reply:
-
-```json
-{ "id": "pick_lock", "on": "player", "when": "state.attempt == 'lock'",
-  "set": { "attempt": "none" },
-  "compute": { "picked": "roll(20) >= 12" },
-  "direct": "The lock {{state.picked}}. Narrate it." }
-```
-
-Here `attempt` is an `enum` with the values `none` and `lock` that the model may set, and `picked` is a `bool` labeled "opens" and "holds", so the direction reads "The lock opens." The app rolls the die and records the result, so the model can't change it. This needs an app that runs the tracker after player messages.
+A dice check works the same way: the tracker notes what the player is attempting, and an event `on: "player"` rolls for it before the reply. The app rolls the die and records the result, so the model can't change it. The [authoring guide](authoring.md#checks-and-dice) shows one.
 
 The full story, with its secrets, variables and events in place, is [Format Appendix B.2](../spec/format.md#b2-a-story-the-lantern-heist), also in [`examples/lantern-heist.troupe.json`](../examples/lantern-heist.troupe.json).
 

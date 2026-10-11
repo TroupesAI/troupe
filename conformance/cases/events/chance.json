@@ -1,7 +1,6 @@
 {
   "description": "Event chance uses the triggering message's ID and the event ID (Play 4)",
   "bundle": {
-    "troupe": "0.11",
     "kind": "bundle",
     "characters": [
       {
@@ -36,7 +35,6 @@
   },
   "session": {
     "header": {
-      "troupe": "0.11",
       "kind": "session",
       "scenario": "s",
       "seed": "conformanceSeed0001",

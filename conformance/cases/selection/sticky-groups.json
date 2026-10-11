@@ -2,7 +2,6 @@
   "description": "Sticky entries that share a group (Play 5.5 step 1): the highest priority stays, ties broken by file order, and the others are excluded for the message",
   "note": "Such records arise because pulled entries ignore groups (Play 5.6). Message 2 is at turn 1 and the message being built at turn 2, so d = 1 and all four are kept by sticky; none is recorded again.",
   "bundle": {
-    "troupe": "0.11",
     "kind": "bundle",
     "characters": [
       {
@@ -67,7 +66,6 @@
   },
   "session": {
     "header": {
-      "troupe": "0.11",
       "kind": "session",
       "scenario": "s",
       "seed": "conformanceSeed0001",

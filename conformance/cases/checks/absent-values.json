@@ -1,7 +1,6 @@
 {
   "description": "null, \"\" and [] read like missing fields, except inside state values (Format 2.2); an opening's content is optional, so [] there reads as missing",
   "bundle": {
-    "troupe": "0.11",
     "kind": "bundle",
     "tagline": "",
     "characters": [

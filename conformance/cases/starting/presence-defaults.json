@@ -1,7 +1,6 @@
 {
   "description": "Presence at the start (Play 2.1): the players and the opening's speakers, or the opening's scene.present plus the players; non-cast speakers are ignored",
   "bundle": {
-    "troupe": "0.11",
     "kind": "bundle",
     "characters": [
       {

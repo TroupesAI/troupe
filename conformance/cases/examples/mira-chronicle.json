@@ -1,7 +1,6 @@
 {
   "description": "Format Appendix B.4: Mira's chronicle (Format 13) is valid, and a new session starts from it with the B.1 card; Mara, the persona, fills the seat",
   "bundle": {
-    "troupe": "0.11",
     "kind": "bundle",
     "characters": [
       {
@@ -86,7 +85,6 @@
       "type": "chronicle",
       "name": "Mira's chronicle is valid",
       "chronicle": {
-        "troupe": "0.11",
         "kind": "chronicle",
         "id": "0d4f3a62-5b1e-4c8a-9f27-6a1c2e8b7d40",
         "character": {
@@ -149,7 +147,6 @@
       "scenario": "kestrel",
       "opening": "docked",
       "chronicle": {
-        "troupe": "0.11",
         "kind": "chronicle",
         "id": "0d4f3a62-5b1e-4c8a-9f27-6a1c2e8b7d40",
         "character": {
@@ -294,7 +291,6 @@
         }
       ],
       "chronicle": {
-        "troupe": "0.11",
         "kind": "chronicle",
         "id": "0d4f3a62-5b1e-4c8a-9f27-6a1c2e8b7d40",
         "character": {

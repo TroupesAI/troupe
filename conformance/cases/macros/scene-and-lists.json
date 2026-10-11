@@ -1,7 +1,6 @@
 {
   "description": "Macros (Format 10): {{scene.location}} (ID) and {{@scene.location}} (name), {{@scene.present}}, {{@players}}, bool labels, lists (empty renders as nothing), maps",
   "bundle": {
-    "troupe": "0.11",
     "kind": "bundle",
     "characters": [
       {
@@ -62,7 +61,6 @@
   },
   "session": {
     "header": {
-      "troupe": "0.11",
       "kind": "session",
       "scenario": "s",
       "seed": "conformanceSeed0001",

@@ -1,7 +1,6 @@
 {
   "description": "Weighted group roll among equal top priority, in file order; the subject is <owner>/<group> (Play 4, 5.5)",
   "bundle": {
-    "troupe": "0.11",
     "kind": "bundle",
     "characters": [
       {
@@ -50,7 +49,6 @@
   },
   "session": {
     "header": {
-      "troupe": "0.11",
       "kind": "session",
       "scenario": "s",
       "seed": "conformanceSeed0001",

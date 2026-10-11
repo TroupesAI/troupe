@@ -1,7 +1,6 @@
 {
   "description": "Numbers (Play 3.3 step 4; Format 10): recorded number values round to the nearest double to ECMAScript toFixed(6), and macros render numbers with ECMAScript Number.prototype.toString",
   "bundle": {
-    "troupe": "0.11",
     "kind": "bundle",
     "scenarios": [
       {
@@ -39,7 +38,6 @@
   },
   "session": {
     "header": {
-      "troupe": "0.11",
       "kind": "session",
       "scenario": "s",
       "seed": "conformanceSeed0001",

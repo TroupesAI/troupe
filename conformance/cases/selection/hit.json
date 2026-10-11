@@ -1,7 +1,6 @@
 {
   "description": "hit() expresses AND, OR and NOT with the same matching rules as keys (Format 7.2, 11.1)",
   "bundle": {
-    "troupe": "0.11",
     "kind": "bundle",
     "characters": [
       {
@@ -72,7 +71,6 @@
   },
   "session": {
     "header": {
-      "troupe": "0.11",
       "kind": "session",
       "scenario": "s",
       "seed": "conformanceSeed0001",

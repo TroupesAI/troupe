@@ -1,7 +1,6 @@
 {
   "description": "Keys over the scan window: scanDepth, speaker names in scanned text, scanDepth 0 (Play 3.1, 5.2, 5.5)",
   "bundle": {
-    "troupe": "0.11",
     "kind": "bundle",
     "characters": [
       {
@@ -73,7 +72,6 @@
   },
   "session": {
     "header": {
-      "troupe": "0.11",
       "kind": "session",
       "scenario": "s",
       "seed": "conformanceSeed0001",

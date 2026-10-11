@@ -41,7 +41,7 @@ The order of cases doesn't matter. A case file is one JSON object:
 | `extend` | array | Optional. Generated filler messages, appended after `addMessages` (section 3). |
 | `tests` | array | The tests (section 4). |
 
-If no bundle is given, the bundle is `{"troupe": <the spec version>, "kind": "bundle"}`. Cases that read raw input instead use `parse` tests (section 4.14), which take their input inline.
+Bundles, session headers and chronicles given as objects leave out `troupe`: before anything else, `check` validation included, the runner sets it to the spec version. If no bundle is given, the bundle is `{"troupe": <the spec version>, "kind": "bundle"}`. Cases that read raw input instead use `parse` tests (section 4.14), which take their input inline.
 
 ## 2. Setup for each test
 
@@ -254,7 +254,7 @@ A diagnostic about one value points at that value: a list item at its index (`/s
 
 ### 4.13 `prompt`: prompt slots (Play 6)
 
-Inputs are as for `select`. The prompt has five slots: `system`, `setting`, `people`, `context` and `history`. Each slot is a list of items, written as strings:
+Inputs are as for `select`, plus `summaries`: an optional boolean that lets every summary the generation can see stand in for the messages it covers (Play 6); without it, no summary does. The prompt has five slots: `system`, `setting`, `people`, `context` and `history`. Each slot is a list of items, written as strings:
 
 | Item | String |
 | --- | --- |
@@ -270,6 +270,7 @@ Inputs are as for `select`. The prompt has five slots: `system`, `setting`, `peo
 | Dialogue examples | `examples:<id>` |
 | A pinned message | `pinned:<id>` |
 | A history message | `message:<id>` |
+| A summary standing in for the messages it covers, where the last of them would be | `summary:<id>`, the ID of the message holding it |
 | The session's limits, right after `app`; the wording is the app's | `limits` |
 
 The text of a `character:<id>` item is the character's resolved `description`; its cast `notes` reach the prompt too, but are not part of the compared text. In the People slot, offstage characters without a `summary` contribute nothing, and `examples:<id>` items come only for present model-played characters and the character being generated for.

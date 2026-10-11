@@ -1,7 +1,6 @@
 {
   "description": "Set normalization and the scene (Format 8.4; Play 3.3): dedupe, declared order, unlisted members, oneWay sets keep members and accept additions, cast order",
   "bundle": {
-    "troupe": "0.11",
     "kind": "bundle",
     "characters": [
       {

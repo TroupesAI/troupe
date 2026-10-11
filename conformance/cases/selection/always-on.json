@@ -1,7 +1,6 @@
 {
   "description": "Always-on entries, when, disabled, file order within each slot (Play 5.1, 6)",
   "bundle": {
-    "troupe": "0.11",
     "kind": "bundle",
     "characters": [
       {
@@ -88,7 +87,6 @@
   },
   "session": {
     "header": {
-      "troupe": "0.11",
       "kind": "session",
       "scenario": "s",
       "seed": "conformanceSeed0001",

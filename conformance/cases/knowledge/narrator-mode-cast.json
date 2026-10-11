@@ -1,7 +1,6 @@
 {
   "description": "Narrator mode (Play 7): the single voice sees everything in use, including content known by characters and narrator-only content; entries of a character outside the cast are never candidates",
   "bundle": {
-    "troupe": "0.11",
     "kind": "bundle",
     "characters": [
       {
@@ -86,7 +85,6 @@
   },
   "session": {
     "header": {
-      "troupe": "0.11",
       "kind": "session",
       "scenario": "s",
       "seed": "conformanceSeed0001",

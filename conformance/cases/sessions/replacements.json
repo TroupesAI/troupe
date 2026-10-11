@@ -1,7 +1,6 @@
 {
   "description": "Session characters replace bundle characters by ID (Format 12.2): the replacement takes the bundle character's cast position and every reference to it for the whole session; it isn't a DUPLICATE_ID, fills no seat and doesn't join the cast as a newcomer; its own variables, entries and events replace the original's; players listing it means a person took that cast member over",
   "bundle": {
-    "troupe": "0.11",
     "kind": "bundle",
     "characters": [
       {
@@ -94,7 +93,6 @@
   },
   "session": {
     "header": {
-      "troupe": "0.11",
       "kind": "session",
       "scenario": "s",
       "seed": "conformanceSeed0001",

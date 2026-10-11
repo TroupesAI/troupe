@@ -1,7 +1,6 @@
 {
   "description": "Owned mechanics (Format 2.3, 6.4, 8.2): each variable and event keeps its owner, so two owners can share an ID; a scenario variable can't take a character's or world's ID",
   "bundle": {
-    "troupe": "0.11",
     "kind": "bundle",
     "characters": [
       {
@@ -99,7 +98,6 @@
   },
   "session": {
     "header": {
-      "troupe": "0.11",
       "kind": "session",
       "scenario": "s",
       "seed": "conformanceSeed0001",

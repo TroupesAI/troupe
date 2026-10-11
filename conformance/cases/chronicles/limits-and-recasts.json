@@ -1,7 +1,6 @@
 {
   "description": "Two header characters that replace the same bundle character are DUPLICATE_ID and make the session unplayable (Format 12.2). A chronicle's limits become the session's, and an opening without content starts with every character in the session's cast present, the chronicle's character included (Play 2.1, 2.2)",
   "bundle": {
-    "troupe": "0.11",
     "kind": "bundle",
     "characters": [
       {
@@ -58,7 +57,6 @@
         }
       ],
       "chronicle": {
-        "troupe": "0.11",
         "kind": "chronicle",
         "id": "c-zed",
         "character": {
@@ -126,7 +124,6 @@
   ],
   "session": {
     "header": {
-      "troupe": "0.11",
       "kind": "session",
       "scenario": "s",
       "seed": "k7Qm2xVb9TzR4pLc8NwYfA",

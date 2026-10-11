@@ -683,7 +683,7 @@ A message may add entries, owned by `session`. They are candidates from that mes
 - **`pinned`** messages are repeated in the Context slot while they remain on the path.
 - **`hidden`** messages stay for people, but are never sent to models, scanned or summarized.
 - **`stopped`** marks a partial reply.
-- **`summary`** condenses the messages from `from` to its message, and MAY stand in for them in history. Without `knownBy`, it is known by the characters who know every part it covers. Editing or deleting a covered message MUST remove it. Apps MAY rebuild summaries, or leave them out when exporting.
+- **`summary`** condenses the messages from `from` to its message, and MAY stand in for them in history. Without `knownBy`, it is known by the characters who know every part it covers, and reaches the narrator only if the narrator can see every part (Play 7). Editing or deleting a covered message MUST remove it. Apps MAY rebuild summaries, or leave them out when exporting.
 - **Records-only messages.** A system message with empty `content` carries only `changes`, such as player edits (Play 3.3): it is not sent to models, not scanned, and not counted for `scanDepth` or numeric positions.
 
 ---
@@ -809,7 +809,7 @@ Messages are never dropped for a failed check, except the lines that `PARSE` and
 | `UNKNOWN_VARIABLE` | Keys in openings, events, changes and chronicle values, exist and aren't derived, and variables named by `min` and `max` are valid bounds (section 8.1); a chronicle's value keys name carried variables of its character (section 13) | The key or bound is dropped |
 | `INVALID_VALUE` | `initial`, opening and event `set` values, recorded values, chronicle values and `outcome` indexes are valid | The value is dropped |
 | `UNKNOWN_MESSAGE` | `parent`, the header's `head` and summary `from` name messages, and `from` is on the path to its summary | The head or summary is ignored; a message with an unknown `parent` is skipped with its descendants |
-| `NOT_PLAYABLE` | `players` names header characters or cast members, with no more header characters than seats | The extra ID is ignored |
+| `INVALID_PLAYER` | `players` names header characters or cast members, with no more header characters than seats | The ID is ignored |
 | `CEL_ERROR` | Every expression parses and type-checks | The item never applies |
 | `REGEX_ERROR` | Every regex key parses as RE2 | The key is ignored |
 | `UNKNOWN_MACRO` | Macros are valid and name existing characters and variables | Left as written |

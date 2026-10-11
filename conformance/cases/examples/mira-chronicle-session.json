@@ -3,7 +3,6 @@
   "bundleFile": "../../../examples/mira-card.troupe.json",
   "session": {
     "header": {
-      "troupe": "0.11",
       "kind": "session",
       "scenario": "kestrel",
       "seed": "conformanceSeed0001",

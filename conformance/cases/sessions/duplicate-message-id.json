@@ -1,7 +1,6 @@
 {
   "description": "A message ID appears once (Format 12.1): a later line with it is DUPLICATE_ID and skipped",
   "bundle": {
-    "troupe": "0.11",
     "kind": "bundle",
     "characters": [
       {
@@ -18,7 +17,6 @@
   },
   "session": {
     "header": {
-      "troupe": "0.11",
       "kind": "session",
       "scenario": "s",
       "seed": "k7Qm2xVb9TzR4pLc8NwYfA",

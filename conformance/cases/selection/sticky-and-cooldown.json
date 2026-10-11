@@ -1,7 +1,6 @@
 {
   "description": "Sticky and cooldown count rounds from the latest record; sticky entries are not re-recorded (Play 3.1, 5.4)",
   "bundle": {
-    "troupe": "0.11",
     "kind": "bundle",
     "characters": [
       {
@@ -54,7 +53,6 @@
   },
   "session": {
     "header": {
-      "troupe": "0.11",
       "kind": "session",
       "scenario": "s",
       "seed": "conformanceSeed0001",

@@ -1,7 +1,6 @@
 {
   "description": "Event on (Format 9; Play 3.3): only after that kind of message; never at an opening root or a records-only system message; a player-first root is a player message",
   "bundle": {
-    "troupe": "0.11",
     "kind": "bundle",
     "characters": [
       {
@@ -68,7 +67,6 @@
   },
   "session": {
     "header": {
-      "troupe": "0.11",
       "kind": "session",
       "scenario": "s",
       "seed": "conformanceSeed0001",

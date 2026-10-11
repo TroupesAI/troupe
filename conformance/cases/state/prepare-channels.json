@@ -1,7 +1,6 @@
 {
   "description": "Who may change a variable (Format 8.1; Play 3.3): player needs by or ask; model needs by; events always may; anyone may change the scene",
   "bundle": {
-    "troupe": "0.11",
     "kind": "bundle",
     "characters": [
       {

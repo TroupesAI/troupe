@@ -1,7 +1,6 @@
 {
   "description": "Groups (Play 5.5 step 2): the highest priority wins without a roll, whatever the weights; a candidate that doesn't match isn't a contender; the group's other candidates are excluded",
   "bundle": {
-    "troupe": "0.11",
     "kind": "bundle",
     "characters": [
       {
@@ -63,7 +62,6 @@
   },
   "session": {
     "header": {
-      "troupe": "0.11",
       "kind": "session",
       "scenario": "s",
       "seed": "conformanceSeed0001",

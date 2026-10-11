@@ -1,0 +1,153 @@
+{
+  "description": "Summary knowledge (Format 12.4; Play 6, 7): a summary without knownBy is known by the characters who know every part it covers, and reaches the narrator only if the narrator can see every part; where it is known it stands in for the messages it covers",
+  "bundle": {
+    "kind": "bundle",
+    "characters": [
+      {
+        "id": "a",
+        "name": "Ann",
+        "description": "Ann."
+      },
+      {
+        "id": "b",
+        "name": "Bea",
+        "description": "Bea."
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s",
+        "cast": [
+          {},
+          {
+            "character": "a"
+          },
+          {
+            "character": "b"
+          }
+        ]
+      }
+    ]
+  },
+  "session": {
+    "header": {
+      "kind": "session",
+      "scenario": "s",
+      "seed": "conformanceSeed0001",
+      "characters": [
+        {
+          "id": "p",
+          "name": "Pat",
+          "description": "Pat."
+        }
+      ],
+      "players": [
+        "p"
+      ]
+    },
+    "messages": [
+      {
+        "id": "1",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "Hello, both of you."
+          }
+        ]
+      },
+      {
+        "id": "2",
+        "parent": "1",
+        "from": "model",
+        "char": "a",
+        "content": [
+          {
+            "speaker": "a",
+            "text": "Hi."
+          },
+          {
+            "speaker": "a",
+            "knownBy": [
+              "a"
+            ],
+            "text": "*She hides the key.*"
+          }
+        ]
+      },
+      {
+        "id": "3",
+        "parent": "2",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "Let's go."
+          }
+        ],
+        "summary": {
+          "text": "Pat greeted Ann and Bea.",
+          "from": "1"
+        }
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "prompt",
+      "name": "Ann knows every covered part, so the summary stands in for them",
+      "for": "a",
+      "parent": "3",
+      "messageId": "4",
+      "summaries": true,
+      "expect": {
+        "history": [
+          "summary:3"
+        ]
+      }
+    },
+    {
+      "type": "prompt",
+      "name": "Bea doesn't know Ann's thought, so she gets the messages she can see",
+      "for": "b",
+      "parent": "3",
+      "messageId": "4",
+      "summaries": true,
+      "expect": {
+        "history": [
+          "message:1",
+          "message:2",
+          "message:3"
+        ]
+      }
+    },
+    {
+      "type": "prompt",
+      "name": "the narrator can't see Ann's thought either",
+      "parent": "3",
+      "messageId": "4",
+      "summaries": true,
+      "expect": {
+        "history": [
+          "message:1",
+          "message:2",
+          "message:3"
+        ]
+      }
+    },
+    {
+      "type": "prompt",
+      "name": "without summaries, Ann gets the messages",
+      "for": "a",
+      "parent": "3",
+      "messageId": "4",
+      "expect": {
+        "history": [
+          "message:1",
+          "message:2",
+          "message:3"
+        ]
+      }
+    }
+  ]
+}

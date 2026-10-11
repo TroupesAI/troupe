@@ -1,7 +1,6 @@
 {
   "description": "Event cooldown is in rounds: the distance from the last firing must exceed cooldown (default 0), so an event fires at most once per round (Format 9; Play 3.1, 3.3)",
   "bundle": {
-    "troupe": "0.11",
     "kind": "bundle",
     "characters": [
       {
@@ -40,7 +39,6 @@
   },
   "session": {
     "header": {
-      "troupe": "0.11",
       "kind": "session",
       "scenario": "s",
       "seed": "conformanceSeed0001",

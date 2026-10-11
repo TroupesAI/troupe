@@ -64,7 +64,7 @@ A check rolls when someone attempts something risky, and the reply narrates the 
   "direct": "The lock {{state.picked}}. Narrate it." }
 ```
 
-This needs an app that runs the tracker after player messages (Play 3.4). Random encounters are an event with weighted `outcomes`.
+The label makes the direction read "The lock opens." or "The lock holds.", and the app records the roll, so the model can't change it. This needs an app that runs the tracker after player messages (Play 3.4). Random encounters are an event with weighted `outcomes`.
 
 ### A hidden truth
 

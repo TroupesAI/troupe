@@ -1,7 +1,6 @@
 {
   "description": "Reference checks on a bundle (Format 17.2): each broken reference reports its code",
   "bundle": {
-    "troupe": "0.11",
     "kind": "bundle",
     "characters": [
       {

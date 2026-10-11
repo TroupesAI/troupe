@@ -1,7 +1,6 @@
 {
   "description": "Starting from a chronicle (Play 2.2): values are validated and only carried keys kept; when no character is brought, the persona fills the first seat with its own ID; a character with no bundle character joins the cast and is present; the chronicle's limits join the session's; writing back sets only keys a change on the path set, keeps only carried keys, trims a memory's knownBy to the character, the persona and narrator, and skips root entries unchanged from how the start copied them",
   "bundle": {
-    "troupe": "0.11",
     "kind": "bundle",
     "characters": [
       {
@@ -34,7 +33,6 @@
   },
   "session": {
     "header": {
-      "troupe": "0.11",
       "kind": "session",
       "id": "sess-9",
       "scenario": "s",
@@ -172,7 +170,6 @@
     {
       "type": "chronicle",
       "chronicle": {
-        "troupe": "0.11",
         "kind": "chronicle",
         "id": "c-kai",
         "character": {
@@ -240,7 +237,6 @@
       "scenario": "s",
       "opening": "o",
       "chronicle": {
-        "troupe": "0.11",
         "kind": "chronicle",
         "id": "c-kai",
         "character": {
@@ -361,7 +357,6 @@
       "type": "chronicle",
       "name": "writing back at message 2",
       "chronicle": {
-        "troupe": "0.11",
         "kind": "chronicle",
         "id": "c-kai",
         "character": {

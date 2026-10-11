@@ -1,7 +1,6 @@
 {
   "description": "self and scenario (Format 11.1): conditions that work for whoever owns them, and a character's text for one scenario",
   "bundle": {
-    "troupe": "0.11",
     "kind": "bundle",
     "characters": [
       {
@@ -95,7 +94,6 @@
   },
   "session": {
     "header": {
-      "troupe": "0.11",
       "kind": "session",
       "scenario": "s",
       "seed": "conformanceSeed0001",

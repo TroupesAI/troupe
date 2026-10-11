@@ -1,7 +1,6 @@
 {
   "description": "Macro parsing (Format 10): {{char}}, {{user}}, {{@id}}, comments, escapes, unknown forms left as written and rescanned from the next character",
   "bundle": {
-    "troupe": "0.11",
     "kind": "bundle",
     "characters": [
       {
@@ -23,7 +22,6 @@
   },
   "session": {
     "header": {
-      "troupe": "0.11",
       "kind": "session",
       "scenario": "s",
       "seed": "conformanceSeed0001",

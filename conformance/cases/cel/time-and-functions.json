@@ -1,7 +1,6 @@
 {
   "description": "CEL (Format 11.1): hour and weekday in the session's timezone (−1 if unknown), elapsed in whole seconds, user, min, max, abs",
   "bundle": {
-    "troupe": "0.11",
     "kind": "bundle",
     "characters": [
       {
@@ -47,7 +46,6 @@
   },
   "session": {
     "header": {
-      "troupe": "0.11",
       "kind": "session",
       "scenario": "s",
       "seed": "conformanceSeed0001",

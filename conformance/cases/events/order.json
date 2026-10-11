@@ -1,7 +1,6 @@
 {
   "description": "Events run once, in order scenario, worlds, characters (cast order); owners' events are named <owner>/<id> and set owned keys <owner>.<id> (Format 2.4, 8.2; Play 3.3)",
   "bundle": {
-    "troupe": "0.11",
     "kind": "bundle",
     "characters": [
       {
@@ -104,7 +103,6 @@
   },
   "session": {
     "header": {
-      "troupe": "0.11",
       "kind": "session",
       "scenario": "s",
       "seed": "conformanceSeed0001",

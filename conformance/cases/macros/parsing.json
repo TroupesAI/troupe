@@ -1,7 +1,6 @@
 {
   "description": "Macro parsing and context (Format 10): \\\\ and \\{{ escapes, forms with spaces kept, a third brace kept, comments removed, own in a scenario's text, location IDs by name, and {{user}} from the latest player message",
   "bundle": {
-    "troupe": "0.11",
     "kind": "bundle",
     "worlds": [
       {
@@ -54,7 +53,6 @@
   },
   "session": {
     "header": {
-      "troupe": "0.11",
       "kind": "session",
       "scenario": "s",
       "seed": "conformanceSeed0001",

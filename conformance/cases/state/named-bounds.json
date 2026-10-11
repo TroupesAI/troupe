@@ -1,7 +1,6 @@
 {
   "description": "min and max may name another variable of the same owner, whose current value is the bound (Format 8.1); rounding comes before clamping (Play 3.3 steps 4–5)",
   "bundle": {
-    "troupe": "0.11",
     "kind": "bundle",
     "characters": [
       {
@@ -63,7 +62,6 @@
   },
   "session": {
     "header": {
-      "troupe": "0.11",
       "kind": "session",
       "scenario": "s",
       "seed": "conformanceSeed0001",

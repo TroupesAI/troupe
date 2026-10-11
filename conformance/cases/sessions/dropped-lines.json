@@ -1,7 +1,6 @@
 {
   "description": "Dropped lines (Format 12.1, 17.2): a message whose parent names no earlier message is skipped with its descendants (UNKNOWN_MESSAGE)",
   "bundle": {
-    "troupe": "0.11",
     "kind": "bundle",
     "scenarios": [
       {
@@ -11,7 +10,6 @@
   },
   "session": {
     "header": {
-      "troupe": "0.11",
       "kind": "session",
       "scenario": "s",
       "seed": "conformanceSeed0001",

@@ -1,7 +1,6 @@
 {
   "description": "Events at the root (Play 2.1, 3.3): a hidden truth chosen at the opening root while culprit is still empty; opening macros see the result (the authoring guide's hidden-truth pattern)",
   "bundle": {
-    "troupe": "0.11",
     "kind": "bundle",
     "characters": [
       {

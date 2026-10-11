@@ -1,7 +1,6 @@
 {
   "description": "Model output (Play 3.4): one payload from a tracker or a structured reply; a character's structured reply keeps only its parts; plain replies; speakers and knownBy naming no character are dropped; model text, entries and characters are stored literal",
   "bundle": {
-    "troupe": "0.11",
     "kind": "bundle",
     "characters": [
       {
@@ -76,7 +75,6 @@
   },
   "session": {
     "header": {
-      "troupe": "0.11",
       "kind": "session",
       "scenario": "s",
       "seed": "conformanceSeed0001",

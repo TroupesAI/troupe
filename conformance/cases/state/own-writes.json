@@ -1,7 +1,6 @@
 {
   "description": "Owners write their own variables as own.<id> in their events, recorded as full keys (Format 8.2); an opening's set is written like a recorded change, with full keys only (Format 6.3); entries, variables and events share one ID space per owner, compared in that order, and a variable or event reusing an earlier ID is the duplicate and is dropped (Format 2.3)",
   "bundle": {
-    "troupe": "0.11",
     "kind": "bundle",
     "characters": [
       {
@@ -103,7 +102,6 @@
   },
   "session": {
     "header": {
-      "troupe": "0.11",
       "kind": "session",
       "scenario": "s",
       "seed": "conformanceSeed0001",

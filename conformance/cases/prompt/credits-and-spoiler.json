@@ -1,7 +1,6 @@
 {
   "description": "Credits and spoilers (Format 3, 6.1): bundle credits are Markdown for people, never sent to models; a cast member's spoiler is informative for interfaces and changes nothing in the engine",
   "bundle": {
-    "troupe": "0.11",
     "kind": "bundle",
     "name": "The Cellar",
     "authors": [
@@ -62,7 +61,6 @@
   },
   "session": {
     "header": {
-      "troupe": "0.11",
       "kind": "session",
       "scenario": "s",
       "seed": "conformanceSeed0001",

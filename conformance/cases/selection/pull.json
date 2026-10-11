@@ -1,7 +1,6 @@
 {
   "description": "Pulling (Format 7.2; Play 5.6): entries with pull and a title form a catalog of visible entries not selected whose when holds; pulled entries are recorded; pull entries without keys are not always-on",
   "bundle": {
-    "troupe": "0.11",
     "kind": "bundle",
     "characters": [
       {
@@ -75,7 +74,6 @@
   },
   "session": {
     "header": {
-      "troupe": "0.11",
       "kind": "session",
       "scenario": "s",
       "seed": "conformanceSeed0001",

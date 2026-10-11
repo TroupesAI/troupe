@@ -1,7 +1,6 @@
 {
   "description": "A scenario without cast or worlds (Format 6.1, 6.3): the default cast is one player seat and every bundle character in bundle order, and every bundle world is in use; the opening's speakers start present, and an opening without content starts with the whole cast",
   "bundle": {
-    "troupe": "0.11",
     "kind": "bundle",
     "characters": [
       {
@@ -93,7 +92,6 @@
   },
   "session": {
     "header": {
-      "troupe": "0.11",
       "kind": "session",
       "scenario": "workshop",
       "seed": "conformanceSeed0001",

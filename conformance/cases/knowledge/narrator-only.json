@@ -1,7 +1,6 @@
 {
   "description": "Narrator-only knowledge in characters mode (Format 7.1, 7.4; Play 5.1, 7): knownBy [\"narrator\"] reaches only the narrator; the narrator's style is a scenario system entry known by the narrator; an explicit knownBy that doesn't name narrator hides content from the narrator, even when it names a character outside the cast; {{char}} for the narrator is \"the narrator\"",
   "bundle": {
-    "troupe": "0.11",
     "kind": "bundle",
     "characters": [
       {
@@ -93,7 +92,6 @@
   },
   "session": {
     "header": {
-      "troupe": "0.11",
       "kind": "session",
       "scenario": "s",
       "seed": "conformanceSeed0001",
