@@ -1,74 +1,33 @@
 {
-  "description": "Strict schemas, lenient readers (Format 3, 4, 6, 15, 17.2): fields the format doesn't define are UNKNOWN_FIELD warnings, located at the field and ignored, and the file is still read; a part's fields are those of the interface its type selects. Among them are fields other formats use: bundle license, source and derivedFrom, character and world origin, character references and openings, and a scenario's narratorVoice: character openings make no solo scenario, and a character named as narratorVoice is an ordinary character",
+  "description": "Strict schemas, lenient readers (Format 15, 17.2): fields the format doesn't define are UNKNOWN_FIELD warnings, located at the field, and the file is still read and played; a part's fields are those of the interface its type selects",
   "bundle": {
     "kind": "bundle",
     "futureField": true,
-    "license": "CC-BY-4.0",
-    "source": "https://example.com/cellar",
-    "derivedFrom": [
-      "https://example.com/original"
-    ],
     "characters": [
       {
         "id": "ann",
         "name": "Ann",
         "description": "A guide.",
-        "origin": {
-          "bundle": "7c1e9a4b",
-          "id": "ann"
-        },
-        "references": [
-          {
-            "src": "refs/ann.png",
-            "kind": "image",
-            "likeness": "fictional"
-          }
-        ],
-        "openings": [
-          {
-            "id": "solo",
-            "content": [
-              {
-                "speaker": "ann",
-                "text": "Just us."
-              }
-            ]
-          }
-        ],
         "mystery": 1,
         "ext": {
           "acme.mood": {
             "x": 1
           }
         }
-      },
-      {
-        "id": "teller",
-        "name": "The Teller",
-        "description": "An old storyteller.",
-        "entries": [
-          {
-            "id": "t_style",
-            "text": "Speak in riddles."
-          }
-        ]
       }
     ],
     "worlds": [
       {
         "id": "w",
         "name": "W",
-        "origin": {
-          "bundle": "7c1e9a4b",
-          "id": "w"
-        }
+        "mystery": 1
       }
     ],
     "scenarios": [
       {
         "id": "s",
         "mode": "characters",
-        "narratorVoice": "teller",
+        "mystery": 1,
         "cast": [
           {},
           {
@@ -77,15 +36,9 @@
         ],
         "entries": [
           {
-            "id": "k_teller",
-            "knownBy": [
-              "teller"
-            ],
-            "text": "Known by the Teller only."
-          },
-          {
             "id": "k_all",
-            "text": "Everyone."
+            "text": "Everyone.",
+            "mystery": 1
           }
         ],
         "openings": [
@@ -163,48 +116,29 @@
           },
           {
             "code": "UNKNOWN_FIELD",
+            "at": "/worlds/0/mystery"
+          },
+          {
+            "code": "UNKNOWN_FIELD",
+            "at": "/scenarios/0/mystery"
+          },
+          {
+            "code": "UNKNOWN_FIELD",
+            "at": "/scenarios/0/entries/0/mystery"
+          },
+          {
+            "code": "UNKNOWN_FIELD",
             "at": "/scenarios/0/openings/0/content/0/src"
-          },
-          {
-            "code": "UNKNOWN_FIELD",
-            "at": "/license"
-          },
-          {
-            "code": "UNKNOWN_FIELD",
-            "at": "/source"
-          },
-          {
-            "code": "UNKNOWN_FIELD",
-            "at": "/derivedFrom"
-          },
-          {
-            "code": "UNKNOWN_FIELD",
-            "at": "/characters/0/origin"
-          },
-          {
-            "code": "UNKNOWN_FIELD",
-            "at": "/characters/0/references"
-          },
-          {
-            "code": "UNKNOWN_FIELD",
-            "at": "/characters/0/openings"
-          },
-          {
-            "code": "UNKNOWN_FIELD",
-            "at": "/worlds/0/origin"
-          },
-          {
-            "code": "UNKNOWN_FIELD",
-            "at": "/scenarios/0/narratorVoice"
           }
         ]
       }
     },
     {
       "type": "select",
-      "name": "the narrator: the Teller's entries aren't candidates and knownBy naming the Teller hides an entry",
+      "name": "entries with unknown fields are still candidates",
       "parent": "1",
       "messageId": "2",
+      "for": "ann",
       "expect": {
         "activated": [
           "s/k_all"
@@ -212,20 +146,8 @@
       }
     },
     {
-      "type": "prompt",
-      "name": "no narrator item in People",
-      "parent": "1",
-      "messageId": "2",
-      "expect": {
-        "people": [
-          "character:ann",
-          "player:p"
-        ]
-      }
-    },
-    {
       "type": "start",
-      "name": "the scenario's openings start sessions as usual",
+      "name": "a file with unknown fields still starts a session",
       "scenario": "s",
       "opening": "o",
       "characters": [
