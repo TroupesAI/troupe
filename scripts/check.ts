@@ -1,7 +1,7 @@
 // Checks the repository's documents and data:
 //   - the schemas compile, and the examples and every complete bundle in a Markdown document validate;
 //   - examples/ matches the examples in spec/format.md (--write-examples rewrites them);
-//   - the spec version agrees across the documents, schema $ids and examples;
+//   - the spec version agrees across the documents, schema URLs, examples, bundles in Markdown and cases;
 //   - every conformance case is valid JSON, named <area>/<topic>.json, and the files it names exist;
 //   - relative Markdown links and #anchors resolve.
 import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
@@ -64,6 +64,7 @@ const extra = readdirSync(join(root, "examples")).filter((f) => !(f in examples)
 if (extra.length) fail(`examples/ has files the spec doesn't define: ${extra.join(", ")}`);
 
 // Every complete bundle written as a json block in a Markdown document
+const docBundles: { where: string; troupe?: string }[] = [];
 for (const doc of markdown) {
   const text = read(doc);
   for (const m of text.matchAll(/```json\n([\s\S]*?)\n```/g)) {
@@ -76,6 +77,7 @@ for (const doc of markdown) {
     if ((value as { kind?: string })?.kind === "bundle") {
       const line = text.slice(0, m.index).split("\n").length;
       validate("bundle.schema.json", value, `${doc}:${line}`);
+      docBundles.push({ where: `${doc}:${line}`, troupe: (value as { troupe?: string }).troupe });
     }
   }
 }
@@ -92,6 +94,11 @@ for (const [name, text] of Object.entries(examples)) {
   const first = JSON.parse(text.split("\n")[0].startsWith("{\"") ? text.split("\n")[0] : text);
   if (first.troupe !== version) fail(`examples/${name}: troupe is ${first.troupe}, not ${version}`);
 }
+for (const b of docBundles) if (b.troupe !== version) fail(`${b.where}: troupe is ${b.troupe}, not ${version}`);
+if (!read("README.md").includes(`v${version} draft`)) fail(`README.md: the status line doesn't say v${version}`);
+for (const doc of [...markdown, ...Object.keys(examples).map((n) => `examples/${n}`)])
+  for (const m of read(doc).matchAll(/troupe\.example\/schema\/(\d+\.\d+)\//g))
+    if (m[1] !== version) fail(`${doc}: schema URL for version ${m[1]}, not ${version}`);
 
 // Conformance cases: cases/<area>/<topic>.json, valid JSON, and files they name exist
 const cases = (readdirSync(join(root, "conformance/cases"), { recursive: true }) as string[]).filter((f) => f.endsWith(".json")).sort();
@@ -105,6 +112,15 @@ for (const f of cases) {
     fail(`${path}: ${(e as Error).message}`);
     continue;
   }
+  const walk = (o: unknown): void => {
+    if (Array.isArray(o)) return o.forEach(walk);
+    if (!o || typeof o !== "object") return;
+    const d = o as Record<string, unknown>;
+    if (typeof d.kind === "string" && ["bundle", "session", "chronicle"].includes(d.kind) && "troupe" in d && d.troupe !== version)
+      fail(`${path}: a ${d.kind} has troupe ${d.troupe}, not ${version}`);
+    Object.values(d).forEach(walk);
+  };
+  walk(value);
   for (const m of JSON.stringify(value).matchAll(/"(?:bundle|session|chronicle)File":"([^"]+)"/g))
     if (!existsSync(join(root, dirname(path), m[1]))) fail(`${path}: ${m[1]} doesn't exist`);
 }
