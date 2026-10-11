@@ -1071,7 +1071,7 @@ footer.colophon { margin-top: 56px; padding-top: 18px; border-top: 1px solid var
       <ul>
         <li><strong>Two levels.</strong> A <strong>Core</strong> app supports everything except variables and events (and openings that set values other than the scene), which is enough for imported cards and lorebooks. A <strong>Full</strong> app supports mechanics too. An app that can't play a file properly refuses it, rather than telling a different story.</li>
         <li><strong>Extensions.</strong> Apps can add their own data under <code>ext</code>, keyed by name, and every other app keeps it safe when saving. <code>requires</code> marks extensions a file depends on.</li>
-        <li><strong>Versions</strong> are compared as two whole numbers, so 0.10 is newer than 0.9. From 1.0, minor versions only add things older apps can safely ignore; before 1.0, any version may break, so apps open only their own.</li>
+        <li><strong>Versions</strong> are compared as two whole numbers, so 0.10 is newer than 0.9. From 1.0, minor versions only add things older apps can safely ignore; before 1.0, any version may break, so apps fully support only their own and warn about the others.</li>
       </ul>
       <h4>Coming from Character Card V2/V3</h4>
       <div class="table-wrap"><table class="compare">
@@ -1087,7 +1087,7 @@ footer.colophon { margin-top: 56px; padding-top: 18px; border-top: 1px solid var
           <tr><td>a chat file with swipes</td><td>a session, with swipes as siblings</td></tr>
         </tbody>
       </table></div>
-      <p class="cite">Appendix F of the specification maps the common fields (unmapped ones are reported and kept), and defines a lossy export of a single character back to V3.</p>
+      <p class="cite">Appendix E of Format maps the common fields (unmapped ones are reported and kept), and defines a lossy export of a single character back to V3.</p>
     </section>
 
     <section class="chapter" id="c21">
@@ -1115,7 +1115,7 @@ footer.colophon { margin-top: 56px; padding-top: 18px; border-top: 1px solid var
 
     <section class="chapter" id="c22">
       <div class="chapter-title"><span class="no">22</span><h3>Status and road to 1.0</h3></div>
-      <p>Version 0.11 is a draft; breaking changes are allowed until 1.0. Troupe is specified in two documents: <a href="#format">Format</a> defines the files, and <a href="#play">Play</a> defines how apps play them. A conformance suite checks implementations against both. Appendix H of Format lists what 1.0 still needs and the extensions planned after it.</p>
+      <p>Version 0.11 is a draft; breaking changes are allowed until 1.0. Troupe is specified in two documents: <a href="#format">Format</a> defines the files, and <a href="#play">Play</a> defines how apps play them. A conformance suite checks implementations against both. Appendix G of Format lists what 1.0 still needs and the extensions planned after it.</p>
     </section>
 
     <div class="part-head" id="glossary">
@@ -1164,7 +1164,7 @@ footer.colophon { margin-top: 56px; padding-top: 18px; border-top: 1px solid var
 
     <footer class="colophon">
       <span>Troupe · Version 0.11 draft · October 2026</span>
-      <span>JSON Schemas: <a href="../schemas/bundle.schema.json" target="_blank" rel="noopener">bundle</a>, <a href="../schemas/session-header.schema.json" target="_blank" rel="noopener">session header</a>, <a href="../schemas/message.schema.json" target="_blank" rel="noopener">message</a>, <a href="../schemas/chronicle.schema.json" target="_blank" rel="noopener">chronicle</a></span>
+      <span>JSON Schemas: <a href="../schemas/bundle.schema.json" target="_blank" rel="noopener">bundle</a>, <a href="../schemas/session-header.schema.json" target="_blank" rel="noopener">session header</a>, <a href="../schemas/message.schema.json" target="_blank" rel="noopener">message</a>, <a href="../schemas/chronicle.schema.json" target="_blank" rel="noopener">chronicle</a>, <a href="../schemas/model-output.schema.json" target="_blank" rel="noopener">model output</a></span>
     </footer>
   </main>
 </div>

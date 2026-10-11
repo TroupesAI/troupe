@@ -1,5 +1,5 @@
 {
-  "description": "The image-embedded form (Format Appendix E): one iTXt chunk with keyword troupe, compressed, holds the bundle, read exactly like a .troupe.json file; readers prefer it to a ccv3 chunk; a PNG with no troupe chunk or with two is PARSE",
+  "description": "The image-embedded form (Format 14.5): one iTXt chunk with keyword troupe, compressed, holds the bundle, read exactly like a .troupe.json file; readers prefer it to a ccv3 chunk; a PNG with no troupe chunk or with two is PARSE",
   "tests": [
     {
       "type": "parse",

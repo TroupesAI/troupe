@@ -12,7 +12,7 @@ This guide is informative. It collects advice for apps that show and play Troupe
 - **Diagnostics.** Show authors the checks a reader reports (Format 17.2), especially unknown macros, which are left as written, and conditions that fail at runtime, which count as false.
 - **Missing extensions.** A file that `requires` an extension the app lacks can't be played (Format 15). Show its metadata and explain what's missing.
 - **Mechanics in a Core app.** A Core app refuses files that use mechanics (Play 8.1). Show the file anyway and explain why it can't be played.
-- **Exporting** to another format loses data (Format Appendix F.2). Show people what was left out.
+- **Exporting** to another format loses data (Format Appendix E.2). Show people what was left out.
 
 ## Play
 

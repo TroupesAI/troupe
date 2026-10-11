@@ -12,7 +12,7 @@ Libraries and apps live in their own repositories. This one holds no implementat
 
 A normative change lands in one change set:
 
-1. the text in `spec/format.md` or `spec/play.md`, with the rationale in Format Appendix G or Play Appendix A when it's a design decision;
+1. the text in `spec/format.md` or `spec/play.md`, with the rationale in Format Appendix F or Play Appendix A when it's a design decision;
 2. the affected `schemas/`;
 3. at least one conformance case in `conformance/cases` (format: [conformance/README.md](conformance/README.md));
 4. `examples/`, when Format 1.4 or Appendix B changes (`bun run examples` re-extracts them);

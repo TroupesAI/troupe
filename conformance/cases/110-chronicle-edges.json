@@ -1,5 +1,5 @@
 {
-  "description": "Chronicle edges (Play 2.1 step 4; Format 13, 17.2): without an opening, the chronicles' values come first on the root, before the first message's own changes; a chronicle deletion that names no record is UNKNOWN_MESSAGE",
+  "description": "Chronicle edges (Play 2.1 step 4, 2.2; Format 13, 17.2): without an opening, the chronicles' values come first on the root, before the first message's own changes, and a chronicle character with no bundle character is present, recorded by that change; a chronicle deletion that names no record is UNKNOWN_MESSAGE",
   "bundle": {
     "troupe": "0.11",
     "kind": "bundle",
@@ -35,7 +35,7 @@
   "tests": [
     {
       "type": "start",
-      "name": "no opening: chronicle values, then the first message's changes",
+      "name": "no opening: chronicle values and presence, then the first message's changes",
       "scenario": "s",
       "characters": [
         {
@@ -104,7 +104,12 @@
           {
             "by": "rules",
             "set": {
-              "kai.feelings.you": 7
+              "kai.feelings.you": 7,
+              "scene.present": [
+                "you",
+                "ann",
+                "kai"
+              ]
             }
           },
           {
@@ -120,7 +125,12 @@
         ],
         "state": {
           "bell": 3,
-          "kai.feelings.you": 7
+          "kai.feelings.you": 7,
+          "scene.present": [
+            "you",
+            "ann",
+            "kai"
+          ]
         }
       }
     },

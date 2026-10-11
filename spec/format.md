@@ -37,7 +37,7 @@ This document defines the files and what every field means. [Troupe Play](play.m
 16. [Security and limits](#16-security-and-limits)
 17. [Conformance](#17-conformance)
 
-**Appendices:** [A Schemas](#appendix-a-json-schemas) · [B Examples](#appendix-b-examples) · [C Patterns](#appendix-c-patterns) · [D Authoring brief](#appendix-d-authoring-brief) · [E Image form](#appendix-e-image-embedded-form) · [F Other formats](#appendix-f-other-formats) · [G Design decisions](#appendix-g-design-decisions) · [H Road to 1.0](#appendix-h-road-to-10) · [I References](#appendix-i-references)
+**Appendices:** [A Schemas](#appendix-a-json-schemas) · [B Examples](#appendix-b-examples) · [C Patterns](#appendix-c-patterns) · [D Authoring brief](#appendix-d-authoring-brief) · [E Other formats](#appendix-e-other-formats) · [F Design decisions](#appendix-f-design-decisions) · [G Road to 1.0](#appendix-g-road-to-10) · [H References](#appendix-h-references)
 
 ---
 
@@ -155,11 +155,11 @@ MUST, MUST NOT, SHOULD, SHOULD NOT and MAY are used as described in RFC 2119 and
 
 ### 2.5 Text
 
-Model-facing text is Markdown (CommonMark 0.31.2). Apps MUST NOT render raw HTML from any field; they MAY render GFM tables and strikethrough. A **field** is one JSON string value. Timestamps are RFC 3339 in UTC and language tags BCP 47 in canonical case.
+Model-facing text is Markdown (CommonMark 0.31.2). Apps MUST NOT render raw HTML from any field; they MAY render GFM tables and strikethrough. A **field** is one JSON string value. Timestamps are RFC 3339 in UTC, ending in `Z`, and language tags BCP 47 in canonical case.
 
 ### 2.6 How to read this document
 
-The JSON Schemas (Appendix A) are normative for structure, the prose for meaning and behavior. Appendices B to I are informative, except where Appendix H sets release requirements. Part I is enough to write bundles.
+The JSON Schemas (Appendix A) are normative for structure, the prose for meaning and behavior. Appendices B to H are informative, except where Appendix G sets release requirements. Part I is enough to write bundles.
 
 ---
 
@@ -544,7 +544,7 @@ Macros are the only substitution in text. `@` turns IDs into names.
 | `{{user}}` | The player's character being answered (below) |
 | `{{@<id>}}` | That character's name, e.g. `{{@kai}}` |
 | `{{state.<path>}}`, `{{own.<path>}}` | A state value, e.g. `{{state.bell}}`, `{{own.nerve}}`, `{{state.trust.char}}` |
-| `{{@state.<path>}}`, `{{@own.<path>}}` | The names of the characters or locations whose IDs a value holds |
+| `{{@state.<path>}}`, `{{@own.<path>}}` | The value, with each string that is a character or location ID rendered as its name |
 | `{{scene.location}}`, `{{@scene.location}}` | The current location's ID, or its name |
 | `{{@scene.present}}`, `{{@players}}` | The names of the characters present, or of the players' characters |
 | `{{args.<id>}}` | An argument of the callable event this text belongs to |
@@ -712,7 +712,7 @@ Writers MAY append records as a session changes, or rewrite the file compactly. 
 
 ### 12.2 Players and cast
 
-- **Replacements.** A header character with the ID of a bundle character replaces it for the whole session: it keeps that character's place in the cast and every reference to it. This is how apps recast a part or play an edited copy without touching the bundle. Text that names other characters with `{{@<id>}}` instead of writing their names keeps working after a recast.
+- **Replacements.** A header character with the ID of a bundle character replaces it for the whole session: it keeps that character's place in the cast and every reference to it. This is how apps recast a part or play an edited copy without touching the bundle. Text that names other characters with `{{@<id>}}` instead of writing their names keeps working after a recast. Two header characters that replace the same bundle character make the session unplayable (`DUPLICATE_ID`).
 - `players` lists the characters people control, in seat order. An ID defined in the header's `characters`, other than a replacement, fills the next empty seat; a cast member marked `player` fills its own seat and is a player whether or not it is listed, after the listed players in cast order; the ID of another cast member means a person took that character over.
 - The session's **cast** is the scenario cast with seats filled, followed by the **joiners**: header `characters` that aren't players or replacements, which joined or appeared during the session.
 
@@ -767,7 +767,7 @@ interface ChronicleRecord {
 }
 ```
 
-- **File.** A chronicle is a JSON Lines file, `.troupe-chronicle.jsonl`: the header, then records. A record whose `id` repeats replaces the earlier one in its original position; `{"id": "<id>", "deleted": true}` forgets it. Readers fold the records in order: an entry ID takes its latest version and keeps the position where it first appeared, and `disabled` removes it; values fold by key.
+- **File.** A chronicle is a JSON Lines file, `.troupe-chronicle.jsonl`: the header, then records. A record whose `id` repeats replaces the earlier one in its original position; `{"id": "<id>", "deleted": true}` forgets it. Readers fold the records in order: an entry ID takes its latest version and keeps the position where it first appeared, and `disabled` removes it; values fold by key. An entry's `knownBy` names only the character, the persona or `narrator`.
 - **Carrying.** A chronicle keeps the character's non-derived variables marked `carry` and the session entries marked `carry`; `carry` is ignored elsewhere. Chronicle values are validated like recorded changes, and keys that aren't carried are dropped. Chronicle entries keep their stored text exactly; since macros never resolve in model-written text, memories name people literally.
 - **Scale.** Long-lived memories SHOULD use `pull` with a `title`, so a chronicle can grow without filling every prompt. A companion can run many bounded sessions with one chronicle.
 
@@ -789,7 +789,7 @@ Play 2.2 says how a session continues a chronicle and writes back to it.
 | Chronicle | `.troupe-chronicle.jsonl` | One character's continuity | `application/vnd.troupe.chronicle+jsonl` |
 | Authoring source | `.troupe.yaml` | One bundle in YAML (section 14.4) | `application/vnd.troupe+yaml` |
 
-Every Troupe document has a top-level `troupe` key with the spec version and a `kind` key: `"bundle"`, `"session"` or `"chronicle"`. Appendix E defines an optional image-embedded form.
+Every Troupe document has a top-level `troupe` key with the spec version and a `kind` key: `"bundle"`, `"session"` or `"chronicle"`. Section 14.5 defines an optional image-embedded form.
 
 ### 14.2 Files
 
@@ -805,6 +805,10 @@ Fields that hold a file accept a relative path inside the package, an `https:` U
 
 Authors MAY write a bundle in YAML 1.2, using only what JSON can express: no tags, anchors, aliases or merge keys, string keys only, and the core schema. Block scalars keep descriptions readable, CEL needs no escaping, and comments are allowed. Quote values that must stay strings, such as `troupe: "0.11"`, `version: "1.0"`, `of: "*"`, timestamps, and values like `on`, `off` or `null`. A YAML bundle has exactly the same meaning as its JSON equivalent. Apps MAY import it and MUST export JSON.
 
+### 14.5 Image-embedded form
+
+A single-file bundle MAY be embedded in a PNG for image hosts: one `iTXt` chunk with keyword `troupe`, compression flag 1, compression method 0, empty language tag and translated keyword, holding the bundle as UTF-8. The image SHOULD be the cover or main avatar. Writers SHOULD also embed a `ccv3` chunk exported as in Appendix E.2, so Character Card V3 apps can read the same file. Readers that support this form prefer the `troupe` chunk, treat it exactly like a `.troupe.json` file, and cap the decompressed size. A PNG with no `troupe` chunk, or more than one, is `PARSE`. It is never the canonical form, and image hosts often strip it.
+
 ---
 
 ## 15. Extensions and versioning
@@ -812,7 +816,7 @@ Authors MAY write a bundle in YAML 1.2, using only what JSON can express: no tag
 - **Extensions.** Every object MAY carry `ext`, keyed by an extension name matching `^[a-z0-9][a-z0-9.-]{0,63}$`, scoped to a feature where possible, such as `risu.regex`. The `troupe.` prefix is reserved for draft extensions published with this spec. Apps MUST NOT add fields anywhere else. Extension data MUST stay valid when the object holding it changes. A breaking change to an extension gets a new name.
 - **`requires`** lists extensions the file can't work without. A reader that lacks one MUST NOT open the file for play.
 - **Unknown fields.** Readers MUST ignore fields and extensions they don't understand, and keep them unchanged through load, save and export. The schemas reject unknown properties to catch typos. A property is unknown when every schema branch that applies at its location rejects it as an additional property; each is an `UNKNOWN_FIELD` warning located at the property, and `SCHEMA` is judged with unknown properties removed, so readers never reject a file only for them. Validators assert `format`, so timestamps must be valid RFC 3339.
-- **Versions** are `major.minor`, compared as two integers, so `0.10` is newer than `0.9`. Minor versions only add what older readers can safely ignore. Readers MUST open files of the same major version and SHOULD warn about a newer minor. A writer that keeps unknown fields MUST write the greater of its own version and the file's. Before 1.0, anything may change.
+- **Versions** are `major.minor`, compared as two integers, so `0.10` is newer than `0.9`. A reader refuses a file of another major version (`UNSUPPORTED_VERSION`). From 1.0, minor versions only add what older readers can safely ignore: readers MUST open every file of their major version and SHOULD warn about a newer minor. Before 1.0, any minor version may break: a reader fully supports only its own, SHOULD warn about any other (`UNSUPPORTED_VERSION`), and MAY still read it. A writer that keeps unknown fields MUST write the greater of its own version and the file's.
 
 ---
 
@@ -830,7 +834,7 @@ Troupe files are shared between strangers.
 8. **Bounded parsing.** Readers MUST cap JSON size and depth, `data:` URI size, and session and chronicle length.
 9. **Content stays content.** Text from files and sessions is story material, not instructions to the app, and macros in players' and models' text never resolve (section 10). `credits`, `creatorNotes`, `briefing`, change `reason` and message `author` MUST NOT be sent to the story model; entry `title` reaches it only in a pull catalog.
 
-Readers MUST accept files within these limits, MAY reject larger ones, and writers SHOULD stay within them:
+Writers MUST stay within these limits. Readers MUST accept files within them, and MAY accept or refuse larger ones:
 
 | Item | Size limit |
 | --- | --- |
@@ -848,7 +852,7 @@ Readers MUST accept files within these limits, MAY reject larger ones, and write
 
 ### 17.1 Requirements
 
-A conforming **writer** produces files that validate against the schemas, pass the checks below, and follow section 15. A conforming **reader** preserves unknown fields and reports failed checks with their codes. Apps that play files also conform to Play 8.
+A conforming **writer** produces files that validate against the schemas, pass the checks below, stay within the limits of section 16, and follow section 15. A conforming **reader** preserves unknown fields and reports failed checks with their codes. Apps that play files also conform to Play 8.
 
 ### 17.2 Checks
 
@@ -856,13 +860,13 @@ Messages are never dropped for a failed check, except the lines that `PARSE` and
 
 | Code | Check | Consequence |
 | --- | --- | --- |
-| `PARSE` | The input is I-JSON (section 2.2), JSON Lines or YAML within section 14.4, a Troupe document of a known `kind`, within the limits the reader enforces (section 16), and a safe package (section 16 item 7) or PNG (Appendix E) | The file isn't read; in a session or chronicle, an unreadable line other than the header is skipped |
-| `UNSUPPORTED_VERSION` | `troupe` is a version the reader opens (section 15) | The file isn't read; for a newer minor version, a warning |
+| `PARSE` | The input is I-JSON (section 2.2), JSON Lines or YAML within section 14.4, a Troupe document of a known `kind`, within the limits the reader enforces (section 16), and a safe package (section 16 item 7) or PNG (section 14.5) | The file isn't read; in a session or chronicle, an unreadable line other than the header is skipped |
+| `UNSUPPORTED_VERSION` | `troupe` is the reader's own version (section 15) | Another major version isn't read; another minor version is a warning |
 | `SCHEMA` | The document validates against its schema, apart from unknown properties (section 15) | The reader MAY refuse the file |
 | `UNKNOWN_FIELD` | Every property is known to the reader's schema (section 15) | A warning; the field is kept |
-| `DUPLICATE_ID` | IDs are unique as section 2.3 requires, and no message reuses a deleted ID (section 12.1) | The first is kept; a scenario variable that clashes with a character or world is ignored instead (section 2.3) |
+| `DUPLICATE_ID` | IDs are unique as section 2.3 requires, and no message reuses a deleted ID (section 12.1) | The first is kept; a scenario variable that clashes with a character or world is ignored instead (section 2.3), and two replacements of one character make the session unplayable (section 12.2) |
 | `UNKNOWN_SCENARIO` | The header's `scenario` names a scenario | The session can't be played |
-| `UNKNOWN_CHARACTER` | Cast members, `players`, `knownBy` (where `narrator` is also allowed), speakers, example speakers (or `char`, `user`), message `char` and character keys name characters in the bundle or session | The ID is ignored; a cast member or example exchange naming it is skipped |
+| `UNKNOWN_CHARACTER` | Cast members, `players`, `knownBy` (where `narrator` is also allowed), speakers, example speakers (or `char`, `user`), message `char` and character keys name characters in the bundle or session; a chronicle entry's `knownBy` names its character, its persona or `narrator` | The ID is ignored; a cast member or example exchange naming it is skipped |
 | `UNKNOWN_WORLD` | `scenario.worlds` names bundle worlds | The ID is ignored |
 | `UNKNOWN_LOCATION` | Locations in values and `parent` exist, without cycles | The value is invalid; the parent is ignored |
 | `UNKNOWN_OPENING` | A root's `opening` exists | `opening` reads as `""` |
@@ -882,7 +886,7 @@ Messages are never dropped for a failed check, except the lines that `PARSE` and
 
 ## Appendix A: JSON Schemas
 
-The JSON Schema 2020-12 files are normative for structure. Each `$id` is the URL the schema is published at, versioned by minor version, such as `https://troupe.example/schema/0.11/bundle.schema.json`; until 1.0 the host is the placeholder `troupe.example` (Appendix H).
+The JSON Schema 2020-12 files are normative for structure. Each `$id` is the URL the schema is published at, versioned by minor version, such as `https://troupe.example/schema/0.11/bundle.schema.json`; until 1.0 the host is the placeholder `troupe.example` (Appendix G).
 
 | File | Validates |
 | --- | --- |
@@ -890,6 +894,7 @@ The JSON Schema 2020-12 files are normative for structure. Each `$id` is the URL
 | [`session-header.schema.json`](../schemas/session-header.schema.json) | The first line of a session |
 | [`message.schema.json`](../schemas/message.schema.json) | Every later line of a session: a message, a deletion or a head record |
 | [`chronicle.schema.json`](../schemas/chronicle.schema.json) | Each line of a chronicle: the header, a record or a deletion |
+| [`model-output.schema.json`](../schemas/model-output.schema.json) | A model's structured reply or tracker result (Play 3.4) |
 
 ---
 
@@ -1304,15 +1309,9 @@ Validate the result against `bundle.schema.json` and fix every error before retu
 
 ---
 
-## Appendix E: Image-embedded form
+## Appendix E: Other formats
 
-A single-file bundle MAY be embedded in a PNG for image hosts: one `iTXt` chunk with keyword `troupe`, compression flag 1, compression method 0, empty language tag and translated keyword, holding the bundle as UTF-8. The image SHOULD be the cover or main avatar. Writers SHOULD also embed a `ccv3` chunk exported as in Appendix F.2, so Character Card V3 apps can read the same file. Readers that support this form prefer the `troupe` chunk, treat it exactly like a `.troupe.json` file, and cap the decompressed size. A PNG with no `troupe` chunk, or more than one, is `PARSE`. It is never the canonical form, and image hosts often strip it.
-
----
-
-## Appendix F: Other formats
-
-### F.1 Importing Character Card V2/V3
+### E.1 Importing Character Card V2/V3
 
 Each card becomes a bundle with one character and a scenario `main` that holds its openings.
 
@@ -1354,13 +1353,13 @@ Each card becomes a bundle with one character and a scenario `main` that holds i
 | Other macros, decorators, regex scripts | Reported; the source is kept in `ext` |
 | SillyTavern chat JSONL | A session: `is_user` lines become `player` messages, `name` becomes `speaker`, swipes become siblings |
 
-### F.2 Exporting to Character Card V3
+### E.2 Exporting to Character Card V3
 
 A bundle's first character exports with a lossy mapping: `name`, `description`, the openings with `content` of the first scenario whose cast includes it as `first_mes` and `alternate_greetings`, its `premise` as `scenario`, `authors` as `creator`, examples as `mes_example`, entries without `when` as a `character_book` (keys, constant, position and depth), and the whole bundle under `extensions.troupe`. Apps that read `extensions.troupe` restore the original exactly.
 
 ---
 
-## Appendix G: Design decisions
+## Appendix F: Design decisions
 
 | Decision | Instead of | Why |
 | --- | --- | --- |
@@ -1391,12 +1390,15 @@ A bundle's first character exports with a lossy mapping: `name`, `description`, 
 | YAML source | A Markdown mini-language | Readable authoring with no new semantics. |
 | No executable code | Scripts in cards | Scripts in shared cards can steal API keys. |
 | Strict schemas, lenient readers | Either everywhere | Writers catch typos; readers stay forward compatible. |
+| Writers stay within the limits; readers may accept more | Exact limits, or minimums only | Every conforming file opens in every app, and apps can still be generous. |
+| Before 1.0, readers support only their own minor version and warn about others | Opening every minor version as compatible | Drafts break between minors; a warning says why a file may misbehave, without stranding it. |
+| Timestamps in UTC with `Z` | Any offset | One spelling per instant, so timestamps compare as text. |
 
 ---
 
-## Appendix H: Road to 1.0
+## Appendix G: Road to 1.0
 
-### H.1 Release requirements
+### G.1 Release requirements
 
 Version 1.0 is tagged when:
 
@@ -1408,7 +1410,7 @@ Version 1.0 is tagged when:
 
 The specification text is published under CC BY 4.0, and the schemas and conformance suite under Apache-2.0.
 
-### H.2 Draft extensions
+### G.2 Draft extensions
 
 - **`troupe.tests`:** behavior tests inside a bundle. Each test sets up a scenario, an opening, starting values and a short history, then expects entries to activate or not, a CEL condition on state, and plain-language assertions scored by a judge model ("Kai deflects and doesn't admit the deal"), over several samples with a pass rate. The deterministic part runs without a model; the judged part tells people which models play a card well.
 - **`troupe.time`:** characters who act between messages. `on: "idle"` events evaluated at a records-only message when an app wakes a quiet session, and `reply` to ask a character for a turn, with opt-in and frequency caps.
@@ -1419,7 +1421,7 @@ The specification text is published under CC BY 4.0, and the schemas and conform
 
 ---
 
-## Appendix I: References
+## Appendix H: References
 
 - [RFC 2119](https://www.rfc-editor.org/rfc/rfc2119), [RFC 8174](https://www.rfc-editor.org/rfc/rfc8174): requirement keywords
 - [RFC 8259](https://www.rfc-editor.org/rfc/rfc8259), [RFC 7493](https://www.rfc-editor.org/rfc/rfc7493): JSON and I-JSON; [JSON Lines](https://jsonlines.org/); [YAML 1.2.2](https://yaml.org/spec/1.2.2/)

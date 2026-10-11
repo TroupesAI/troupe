@@ -2,7 +2,7 @@
 
 An open file format for AI roleplay: characters, the worlds they live in, the scenarios that bring them together, the mechanics that drive a story, and the chat sessions played from them.
 
-**Status:** v0.11 draft. Breaking changes are allowed until 1.0 ([road to 1.0](spec/format.md#appendix-h-road-to-10)).
+**Status:** v0.11 draft. Breaking changes are allowed until 1.0 ([road to 1.0](spec/format.md#appendix-g-road-to-10)).
 
 ## Specification
 

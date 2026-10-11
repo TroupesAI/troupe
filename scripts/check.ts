@@ -24,6 +24,7 @@ const validator = (name: string) => {
   if (!v) throw new Error(`no schema ${name}`);
   return v;
 };
+for (const f of schemaFiles) validator(f); // compile every schema, including ones nothing below uses
 const validate = (name: string, value: unknown, where: string) => {
   const v = validator(name);
   if (!v(value)) fail(`${where}: ${ajv.errorsText(v.errors, { dataVar: "" })}`);

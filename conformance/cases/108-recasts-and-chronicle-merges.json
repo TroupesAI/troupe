@@ -1,5 +1,5 @@
 {
-  "description": "Chronicles' limits are added to the session's without duplicates, in order, and an opening without content starts with every character in the session's cast present, chronicle characters included (Format 6.3; Play 2.2)",
+  "description": "Two header characters that replace the same bundle character are DUPLICATE_ID and make the session unplayable (Format 12.2). Chronicles' limits are added to the session's without duplicates, in order, and an opening without content starts with every character in the session's cast present, chronicle characters included (Format 6.3; Play 2.2)",
   "bundle": {
     "troupe": "0.11",
     "kind": "bundle",
@@ -37,6 +37,14 @@
     ]
   },
   "tests": [
+    {
+      "type": "check",
+      "expect": {
+        "codes": [
+          "DUPLICATE_ID"
+        ]
+      }
+    },
     {
       "type": "start",
       "name": "two chronicles, one for a character with no bundle character",
@@ -148,5 +156,53 @@
         }
       }
     }
-  ]
+  ],
+  "session": {
+    "header": {
+      "troupe": "0.11",
+      "kind": "session",
+      "scenario": "s",
+      "seed": "k7Qm2xVb9TzR4pLc8NwYfA",
+      "characters": [
+        {
+          "id": "p",
+          "name": "Pat",
+          "description": "d"
+        },
+        {
+          "id": "kai",
+          "name": "Kai",
+          "description": "First recast."
+        },
+        {
+          "id": "kai",
+          "name": "Kai",
+          "description": "Second recast."
+        }
+      ],
+      "players": [
+        "p"
+      ]
+    },
+    "messages": [
+      {
+        "id": "1",
+        "opening": "street",
+        "from": "system",
+        "content": [],
+        "changes": [
+          {
+            "by": "rules",
+            "set": {
+              "scene.present": [
+                "p",
+                "kai",
+                "ann"
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  }
 }

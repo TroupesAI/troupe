@@ -204,7 +204,8 @@
     },
     "timestamp": {
       "type": "string",
-      "format": "date-time"
+      "format": "date-time",
+      "pattern": "[Zz]$"
     },
     "httpsUrl": {
       "type": "string",

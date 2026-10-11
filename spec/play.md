@@ -29,7 +29,7 @@ Troupe separates **what a story is** (content, state, knowledge and recorded out
 
 ### 1.2 Conventions
 
-Format 2 applies here, including requirement keywords. "Format 7.2" means section 7.2 of Troupe Format; a section number alone means this document. Normative references are listed in Format Appendix I. The [implementer's guide](../guides/implementers.md) gives informative advice.
+Format 2 applies here, including requirement keywords. "Format 7.2" means section 7.2 of Troupe Format; a section number alone means this document. Normative references are listed in Format Appendix H. The [implementer's guide](../guides/implementers.md) gives informative advice.
 
 ---
 
@@ -40,7 +40,7 @@ Format 2 applies here, including requirement keywords. "Format 7.2" means sectio
 1. Generate a `seed` of at least 96 random bits, such as 16 bytes in base64url.
 2. Fill the player seats; rename brought-in characters, worlds or locations whose IDs clash (Format 12.5), except characters meant as replacements (Format 12.2).
 3. Ask the questions of variables with `ask`.
-4. Create a root message for the chosen opening, `from: "system"`, with `opening` set and the content copied as written, or empty for an opening without `content`. It records, in order: the chronicles' values in one `{"by": "rules", "set": …}` change, when the session continues chronicles (section 2.2); a change `{"by": "rules", "set": …}` with the opening's `set` and the starting `scene.present` (Format 6.3); and a change `{"by": "player", "set": …}` with the answers. Without an opening, the player's first message is the root and carries the chronicles' values first, then its own changes, then the answers.
+4. Create a root message for the chosen opening, `from: "system"`, with `opening` set and the content copied as written, or empty for an opening without `content`. It records, in order: the chronicles' values in one `{"by": "rules", "set": …}` change, when the session continues chronicles (section 2.2); a change `{"by": "rules", "set": …}` with the opening's `set` and the starting `scene.present` (Format 6.3); and a change `{"by": "player", "set": …}` with the answers. Without an opening, the player's first message is the root and carries the chronicles' values first, then its own changes, then the answers; when a chronicle character with no bundle character joins, the chronicles' change also sets `scene.present` (section 2.2).
 5. Evaluate events at the root. Opening macros see their results.
 6. For an opening without `content`, generate the first model message as a child of the root (or of the root's event message), for a present model-played character chosen by the app, or the narrator.
 
@@ -48,7 +48,7 @@ Swiping to another opening creates another root, starting again from step 4.
 
 ### 2.2 Continuing chronicles
 
-- **Starting.** A session that continues a chronicle lists it in `chronicles`, has an `id`, and copies the chronicle's `character` into the header's `characters`, where it replaces the bundle character with the same ID (Format 12.2). The character keeps that ID for life, so bundle references to it still work. A chronicle character with no bundle character joins the cast and is present at the start. `persona` is offered as the player's character for the first seat, and the chronicle's `limits` are added to the session's `lines` and `veils`, without duplicates, in order. The folded entries are copied onto the root as session entries, an entry without `knownBy` getting the character's, and the folded values of all its chronicles are recorded on the root in one `{"by": "rules"}` change, before any other change (section 2.1). The session never needs the chronicle file to replay.
+- **Starting.** A session that continues a chronicle lists it in `chronicles`, has an `id`, and copies the chronicle's `character` into the header's `characters`, where it replaces the bundle character with the same ID (Format 12.2). The character keeps that ID for life, so bundle references to it still work. A chronicle character with no bundle character joins the cast and is present at the start: an opening's change includes it (Format 6.3), and without an opening the chronicles' change on the root sets `scene.present` to the starting presence (section 3.2) plus every such character, in cast order. `persona` is offered as the player's character for the first seat, and the chronicle's `limits` are added to the session's `lines` and `veils`, without duplicates, in order. The folded entries are copied onto the root as session entries, an entry without `knownBy` getting the character's, and the folded values of all its chronicles are recorded on the root in one `{"by": "rules"}` change, before any other change (section 2.1). The session never needs the chronicle file to replay.
 - **Persona keys.** Keys of carried keyed variables that name the persona are rewritten to the session's first player's character, and back to the persona's ID when written back.
 - **Writing back.** Apps write carried values and entries from the head path back to the chronicle when they choose, such as when a conversation pauses, each record citing its `source`. They write back only keys that a change on the path set, and skip root entries unchanged from how the start copied them. With several chronicles in a session, each has a distinct character; a carried entry goes to the chronicle of every character in its `knownBy`, or to all of them without `knownBy`, and clashing entry IDs from different chronicles are renamed on the root.
 
@@ -104,7 +104,7 @@ Then they drop each key whose value is still invalid, or whose channel isn't all
 
 ### 3.4 Model output
 
-Models may produce state as well as story. One payload carries it, through either of two transports:
+Models may produce state as well as story. One payload carries it, through either of two transports. Its schema is `model-output.schema.json` (Format Appendix A):
 
 ```ts
 interface ModelOutput {
@@ -256,7 +256,7 @@ What a generation **can see**:
 | Generation | Sees |
 | --- | --- |
 | a character, in `characters` or `mixed` mode | only what that character knows |
-| the narrator, in `mixed` mode | everything except content whose explicit `knownBy` doesn't name `narrator` |
+| the narrator, in `characters` or `mixed` mode | everything except content whose explicit `knownBy` doesn't name `narrator` |
 | the single voice, in `narrator` mode | everything |
 
 Knowledge limits what models see, never what people see; secrets between human players are out of scope.
@@ -267,10 +267,10 @@ Knowledge limits what models see, never what people see; secrets between human p
 
 ### 8.1 Levels
 
-- **Core** apps implement everything except **mechanics**: `variables`, `events`, and opening `set` keys other than `scene.location` and `scene.present`. Core includes `when`, `hit()`, CEL and the scene, so imported character cards and lorebooks play in Core. Carried values are mechanics; a Core app MAY continue a chronicle, ignoring its values.
+- **Core** apps implement everything except **mechanics**: `variables`, `events`, and opening `set` keys other than `scene.location` and `scene.present`. Core includes `when`, `hit()`, CEL and the scene, so imported character cards and lorebooks play in Core. Carried values are mechanics; a Core app MAY continue a chronicle, ignoring its values. It records no changes to them, so writing back leaves them as they were.
 - **Full** apps also implement mechanics.
 
-A Core app MUST refuse to play a file that uses mechanics. Pulling is optional at both levels. An app without multiplayer lets one person control every player seat.
+A Core app MUST refuse to play a file that uses mechanics, other than a chronicle's carried values. Pulling is optional at both levels. An app without multiplayer lets one person control every player seat.
 
 ### 8.2 Requirements
 

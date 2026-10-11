@@ -268,11 +268,11 @@ Every field of `expect` is optional:
 - `texts`, a subset map from item string to the item's resolved text
 - `directions`, the resolved direction texts
 
-### 4.14 `parse`: reading raw input (Format 2.2, 12, 13, 14, 15, 16, Format Appendix E)
+### 4.14 `parse`: reading raw input (Format 2.2, 12, 13, 14, 15, 16)
 
 | Input | Meaning |
 | --- | --- |
-| `kind` | What the input is read as: `bundle` (a `.troupe.json` file), `yaml` (a YAML authoring source, Format 14.4), `session`, `chronicle`, `package` (a `.troupe` ZIP archive) or `png` (Format Appendix E). |
+| `kind` | What the input is read as: `bundle` (a `.troupe.json` file), `yaml` (a YAML authoring source, Format 14.4), `session`, `chronicle`, `package` (a `.troupe` ZIP archive), `png` (Format 14.5) or `modelOutput` (JSON validated against `model-output.schema.json`, Play 3.4). |
 | `text` | The input as a string, encoded as UTF-8 to get its bytes. |
 | `base64` | Instead of `text`: the input's bytes, in base64. Used for bytes that aren't valid UTF-8 text and for binary formats. |
 
@@ -347,7 +347,7 @@ After the calls, for `by: "player"`, an event pass runs at the message (section 
 - `expect.records` is the surviving record IDs, in the order the records were first added.
 - `expect.entries` is the folded entries in fold order: by entry ID, the latest version wins, `disabled` removes an entry, and an entry keeps the position where its ID first appeared.
 - `expect.values` is the folded values, `key → value`, with keys without the owner. Folding doesn't filter keys; checks report them.
-- `expect.codes` is optional: the sorted distinct codes from validating every line against `chronicle.schema.json` and checking the chronicle (Format 13), plus `UNKNOWN_CHARACTER` for a `knownBy` ID other than the character, the persona or `narrator`. A value key of a keyed variable has exactly one key segment.
+- `expect.codes` is optional: the sorted distinct codes from validating every line against `chronicle.schema.json` and checking the chronicle (Format 13). A value key of a keyed variable has exactly one key segment.
 - `expect.record` is the record written back (Play 2.2): `{id, at?, source?, entries?, set?}`. `source` is `{session: header id, message: head}` when the session has an `id`. `set` is keyed without the owner. `entries` lists the carried session entries on the path to `head` whose `knownBy` is absent or names the character, the latest version of each ID, in the order the IDs first appear.
 
 Starting from chronicles (section 4.11 input `chronicles`) follows Play 2.2. Chronicle characters are added to the header's `characters` in chronicle order, after the test's own `characters`. When the test brings no `characters`, the first chronicle's `persona` fills the first seat.

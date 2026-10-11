@@ -1,0 +1,95 @@
+{
+  "description": "The model output schema (Play 3.4, Format Appendix A: model-output.schema.json): structured replies and tracker results validate; unknown properties are UNKNOWN_FIELD warnings (Format 15); a part without text, a call without an event, or a malformed change key is SCHEMA",
+  "tests": [
+    {
+      "type": "parse",
+      "name": "a structured reply",
+      "kind": "modelOutput",
+      "text": "{\"parts\":[{\"speaker\":\"kai\",\"text\":\"Fine.\"},{\"text\":\"*He looks away.*\",\"knownBy\":[\"kai\"]}],\"changes\":{\"kai.nerve\":2},\"reason\":\"He's rattled.\",\"calls\":[{\"event\":\"pick_lock\",\"args\":{\"difficulty\":3}}]}",
+      "expect": {
+        "ok": true,
+        "codes": []
+      }
+    },
+    {
+      "type": "parse",
+      "name": "a tracker result",
+      "kind": "modelOutput",
+      "text": "{\"changes\":{\"bell\":8},\"entries\":[{\"id\":\"stair\",\"knownBy\":[\"kai\"],\"text\":\"Kai noticed the back stair.\"}],\"characters\":[{\"id\":\"guard\",\"name\":\"A guard\",\"description\":\"A bored night guard.\"}]}",
+      "expect": {
+        "ok": true,
+        "codes": []
+      }
+    },
+    {
+      "type": "parse",
+      "name": "nothing found",
+      "kind": "modelOutput",
+      "text": "{}",
+      "expect": {
+        "ok": true,
+        "codes": []
+      }
+    },
+    {
+      "type": "parse",
+      "name": "an unknown property",
+      "kind": "modelOutput",
+      "text": "{\"parts\":[{\"text\":\"Hi.\"}],\"mood\":\"tense\"}",
+      "expect": {
+        "ok": true,
+        "codes": [
+          "UNKNOWN_FIELD"
+        ]
+      }
+    },
+    {
+      "type": "parse",
+      "name": "a part without text",
+      "kind": "modelOutput",
+      "text": "{\"parts\":[{\"speaker\":\"kai\"}]}",
+      "expect": {
+        "ok": false,
+        "codes": [
+          "SCHEMA"
+        ]
+      }
+    },
+    {
+      "type": "parse",
+      "name": "a call without an event",
+      "kind": "modelOutput",
+      "text": "{\"calls\":[{\"args\":{}}]}",
+      "expect": {
+        "ok": false,
+        "codes": [
+          "SCHEMA"
+        ]
+      }
+    },
+    {
+      "type": "parse",
+      "name": "a malformed change key",
+      "kind": "modelOutput",
+      "text": "{\"changes\":{\"Bad Key\":1}}",
+      "expect": {
+        "ok": false,
+        "codes": [
+          "SCHEMA"
+        ]
+      }
+    },
+    {
+      "type": "parse",
+      "name": "not JSON",
+      "kind": "modelOutput",
+      "text": "Sure! Here is the JSON:",
+      "expect": {
+        "ok": false,
+        "codes": [
+          "PARSE"
+        ]
+      }
+    }
+  ]
+}
