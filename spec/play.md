@@ -38,7 +38,7 @@ Format 2 applies here, including requirement keywords. "Format 7.2" means sectio
 ### 2.1 Starting
 
 1. Generate a `seed` of at least 96 random bits, such as 16 bytes in base64url.
-2. Fill the player seats; rename brought-in characters, worlds or locations whose IDs clash (Format 12.5), except characters meant as replacements (Format 12.2).
+2. Fill the player seats. A character, world or location the app brings into the session needs an ID that is unique there (Format 2.3) and, unless it is meant as a replacement (Format 12.2), isn't a bundle character's; how the app ensures this is its own choice.
 3. Ask the questions of variables with `ask`.
 4. Create a root message for the chosen opening: `from: "system"`, with `opening` set and the content copied as written, or empty for an opening without `content`. It records these changes, in order:
    1. when the session continues a chronicle, its values in one `{"by": "rules", "set": …}` change (section 2.2);
@@ -57,11 +57,15 @@ Swiping to another opening creates another root, starting again from step 4.
 
 - **Starting.** A session continues at most one chronicle, named by `chronicle`.
   - The chronicle's `character` is copied into the header's `characters`, where it replaces the bundle character with the same ID (Format 12.2). The character keeps that ID for life, so bundle references to it still work. When the character has no bundle character, it joins the cast and is present at the start (section 2.1).
-  - `persona` is offered as the player's character for the first seat, and the chronicle's `limits` are added to the session's `lines` and `veils`, without duplicates, in order.
+  - `persona` fills the first seat unless the people playing bring another character, and the chronicle's `limits` are added to the session's `lines` and `veils`, without duplicates, in order.
   - Its `memories` are copied onto the root as session entries, a memory without `knownBy` getting the character's, and its `values` are recorded on the root in one `{"by": "rules"}` change, keyed with the character's ID (`mira.closeness`), before any other change (section 2.1).
+  - Values and memories name the persona by its ID, so they apply only when the persona plays with that ID (section 2.1 step 2).
   - The session never needs the chronicle file to replay.
-- **Persona keys.** Keys of carried keyed variables, and memory `knownBy` IDs, that name the persona are rewritten to the session's first player's character, and back to the persona's ID when written back.
-- **Writing back.** Apps write back to the chronicle when they choose, such as when a conversation pauses, by rewriting it from the head path. `values` keeps only carried keys, keyed without the owner, and takes the latest value of each carried key that a change on the path set. Each carried session entry on the path whose `knownBy` is absent or names the character, the latest version of its ID, keeps in `knownBy` only the character, `narrator` and, when the chronicle has a persona, the first player's character; it replaces the memory with that ID or is added after the others, and with `disabled` removes it; root entries unchanged from how the start copied them are skipped.
+- **Writing back.** Apps write back to the chronicle when they choose, such as when a conversation pauses, by rewriting it from the head path.
+  - `values` keeps only carried keys, keyed without the owner, and takes the latest value of each carried key that a change on the path set.
+  - The memories written back are the carried session entries on the path, the latest version of each ID, whose `knownBy` is absent or names the character. Root entries unchanged from how the start copied them are skipped.
+  - Each keeps in `knownBy` only the character, the persona and `narrator`.
+  - Each replaces the memory with its ID, or is added after the others in the order the IDs first appear; one with `disabled` removes that memory.
 
 ### 2.3 Turns
 
@@ -220,10 +224,10 @@ Entries kept by `sticky` are not recorded again, so stickiness runs out.
 
 ### 5.5 Steps
 
-1. **Sticky.** Candidates kept by `sticky` are selected unless their `when` is false, in which case they remain candidates for step 2. If several share a group, the highest `priority` stays, ties broken by file order; the others are excluded for this message.
-2. **Passes.** Selection runs in up to three passes. In pass 1, an entry's **text to match** is its scanned text. In later passes it is its scanned text, a newline, and the **chain text**: the resolved texts, in file order and joined with newlines, of every entry with `chain` selected before the pass began. Pass 2 runs if step 1 or pass 1 selected an entry with `chain`; pass 3 runs if pass 2 did. Each pass applies four phases to every candidate not yet selected or excluded, each phase finishing before the next:
-   1. **Match.** A candidate matches if a key matches its text to match. An entry without `keys` or `pull` matches in every pass.
-   2. **Filter.** A matching candidate whose `when` is false waits for the next pass. One in cooldown, `once` and already recorded, or failing its `chance` roll is excluded.
+1. **Sticky.** Candidates kept by `sticky` whose `when` holds are selected. If several share a group, the highest `priority` stays, ties broken by file order; the others are excluded for this message.
+2. **Selection.** Four phases apply to every candidate not selected in step 1, each phase finishing before the next:
+   1. **Match.** A candidate matches if a key matches its scanned text. An entry without `keys` or `pull` always matches.
+   2. **Filter.** A matching candidate is excluded if its `when` is false, it is in cooldown, it is `once` and already recorded, or it fails its `chance` roll.
    3. **Group.** For each group of an owner with no selected entry, the remaining candidates with the highest `priority` compete, and one wins by a weighted group roll; the group's other remaining candidates are excluded. Candidates of a group that already has a selected entry are excluded.
    4. **Select.** The remaining candidates are selected.
 3. **Fit.** If space runs out, the app drops entries below priority 100, lowest `priority` first, ties broken by dropping later entries in file order. It never drops priority-100 entries; if they don't fit, generation fails. Fitting never re-rolls. How an app shortens examples and history is its own choice.
@@ -274,16 +278,7 @@ Knowledge limits what models see, never what people see; secrets between human p
 
 ## 8. Conformance
 
-### 8.1 Levels
-
-- **Core** apps implement everything except **mechanics**: `variables`, `events`, and opening `set` keys other than `scene.location` and `scene.present`. Core includes `when`, `hit()`, CEL and the scene, so imported character cards and lorebooks play in Core. Carried values are mechanics; a Core app MAY continue a chronicle, ignoring its values. It records no changes to them, so writing back leaves them as they were.
-- **Full** apps also implement mechanics.
-
-A Core app MUST refuse to play a file that uses mechanics, other than a chronicle's carried values. Pulling is optional at both levels. An app without multiplayer lets one person control every player seat.
-
-### 8.2 Requirements
-
-A conforming **app** reads files as a conforming reader (Format 17.1), and also selects entries, computes rolls, fills prompt slots, applies knowledge rules and the session's `limits`, records the scene, keeps player and model text literal and follows Format 16; a Full app also computes and records state and evaluates events, all exactly as this document describes.
+A conforming **app** reads files as a conforming reader (Format 17.1), and also computes and records state, evaluates events, selects entries, computes rolls, fills prompt slots, applies knowledge rules and the session's `limits`, records the scene, keeps player and model text literal and follows Format 16, all exactly as this document describes. Pulling is optional. An app without multiplayer lets one person control every player seat.
 
 ---
 
@@ -300,5 +295,5 @@ A conforming **app** reads files as a conforming reader (Format 17.1), and also 
 | Prompt slots, not a fixed order | One mandated order | Apps keep prompt caches warm with long contexts. |
 | SHA-256 rolls over seed, message and subject | A sequential generator | Order-independent, exact in JavaScript, fresh on regeneration. |
 | Recorded activations; sticky not re-recorded | Recomputing history | Timers continue in any app, and run out. |
-| Batch passes; cumulative chain text | Per-entry loops, grouping after chaining | Order-independent selection; losing entries never activate others. |
-| Core plays cards; Full adds mechanics; partial apps refuse | One level, or fallbacks | Apps without mechanics still play imported cards, and no app tells a different story. Core still needs CEL, RE2 and exact entry selection. |
+| One selection pass, no recursion | Entries whose text activates other entries | Selection stays simple and order-independent; shared keys and `pull` reach related lore. |
+| One conformance level | Core apps without mechanics | Every app plays every file the same way; a level for apps without mechanics only mattered for importing cards. |

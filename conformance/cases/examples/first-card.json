@@ -1,10 +1,9 @@
 {
-  "description": "Format 1.4's card: valid, without mechanics, so a Core app plays it; the scenario's default cast is one seat and every bundle character, and the opening is a root with Elena present (Format 1.4, 6.1, 6.3; Play 8.1)",
+  "description": "Format 1.4's card: valid, without mechanics; the scenario's default cast is one seat and every bundle character, and the opening is a root with Elena present (Format 1.4, 6.1, 6.3)",
   "bundleFile": "../../../examples/elena-card.troupe.json",
   "tests": [
     {
       "type": "check",
-      "core": true,
       "expect": {
         "codes": []
       }

@@ -1,5 +1,5 @@
 {
-  "description": "A sticky entry whose when is false stays a candidate for the passes, so chain text can select it (Play 5.5)",
+  "description": "A sticky entry whose when is false isn't selected (Play 5.5 step 1)",
   "bundle": {
     "troupe": "0.11",
     "kind": "bundle",
@@ -93,7 +93,6 @@
         "entries": [
           {
             "id": "glow",
-            "chain": true,
             "text": "The lantern glows."
           },
           {
@@ -195,18 +194,16 @@
   "tests": [
     {
       "type": "select",
-      "name": "x is sticky but its when is false at step 1; the chain text lets pass 2 select it",
+      "name": "x is sticky, but its when is false and nothing in the scanned text matches it",
       "for": "a",
       "parent": "3",
       "messageId": "4",
       "expect": {
         "selected": [
-          "s/glow",
-          "s/x"
+          "s/glow"
         ],
         "activated": [
-          "s/glow",
-          "s/x"
+          "s/glow"
         ]
       }
     }

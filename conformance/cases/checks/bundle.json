@@ -3,9 +3,6 @@
   "bundle": {
     "troupe": "0.11",
     "kind": "bundle",
-    "requires": [
-      "acme.scripts"
-    ],
     "characters": [
       {
         "id": "a",
@@ -182,7 +179,6 @@
           "CEL_ERROR",
           "DUPLICATE_ID",
           "INVALID_VALUE",
-          "MISSING_EXTENSION",
           "REGEX_ERROR",
           "UNKNOWN_CHARACTER",
           "UNKNOWN_LOCATION",
@@ -192,10 +188,6 @@
           "UNKNOWN_WORLD"
         ],
         "includes": [
-          {
-            "code": "MISSING_EXTENSION",
-            "at": "/requires/0"
-          },
           {
             "code": "UNKNOWN_CHARACTER",
             "at": "/scenarios/0/cast/3/character"

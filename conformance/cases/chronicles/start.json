@@ -1,5 +1,5 @@
 {
-  "description": "Starting from a chronicle (Play 2.2): values are validated and only carried keys kept; persona keys go to the player's character; a character with no bundle character joins the cast and is present; the chronicle's limits join the session's; writing back sets only keys a change on the path set, reverses the persona key, keeps only carried keys, and skips root entries unchanged from how the start copied them",
+  "description": "Starting from a chronicle (Play 2.2): values are validated and only carried keys kept; when no character is brought, the persona fills the first seat with its own ID; a character with no bundle character joins the cast and is present; the chronicle's limits join the session's; writing back sets only keys a change on the path set, keeps only carried keys, trims a memory's knownBy to the character, the persona and narrator, and skips root entries unchanged from how the start copied them",
   "bundle": {
     "troupe": "0.11",
     "kind": "bundle",
@@ -42,9 +42,9 @@
       "chronicle": "c-kai",
       "characters": [
         {
-          "id": "you",
-          "name": "Rae",
-          "description": "A courier."
+          "id": "mara",
+          "name": "Mara",
+          "description": "d"
         },
         {
           "id": "kai",
@@ -76,7 +76,7 @@
         }
       ],
       "players": [
-        "you"
+        "mara"
       ],
       "limits": {
         "lines": [
@@ -111,14 +111,14 @@
           {
             "by": "rules",
             "set": {
-              "kai.feelings.you": 7
+              "kai.feelings.mara": 7
             }
           },
           {
             "by": "rules",
             "set": {
               "scene.present": [
-                "you",
+                "mara",
                 "kai"
               ]
             }
@@ -138,7 +138,7 @@
           {
             "by": "model",
             "set": {
-              "kai.feelings.you": 9
+              "kai.feelings.mara": 9
             }
           }
         ],
@@ -146,7 +146,11 @@
           {
             "id": "storm",
             "carry": true,
-            "text": "Kai and Rae sheltered from a storm."
+            "knownBy": [
+              "kai",
+              "ann"
+            ],
+            "text": "Kai and Mara sheltered from a storm."
           },
           {
             "id": "ann_secret",
@@ -235,13 +239,6 @@
       "type": "start",
       "scenario": "s",
       "opening": "o",
-      "characters": [
-        {
-          "id": "you",
-          "name": "Rae",
-          "description": "A courier."
-        }
-      ],
       "chronicle": {
         "troupe": "0.11",
         "kind": "chronicle",
@@ -305,14 +302,14 @@
           {
             "by": "rules",
             "set": {
-              "kai.feelings.you": 7
+              "kai.feelings.mara": 7
             }
           },
           {
             "by": "rules",
             "set": {
               "scene.present": [
-                "you",
+                "mara",
                 "kai"
               ]
             }
@@ -329,7 +326,7 @@
           }
         ],
         "characters": [
-          "you",
+          "mara",
           "kai"
         ],
         "header": {
@@ -341,7 +338,10 @@
               "romance"
             ]
           },
-          "chronicle": "c-kai"
+          "chronicle": "c-kai",
+          "players": [
+            "mara"
+          ]
         }
       }
     },
@@ -431,7 +431,10 @@
           {
             "id": "storm",
             "carry": true,
-            "text": "Kai and Rae sheltered from a storm."
+            "knownBy": [
+              "kai"
+            ],
+            "text": "Kai and Mara sheltered from a storm."
           }
         ],
         "values": {

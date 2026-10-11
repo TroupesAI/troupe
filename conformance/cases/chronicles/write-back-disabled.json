@@ -42,9 +42,9 @@
       "chronicle": "c-kai",
       "characters": [
         {
-          "id": "you",
-          "name": "Rae",
-          "description": "A courier."
+          "id": "mara",
+          "name": "Mara",
+          "description": "d"
         },
         {
           "id": "kai",
@@ -76,7 +76,7 @@
         }
       ],
       "players": [
-        "you"
+        "mara"
       ],
       "limits": {
         "lines": [
@@ -111,14 +111,14 @@
           {
             "by": "rules",
             "set": {
-              "kai.feelings.you": 7
+              "kai.feelings.mara": 7
             }
           },
           {
             "by": "rules",
             "set": {
               "scene.present": [
-                "you",
+                "mara",
                 "kai"
               ]
             }

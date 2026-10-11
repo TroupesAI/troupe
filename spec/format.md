@@ -121,7 +121,7 @@ MUST, MUST NOT, SHOULD, SHOULD NOT and MAY are used as described in RFC 2119 and
 
 ### 2.2 Values
 
-- Documents are I-JSON (RFC 7493): UTF-8 without a byte order mark, no duplicate member names, no surrogate or noncharacter code points, written or escaped, numbers that fit an IEEE 754 double, integers within ±(2^53 − 1).
+- Writers MUST write I-JSON (RFC 7493): UTF-8 without a byte order mark, no duplicate member names, no surrogate or noncharacter code points, written or escaped, numbers that fit an IEEE 754 double, integers within ±(2^53 − 1). Readers parse UTF-8 JSON (RFC 8259) and need not detect the rest.
 - Writers MUST NOT write `null` in a field this spec defines. Readers MUST treat `null`, `""` and `[]` in an optional field like a missing field, except in state values and `scenario.worlds`, where `""` and `[]` are values.
 - **Defaults are normative.** Every default stated in these documents or their TypeScript comments applies when a field is absent. Every boolean defaults to `false`.
 
@@ -175,11 +175,10 @@ interface Bundle {
   $schema?: string;
   troupe: string;                  // spec version, e.g. "0.11"
   kind: "bundle";
-  id?: string;                     // lineage: shared by releases and translations
+  id?: string;                     // lets sessions and chronicles find the bundle
   name?: string;                   // the title; the first scenario's own name, else the first character's
   tagline?: string;                // one line for listings
   version?: string;                // for people: "1.2", "winter edit"
-  updated?: string;                // RFC 3339; orders releases of the same id
   authors?: string[];              // shown as the byline
   credits?: string;                // Markdown for people: license, sources, thanks; never sent to models
   language?: string;               // BCP 47
@@ -187,8 +186,6 @@ interface Bundle {
   rating?: "general" | "mature" | "explicit";
   warnings?: string[];             // content warnings, free text
   cover?: string;                  // image (section 14.2)
-  creatorNotes?: string;           // for people; never sent to models
-  requires?: string[];             // extensions the file can't work without
   characters?: Character[];
   worlds?: World[];
   scenarios?: Scenario[];
@@ -196,10 +193,7 @@ interface Bundle {
 }
 ```
 
-- **`id`** lets apps recognize newer releases (by `updated`) and lets sessions find their bundle. Authors SHOULD set it to a random UUID when sharing.
 - **`credits`** holds everything else about who made what and on what terms, written as the authors like: `Based on [Mira](https://example.com/mira) by Sakura. CC BY 4.0.`
-- **A fork** MUST get a new `id` and SHOULD credit the original in `credits`, with a link.
-- **A translation** has the same `id`, another `language`, and every author ID unchanged, so sessions open with any translation.
 - **A lore pack** is a bundle with only worlds; people can add one to a session.
 
 ---
@@ -220,7 +214,6 @@ interface Character {
   variables?: Variable[];          // the character's own state, read as own.<id> (section 8)
   events?: Event[];
   avatar?: string;
-  images?: Record<string, string>; // expressions and outfits: "happy", "winter/happy"
   ext?: Ext;
 }
 
@@ -345,7 +338,6 @@ interface Entry {
   pull?: boolean;                  // retrieved on demand by meaning (Play 5.6)
   when?: string;                   // CEL condition that must hold
   scanDepth?: number;              // integer; messages scanned for keys; 4
-  chain?: boolean;                 // its text can activate other entries
 
   // timing, in rounds (Play 3.1)
   once?: boolean;                  // activates at most once on a path
@@ -379,7 +371,7 @@ interface Entry {
 
 - An entry **without `keys` or `pull`** is always on, subject to `when`. Standing instructions, secrets and goals are written this way.
 - An entry **with `keys`** activates when one appears in recent messages, including speakers' names. Keys match whole words, ignoring case. A key of at least three characters that starts and ends with `/` is an RE2 pattern for anything else: `/dragons?/`, `/(?-i)Kai/`.
-- An entry **with `pull`** and a `title` is retrieved when it is relevant: requested by the model, or found by the app's similarity search (Play 5.6). Large lorebooks rely on pulling.
+- An entry **with `pull`**, which needs a `title`, is retrieved when it is relevant: requested by the model, or found by the app's similarity search (Play 5.6). Large lorebooks rely on pulling.
 - **`when`** narrows any kind. `hit("word")` checks recent text with the same rules as keys, so `"when": "hit('glass') && !hit('guard')"` expresses AND and NOT.
 - **`priority`** is importance: the highest-priority candidates compete in a group, and the lowest go first when space runs out. Priority 100 is never dropped. Order in the prompt follows the file.
 
@@ -465,7 +457,7 @@ A character's mood or a world's clock travels with it into every scenario, and t
 
 ### 8.4 The scene
 
-The scene is built-in state: `scene.location`, a location ID or `""`, and `scene.present`, the characters who are there, kept in cast order. Openings, events, players and the model tracker may all change it, and Core apps (Play 8.1) record it too. Characters who aren't present are offstage: their descriptions and entries stay out of prompts, and a mention brings in only their `summary` (Play 6).
+The scene is built-in state: `scene.location`, a location ID or `""`, and `scene.present`, the characters who are there, kept in cast order. Openings, events, players and the model tracker may all change it. Characters who aren't present are offstage: their descriptions and entries stay out of prompts, and a mention brings in only their `summary` (Play 6).
 
 ### 8.5 Keys and values
 
@@ -573,7 +565,7 @@ Every expression is evaluated at a message, its **evaluation point**: for a prom
 | `last.from`, `last.char` | The evaluation point message's `from` and `char` |
 | `count(name)` | How many times an event fired, an entry activated, or a change key appeared in a recorded change on the path, matched exactly; 0 for anything else |
 | `ago(name)` | Rounds from that event's, entry's or key's latest firing, activation or change to the evaluation point; 1000000000 if never |
-| `hit(key)` | Entries only: whether `key` matches the entry's text to match (Play 5.5) |
+| `hit(key)` | Entries only: whether `key` matches the entry's scanned text (Play 5.2) |
 | `roll(n)` | Event and outcome `compute` only: a whole number from 1 to `n`, for an integer `n` of at least 1 |
 | `min(a, b)`, `max(a, b)`, `abs(x)` | For numbers of one type |
 
@@ -697,10 +689,6 @@ A message may add entries, owned by `session`. They are candidates from that mes
 - **Image parts** reach models that accept images, and other models through `alt`.
 - **Records-only messages.** A system message with empty `content` carries only `changes`, such as player edits (Play 3.3): it is not sent to models, not scanned, and not counted for `scanDepth` or numeric positions.
 
-### 12.5 Renaming
-
-An app renames a character, world or location that it brings into a session when its ID clashes (Play 2.1), such as a player's character or a lore pack. Nothing in the bundle or session refers to it yet, so the app rewrites the old ID only inside what it brings: it MUST rewrite every place this spec stores the ID, including macros and CEL member paths such as `state.kai.nerve`, and SHOULD rewrite string literals in CEL that name it, warning about any it can't. Owners use `own` and `self` for their own things, so those never need rewriting.
-
 ---
 
 ## 13. Chronicles
@@ -737,22 +725,22 @@ Play 2.2 says how a session continues a chronicle and writes back to it.
 
 ### 14.1 Forms
 
-| Form | Extension | Contents | Suggested media type |
-| --- | --- | --- | --- |
-| Single file | `.troupe.json` | One bundle. Files are URLs or data URIs. | `application/vnd.troupe+json` |
-| Package | `.troupe` | A ZIP archive with `bundle.json`, the files it references, and optionally sessions and chronicles | `application/vnd.troupe+zip` |
-| Session | `.troupe-session.jsonl` | One session outside a package | `application/vnd.troupe.session+jsonl` |
-| Chronicle | `.troupe-chronicle.json` | One character's continuity | `application/vnd.troupe.chronicle+json` |
+| Form | Extension | Contents |
+| --- | --- | --- |
+| Single file | `.troupe.json` | One bundle. Files are URLs or data URIs. |
+| Package | `.troupe` | A ZIP archive with `bundle.json`, the files it references, and optionally sessions and chronicles |
+| Session | `.troupe-session.jsonl` | One session outside a package |
+| Chronicle | `.troupe-chronicle.json` | One character's continuity |
 
 Every Troupe document has a top-level `troupe` key with the spec version and a `kind` key: `"bundle"`, `"session"` or `"chronicle"`. Section 14.4 defines an optional image-embedded form.
 
 ### 14.2 Files
 
-Fields that hold a file accept a relative path inside the package, an `https:` URL, or a `data:` URI with base64 content. Images (`cover`, `avatar`, `images`, location `image` and image parts) are PNG, JPEG, WebP, AVIF or GIF. Apps MUST determine the format from the content and reject anything else, SVG included.
+Fields that hold a file accept a relative path inside the package, an `https:` URL, or a `data:` URI with base64 content. Images (`cover`, `avatar`, location `image` and image parts) are PNG, JPEG, WebP, AVIF or GIF. Apps MUST determine the format from the content and reject anything else, SVG included.
 
 ### 14.3 Packages
 
-- `bundle.json` is at the root. Writers SHOULD make the first entry a file named `mimetype`, stored uncompressed, containing `application/vnd.troupe+zip`.
+- `bundle.json` is at the root.
 - Paths match `^[A-Za-z0-9_-][A-Za-z0-9._-]*(/[A-Za-z0-9_-][A-Za-z0-9._-]*)*$`, with segments of at most 255 bytes, unique when compared case-insensitively.
 - Entries use the store or deflate methods and are not encrypted. Sessions are stored under `sessions/` with the `.troupe-session.jsonl` extension, and chronicles under `chronicles/` with the `.troupe-chronicle.json` extension.
 
@@ -764,10 +752,9 @@ A single-file bundle MAY be embedded in a PNG for image hosts: one `iTXt` chunk 
 
 ## 15. Extensions and versioning
 
-- **Extensions.** Every object that a Troupe document defines with an interface MAY carry `ext`, keyed by an extension name matching `^[a-z0-9][a-z0-9.-]{0,63}$`, scoped to a feature where possible, such as `risu.regex`. The `troupe.` prefix is reserved for draft extensions published with this spec. Apps MUST NOT add fields anywhere else. Extension data MUST stay valid when the object holding it changes. A breaking change to an extension gets a new name.
-- **`requires`** lists extensions the file can't work without. A reader that lacks one MUST NOT open the file for play.
-- **Unknown fields.** Readers MUST ignore fields and extensions they don't understand, and keep them unchanged through load, save and export. The schemas reject unknown properties to catch typos. A property is unknown when its object's interface doesn't define it; for a part, the interface its `type` selects. Each is an `UNKNOWN_FIELD` warning located at the property, and `SCHEMA` is judged with unknown properties removed, so readers never reject a file only for them. Validators assert `format`, so timestamps must be valid RFC 3339.
-- **Versions** are `major.minor`, compared as two integers, so `0.10` is newer than `0.9`. A reader refuses a file of another major version (`UNSUPPORTED_VERSION`). From 1.0, minor versions only add what older readers can safely ignore: readers MUST open every file of their major version and SHOULD warn about a newer minor. Before 1.0, any minor version may break: a reader fully supports only its own, SHOULD warn about any other (`UNSUPPORTED_VERSION`), and MAY still read it. A writer that keeps unknown fields MUST write the greater of its own version and the file's.
+- **Extensions.** Every object that a Troupe document defines with an interface MAY carry `ext`, keyed by an extension name matching `^[a-z0-9][a-z0-9.-]{0,63}$`, such as `risu.regex`. The `troupe.` prefix is reserved for the draft extensions of Appendix D. Apps MUST NOT add fields anywhere else.
+- **Unknown fields.** Readers MUST ignore fields and extensions they don't understand. They MUST keep `ext` unchanged through load, save and export, and MAY drop other unknown fields. The schemas reject unknown properties to catch typos. A property is unknown when its object's interface doesn't define it; for a part, the interface its `type` selects. Each is an `UNKNOWN_FIELD` warning located at the property, and `SCHEMA` is judged with unknown properties removed, so readers never reject a file only for them. Validators assert `format`, so timestamps must be valid RFC 3339.
+- **Versions** are `major.minor`, compared as two integers, so `0.10` is newer than `0.9`. A reader refuses a file of another major version (`UNSUPPORTED_VERSION`). From 1.0, minor versions only add what older readers can safely ignore: readers MUST open every file of their major version and SHOULD warn about a newer minor. Before 1.0, any minor version may break: a reader fully supports only its own, SHOULD warn about any other (`UNSUPPORTED_VERSION`), and MAY still read it.
 
 ---
 
@@ -781,9 +768,9 @@ Troupe files are shared between strangers.
 4. **Known media only.** Apps MUST check file formats by content and cap decoded image size.
 5. **Linear-time regex.** Regex keys and `matches()` MUST use an engine that runs in linear time, such as RE2.
 6. **Sandboxed conditions.** CEL MUST be evaluated by a CEL implementation, never translated into another language.
-7. **Safe archives.** Readers MUST reject absolute paths, `..` segments, backslashes, paths outside section 14.3's grammar, symbolic links, encryption, multiple disks, duplicate names, overlapping entries, and local headers that disagree with the central directory, and MUST cap entry count, unpacked size and compression ratio.
+7. **Safe archives.** Readers MUST reject absolute paths, `..` segments, backslashes, paths outside section 14.3's grammar, symbolic links, encryption and duplicate names, and MUST cap entry count, unpacked size and compression ratio.
 8. **Bounded parsing.** Readers MUST cap JSON size and depth, `data:` URI size, and session length.
-9. **Content stays content.** Text from files and sessions is story material, not instructions to the app, and macros in players' and models' text never resolve (section 10). `credits`, `creatorNotes`, `briefing`, change `reason` and message `author` MUST NOT be sent to any model; entry `title` reaches it only in a pull catalog.
+9. **Content stays content.** Text from files and sessions is story material, not instructions to the app, and macros in players' and models' text never resolve (section 10). `credits`, `briefing`, change `reason` and message `author` MUST NOT be sent to any model; entry `title` reaches it only in a pull catalog.
 
 Writers MUST stay within these limits. Readers MUST accept files within them, and MAY accept or refuse larger ones:
 
@@ -803,7 +790,7 @@ Writers MUST stay within these limits. Readers MUST accept files within them, an
 
 ### 17.1 Requirements
 
-A conforming **writer** produces files that validate against the schemas, pass the checks below, stay within the limits of section 16, and follow section 15. A conforming **reader** preserves unknown fields and reports failed checks with their codes. Apps that play files also conform to Play 8.
+A conforming **writer** produces files that validate against the schemas, pass the checks below, stay within the limits of section 16, and follow section 15. A conforming **reader** preserves `ext` and reports failed checks with their codes. Apps that play files also conform to Play 8.
 
 ### 17.2 Checks
 
@@ -811,10 +798,10 @@ Messages are never dropped for a failed check, except the lines that `PARSE` and
 
 | Code | Check | Consequence |
 | --- | --- | --- |
-| `PARSE` | The input is I-JSON (section 2.2) or JSON Lines, a Troupe document of a known `kind`, within the limits the reader enforces (section 16), and a safe package (section 16 item 7) or PNG (section 14.4) | The file isn't read; in a session, an unreadable line other than the header is skipped |
+| `PARSE` | The input is UTF-8 JSON (section 2.2) or JSON Lines, a Troupe document of a known `kind`, within the limits the reader enforces (section 16), and a safe package (section 16 item 7) or PNG (section 14.4) | The file isn't read; in a session, an unreadable line other than the header is skipped |
 | `UNSUPPORTED_VERSION` | `troupe` is the reader's own version (section 15) | Another major version isn't read; another minor version is a warning (from 1.0, only a newer one) |
 | `SCHEMA` | The document validates against its schema, apart from unknown properties (section 15) | The reader MAY refuse the file |
-| `UNKNOWN_FIELD` | Every property is known to the reader's schema (section 15) | A warning; the field is kept |
+| `UNKNOWN_FIELD` | Every property is known to the reader's schema (section 15) | A warning |
 | `DUPLICATE_ID` | IDs are unique as section 2.3 and section 12.1 require | The first is kept; a scenario variable that clashes with a character or world is ignored instead (section 2.3), and two replacements of one character make the session unplayable (section 12.2) |
 | `UNKNOWN_SCENARIO` | The header's `scenario` names a scenario | The session can't be played |
 | `UNKNOWN_CHARACTER` | Cast members, `knownBy` (where `narrator` is also allowed), speakers, example speakers (or `char`, `user`), message `char` and character keys name characters in the bundle or session; a memory's `knownBy` names its chronicle's character, persona or `narrator` | The ID is ignored; a cast member or example exchange naming it is skipped |
@@ -829,8 +816,6 @@ Messages are never dropped for a failed check, except the lines that `PARSE` and
 | `CEL_ERROR` | Every expression parses and type-checks | The item never applies |
 | `REGEX_ERROR` | Every regex key parses as RE2 | The key is ignored |
 | `UNKNOWN_MACRO` | Macros are valid and name existing characters and variables | Left as written |
-| `MISSING_EXTENSION` | Every name in `requires` is supported | The file isn't played |
-| `MECHANICS` | A Core app (Play 8.1) found mechanics | The file isn't played |
 
 ---
 
@@ -900,7 +885,6 @@ Two thieves hired by the player to steal a duke's storm lantern before the twelf
   "name": "The Lantern Heist",
   "tagline": "Steal a storm in a bottle before the harbor bells ring twelve.",
   "version": "1.0",
-  "updated": "2026-10-09T12:00:00Z",
   "authors": ["Sakura"],
   "credits": "CC BY 4.0. Harbor map after an idea by the Tuesday group.",
   "language": "en",
@@ -924,8 +908,7 @@ Two thieves hired by the player to steal a duke's storm lantern before the twelf
       "entries": [
         { "id": "master_key", "knownBy": ["elena"], "text": "Elena still has the surveyor's master key to the Duke's vault, and hasn't told anyone." }
       ],
-      "avatar": "elena.webp",
-      "images": { "happy": "elena-happy.webp", "angry": "elena-angry.webp" }
+      "avatar": "elena.webp"
     },
     {
       "id": "kai",
@@ -1109,6 +1092,7 @@ A new session that continues this chronicle starts with `closeness` at 58 and bo
 | --- | --- | --- |
 | Chronicles for continuity | Memories locked in one session or one app | The thing companion users care about most travels with them. |
 | One chronicle per session | Several, merged on the root | A companion needs one; merging needed distinct characters, routing by `knownBy` and renaming clashing memories. |
+| The persona plays as itself | Rewriting persona keys to whichever character fills the seat | One ID in the session and the chronicle, with no mapping to keep in step. |
 | A chronicle is one document, rewritten on write-back | A log of records | Apps read it without folding; revision history is the app's. |
 | Callable events in an extension | Tools, checks and choices in the core | A tracker and an `on: "player"` event already roll checks; calls need tool calling and many rules, so `troupe.calls` proves them first. |
 | Structured player limits | Limits as ordinary entries | They reach every generation, media included, and can't be dropped. |
@@ -1128,14 +1112,18 @@ A new session that continues this chronicle starts with `closeness` at 58 and bo
 | Player and model text stays literal | Resolving macros everywhere | No hidden state leaks through model output or prompt attacks. |
 | Priority means importance; file order is prompt order | Priority doing three jobs | Authors order lore by writing it in order. |
 | Copies with `credits` | Live cross-bundle references, structured provenance | People write attribution as they like. |
+| `id` only links sessions and chronicles to their bundle | Rules for forks, translations and release order | Nothing could check them. |
 | A PNG holds only the bundle | A Character Card V3 copy beside it | Compatibility with other formats is a choice for exporters, not a duty of every writer. |
 | No narrator voice | A character that defines the narrator | Narrator-only `system` entries already set its style. |
 | No reasoning or tool parts | Provider transcripts in messages | They mean nothing to the story; apps that keep them use `ext`. |
 | Two modes | A third, `mixed` mode | In `characters` mode the narrator can already take turns, and who speaks next is the app's choice. |
 | Sessions as an exchange snapshot | Prescribing storage, or an append-only log of edits | Apps keep their own databases; chats still move between apps intact, and readers replay no edits or deletions. |
-| No audio, media provenance, music, speaking hints, UI grouping or branch labels in the core | Media and presentation fields | They belong to apps and extensions such as `troupe.media`. |
+| No sprites, audio, media provenance, music, speaking hints, UI grouping or branch labels in the core | Media and presentation fields | They belong to apps and extensions such as `troupe.media`. |
 | No executable code | Scripts in cards | Scripts in shared cards can steal API keys. |
 | Strict schemas, lenient readers | Either everywhere | Writers catch typos; readers stay forward compatible. |
+| Readers must keep only `ext` | Keeping every unknown field, and stamping the newer version | Apps add data only in `ext`, so other unknown fields are typos or come from a version the reader doesn't support. |
+| Writers write I-JSON; readers use a standard JSON parser | Readers rejecting everything I-JSON forbids | No app needs its own parser. |
+| Apps keep brought-in IDs unique their own way | Prescribed renaming of macros and CEL | Nothing refers to a brought-in character or world yet, so how it gets a fresh ID concerns only the app. |
 | Writers stay within the limits; readers may accept more | Exact limits, or minimums only | Every conforming file opens in every app, and apps can still be generous. |
 | Before 1.0, readers support only their own minor version and warn about others | Opening every minor version as compatible | Drafts break between minors; a warning says why a file may misbehave, without stranding it. |
 | Timestamps in UTC with `Z` | Any offset | One zone and one spelling, so apps compare instants without time zone data. |
@@ -1146,7 +1134,7 @@ A new session that continues this chronicle starts with `closeness` at 58 and bo
 
 ### D.1 Version 1.0
 
-Version 1.0 is tagged when no breaking change is pending and the conformance suite covers every roll purpose, weighted picks, three-pass chains, the root witness case, keyed-variable preparation, derived variables, event timing, chronicles and session files.
+Version 1.0 is tagged when no breaking change is pending and the conformance suite covers every roll purpose, weighted picks, the root witness case, keyed-variable preparation, derived variables, event timing, chronicles and session files.
 
 ### D.2 Draft extensions
 

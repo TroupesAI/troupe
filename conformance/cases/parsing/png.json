@@ -81,9 +81,9 @@
     },
     {
       "type": "parse",
-      "name": "the chunk's text is checked like a file",
+      "name": "the chunk's text is read like a file: malformed JSON",
       "kind": "png",
-      "base64": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAAAAAA6fptVAAAANWlUWHR0cm91cGUAAQAAAHicq1YqKcovLUhVslIy0DM0VNJRys7MS1GyUkoqzUvJScXg1wIAdEAPNvuoTKUAAAAKSURBVHicY2AAAAACAAFIr6RxAAAAAElFTkSuQmCC",
+      "base64": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAAAAAA6fptVAAAAM2lUWHR0cm91cGUAAQAAAHicq1YqKcovLUhVslIy0DM0VNJRys7MS1GyUkoqzUvJSVUCAKEqCavxEJrEAAAACklEQVR4nGNgAAAAAgABSK+kcQAAAABJRU5ErkJggg==",
       "expect": {
         "ok": false,
         "codes": [

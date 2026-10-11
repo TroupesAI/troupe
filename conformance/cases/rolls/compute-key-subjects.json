@@ -93,7 +93,6 @@
         "entries": [
           {
             "id": "glow",
-            "chain": true,
             "text": "The lantern glows."
           },
           {

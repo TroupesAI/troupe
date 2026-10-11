@@ -1,5 +1,5 @@
 {
-  "description": "Reading a bundle (Format 2.2, 14.1, 17.2): I-JSON with no byte order mark, duplicate member names, surrogate or noncharacter code points, or numbers beyond a double, and a Troupe document of the expected kind. Each violation is PARSE and the file isn't read. A bundle nested 64 deep is within the limits (Format 16)",
+  "description": "Reading a bundle (Format 2.2, 14.1, 17.2): the input must be UTF-8 JSON and a Troupe document of the expected kind; otherwise it is PARSE and the file isn't read. An escaped surrogate pair is one character. A bundle nested 64 deep is within the limits (Format 16)",
   "tests": [
     {
       "type": "parse",
@@ -29,57 +29,9 @@
     },
     {
       "type": "parse",
-      "name": "a duplicate member name",
-      "kind": "bundle",
-      "text": "{\"troupe\":\"0.11\",\"kind\":\"bundle\",\"kind\":\"bundle\"}",
-      "expect": {
-        "ok": false,
-        "codes": [
-          "PARSE"
-        ]
-      }
-    },
-    {
-      "type": "parse",
-      "name": "a duplicate member name inside ext",
-      "kind": "bundle",
-      "text": "{\"troupe\":\"0.11\",\"kind\":\"bundle\",\"ext\":{\"a.b\":{\"x\":1,\"x\":2}}}",
-      "expect": {
-        "ok": false,
-        "codes": [
-          "PARSE"
-        ]
-      }
-    },
-    {
-      "type": "parse",
-      "name": "a byte order mark",
-      "kind": "bundle",
-      "base64": "77u/eyJ0cm91cGUiOiIwLjExIiwia2luZCI6ImJ1bmRsZSJ9",
-      "expect": {
-        "ok": false,
-        "codes": [
-          "PARSE"
-        ]
-      }
-    },
-    {
-      "type": "parse",
       "name": "invalid UTF-8",
       "kind": "bundle",
       "base64": "eyJ0cm91cGUiOiIwLjExIiwia2luZCI6ImJ1bmRsZSIsInRhZ3MiOlsi/yJdfQ==",
-      "expect": {
-        "ok": false,
-        "codes": [
-          "PARSE"
-        ]
-      }
-    },
-    {
-      "type": "parse",
-      "name": "an escaped lone surrogate",
-      "kind": "bundle",
-      "text": "{\"troupe\":\"0.11\",\"kind\":\"bundle\",\"tags\":[\"\\ud800\"]}",
       "expect": {
         "ok": false,
         "codes": [
@@ -95,42 +47,6 @@
       "expect": {
         "ok": true,
         "codes": []
-      }
-    },
-    {
-      "type": "parse",
-      "name": "an escaped noncharacter",
-      "kind": "bundle",
-      "text": "{\"troupe\":\"0.11\",\"kind\":\"bundle\",\"tags\":[\"\\uffff\"]}",
-      "expect": {
-        "ok": false,
-        "codes": [
-          "PARSE"
-        ]
-      }
-    },
-    {
-      "type": "parse",
-      "name": "a noncharacter written in UTF-8",
-      "kind": "bundle",
-      "base64": "eyJ0cm91cGUiOiIwLjExIiwia2luZCI6ImJ1bmRsZSIsInRhZ3MiOlsi77eQIl19",
-      "expect": {
-        "ok": false,
-        "codes": [
-          "PARSE"
-        ]
-      }
-    },
-    {
-      "type": "parse",
-      "name": "a number beyond a double",
-      "kind": "bundle",
-      "text": "{\"troupe\":\"0.11\",\"kind\":\"bundle\",\"ext\":{\"a.b\":1e400}}",
-      "expect": {
-        "ok": false,
-        "codes": [
-          "PARSE"
-        ]
       }
     },
     {

@@ -6,7 +6,6 @@
   "name": "The Lantern Heist",
   "tagline": "Steal a storm in a bottle before the harbor bells ring twelve.",
   "version": "1.0",
-  "updated": "2026-10-09T12:00:00Z",
   "authors": ["Sakura"],
   "credits": "CC BY 4.0. Harbor map after an idea by the Tuesday group.",
   "language": "en",
@@ -30,8 +29,7 @@
       "entries": [
         { "id": "master_key", "knownBy": ["elena"], "text": "Elena still has the surveyor's master key to the Duke's vault, and hasn't told anyone." }
       ],
-      "avatar": "elena.webp",
-      "images": { "happy": "elena-happy.webp", "angry": "elena-angry.webp" }
+      "avatar": "elena.webp"
     },
     {
       "id": "kai",

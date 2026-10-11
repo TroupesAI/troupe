@@ -4,7 +4,6 @@ This guide is informative. It collects advice for apps that show and play Troupe
 
 ## Characters
 
-- **Images.** Name a character's `images` `neutral`, `happy`, `sad`, `angry`, `surprised`, `afraid` and `embarrassed`, optionally grouped as `<set>/<name>`. When a character has no image for the name you want, fall back to `neutral` in the same set, then `neutral`, then `avatar` (Format 4).
 - **Who speaks next** is up to the app (Play 2.3). A good default: prefer present characters named in the last message, and let each model-played character speak at most once per player message before returning control.
 
 ## Authoring
@@ -14,8 +13,6 @@ This guide is informative. It collects advice for apps that show and play Troupe
 ## Telling people what's wrong
 
 - **Diagnostics.** Show authors the checks a reader reports (Format 17.2), especially unknown macros, which are left as written, and conditions that fail at runtime, which count as false.
-- **Missing extensions.** A file that `requires` an extension the app lacks can't be played (Format 15). Show its metadata and explain what's missing.
-- **Mechanics in a Core app.** A Core app refuses files that use mechanics (Play 8.1). Show the file anyway and explain why it can't be played.
 - **Exporting** to another format loses data ([Character Card V2/V3 and Troupe](character-cards.md)). Show people what was left out.
 
 ## Play

@@ -1,5 +1,5 @@
 {
-  "description": "Strict schemas, lenient readers (Format 3, 4, 6, 15, 17.2): fields the format doesn't define are UNKNOWN_FIELD warnings, located at the field, kept and ignored, and the file is still read; a part's fields are those of the interface its type selects. Among them are fields other formats use: bundle license, source and derivedFrom, character and world origin, character references and openings, and a scenario's narratorVoice: character openings make no solo scenario, and a character named as narratorVoice is an ordinary character",
+  "description": "Strict schemas, lenient readers (Format 3, 4, 6, 15, 17.2): fields the format doesn't define are UNKNOWN_FIELD warnings, located at the field and ignored, and the file is still read; a part's fields are those of the interface its type selects. Among them are fields other formats use: bundle license, source and derivedFrom, character and world origin, character references and openings, and a scenario's narratorVoice: character openings make no solo scenario, and a character named as narratorVoice is an ordinary character",
   "bundle": {
     "troupe": "0.11",
     "kind": "bundle",

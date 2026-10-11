@@ -28,9 +28,6 @@
     "version": {
       "type": "string"
     },
-    "updated": {
-      "$ref": "#/$defs/timestamp"
-    },
     "authors": {
       "$ref": "#/$defs/strings"
     },
@@ -55,16 +52,6 @@
     },
     "cover": {
       "$ref": "#/$defs/image"
-    },
-    "creatorNotes": {
-      "type": "string"
-    },
-    "requires": {
-      "type": "array",
-      "uniqueItems": true,
-      "items": {
-        "$ref": "#/$defs/extName"
-      }
     },
     "characters": {
       "type": "array",
@@ -306,12 +293,6 @@
         "avatar": {
           "$ref": "#/$defs/image"
         },
-        "images": {
-          "type": "object",
-          "additionalProperties": {
-            "$ref": "#/$defs/image"
-          }
-        },
         "ext": {
           "$ref": "#/$defs/ext"
         }
@@ -441,9 +422,6 @@
           "type": "integer",
           "minimum": 0,
           "default": 4
-        },
-        "chain": {
-          "type": "boolean"
         },
         "once": {
           "type": "boolean"

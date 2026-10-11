@@ -1,5 +1,5 @@
 {
-  "description": "Format Appendix B.1: valid and playable in Core; two written openings are swipeable roots where Mira, who speaks, starts present; the style rule and the secret are always on and keyed lore waits for its words; 'Shore leave' has no content, so its root is a records-only system message with the whole cast present, its entry directs the first model message at turn 0 and then stops (Format 6.3, 7.2; Play 2.1, 5, 8.1)",
+  "description": "Format Appendix B.1: valid; two written openings are swipeable roots where Mira, who speaks, starts present; the style rule and the secret are always on and keyed lore waits for its words; 'Shore leave' has no content, so its root is a records-only system message with the whole cast present, its entry directs the first model message at turn 0 and then stops (Format 6.3, 7.2; Play 2.1, 5)",
   "bundleFile": "../../../examples/mira-card.troupe.json",
   "session": {
     "header": {
@@ -99,7 +99,6 @@
   "tests": [
     {
       "type": "check",
-      "core": true,
       "expect": {
         "codes": []
       }

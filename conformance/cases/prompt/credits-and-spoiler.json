@@ -164,14 +164,6 @@
           "character:ghost": "A ghost in the cellar."
         }
       }
-    },
-    {
-      "type": "check",
-      "name": "the Core level: neither is a mechanic",
-      "core": true,
-      "expect": {
-        "codes": []
-      }
     }
   ]
 }

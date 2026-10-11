@@ -18,9 +18,9 @@ Each card becomes a bundle with one character and a scenario `main` that holds i
 | `post_history_instructions` | An entry with `position: 0` and `knownBy: ["<id>"]` |
 | `extensions.depth_prompt` | An entry at its depth with `knownBy: ["<id>"]`; the role is dropped |
 | `extensions.talkativeness` | `ext` |
-| `creator_notes`, `tags`, `creator`, `character_version` | `creatorNotes`, `tags`, `authors`, `version` |
+| `creator_notes`, `tags`, `creator`, `character_version` | The scenario's `briefing`, `tags`, `authors`, `version` |
 | `source` | Links in `credits` |
-| `assets` icon / emotion / background | `avatar` / `images` / a location `image` |
+| `assets` icon / background | `avatar` / a location `image`; other assets in `ext` |
 | Lorebook entries | Character entries, or a world named after the book |
 | `keys`, `constant`, `enabled` | `keys`, no keys, `disabled` |
 | SillyTavern regex keys `/p/flags` | `/(?flags)p/` |
@@ -34,14 +34,13 @@ Each card becomes a bundle with one character and a scenario `main` that holds i
 | `group`, `groupWeight`, `groupOverride` | `group`, `weight`, a higher `priority` |
 | `vectorized` | `pull`, with `title` from the entry's comment or first key |
 | `sticky`, `cooldown`, `delay` (in messages) | `sticky`, `cooldown` in rounds (about half), `when: "turn >= N"` |
-| Recursion, `preventRecursion` | `chain: true`, `chain: false` |
 | `@@activate_only_after N`, `@@activate_only_every N` | `when: "turn >= N"`, `when: "turn % N == 0"` |
 | `@@is_greeting N` (0 is `first_mes`) | `when: "opening == 'greeting_<N+1>'"` |
 | `@@ignore_on_max_context` | `priority: 0` |
 | `{{char}}`, `{{user}}`, `{{// …}}` | the same |
 | `<bot>`, `<user>` | `{{char}}`, `{{user}}` |
 | `{{pick::…}}`, `{{random::…}}` | `{{pick::…}}`, fixed for the session |
-| Other macros, decorators, regex scripts | Reported; the source is kept in `ext` |
+| Recursion, other macros, decorators, regex scripts | Reported; the source is kept in `ext`. Give an entry that recursion activated the keys of the entries that mention it. |
 | SillyTavern chat JSONL | A session: `is_user` lines become `player` messages, `name` becomes `speaker`, swipes become siblings |
 
 ## Exporting to Character Card V3

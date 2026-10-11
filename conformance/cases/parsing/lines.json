@@ -47,21 +47,6 @@
     },
     {
       "type": "parse",
-      "name": "a line with a duplicate member name is skipped",
-      "kind": "session",
-      "text": "{\"troupe\":\"0.11\",\"kind\":\"session\",\"scenario\":\"s\",\"seed\":\"k7Qm2xVb9TzR4pLc8NwYfA\"}\n{\"id\":\"1\",\"from\":\"player\",\"content\":[{\"text\":\"Hi.\"}]}\n{\"id\":\"2\",\"id\":\"3\",\"parent\":\"1\",\"from\":\"model\",\"content\":[]}\n",
-      "expect": {
-        "ok": false,
-        "codes": [
-          "PARSE"
-        ],
-        "ids": [
-          "1"
-        ]
-      }
-    },
-    {
-      "type": "parse",
       "name": "an unreadable header",
       "kind": "session",
       "text": "{\"troupe\":\"0.11\",\n{\"id\":\"1\",\"from\":\"player\",\"content\":[{\"text\":\"Hi.\"}]}\n",

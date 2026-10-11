@@ -112,18 +112,21 @@
     {
       "type": "parse",
       "name": "a timestamp in UTC",
-      "kind": "bundle",
-      "text": "{\"troupe\":\"0.11\",\"kind\":\"bundle\",\"updated\":\"2026-10-11T09:00:00Z\"}",
+      "kind": "session",
+      "text": "{\"troupe\":\"0.11\",\"kind\":\"session\",\"scenario\":\"s\",\"seed\":\"k7Qm2xVb9TzR4pLc8NwYfA\"}\n{\"id\":\"1\",\"from\":\"player\",\"at\":\"2026-10-11T09:00:00Z\",\"content\":[{\"text\":\"Hi.\"}]}\n",
       "expect": {
         "ok": true,
-        "codes": []
+        "codes": [],
+        "ids": [
+          "1"
+        ]
       }
     },
     {
       "type": "parse",
       "name": "a timestamp with an offset",
-      "kind": "bundle",
-      "text": "{\"troupe\":\"0.11\",\"kind\":\"bundle\",\"updated\":\"2026-10-11T12:00:00+03:00\"}",
+      "kind": "session",
+      "text": "{\"troupe\":\"0.11\",\"kind\":\"session\",\"scenario\":\"s\",\"seed\":\"k7Qm2xVb9TzR4pLc8NwYfA\"}\n{\"id\":\"1\",\"from\":\"player\",\"at\":\"2026-10-11T12:00:00+03:00\",\"content\":[{\"text\":\"Hi.\"}]}\n",
       "expect": {
         "ok": false,
         "codes": [

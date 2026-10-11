@@ -1,5 +1,5 @@
 {
-  "description": "Groups (Play 5.5): the highest priority wins without a roll; losers are excluded and add no chain text; a later pass can't add to a group that has a winner",
+  "description": "Groups (Play 5.5 step 2): the highest priority wins without a roll, whatever the weights; a candidate that doesn't match isn't a contender; the group's other candidates are excluded",
   "bundle": {
     "troupe": "0.11",
     "kind": "bundle",
@@ -55,29 +55,7 @@
             "id": "g5",
             "group": "h",
             "priority": 50,
-            "chain": true,
             "text": "the zebra key"
-          },
-          {
-            "id": "g6",
-            "keys": [
-              "zebra"
-            ],
-            "text": "would need g5's chain text"
-          },
-          {
-            "id": "g7",
-            "chain": true,
-            "text": "plain words"
-          },
-          {
-            "id": "g8",
-            "group": "g",
-            "priority": 100,
-            "keys": [
-              "plain"
-            ],
-            "text": "matches in pass 2, but group g already has g1"
           }
         ]
       }
@@ -123,8 +101,7 @@
       "expect": {
         "activated": [
           "s/g1",
-          "s/g4",
-          "s/g7"
+          "s/g4"
         ]
       }
     }

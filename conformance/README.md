@@ -23,7 +23,7 @@ Cases live in `cases/<area>/<topic>.json`, one folder per area of the spec:
 | `prompt` | Prompt slots (Play 6) |
 | `model-output` | Model output and its schema (Play 3.4) |
 | `chronicles` | Chronicles (Format 13; Play 2.2) |
-| `checks` | Reference checks, unknown fields and Core (Format 15, 17.2; Play 8.1) |
+| `checks` | Reference checks and unknown fields (Format 15, 17.2) |
 | `parsing` | Reading raw files (Format 2.2, 14, 16) |
 | `examples` | The spec's worked examples and the authoring guide's patterns |
 
@@ -235,10 +235,6 @@ Every field of `expect` is optional:
 
 The runner validates the bundle and the session's raw lines against the schemas, then runs every reference check.
 
-| Input | Meaning |
-| --- | --- |
-| `core` | Optional boolean. Also run the Core check, which reports `MECHANICS`. |
-
 - `expect.codes` is the sorted list of distinct diagnostic codes reported. It is compared exactly.
 - Each session line after the header is validated against `message.schema.json`. A chronicle is validated against `chronicle.schema.json`. Validators assert `format`, so a malformed timestamp is `SCHEMA`.
 - `SCHEMA` covers schema failures, such as `null` in a field the spec defines. `""` and `[]` in optional fields read as missing (Format 2.2) for every other operation, but the raw document still fails the schema where it sets `minLength` or `minItems`, which is reported as `SCHEMA`.
@@ -255,7 +251,7 @@ Locations:
 | In a message (its schema failures included) | `message:<id>/<pointer within the message>` | `message:3/changes/0/set/hp` |
 | In a chronicle | `chronicle/<pointer>` | `chronicle/values/closeness` |
 
-A diagnostic about one value points at that value: a list item at its index (`/requires/0`), a duplicate ID at the duplicate's `id` (`/characters/1/id`), a reference at the field holding it (`/scenarios/0/cast/2/character`). For keys inside `set`, the pointer segment is the key as written (`/set/scene.present`).
+A diagnostic about one value points at that value: a list item at its index (`/scenarios/0/worlds/1`), a duplicate ID at the duplicate's `id` (`/characters/1/id`), a reference at the field holding it (`/scenarios/0/cast/2/character`). For keys inside `set`, the pointer segment is the key as written (`/set/scene.present`).
 
 ### 4.13 `prompt`: prompt slots (Play 6)
 
@@ -339,7 +335,7 @@ Every field of `expect` is optional:
 - `expect.codes` is optional: the sorted distinct codes from validating the chronicle against `chronicle.schema.json` and checking it (Format 13). A value key of a keyed variable has exactly one key segment.
 - `expect.memories` and `expect.values` are the chronicle's `memories` and `values` after writing back (Play 2.2). `values` keeps only carried keys, keyed without the owner. A carried session entry on the path to `head` whose `knownBy` is absent or names the character, the latest version of each ID, keeps in `knownBy` only the character, `narrator` and the persona, replaces the memory with that ID or is added after the others, in the order the IDs first appear, and with `disabled` removes it. Root entries unchanged from how the start copied them are skipped.
 
-Starting from a chronicle (section 4.11 input `chronicle`) follows Play 2.2. The chronicle's character is added to the header's `characters` after the test's own `characters`. When the test brings no `characters`, its `persona` fills the first seat.
+Starting from a chronicle (section 4.11 input `chronicle`) follows Play 2.2. The chronicle's character is added to the header's `characters` after the test's own `characters`. When the test brings no `characters`, its `persona` fills the first seat and comes first in the header's `characters`.
 
 ### 4.18 Limits
 
@@ -368,7 +364,7 @@ The edit is prepared as a `player` change (Play 3.3) against the state at the he
 
 ## 6. Adding cases
 
-- Put a case in the folder for its area, named after its topic: `selection/chain.json`.
+- Put a case in the folder for its area, named after its topic: `selection/group-priority.json`.
 - Prefer small inline bundles.
 - Compute every expected roll independently, outside the implementation under test.
 - When an expectation depends on ambiguous spec text, fix the spec text rather than recording a reading in the case.

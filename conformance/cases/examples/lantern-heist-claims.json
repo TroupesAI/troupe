@@ -1,5 +1,5 @@
 {
-  "description": "Format Appendix B.2 and B.3, the claims examples/lantern-heist.json doesn't cover: a Core app refuses the story; Kai's own nerve feeds his entry; trust is per character; the bell is a one-way clock the model advances; the patrol, Kai's confession and the twelfth bell; the witness rule in branch 3 and at the 'Already caught' root; {{user}} in the opening",
+  "description": "Format Appendix B.2 and B.3, the claims examples/lantern-heist.json doesn't cover: Kai's own nerve feeds his entry; trust is per character; the bell is a one-way clock the model advances; the patrol, Kai's confession and the twelfth bell; the witness rule in branch 3 and at the 'Already caught' root; {{user}} in the opening",
   "bundleFile": "../../../examples/lantern-heist.troupe.json",
   "sessionFile": "../../../examples/lantern-heist.troupe-session.jsonl",
   "addMessages": [
@@ -198,16 +198,6 @@
     }
   ],
   "tests": [
-    {
-      "type": "check",
-      "name": "B.2 uses mechanics",
-      "core": true,
-      "expect": {
-        "codes": [
-          "MECHANICS"
-        ]
-      }
-    },
     {
       "type": "select",
       "name": "with nerve 2, kai/rattled applies",
