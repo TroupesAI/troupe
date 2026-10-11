@@ -9,4 +9,4 @@ Guidance for coding agents. Follow [CONTRIBUTING.md](CONTRIBUTING.md): it says w
 
 - Plain, direct sentences. Define a term once, where it first matters, and use it consistently.
 - Keep section numbers stable; cases and the guides cite them as `Format 7.2` and `Play 3.3`.
-- Record design decisions in Format Appendix F or Play Appendix A, and open questions in Format Appendix G, not in separate notes.
+- Record design decisions in Format Appendix C or Play Appendix A, and open questions in Format Appendix D, not in separate notes.

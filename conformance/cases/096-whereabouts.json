@@ -1,5 +1,5 @@
 {
-  "description": "Format Appendix C.11, whereabouts and hidden characters: a scenario variable of cast records where each character waits, and an event brings whoever waits at the new location into the scene, keeping those who go along (\"\"); it type-checks, prepares a valid scene.present in cast order, fires at most once per round, and a spoiler cast member stays offstage until the players walk in",
+  "description": "The authoring guide's whereabouts pattern: a scenario variable of cast records where each character waits, and an event brings whoever waits at the new location into the scene, keeping those who go along (\"\"); it type-checks, prepares a valid scene.present in cast order, fires at most once per round, and a spoiler cast member stays offstage until the players walk in",
   "bundle": {
     "troupe": "0.11",
     "kind": "bundle",

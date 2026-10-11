@@ -2,7 +2,7 @@
 
 An open file format for AI roleplay: characters, the worlds they live in, the scenarios that bring them together, the mechanics that drive a story, and the chat sessions played from them.
 
-**Status:** v0.11 draft. Breaking changes are allowed until 1.0 ([road to 1.0](spec/format.md#appendix-g-road-to-10)).
+**Status:** v0.11 draft. Breaking changes are allowed until 1.0 ([road to 1.0](spec/format.md#appendix-d-road-to-10)).
 
 ## Specification
 
@@ -19,7 +19,9 @@ An open file format for AI roleplay: characters, the worlds they live in, the sc
 These are informative.
 
 - [Beginner's guide](guides/beginners.html): a walkthrough of the format. Serve the repository root over HTTP (`bunx serve .`) and open `/guides/beginners.html`, so its Format and Play tabs can load.
+- [Authoring guide](guides/authoring.md): patterns for common stories, and a one-page brief for people and LLMs writing Troupe files.
 - [Implementer's guide](guides/implementers.md): advice for apps on presentation and the choices the spec leaves to them.
+- [Character Card V2/V3 and Troupe](guides/character-cards.md): importing and exporting cards.
 
 ## Contributing
 

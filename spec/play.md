@@ -29,7 +29,7 @@ Troupe separates **what a story is** (content, state, knowledge and recorded out
 
 ### 1.2 Conventions
 
-Format 2 applies here, including requirement keywords. "Format 7.2" means section 7.2 of Troupe Format; a section number alone means this document. Normative references are listed in Format Appendix H. The [implementer's guide](../guides/implementers.md) gives informative advice.
+Format 2 applies here, including requirement keywords. "Format 7.2" means section 7.2 of Troupe Format; a section number alone means this document. Normative references are listed in Format Appendix E. The [implementer's guide](../guides/implementers.md) gives informative advice.
 
 ---
 
