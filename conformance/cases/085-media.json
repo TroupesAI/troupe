@@ -43,31 +43,6 @@
             "character": "ann"
           }
         ],
-        "events": [
-          {
-            "id": "bad",
-            "when": "false",
-            "direct": "{{args.x}}"
-          },
-          {
-            "id": "call_bad",
-            "when": "true",
-            "call": {
-              "by": [
-                "player"
-              ],
-              "label": "Try {{args.level}}",
-              "params": [
-                {
-                  "id": "level",
-                  "type": "int",
-                  "description": "For {{user}}."
-                }
-              ]
-            },
-            "direct": "{{args.nope}}"
-          }
-        ],
         "openings": [
           {
             "id": "o",
@@ -264,24 +239,6 @@
         "history": [
           "message:2",
           "message:3"
-        ]
-      }
-    },
-    {
-      "type": "check",
-      "expect": {
-        "codes": [
-          "UNKNOWN_MACRO"
-        ],
-        "includes": [
-          {
-            "code": "UNKNOWN_MACRO",
-            "at": "/scenarios/0/events/0/direct"
-          },
-          {
-            "code": "UNKNOWN_MACRO",
-            "at": "/scenarios/0/events/1/direct"
-          }
         ]
       }
     }

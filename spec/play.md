@@ -93,7 +93,7 @@ Then they drop each key whose value is still invalid, or whose channel isn't all
 
 **Player edits** to state are recorded on the head if it is a player message, else on a new `from: "system"` child of the head with empty `content`. Events are then evaluated at that message.
 
-**Events.** At each root, after each player or model message once its player and model changes are recorded, after player edits, and after a player's calls (section 3.4):
+**Events.** At each root, after each player or model message once its player and model changes are recorded, and after player edits:
 
 1. Events in use are evaluated once each, in the order scenario, worlds, characters (cast order), each in array order, in a single pass, skipping events whose `on` doesn't match the triggering message; a root made from an opening, and a records-only message, match neither. Each sees the state, firings and counts left by those before it. Messages added by events don't trigger evaluation.
 2. An event fires when its `when` is true; it isn't `once` with an earlier firing on the path; its distance from its last firing is greater than `cooldown`, so it fires at most once per round (an event that fired after a player message can't fire again after the replies in that round); and its `chance` roll succeeds.
@@ -113,21 +113,20 @@ interface ModelOutput {
   reason?: string;
   entries?: Entry[];               // session entries to add, such as memories
   characters?: Character[];        // newcomers who appeared, with a change adding them to scene.present
-  calls?: { event: string; args?: Record<string, Json> }[];   // callable events invoked
 }
 ```
 
-- **Tracker.** A separate model call or a tool call reads the messages since the last extraction on the path and returns everything but `parts` and `calls`. Its input is, for each variable whose `by` includes `model`, its key, type, `values` or range, `description` and current value; the scene, with location names and the cast; entries placed in `tracker` whose `when` holds; and the messages, with full knowledge.
+- **Tracker.** A separate model call or a tool call reads the messages since the last extraction on the path and returns everything but `parts`. Its input is, for each variable whose `by` includes `model`, its key, type, `values` or range, `description` and current value; the scene, with location names and the cast; entries placed in `tracker` whose `when` holds; and the messages, with full knowledge.
 - **Structured reply.** The story model returns the whole payload in its reply.
 - **Plain reply.** Without structure, the reply is one text part whose `speaker` is the message's `char`, or none for the narrator. Apps MUST NOT guess `knownBy` from plain text.
 
-Calls need a transport that returns results during generation, such as tool calling. A model's call is evaluated against the state of the message being built, after earlier calls, and recorded there like a firing, with `args` (`{}` when it has no params); `args` marks a call. The model receives the firing's `direct` texts (event, then outcome) and the changed values as the result. Call directions are only ever results: they never enter later prompts, so a structured reply, whose calls are evaluated after it with its `changes` first, gets none, and authors put follow-ups in `message`. The `message` parts of a model's calls form one `from: "system"` message after the model message, before any message from the event pass that follows it. A player's call is recorded on the player's message, or on a records-only system message, and events are then evaluated there; the call's `message` parts and the pass's form one `from: "system"` message after it, calls first. `{{args.<id>}}` in a call's message is resolved when the message is recorded, since stored messages keep no arguments. Apps record `changes` as `{"by": "model", …}`, prepared as in section 3.3, on the newest message covered; `entries` as session entries on the same message; and `characters` in the header. Speakers and `knownBy` IDs that name no character in the session are dropped. An extraction that finds nothing SHOULD record `{"by": "model", "set": {}}`, which marks where the next one starts. Failure is not fatal. Events `on: "model"` wait for the extraction.
+Apps record `changes` as `{"by": "model", …}`, prepared as in section 3.3, on the newest message covered; `entries` as session entries on the same message; and `characters` in the header. Speakers and `knownBy` IDs that name no character in the session are dropped. An extraction that finds nothing SHOULD record `{"by": "model", "set": {}}`, which marks where the next one starts. Failure is not fatal. The event pass after a message waits for any extraction the app runs on it.
 
 A condition written in plain words, such as "Elena has told the crew about the key", is a `bool` variable with `by: ["model"]` and `oneWay`, whose description is that sentence. Once set, it stays set and replays exactly.
 
 ### 3.5 Edits and regeneration
 
-Changes are history. When a message's content is edited, the app SHOULD re-derive that message's `model` and `rules` changes, and the event message they add, and keep its `player` changes and the calls a player made; other messages keep their records. A regenerated message is a new sibling with its own changes and rolls. Continuing a stopped message appends to it, keeping its ID and rolls.
+Changes are history. When a message's content is edited, the app SHOULD re-derive that message's `model` and `rules` changes, and the event message they add, and keep its `player` changes; other messages keep their records. A regenerated message is a new sibling with its own changes and rolls. Continuing a stopped message appends to it, keeping its ID and rolls.
 
 ---
 
@@ -156,7 +155,6 @@ The result is below 2^53, so JavaScript computes it exactly without BigInt.
 - **Weighted pick:** with candidates in order and total integer weight *W*, let `t = roll mod W`; pick the first candidate whose running total of weights exceeds `t`.
 - `chance · 2^48` is exact in double precision, so `chance: 1` always passes and `0` never does.
 - Identical picks in different fields agree, by design.
-- A callable event invoked more than once on the same message appends `#<k>` to the end of each subject, where *k* counts the event's earlier valid recorded calls on that message, from the second call on.
 
 Test vectors, with seed `k7Qm2xVb9TzR4pLc8NwYfA`:
 

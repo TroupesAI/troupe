@@ -1,11 +1,11 @@
 {
-  "description": "The model output schema (Play 3.4, Format Appendix A: model-output.schema.json): structured replies and tracker results validate; unknown properties are UNKNOWN_FIELD warnings (Format 15); a part without text, a call without an event, or a malformed change key is SCHEMA",
+  "description": "The model output schema (Play 3.4, Format Appendix A: model-output.schema.json): structured replies and tracker results validate; unknown properties are UNKNOWN_FIELD warnings (Format 15); a part without text or a malformed change key is SCHEMA",
   "tests": [
     {
       "type": "parse",
       "name": "a structured reply",
       "kind": "modelOutput",
-      "text": "{\"parts\":[{\"speaker\":\"kai\",\"text\":\"Fine.\"},{\"text\":\"*He looks away.*\",\"knownBy\":[\"kai\"]}],\"changes\":{\"kai.nerve\":2},\"reason\":\"He's rattled.\",\"calls\":[{\"event\":\"pick_lock\",\"args\":{\"difficulty\":3}}]}",
+      "text": "{\"parts\":[{\"speaker\":\"kai\",\"text\":\"Fine.\"},{\"text\":\"*He looks away.*\",\"knownBy\":[\"kai\"]}],\"changes\":{\"kai.nerve\":2},\"reason\":\"He's rattled.\"}",
       "expect": {
         "ok": true,
         "codes": []
@@ -48,18 +48,6 @@
       "name": "a part without text",
       "kind": "modelOutput",
       "text": "{\"parts\":[{\"speaker\":\"kai\"}]}",
-      "expect": {
-        "ok": false,
-        "codes": [
-          "SCHEMA"
-        ]
-      }
-    },
-    {
-      "type": "parse",
-      "name": "a call without an event",
-      "kind": "modelOutput",
-      "text": "{\"calls\":[{\"args\":{}}]}",
       "expect": {
         "ok": false,
         "codes": [

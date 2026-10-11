@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://troupe.example/schema/0.11/model-output.schema.json",
   "title": "Troupe model output",
-  "description": "What a model returns (Play 3.4): a structured reply, or a tracker's result without parts and calls.",
+  "description": "What a model returns (Play 3.4): a structured reply, or a tracker's result without parts.",
   "type": "object",
   "additionalProperties": false,
   "properties": {
@@ -43,27 +43,6 @@
       "type": "array",
       "items": {
         "$ref": "bundle.schema.json#/$defs/character"
-      }
-    },
-    "calls": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "required": [
-          "event"
-        ],
-        "additionalProperties": false,
-        "properties": {
-          "event": {
-            "$ref": "bundle.schema.json#/$defs/eventName"
-          },
-          "args": {
-            "type": "object",
-            "propertyNames": {
-              "$ref": "bundle.schema.json#/$defs/id"
-            }
-          }
-        }
       }
     }
   }

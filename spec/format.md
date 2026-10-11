@@ -122,7 +122,7 @@ MUST, MUST NOT, SHOULD, SHOULD NOT and MAY are used as described in RFC 2119 and
 ### 2.2 Values
 
 - Documents are I-JSON (RFC 7493): UTF-8 without a byte order mark, no duplicate member names, no surrogate or noncharacter code points, written or escaped, numbers that fit an IEEE 754 double, integers within ±(2^53 − 1).
-- Writers MUST NOT write `null` in a field this spec defines. Readers MUST treat `null`, `""` and `[]` in an optional field like a missing field, except in state values, `args` and `scenario.worlds`, where `""` and `[]` are values.
+- Writers MUST NOT write `null` in a field this spec defines. Readers MUST treat `null`, `""` and `[]` in an optional field like a missing field, except in state values and `scenario.worlds`, where `""` and `[]` are values.
 - **Defaults are normative.** Every default stated in these documents or their TypeScript comments applies when a field is absent. Every boolean defaults to `false`.
 
 ### 2.3 Identifiers
@@ -493,7 +493,7 @@ interface Event {
   when: string;                    // CEL
   on?: "player" | "model";         // only after this kind of message; both
   once?: boolean;                  // fires at most once on a path
-  cooldown?: number;               // rounds blocked after firing; a passive event fires at most once per round
+  cooldown?: number;               // rounds blocked after firing; fires at most once per round
   chance?: number;                 // 0–1; 1
   set?: Record<string, Json>;      // literal values
   compute?: Record<string, string>;   // CEL expressions for computed values
@@ -501,15 +501,6 @@ interface Event {
   direct?: string;                 // a one-time instruction for the next model reply
   end?: boolean;                   // the story is finished
   outcomes?: Outcome[];            // one is chosen at random each time it fires
-  call?: Call;                     // makes it an action that players or the model invoke
-  ext?: Ext;
-}
-
-interface Call {
-  by: ("player" | "model")[];      // who may invoke it
-  label?: string;                  // the choice's text for players; models call the event by name
-  description?: string;            // for the model: when to call it
-  params?: Variable[];             // typed arguments, read as args.<id>; no of, derive, by, ask or carry
   ext?: Ext;
 }
 
@@ -525,13 +516,12 @@ interface Outcome {
 ```
 
 - **`set` takes plain values; `compute` takes CEL.** `"set": {"scene.location": "vault"}`, `"compute": {"trust.elena": "state.trust.elena - 0.1"}`. An owner's own events write its variables as `own.<id>`.
-- **Firing.** Events run at each root, after each player or model message, and after player edits and player calls, in a single pass; `on` limits an event to one kind of message, so events with `on` don't run at an opening. An event fires when its `when` holds, it isn't `once` with an earlier firing, its `cooldown` has passed, and its `chance` roll succeeds. Play 3.3 has the exact rules.
+- **Firing.** Events run at each root, after each player or model message, and after player edits, in a single pass; `on` limits an event to one kind of message, so events with `on` don't run at an opening. An event fires when its `when` holds, it isn't `once` with an earlier firing, its `cooldown` has passed, and its `chance` roll succeeds. Play 3.3 has the exact rules.
 - **Timing.** An event `on: "player"` runs before the reply, so it can roll for the action the player just attempted and direct the reply to narrate the result. An event `on: "model"` runs after the reply and its tracking.
 - **Outcomes** pick one weighted alternative per firing, so a random culprit or encounter is one declaration with correct odds. `roll(n)` in an event's or outcome's `compute` rolls a die; each call is a separate roll.
 - **Messages** from all events in one pass form a single narration message after the trigger.
 - **`direct`** reaches the System slot of the next model reply and its regenerations, then expires.
 - **`end`** marks the story finished on that path. Apps MAY let people continue; a `direct` on the same firing applies if they do.
-- **Callable events** are actions: a player's choice, a game master's check, a tool the model uses. An event with `call` never fires in the event pass. It is offered to the players or the model named in `call.by` while its `when` holds, and fires when invoked, with arguments validated like values of its `params`. `compute`, messages and directions read them as `args.<id>`. Callable events don't take `chance`; use `outcomes`. It is available while its `when` holds at the evaluation point (the head for players, the parent of the message being built for the model), read once before that message's calls; it isn't `once` with an earlier firing, and its distance from its last firing exceeds `cooldown` when `cooldown` is set, counting earlier calls on the same message; without `cooldown` it may be called several times in a round, and `on` is ignored. An omitted argument takes the param's initial value, as a variable would. Arguments are prepared as in Play 3.3, steps 1, 4 and 5, then validated; a call with an argument still invalid is refused and not recorded, and a model receives the refusal as its result. In `characters` mode the model is offered the callable events of the scenario, its worlds and the character being generated for.
 
 ---
 
@@ -548,7 +538,6 @@ Macros are the only substitution in text. `@` turns IDs into names.
 | `{{@state.<path>}}`, `{{@own.<path>}}` | The value, with each string that is a character or location ID rendered as its name |
 | `{{scene.location}}`, `{{@scene.location}}` | The current location's ID, or its name |
 | `{{@scene.present}}`, `{{@players}}` | The names of the characters present, or of the players' characters |
-| `{{args.<id>}}` | An argument of the callable event this text belongs to |
 | `{{pick::<a>::<b>…}}` | One option, fixed for the session (Play 4) |
 | `{{// <comment>}}` | Nothing; a note for authors |
 
@@ -556,7 +545,7 @@ Macros are the only substitution in text. `@` turns IDs into names.
 - **`{{user}}`** is the speaker of the first part with a speaker in the latest player message on the path that has one, else the first player's character. In a state path, `user` means the same character.
 - **Rendering.** A value with a label renders as its label. Numbers render as ECMAScript `Number.prototype.toString`, booleans as `true` or `false`, lists as items joined by `, ` (an empty list as nothing), and maps as `Name: value` pairs joined by `, `, with character keys shown by name and other keys with underscores as spaces. Map keys render in declared order (cast order for characters), and `"*"` keys in the order changes added them, a key removed and set again moving to the end. A macro naming a variable that isn't declared is left as written (`UNKNOWN_MACRO`); an absent key of a declared variable, a path below a value that isn't a map, or a variable whose owner isn't in use renders as nothing.
 - **Which state.** Macros in a message resolve against the state at that message; elsewhere, against the evaluation point (section 11.1). In a scenario's text, openings included, `own` means `state`; session entries have no `own`.
-- **Where.** Macros resolve in author-written text: descriptions, summaries, premises, briefings, notes, entry texts, openings, event messages and directions, variable and param descriptions, questions, labels, call labels and descriptions, and image `alt` and audio `transcript` in author content. Entry titles and keys are never resolved. Macros never resolve in text written by players or models, including entries and characters that a model adds: apps MUST store such text with each `\` written as `\\` and each `{{` as `\{{`.
+- **Where.** Macros resolve in author-written text: descriptions, summaries, premises, briefings, notes, entry texts, openings, event messages and directions, variable descriptions, questions, labels, and image `alt` and audio `transcript` in author content. Entry titles and keys are never resolved. Macros never resolve in text written by players or models, including entries and characters that a model adds: apps MUST store such text with each `\` written as `\\` and each `{{` as `\{{`.
 - **Parsing** is one left-to-right scan. At each `{{`, the longest form in the table, with no spaces outside comments and options, is a macro; otherwise the first `{` is kept and scanning resumes at the next character. A comment runs from `{{//` to the next `}}`. Options can't contain `::` or `}}`. `\{{` produces a literal `{{`, and `\\` a literal `\`.
 - **Unknown macros** are left as written (`UNKNOWN_MACRO`).
 - **Stored text keeps its macros.** They resolve when text is shown or sent.
@@ -591,7 +580,6 @@ Every expression is evaluated at a message, its **evaluation point**: for a prom
 | `count(name)` | How many times an event fired, an entry activated, or a change key appeared in a recorded change on the path, matched exactly; 0 for anything else |
 | `ago(name)` | Rounds from that event's, entry's or key's latest firing, activation or change to the evaluation point; 1000000000 if never |
 | `hit(key)` | Entries only: whether `key` matches the entry's text to match (Play 5.5) |
-| `args.<id>` | In a callable event's `compute`: its arguments |
 | `roll(n)` | Event and outcome `compute` only: a whole number from 1 to `n`, for an integer `n` of at least 1 |
 | `min(a, b)`, `max(a, b)`, `abs(x)` | For numbers of one type |
 
@@ -605,7 +593,7 @@ state.trust[char] >= 0.8 && hour < 6
 
 ### 11.2 Rules
 
-- Apps MUST type-check every expression when loading: `state` against the scenario's variables and every character's and world's variables in the bundle and session, `own` against the expression owner's, and `args` against the callable event's `params`. An expression that fails is reported, and its entry, event or variable never applies. A `compute` key that fails at runtime is skipped, and any literal for the same key stands.
+- Apps MUST type-check every expression when loading: `state` against the scenario's variables and every character's and world's variables in the bundle and session, and `own` against the expression owner's. An expression that fails is reported, and its entry, event or variable never applies. A `compute` key that fails at runtime is skipped, and any literal for the same key stands.
 - Conditions have type `bool`; `derive` and `compute` expressions have their variable's type, except that an `int` may set a `number`.
 - Cross-type numeric comparison, including `==` and `!=`, MUST work: `state.trust.kai >= 1`. Arithmetic doesn't mix types: write `state.trust.kai - 0.1`.
 - Runtime errors make a condition false.
@@ -688,7 +676,6 @@ interface Change {
   set: Record<string, Json>;       // full key → new value
   event?: string;                  // the event that fired
   outcome?: number;                // the chosen outcome's index
-  args?: Record<string, Json>;     // a callable event's arguments
   reason?: string;                 // for people; never sent to models
   ext?: Ext;
 }
@@ -864,7 +851,6 @@ Messages are never dropped for a failed check, except the lines that `PARSE` and
 | `UNKNOWN_VARIABLE` | Keys in openings, events, changes and chronicle values, and variables named by `min` and `max`, exist and aren't derived; a chronicle's value keys name carried variables of its character (section 13) | The key or bound is dropped |
 | `INVALID_VALUE` | `initial`, opening and event `set` values, recorded values, chronicle values and `outcome` indexes are valid | The value is dropped |
 | `UNKNOWN_MESSAGE` | `parent`, the header's `head` and summary `from` name messages, and `from` is on the path to its summary | The head or summary is ignored; a message with an unknown `parent` is skipped with its descendants |
-| `INVALID_CALL` | A recorded call names a callable event that was available, with valid `args` | The call's values still apply; the firing isn't counted |
 | `NOT_PLAYABLE` | `players` names header characters or cast members, with no more header characters than seats | The extra ID is ignored |
 | `CEL_ERROR` | Every expression parses and type-checks | The item never applies |
 | `REGEX_ERROR` | Every regex key parses as RE2 | The key is ignored |
@@ -1197,20 +1183,18 @@ An `enum` `phase`, entries gated on it, and events that advance it when a beat i
 
 `ago()` covers change keys, so a status can expire without bookkeeping: `"when": "own.mood == 'upset' && ago('kai.mood') < 3"`. String literals like `'kai.mood'` need rewriting if Kai is renamed.
 
-### C.7 Checks, dice and choices
+### C.7 Checks and dice
 
-A check is a callable event. The model calls it when someone attempts something risky, and narrates the result it gets back. `picked` is a scenario `bool` labeled "opens" and "holds":
+A check rolls when someone attempts something risky, and the reply narrates the result. The tracker records the attempt on the player's message, and an event `on: "player"` rolls for it before the reply. `attempt` is a scenario `enum` with `values` `["none", "lock"]` and `by: ["model"]`; `picked` is a scenario `bool` labeled "opens" and "holds":
 
 ```json
-{ "id": "pick_lock", "when": "scene.location == 'vault'",
-  "call": { "by": ["model", "player"], "label": "Pick the lock",
-            "description": "Call when someone tries to open a locked door or chest.",
-            "params": [{ "id": "difficulty", "type": "int", "min": 5, "max": 25, "initial": 12, "description": "How hard the lock is." }] },
-  "compute": { "picked": "roll(20) >= args.difficulty" },
+{ "id": "pick_lock", "on": "player", "when": "state.attempt == 'lock'",
+  "set": { "attempt": "none" },
+  "compute": { "picked": "roll(20) >= 12" },
   "direct": "The lock {{state.picked}}. Narrate it." }
 ```
 
-A choice offered to the player is the same with `"by": ["player"]` and a `label`; random encounters are a passive event with weighted `outcomes`.
+This needs an app that runs the tracker after player messages (Play 3.4). Random encounters are an event with weighted `outcomes`.
 
 ### C.8 A hidden truth
 
@@ -1294,7 +1278,7 @@ One page for people and for LLMs asked to write Troupe files.
 
 **Variables** need `id`, `type` (`bool`, `int`, `number`, `string`, `enum` with `values`, or `set`) and `description`. Give `by: ["model"]` for values the story should update, and `of: "characters"` for one value per character. Read a scenario's variable as `state.bell`, a character's own as `own.nerve`, and another character's as `state.kai.nerve`.
 
-**Events** need `id` and `when`. `set` takes plain values; `compute` takes CEL strings. Durations count rounds: one player message and the replies to it. An action that players or the model invoke, such as a check or a choice, is an event with `call`.
+**Events** need `id` and `when`. `set` takes plain values; `compute` takes CEL strings. Durations count rounds: one player message and the replies to it. An event `on: "player"` runs before the reply, so it can roll for what the player attempted and `direct` the reply.
 
 **Traps:**
 
@@ -1371,7 +1355,7 @@ A bundle's first character exports with a lossy mapping: `name`, `description`, 
 | --- | --- | --- |
 | Chronicles for continuity | Memories locked in one session or one app | The thing companion users care about most travels with them. |
 | A chronicle is one document, rewritten on write-back | A log of records | Apps read it without folding; revision history is the app's. |
-| Callable events | Mechanics that can only react | One primitive covers tools, checks and choices, and the model narrates real results. |
+| Callable events in an extension | Tools, checks and choices in the core | A tracker and an `on: "player"` event already roll checks; calls need tool calling and many rules, so `troupe.calls` proves them first. |
 | Audio parts and media provenance | Text-only sessions | Voice-first and image-heavy play is representable, and generated media stays labeled. |
 | Structured player limits | Limits as ordinary entries | They reach every generation, media included, and can't be dropped. |
 | One `Entry` for lore, instructions, secrets, goals, notes, memories and tracker guidance | A type for each | One pipeline, one shape, one thing to learn. |
@@ -1409,7 +1393,7 @@ A bundle's first character exports with a lossy mapping: `name`, `description`, 
 Version 1.0 is tagged when:
 
 1. the schemas are published at a real domain;
-2. the conformance suite covers every roll purpose, weighted picks, three-pass chains, the root witness case, keyed-variable preparation, derived variables, event timing, callable events, chronicles and session files;
+2. the conformance suite covers every roll purpose, weighted picks, three-pass chains, the root witness case, keyed-variable preparation, derived variables, event timing, chronicles and session files;
 3. two independent implementations, at least one not in JavaScript, pass it;
 4. the V2/V3 importer and exporter run against a corpus of real cards, including SillyTavern regex flags;
 5. real multi-character and stat-tracking cards are ported with their authors.
@@ -1421,6 +1405,7 @@ The specification text is published under CC BY 4.0, and the schemas and conform
 - **`troupe.tests`:** behavior tests inside a bundle. Each test sets up a scenario, an opening, starting values and a short history, then expects entries to activate or not, a CEL condition on state, and plain-language assertions scored by a judge model ("Kai deflects and doesn't admit the deal"), over several samples with a pass rate. The deterministic part runs without a model; the judged part tells people which models play a card well.
 - **`troupe.time`:** characters who act between messages. `on: "idle"` events evaluated at a records-only message when an app wakes a quiet session, and `reply` to ask a character for a turn, with opt-in and frequency caps.
 - **`troupe.table`:** play with several people: participants, seat assignment, turn policy, and secrets between human players.
+- **`troupe.calls`:** events that players or the model invoke, such as checks, choices and tools: typed parameters read as `args`, availability while `when` holds, refusal of invalid calls, results returned to the model during generation, and recorded calls.
 - **`troupe.overlay`:** a bundle that patches another by ID (replace objects, merge entries by ID, remove listed ones), for translations, fan patches and mods.
 - **`troupe.media`:** one asset shape for covers, avatars, sprites and backgrounds, with music and ambience.
 - **Text transforms** stay out: most rewrite scripts build HTML, fix one model's quirks, or display stats that state now covers.

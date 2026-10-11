@@ -180,19 +180,10 @@
         },
         "ext": {
           "$ref": "bundle.schema.json#/$defs/ext"
-        },
-        "args": {
-          "type": "object",
-          "propertyNames": {
-            "$ref": "bundle.schema.json#/$defs/id"
-          }
         }
       },
       "dependentRequired": {
         "outcome": [
-          "event"
-        ],
-        "args": [
           "event"
         ]
       },

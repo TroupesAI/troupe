@@ -27,7 +27,7 @@ If no bundle is given, the bundle is `{"troupe": <the spec version>, "kind": "bu
 
 Every test starts from a fresh copy of the case's inputs. Tests don't affect each other.
 
-1. **Absent values.** Apply Format 2.2 to the bundle, the session header and every message: `null`, `""` and `[]` in optional fields read as missing. State values (`set`, `initial`) and call arguments (`args`) keep `""` and `[]`. `scenario.worlds` keeps `[]`. Required text fields (an entry's or part's `text`, a character's `description`) and message `content` keep `""` and `[]`; an opening's `content` is optional, so `[]` there reads as missing.
+1. **Absent values.** Apply Format 2.2 to the bundle, the session header and every message: `null`, `""` and `[]` in optional fields read as missing. State values (`set`, `initial`) keep `""` and `[]`. `scenario.worlds` keeps `[]`. Required text fields (an entry's or part's `text`, a character's `description`) and message `content` keep `""` and `[]`; an opening's `content` is optional, so `[]` there reads as missing.
 2. **Reading.** Read the session lines as a reader does (Format 12.1, 17.2): a line repeating an earlier message's ID is skipped, a message whose `parent` names no earlier message is skipped with its descendants, and the head is the header's `head` if it names a message, else the last message.
 3. **The story.** The session's `scenario` names the scenario. Without a session, a test may name it with `scenario`; otherwise use the bundle's first scenario. Header characters replace bundle characters as Format 12.2 says.
 
@@ -146,7 +146,7 @@ Every field of `expect` is optional:
 
 | Field | Meaning |
 | --- | --- |
-| `changes` | The firings in order, `{"by": "rules", "event", "outcome"?, "set", "args"?}`, with prepared full-key values. |
+| `changes` | The firings in order, `{"by": "rules", "event", "outcome"?, "set"}`, with prepared full-key values. |
 | `message` | The system message added, or `null` when none. |
 | `directions` | The `direct` texts of the pass, unresolved, event before outcome. |
 | `ended` | Whether an `end` fired. |
@@ -155,7 +155,7 @@ Every field of `expect` is optional:
 
 ### 4.8 `directions` and `ended`
 
-`at` is the evaluation point. For `directions`, `expect` is the list of `direct` texts, unresolved, that the System slot of a prompt built there carries (Play 3.3 step 6): those of event-pass firings on messages from the latest model message on the path, that message included. Calls (changes with `args`, or naming a callable event) never direct later prompts; their directions are only results. Invalid recorded calls (`INVALID_CALL`) also don't count or end. For `ended`, `expect` is whether the story is finished on that path.
+`at` is the evaluation point. For `directions`, `expect` is the list of `direct` texts, unresolved, that the System slot of a prompt built there carries (Play 3.3 step 6): those of event-pass firings on messages from the latest model message on the path, that message included. For `ended`, `expect` is whether the story is finished on that path.
 
 ### 4.9 `macro`: macro resolution (Format 10)
 
@@ -256,7 +256,7 @@ Inputs are as for `select`. The prompt has five slots: `system`, `setting`, `peo
 | Dialogue examples | `examples:<id>` |
 | A pinned message | `pinned:<id>` |
 | A history message | `message:<id>` |
-| The session's limits (section 4.19) | `limits` |
+| The session's limits (section 4.18) | `limits` |
 
 The text of a `character:<id>` item is the character's resolved `description`; its cast `notes` reach the prompt too, but are not part of the compared text. In the People slot, offstage characters without a `summary` contribute nothing, and `examples:<id>` items come only for present model-played characters and the character being generated for.
 
@@ -300,42 +300,16 @@ The test reads the case's raw session lines.
 | `reply` | Optional. `{id, parent, char?}`: record a reply as a new model message. |
 | `message` | Instead of `reply`: an existing message, for a tracker extraction. |
 | `output` | A string for a plain reply, or a `ModelOutput` object. |
-| `eventMessageId` | Optional. The ID of the system message the output's calls may add. |
 
-The output is applied in this order: parts (model text stored escaped, Format 10; speakers and `knownBy` IDs naming no character dropped), newcomers in `characters` added to the header, `changes` prepared and recorded as `{"by": "model", "set", "reason"?}`, `entries` added as session entries, then `calls`, applied as in section 4.17 with `by` `"model"` after the reply and its changes.
+The output is applied in this order: parts (model text stored escaped, Format 10; speakers and `knownBy` IDs naming no character dropped), newcomers in `characters` added to the header, `changes` prepared and recorded as `{"by": "model", "set", "reason"?}`, then `entries` added as session entries.
 
 Every field of `expect` is optional:
 
 - `message` is the resulting message.
 - `dropped` is the list of change keys dropped by preparation.
 - `characters` is the header characters' IDs afterwards.
-- `calls` lists the call results, as `expect.results` in section 4.17. A structured reply receives none of them (Play 3.4); they are listed to check the recorded firings.
-- `system` is the system message the calls added, or `null`.
 
-### 4.17 `calls`: callable events (Format 9; Play 3.4, 4)
-
-| Input | Meaning |
-| --- | --- |
-| `message` | The message the calls are recorded on, which must exist: the model message being built, or the player's message or a records-only system message. |
-| `by` | `"model"` or `"player"`. |
-| `calls` | `[{event, args?}]`, applied in order. |
-| `eventMessageId` | The ID of the system message the calls' `message` parts (and, for player calls, the following event pass) may add. |
-
-Each call is processed in order:
-
-1. **Refusals.** The call is refused with `INVALID_CALL`, recording nothing, when the event isn't a callable event in use, `by` isn't in its `call.by`, an argument names no param, an argument is invalid after preparation, or the event isn't available.
-2. **Arguments.** Each param takes the argument, else its `initial`, else its type's default, and is prepared like a value (Play 3.3 steps 1, 4 and 5: sets normalized, numbers rounded and clamped), then validated. Recorded `args` hold every param; `{}` when there are none.
-3. **Availability.** `when` is evaluated at the evaluation point: for `by: "model"`, the state at the message's parent; for `by: "player"`, the state at the message before this test's calls. `once` and `cooldown` count earlier firings on the path, including earlier calls in the same test. Without `cooldown` an event may be called repeatedly on one message.
-4. **Firing.** The call fires like an event (Play 3.3), against the state after the earlier calls, with `args` readable in `compute`, messages and directions. Its rolls use the message's ID and the subjects of Play 4, with `#<k>` from the second call on (`pick_lock#1`, `pick_lock/e/fate/0#1`).
-5. **Recording.** The call is appended to the message's changes as `{"by": "rules", "event", "outcome"?, "args", "set"}`.
-
-After the calls, for `by: "player"`, an event pass runs at the message (section 4.7) and its firings follow the calls.
-
-- `expect.changes` is the message's changes after the calls, recorded firings included.
-- `expect.results` lists, per call, either `{"direct": [texts], "set": {changed values}}` or `{"error": "INVALID_CALL"}`. `direct` holds the event's then the outcome's `direct`, macro-resolved with the call's `args` against the state after the call; `set` is the recorded `set`.
-- `expect.message` is the system message added, or `null`. Its content is the calls' `message` parts, in call order, with `{{args.<id>}}` replaced by the argument's rendered value when recorded; for player calls the event pass's parts follow in the same message.
-
-### 4.18 `chronicle`: chronicle checks and writing back (Format 13; Play 2.2)
+### 4.17 `chronicle`: chronicle checks and writing back (Format 13; Play 2.2)
 
 | Input | Meaning |
 | --- | --- |
@@ -348,11 +322,11 @@ After the calls, for `by: "player"`, an event pass runs at the message (section 
 
 Starting from chronicles (section 4.11 input `chronicles`) follows Play 2.2. Chronicle characters are added to the header's `characters` in chronicle order, after the test's own `characters`. When the test brings no `characters`, the first chronicle's `persona` fills the first seat.
 
-### 4.19 Limits
+### 4.18 Limits
 
 A session or chronicle `limits` object is rendered in the System slot as the `limits` item (section 4.13), right after `app`. The test checks only that the item is there; the wording is the app's.
 
-### 4.20 `edit`: player edits to state (Play 3.3)
+### 4.19 `edit`: player edits to state (Play 3.3)
 
 | Input | Meaning |
 | --- | --- |

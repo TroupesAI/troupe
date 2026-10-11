@@ -1069,21 +1069,6 @@
             "player",
             "model"
           ]
-        },
-        "call": {
-          "$ref": "#/$defs/call"
-        }
-      },
-      "if": {
-        "required": [
-          "call"
-        ]
-      },
-      "then": {
-        "not": {
-          "required": [
-            "chance"
-          ]
         }
       }
     },
@@ -1277,79 +1262,6 @@
         },
         "at": {
           "$ref": "#/$defs/timestamp"
-        },
-        "ext": {
-          "$ref": "#/$defs/ext"
-        }
-      }
-    },
-    "param": {
-      "allOf": [
-        {
-          "$ref": "#/$defs/variable"
-        },
-        {
-          "not": {
-            "anyOf": [
-              {
-                "required": [
-                  "of"
-                ]
-              },
-              {
-                "required": [
-                  "derive"
-                ]
-              },
-              {
-                "required": [
-                  "by"
-                ]
-              },
-              {
-                "required": [
-                  "ask"
-                ]
-              },
-              {
-                "required": [
-                  "carry"
-                ]
-              }
-            ]
-          }
-        }
-      ]
-    },
-    "call": {
-      "type": "object",
-      "required": [
-        "by"
-      ],
-      "additionalProperties": false,
-      "properties": {
-        "by": {
-          "type": "array",
-          "minItems": 1,
-          "uniqueItems": true,
-          "items": {
-            "enum": [
-              "player",
-              "model"
-            ]
-          }
-        },
-        "label": {
-          "type": "string"
-        },
-        "description": {
-          "type": "string"
-        },
-        "params": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/param"
-          }
         },
         "ext": {
           "$ref": "#/$defs/ext"
