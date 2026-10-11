@@ -747,9 +747,8 @@ Play 2.2 says how a session continues a chronicle and writes back to it.
 | Package | `.troupe` | A ZIP archive with `bundle.json`, the files it references, and optionally sessions and chronicles | `application/vnd.troupe+zip` |
 | Session | `.troupe-session.jsonl` | One session outside a package | `application/vnd.troupe.session+jsonl` |
 | Chronicle | `.troupe-chronicle.json` | One character's continuity | `application/vnd.troupe.chronicle+json` |
-| Authoring source | `.troupe.yaml` | One bundle in YAML (section 14.4) | `application/vnd.troupe+yaml` |
 
-Every Troupe document has a top-level `troupe` key with the spec version and a `kind` key: `"bundle"`, `"session"` or `"chronicle"`. Section 14.5 defines an optional image-embedded form.
+Every Troupe document has a top-level `troupe` key with the spec version and a `kind` key: `"bundle"`, `"session"` or `"chronicle"`. Section 14.4 defines an optional image-embedded form.
 
 ### 14.2 Files
 
@@ -761,11 +760,7 @@ Fields that hold a file accept a relative path inside the package, an `https:` U
 - Paths match `^[A-Za-z0-9_-][A-Za-z0-9._-]*(/[A-Za-z0-9_-][A-Za-z0-9._-]*)*$`, with segments of at most 255 bytes, unique when compared case-insensitively.
 - Entries use the store or deflate methods and are not encrypted. Sessions are stored under `sessions/` with the `.troupe-session.jsonl` extension, and chronicles under `chronicles/` with the `.troupe-chronicle.json` extension.
 
-### 14.4 YAML authoring source
-
-Authors MAY write a bundle in YAML 1.2, using only what JSON can express: no tags, anchors, aliases or merge keys, string keys only, and the core schema. Block scalars keep descriptions readable, CEL needs no escaping, and comments are allowed. Quote values that must stay strings, such as `troupe: "0.11"`, `version: "1.0"`, `of: "*"`, timestamps, and values like `on`, `off` or `null`. A YAML bundle has exactly the same meaning as its JSON equivalent. Apps MAY import it and MUST export JSON.
-
-### 14.5 Image-embedded form
+### 14.4 Image-embedded form
 
 A single-file bundle MAY be embedded in a PNG for image hosts: one `iTXt` chunk with keyword `troupe`, compression flag 1, compression method 0, empty language tag and translated keyword, holding the bundle as UTF-8. The image SHOULD be the cover or main avatar. Writers SHOULD also embed a `ccv3` chunk exported as in Appendix E.2, so Character Card V3 apps can read the same file. Readers that support this form prefer the `troupe` chunk, treat it exactly like a `.troupe.json` file, and cap the decompressed size. A PNG with no `troupe` chunk, or more than one, is `PARSE`. It is never the canonical form, and image hosts often strip it.
 
@@ -820,7 +815,7 @@ Messages are never dropped for a failed check, except the lines that `PARSE` and
 
 | Code | Check | Consequence |
 | --- | --- | --- |
-| `PARSE` | The input is I-JSON (section 2.2), JSON Lines or YAML within section 14.4, a Troupe document of a known `kind`, within the limits the reader enforces (section 16), and a safe package (section 16 item 7) or PNG (section 14.5) | The file isn't read; in a session, an unreadable line other than the header is skipped |
+| `PARSE` | The input is I-JSON (section 2.2) or JSON Lines, a Troupe document of a known `kind`, within the limits the reader enforces (section 16), and a safe package (section 16 item 7) or PNG (section 14.4) | The file isn't read; in a session, an unreadable line other than the header is skipped |
 | `UNSUPPORTED_VERSION` | `troupe` is the reader's own version (section 15) | Another major version isn't read; another minor version is a warning |
 | `SCHEMA` | The document validates against its schema, apart from unknown properties (section 15) | The reader MAY refuse the file |
 | `UNKNOWN_FIELD` | Every property is known to the reader's schema (section 15) | A warning; the field is kept |
@@ -1356,7 +1351,6 @@ A bundle's first character exports with a lossy mapping: `name`, `description`, 
 | No narrator voice | A character that defines the narrator | Narrator-only `system` entries already set its style. |
 | Sessions as an exchange snapshot | Prescribing storage, or an append-only log of edits | Apps keep their own databases; chats still move between apps intact, and readers replay no edits or deletions. |
 | No audio, media provenance, music, speaking hints, UI grouping or branch labels in the core | Media and presentation fields | They belong to apps and extensions such as `troupe.media`. |
-| YAML source | A Markdown mini-language | Readable authoring with no new semantics. |
 | No executable code | Scripts in cards | Scripts in shared cards can steal API keys. |
 | Strict schemas, lenient readers | Either everywhere | Writers catch typos; readers stay forward compatible. |
 | Writers stay within the limits; readers may accept more | Exact limits, or minimums only | Every conforming file opens in every app, and apps can still be generous. |
@@ -1394,7 +1388,7 @@ The specification text is published under CC BY 4.0, and the schemas and conform
 ## Appendix H: References
 
 - [RFC 2119](https://www.rfc-editor.org/rfc/rfc2119), [RFC 8174](https://www.rfc-editor.org/rfc/rfc8174): requirement keywords
-- [RFC 8259](https://www.rfc-editor.org/rfc/rfc8259), [RFC 7493](https://www.rfc-editor.org/rfc/rfc7493): JSON and I-JSON; [JSON Lines](https://jsonlines.org/); [YAML 1.2.2](https://yaml.org/spec/1.2.2/)
+- [RFC 8259](https://www.rfc-editor.org/rfc/rfc8259), [RFC 7493](https://www.rfc-editor.org/rfc/rfc7493): JSON and I-JSON; [JSON Lines](https://jsonlines.org/)
 - [RFC 3339](https://www.rfc-editor.org/rfc/rfc3339): timestamps; [IANA time zones](https://www.iana.org/time-zones); [BCP 47](https://www.rfc-editor.org/info/bcp47)
 - [JSON Schema 2020-12](https://json-schema.org/draft/2020-12); [CommonMark 0.31.2](https://spec.commonmark.org/0.31.2/)
 - [CEL](https://github.com/google/cel-spec/blob/master/doc/langdef.md); [RE2 syntax](https://github.com/google/re2/wiki/Syntax)

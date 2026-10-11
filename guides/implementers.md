@@ -7,6 +7,10 @@ This guide is informative. It collects advice for apps that show and play Troupe
 - **Images.** Name a character's `images` `neutral`, `happy`, `sad`, `angry`, `surprised`, `afraid` and `embarrassed`, optionally grouped as `<set>/<name>`. When a character has no image for the name you want, fall back to `neutral` in the same set, then `neutral`, then `avatar` (Format 4).
 - **Who speaks next** is up to the app (Play 2.3). A good default: prefer present characters named in the last message, and let each model-played character speak at most once per player message before returning control.
 
+## Authoring
+
+- **YAML.** Editors may let authors write a bundle in YAML that maps one to one onto JSON, for block scalars and comments. Export and share the JSON.
+
 ## Telling people what's wrong
 
 - **Diagnostics.** Show authors the checks a reader reports (Format 17.2), especially unknown macros, which are left as written, and conditions that fail at runtime, which count as false.

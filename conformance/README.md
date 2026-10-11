@@ -14,7 +14,6 @@ A case file is one JSON object:
 | `note` | string | Optional. How an expected value was derived, such as roll inputs. Informative. |
 | `bundle` | object | The bundle, as a JSON document. |
 | `bundleFile` | string | Instead of `bundle`: a path to a bundle JSON file, relative to the case file. |
-| `bundleYaml` | string | Instead of `bundle`: a YAML authoring source (Format 14.4), imported as the bundle. |
 | `session` | object | Optional. `{"header": SessionHeader, "messages": [Message, …]}`. `messages` lists the session's lines after the header, in file order (Format 12.1). |
 | `sessionFile` | string | Instead of `session`: a path to a `.jsonl` session file, relative to the case file. |
 | `addMessages` | array | Optional. Messages appended after the session's own messages. |
@@ -271,7 +270,7 @@ Every field of `expect` is optional:
 
 | Input | Meaning |
 | --- | --- |
-| `kind` | What the input is read as: `bundle` (a `.troupe.json` file), `yaml` (a YAML authoring source, Format 14.4), `session`, `chronicle`, `package` (a `.troupe` ZIP archive), `png` (Format 14.5) or `modelOutput` (JSON validated against `model-output.schema.json`, Play 3.4). |
+| `kind` | What the input is read as: `bundle` (a `.troupe.json` file), `session`, `chronicle`, `package` (a `.troupe` ZIP archive), `png` (Format 14.4) or `modelOutput` (JSON validated against `model-output.schema.json`, Play 3.4). |
 | `text` | The input as a string, encoded as UTF-8 to get its bytes. |
 | `base64` | Instead of `text`: the input's bytes, in base64. Used for bytes that aren't valid UTF-8 text and for binary formats. |
 
@@ -281,7 +280,7 @@ Every field of `expect` is optional:
 
 - `ok` is whether a document is read with no error diagnostics. A newer minor version or an unknown field is a warning, so the input is still `ok`.
 - `codes` is the sorted list of distinct codes reported, compared exactly.
-- `equals` is the bundle read, for `bundle`, `yaml` and `png`, after absent values read as missing (Format 2.2).
+- `equals` is the bundle read, for `bundle` and `png`, after absent values read as missing (Format 2.2).
 - `ids` is, for `session`, the IDs of the messages read, in line order.
 
 ### 4.15 `read`: session lines (Format 12.1)
