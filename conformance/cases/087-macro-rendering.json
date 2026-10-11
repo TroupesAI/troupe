@@ -1,5 +1,5 @@
 {
-  "description": "Macro resolution and rendering (Format 10): {{char}} in a message part without a speaker or char is left as written; undeclared variables are left as written (UNKNOWN_MACRO), while absent keys, paths below non-maps and owners not in use render as nothing; map keys in declared order; a non-macro {{ keeps only its first {",
+  "description": "Macro resolution and rendering (Format 10): {{char}} in a message part without a speaker or char is left as written; undeclared variables are left as written (UNKNOWN_MACRO), while absent keys, paths below non-maps and owners not in use render as nothing; map keys in declared order, and \"*\" keys in code point order; a non-macro {{ keeps only its first {",
   "bundle": {
     "troupe": "0.11",
     "kind": "bundle",
@@ -202,10 +202,10 @@
     },
     {
       "type": "macro",
-      "name": "\"*\" keys in the order changes first set them",
+      "name": "\"*\" keys in code point order, whatever order the changes used",
       "at": "3",
       "text": "{{state.inv}}",
-      "expect": "rope: 1, axe: 2, cup: 1"
+      "expect": "axe: 2, cup: 1, rope: 1"
     },
     {
       "type": "macro",
