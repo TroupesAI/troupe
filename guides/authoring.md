@@ -108,7 +108,7 @@ A one-way `enum` `chapter`, with entries gated on it, keeps a canon character fr
 
 ### Group chats from several bundles
 
-Copy the characters into a new bundle, credit their authors in `credits`, add a scenario with a cast, and rename clashing IDs (Format 12.5). Each character brings its own entries, variables and events, and keeps using them through `own` and `self`.
+Copy the characters into a new bundle, credit their authors in `credits`, add a scenario with a cast, and rename clashing IDs. In a bundle, a renamed ID appears in cast members, `knownBy`, speakers, example speakers, `scenario.worlds`, location `parent`, `of` lists, keyed variable keys, keys and `scene` values in openings and events, `{{@id}}`, `{{state.<id>…}}` and `{{@state.<id>…}}` macros, and CEL member paths such as `state.kai.nerve`; string literals in CEL that name it need a look too. Each character brings its own entries, variables and events, and keeps using them through `own` and `self`.
 
 ## Authoring brief
 

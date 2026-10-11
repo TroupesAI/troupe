@@ -699,7 +699,7 @@ A message may add entries, owned by `session`. They are candidates from that mes
 
 ### 12.5 Renaming
 
-When an app renames a character, world or location to resolve a clash, it MUST rewrite the ID in cast members, `players`, `knownBy`, speakers, example speakers, message `char`, `scenario.worlds`, location `parent`, `of` lists, `scene.present` and `scene.location` values, keyed variable keys, owned keys in openings, events and changes, references in `activated` and `event`, `{{@id}}`, `{{state.<id>…}}` and `{{@state.<id>…}}` macros, and CEL member paths such as `state.kai.nerve`. It SHOULD also rewrite string literals in CEL that name it, and warn about any it can't. Owners use `own` and `self` for their own things, so those never need rewriting.
+An app renames a character, world or location that it brings into a session when its ID clashes (Play 2.1), such as a player's character or a lore pack. Nothing in the bundle or session refers to it yet, so the app rewrites the old ID only inside what it brings: it MUST rewrite every place this spec stores the ID, including macros and CEL member paths such as `state.kai.nerve`, and SHOULD rewrite string literals in CEL that name it, warning about any it can't. Owners use `own` and `self` for their own things, so those never need rewriting.
 
 ---
 
