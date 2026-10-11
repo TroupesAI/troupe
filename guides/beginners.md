@@ -374,7 +374,8 @@ A Troupe file can also hide inside a PNG picture, with a V3 copy beside it so ol
 
 ## 11. Where next
 
-- [The authoring guide](authoring.md) has patterns for goals and arcs, relationships, clocks, inventories, mysteries, whereabouts and group chats, and a one-page brief to give an LLM that writes Troupe files.
+- [The authoring guide](authoring.md) has patterns for goals and arcs, relationships, clocks, inventories, mysteries, whereabouts and group chats.
+- [The authoring brief](authoring-brief.md) is one page to give an LLM that writes Troupe files.
 - [Troupe Format](../spec/format.md) lists every field. Part I is all an author needs.
 - [`examples/`](../examples/) holds the spec's examples as files, and [`schemas/bundle.schema.json`](../schemas/bundle.schema.json) lets editors check a bundle as you write it.
 

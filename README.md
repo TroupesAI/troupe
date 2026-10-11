@@ -19,7 +19,8 @@ An open file format for AI roleplay: characters, the worlds they live in, the sc
 These are informative.
 
 - [Beginner's guide](guides/beginners.md): learn Troupe by building one story, step by step.
-- [Authoring guide](guides/authoring.md): patterns for common stories, and a one-page brief for people and LLMs writing Troupe files.
+- [Authoring guide](guides/authoring.md): patterns for common stories.
+- [Authoring brief](guides/authoring-brief.md): one page for people and LLMs writing Troupe files.
 - [Implementer's guide](guides/implementers.md): advice for apps on presentation and the choices the spec leaves to them.
 - [Character Card V2/V3 and Troupe](guides/character-cards.md): importing and exporting cards.
 
