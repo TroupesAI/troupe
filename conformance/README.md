@@ -171,7 +171,6 @@ Every field of `expect` is optional:
 | `directions` | The `direct` texts of the pass, unresolved, event before outcome. |
 | `ended` | Whether an `end` fired. |
 | `state` | A subset of the flattened state after the pass. |
-| `warnings` | How many `CEL_ERROR` warnings the pass reports: conditions and computes that failed at runtime (Format 11.2). |
 
 ### 4.8 `directions` and `ended`
 

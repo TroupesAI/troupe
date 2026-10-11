@@ -28,8 +28,8 @@ This guide is informative. It collects advice for apps that show and play Troupe
 ## Trackers and model output
 
 - **A separate tracker call** works best for state, and it can use a cheaper model than the story (Play 3.4).
-- **When to extract.** Run the tracker after each model message. Running it less often, or after player messages too, also works.
-- **Plain or structured replies.** Most chats need only plain replies. In `characters` mode each reply is one character's turn, so its speaker is known, and actions and scene description stay inside the text, usually in italics. A structured reply is needed only when one reply voices several characters, as in `narrator` mode, or marks content such as a private thought with `knownBy`. State can still come from a tracker either way.
+- **When to extract.** Run the tracker after every player and model message. Events `on: "player"` that read model-set values, such as dice checks, see the player's action only if the tracker has run on it.
+- **Plain or structured replies.** Most chats need only plain replies. In `characters` mode each reply is one character's turn, so its speaker is known, and actions and scene description stay inside the text, usually in italics. A structured reply is needed only when one reply voices several characters, as in `narrator` mode, or marks content such as a private thought with `knownBy`. A character's reply carries no state (Play 3.4), so state comes from a tracker.
 
 ## Prompts
 

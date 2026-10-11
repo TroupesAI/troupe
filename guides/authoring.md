@@ -92,7 +92,7 @@ A scenario variable records where each character waits, and one event brings who
   "compute": { "scene.present": "scene.present.filter(c, state.where[c] == '') + state.where.filter(c, state.where[c] == scene.location)" } }
 ```
 
-Mark the ghost's cast member `spoiler`, and nobody sees it in the cast list before the players walk into the cellar. Until then it is offstage, so the model knows nothing about it. Openings should set `scene.location`, so the event sorts presence at the root. Like any event, it fires at most once per round, so presence follows the first move in a round.
+Mark the ghost's cast member `spoiler`, and nobody sees it in the cast list before the players walk into the cellar. Until then it is offstage, so the model knows only its summary, and only when someone mentions it. Openings should set `scene.location`, so the event sorts presence at the root. Like any event, it fires at most once per round, so presence follows the first move in a round.
 
 ### Companions that remember
 

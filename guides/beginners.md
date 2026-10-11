@@ -272,7 +272,7 @@ A character can carry its own variables into any story. Kai declares `nerve`, an
 | `state.bell >= 10` | the tenth bell or later has rung |
 | `scene.location == 'vault'` | the scene is in the vault (strings use single quotes) |
 | `state.trust.kai >= 0.8 && hour >= 0 && hour < 6` | Kai trusts the player and it is before 6 a.m. where they are |
-| `opening == 'harbor' && turn == 0` | the chat started at the harbor and nobody has replied yet |
+| `opening == 'harbor' && turn == 0` | the chat started at the harbor and the player hasn't written yet |
 | `hit('glass') && !hit('guard')` | in an entry: "glass" was mentioned and "guard" wasn't |
 
 Some things are hard to test with a formula, like "Elena has told the crew about the key". Make that a `bool` variable with `by: ["model"]` and `oneWay`, with that sentence as its description. The tracker sets it when it happens, and from then on it is a recorded fact.
@@ -355,7 +355,7 @@ flowchart LR
   S -- "written back when it pauses: changed values, new memories" --> C
 ```
 
-The chat never needs the chronicle file to replay: everything it uses is copied in when it starts. Apps let people read, edit and delete every memory. A long friendship can run as many short chats with one chronicle, instead of one endless chat. [Format Appendix B.4](../spec/format.md#b4-chronicle) shows Mira's chronicle.
+The chat never needs the chronicle file to replay: everything it uses is copied in when it starts. Apps should let people read, edit and delete every memory. A long friendship can run as many short chats with one chronicle, instead of one endless chat. [Format Appendix B.4](../spec/format.md#b4-chronicle) shows Mira's chronicle.
 
 ## 10. Coming from Character Card V2/V3
 

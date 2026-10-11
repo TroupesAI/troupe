@@ -1,5 +1,5 @@
 {
-  "description": "Model output (Play 3.4): one payload from a tracker or a structured reply; plain replies; speakers and knownBy naming no character are dropped; model text, entries and characters are stored literal",
+  "description": "Model output (Play 3.4): one payload from a tracker or a structured reply; a character's structured reply keeps only its parts; plain replies; speakers and knownBy naming no character are dropped; model text, entries and characters are stored literal",
   "bundle": {
     "troupe": "0.11",
     "kind": "bundle",
@@ -164,11 +164,10 @@
     },
     {
       "type": "output",
-      "name": "a structured reply with a newcomer",
+      "name": "the narrator's structured reply with a newcomer",
       "reply": {
         "id": "3",
-        "parent": "2",
-        "char": "a"
+        "parent": "2"
       },
       "output": {
         "parts": [
@@ -223,7 +222,6 @@
           "id": "3",
           "parent": "2",
           "from": "model",
-          "char": "a",
           "content": [
             {
               "speaker": "a",
@@ -271,6 +269,56 @@
         "characters": [
           "p",
           "rook"
+        ]
+      }
+    },
+    {
+      "type": "output",
+      "name": "a character's structured reply keeps only its parts",
+      "reply": {
+        "id": "3",
+        "parent": "2",
+        "char": "a"
+      },
+      "output": {
+        "parts": [
+          {
+            "speaker": "a",
+            "text": "Fine."
+          }
+        ],
+        "changes": {
+          "mood": "tense"
+        },
+        "entries": [
+          {
+            "id": "met",
+            "text": "Ann met {{user}}."
+          }
+        ],
+        "characters": [
+          {
+            "id": "rook",
+            "name": "Rook",
+            "description": "A thief."
+          }
+        ]
+      },
+      "expect": {
+        "message": {
+          "id": "3",
+          "parent": "2",
+          "from": "model",
+          "char": "a",
+          "content": [
+            {
+              "speaker": "a",
+              "text": "Fine."
+            }
+          ]
+        },
+        "characters": [
+          "p"
         ]
       }
     },

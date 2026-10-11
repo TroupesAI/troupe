@@ -83,7 +83,7 @@ Who speaks next is up to the app. Apps MAY let a person take over a model-played
 
 The state at a message is computed by applying, in order:
 
-1. every variable's initial value; no location; the whole cast present except the joiners (Format 12.2);
+1. every variable's initial value, clamped to `min` and `max`; no location; the whole cast present except the joiners (Format 12.2);
 2. the `changes` of every message on the path from the root to that message, in path order, and within a message in array order.
 
 Playing never modifies a bundle: state is the bundle's starting values plus the changes recorded in the session. Derived variables are computed from that state when read; one whose expression fails at runtime is absent. Readers apply recorded changes and never re-run events or trackers on load. The state at a message includes its own changes. Branches never share state. Keys, values and validity are defined in Format 8.5.
@@ -107,7 +107,7 @@ Then they drop each key whose value is still invalid, or whose channel isn't all
 **Events.** At each root, after each player or model message once its player and model changes are recorded, and after player edits:
 
 1. Events in use are evaluated once each, in the order scenario, worlds, characters (cast order), each in array order, in a single pass, skipping events whose `on` doesn't match the triggering message; a root made from an opening, and a records-only message, match neither. Each sees the state, firings and counts left by those before it. Messages added by events don't trigger evaluation.
-2. An event fires when its `when` is true; it isn't `once` with an earlier firing on the path; its distance from its last firing is greater than `cooldown`, so it fires at most once per round (an event that fired after a player message can't fire again after the replies in that round); and its `chance` roll succeeds.
+2. An event fires when its `when` is true; it isn't `once` with an earlier firing on the path; its distance from its last firing is greater than `cooldown` (0 when unset), so it fires at most once per round (an event that fired after a player message can't fire again after the replies in that round); and its `chance` roll succeeds.
 3. A firing chooses an outcome by a weighted roll, if there are `outcomes`. The event's `set` and `compute`, then the outcome's, produce new values; later keys replace earlier ones. Every `compute` expression sees the state before this firing. Values are prepared as above.
 4. The firing is recorded on the triggering message as `{"by": "rules", "event": name, "outcome": index, "set": {…}}`, even when `set` is empty.
 5. The `message` parts of all firings in the pass, event before outcome, form one `from: "system"` message, a child of the triggering message, which becomes the head.
@@ -128,7 +128,7 @@ interface ModelOutput {
 ```
 
 - **Tracker.** A separate model call or a tool call reads the messages since the last extraction on the path and returns everything but `parts`. Its input is, for each variable whose `by` includes `model`, its key, type, `values` or range, `description` and current value; the scene, with location names and the cast; entries placed in `tracker` whose `when` holds; and the messages, with full knowledge.
-- **Structured reply.** The story model returns the whole payload in its reply. Its System slot also carries the tracker's input other than the messages, so it knows which values it may change.
+- **Structured reply.** The story model returns the whole payload in its reply. For the narrator and the single voice, its System slot also carries the tracker's input other than the messages, so it knows which values it may change. Variables have no `knownBy`, so a character's generation in `characters` mode gets no tracker input, and apps keep only the `parts` of its reply.
 - **Plain reply.** Without structure, the reply is one text part whose `speaker` is the message's `char`, or none for the narrator. Apps MUST NOT guess `knownBy` from plain text.
 
 Apps record `changes` as `{"by": "model", …}`, prepared as in section 3.3, on the newest message covered; `entries` as session entries on the same message; and `characters` in the header. Speakers and `knownBy` IDs that name no character in the session, newcomers included, are dropped. An extraction that finds nothing SHOULD record `{"by": "model", "set": {}}`, which marks where the next one starts. Failure is not fatal. The event pass after a message waits for any extraction the app runs on it.
@@ -212,7 +212,7 @@ Matching works on Unicode scalar values, with scanned text and plain keys normal
 
 Each new model message records the entries that **activated** for it in `activated`, in file order. For a recorded entry, *d* is the distance from the latest message recording it to the message being built.
 
-- **Sticky:** if *d* ≤ `sticky`, the entry is kept without needing to match.
+- **Sticky:** for an entry with `sticky`, if *d* ≤ `sticky`, the entry is kept without needing to match.
 - **Cooldown:** if `sticky` < *d* ≤ `sticky` + `cooldown` (an unset `sticky` counts as 0), it can't activate.
 - **Once:** an entry recorded anywhere on the path can't activate again.
 
@@ -244,7 +244,7 @@ Troupe defines what goes into a prompt and in which slot; formatting, mapping to
 | --- | --- |
 | **System** | the app's own prompt; the session's `limits` (Format 12.4); selected entries placed in `system`; event directions (section 3.3) |
 | **Setting** | the premise; world descriptions; the current location and its parents |
-| **People** | present model-played characters, then the character being generated for if absent: description and cast `notes`; the players' characters; offstage cast characters whose name or alias, as a plain key, matches the scanned text (section 5.2) of the last 4 messages, as the generation can see it: their `summary`, a character without one contributing nothing; dialogue examples of the present model-played characters and the character being generated for |
+| **People** | present model-played characters, then the character being generated for if absent: description and cast `notes`; the players' characters, with their cast `notes`; offstage cast characters whose name or alias, as a plain key, matches the scanned text (section 5.2) of the last 4 messages, as the generation can see it: their `summary`, a character without one contributing nothing; dialogue examples of the present model-played characters and the character being generated for |
 | **Context** | selected entries placed in `context`; pinned messages |
 | **History** | messages on the path with parts the generation can see, with summaries it can see standing in for messages they cover where the app chooses, and entries with a numeric position inserted at their depth |
 
@@ -296,7 +296,7 @@ A conforming **app** reads files as a conforming reader (Format 17.1), and also 
 | Events in a single pass, once per round, one message per pass | Cascading rules | Deterministic, terminating, no accidental branches. |
 | Witness knowledge, `["narrator"]` | Everyone knows everything; `[]` | Offstage characters miss events; no empty-list footgun. |
 | Presence from openings, offstage summaries on mention | Everyone present, every summary | Casts and rosters scale. |
-| One model-output payload | Separate tracker and reply rules | Speakers, state and memories travel the same way from any transport. |
+| One model-output payload; characters' replies carry only parts | Separate tracker and reply rules; state from every reply | Speakers, state and memories travel the same way from any transport, and a character's model never reads variable descriptions it mustn't know. |
 | Prompt slots, not a fixed order | One mandated order | Apps keep prompt caches warm with long contexts. |
 | SHA-256 rolls over seed, message and subject | A sequential generator | Order-independent, exact in JavaScript, fresh on regeneration. |
 | Recorded activations; sticky not re-recorded | Recomputing history | Timers continue in any app, and run out. |
