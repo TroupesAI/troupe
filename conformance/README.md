@@ -116,7 +116,6 @@ The state is flattened to an object with these keys:
 | `by` | `"rules"`, `"player"` or `"model"`. |
 | `set` | The proposed change, `key → value`. |
 | `owner` | Optional. The owner whose own events write the change, so `own.<id>` keys resolve. |
-| `starting` | Optional boolean. The change carries starting values, which are exempt from `oneWay`. |
 
 - `expect.set` is the prepared change exactly, with full keys (`own.x` written as `<owner>.x`).
 - `expect.dropped` is the list of input keys dropped, in input order.
@@ -271,7 +270,7 @@ Inputs are as for `select`. The prompt has five slots: `system`, `setting`, `peo
 | Dialogue examples | `examples:<id>` |
 | A pinned message | `pinned:<id>` |
 | A history message | `message:<id>` |
-| The session's limits (section 4.18) | `limits` |
+| The session's limits, right after `app`; the wording is the app's | `limits` |
 
 The text of a `character:<id>` item is the character's resolved `description`; its cast `notes` reach the prompt too, but are not part of the compared text. In the People slot, offstage characters without a `summary` contribute nothing, and `examples:<id>` items come only for present model-played characters and the character being generated for.
 
@@ -294,7 +293,7 @@ The reader parses the bytes, checks the version, validates against the schema (u
 
 Every field of `expect` is optional:
 
-- `ok` is whether a document is read with no error diagnostics. A newer minor version or an unknown field is a warning, so the input is still `ok`.
+- `ok` is whether a document is read with no error diagnostics. Another minor version or an unknown field is a warning, so the input is still `ok`.
 - `codes` is the sorted list of distinct codes reported, compared exactly.
 - `equals` is the bundle read, for `bundle` and `png`, after absent values read as missing (Format 2.2).
 - `ids` is, for `session`, the IDs of the messages read, in line order.
@@ -316,7 +315,7 @@ The test reads the case's raw session lines.
 | `message` | Instead of `reply`: an existing message, for a tracker extraction. |
 | `output` | A string for a plain reply, or a `ModelOutput` object. |
 
-The output is applied in this order: newcomers in `characters` added to the header, parts (model text stored escaped, Format 10; speakers and `knownBy` IDs naming no character dropped, newcomers included), `changes` prepared and recorded as `{"by": "model", "set", "reason"?}`, then `entries` added as session entries.
+The output is applied as Play 3.4 says, with model text stored escaped (Format 10) and changes recorded as `{"by": "model", "set", "reason"?}`.
 
 Every field of `expect` is optional:
 
@@ -333,28 +332,22 @@ Every field of `expect` is optional:
 | `writeBack` | Optional. `{head}`: write back to the chronicle from the case's session at `head`. |
 
 - `expect.codes` is optional: the sorted distinct codes from validating the chronicle against `chronicle.schema.json` and checking it (Format 13). A value key of a keyed variable has exactly one key segment.
-- `expect.memories` and `expect.values` are the chronicle's `memories` and `values` after writing back (Play 2.2). `values` keeps only carried keys, keyed without the owner. A carried session entry on the path to `head` whose `knownBy` is absent or names the character, the latest version of each ID, keeps in `knownBy` only the character, `narrator` and the persona, replaces the memory with that ID or is added after the others, in the order the IDs first appear, and with `disabled` removes it. Root entries unchanged from how the start copied them are skipped.
+- `expect.memories` and `expect.values` are the chronicle's `memories` and `values` after writing back from the path to `head` (Play 2.2).
 
 Starting from a chronicle (section 4.11 input `chronicle`) follows Play 2.2. The chronicle's character is added to the header's `characters` after the test's own `characters`. When the test brings no `characters`, its `persona` fills the first seat and comes first in the header's `characters`.
 
-### 4.18 Limits
-
-A session or chronicle `limits` object is rendered in the System slot as the `limits` item (section 4.13), right after `app`. The test checks only that the item is there; the wording is the app's.
-
-### 4.19 `edit`: player edits to state (Play 3.3)
+### 4.18 `edit`: player edits to state (Play 3.3)
 
 | Input | Meaning |
 | --- | --- |
 | `set` | The values the player sets, `key → value`. |
 | `newId` | The ID of the records-only system message to add when the head isn't a player message. |
-| `eventMessageId` | Optional. The ID for the system message the following event pass may add. |
 
 The edit is prepared as a `player` change (Play 3.3) against the state at the head. If the head is a player message, the change is appended to its `changes`; otherwise a new message `{"id": newId, "parent": head, "from": "system", "content": [], "changes": [change]}` is added and becomes the head. Events are then evaluated at that message (section 4.7) and recorded on it.
 
 - `expect.message` is the message the edit was recorded on, after the event pass.
 - `expect.events` is the event pass's firings.
 - `expect.head` is the head afterwards.
-- `expect.dropped` is the list of keys dropped by preparation.
 
 ## 5. Floating point and text
 

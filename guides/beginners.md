@@ -359,18 +359,7 @@ The chat never needs the chronicle file to replay: everything it uses is copied 
 
 ## 10. Coming from Character Card V2/V3
 
-| V2/V3 | Troupe |
-| --- | --- |
-| first message, alternate greetings | openings of a scenario, swipeable |
-| scenario text | the scenario's `premise` |
-| description and personality | one `description`, with headings |
-| system prompt, post-history instructions | entries with a `position`, known only by the character |
-| lorebook entries | entries; a constant entry has no keys |
-| secondary keys with AND or NOT | `when` with `hit()` |
-| probability, inclusion groups | `chance`, `group` and `weight` |
-| a chat file with swipes | a session, with swipes as siblings |
-
-A Troupe file can also hide inside a PNG picture, and an exporter can put a V3 copy beside it so older apps can read it. [Character Card V2/V3 and Troupe](character-cards.md) maps every field, in both directions.
+A V2/V3 card becomes a bundle with one character and a scenario: greetings become swipeable openings, the scenario text becomes the `premise`, the system prompt and post-history instructions become entries known only by the character, and the lorebook becomes entries, with secondary keys written as `when` with `hit()`. A chat file becomes a session, with swipes as siblings. [Character Card V2/V3 and Troupe](character-cards.md) maps every field, in both directions.
 
 ## 11. Where next
 

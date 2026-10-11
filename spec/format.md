@@ -156,7 +156,7 @@ MUST, MUST NOT, SHOULD, SHOULD NOT and MAY are used as described in RFC 2119 and
 
 ### 2.5 Text
 
-Model-facing text is Markdown (CommonMark 0.31.2). Apps MUST NOT render raw HTML from any field; they MAY render GFM tables and strikethrough. A **field** is one JSON string value. Timestamps are RFC 3339 in UTC, ending in `Z`, and language tags BCP 47 in canonical case.
+Model-facing text is Markdown (CommonMark 0.31.2). Apps never render raw HTML (section 16); they MAY render GFM tables and strikethrough. A **field** is one JSON string value. Timestamps are RFC 3339 in UTC, ending in `Z`, and language tags BCP 47 in canonical case.
 
 ### 2.6 How to read this document
 
@@ -533,14 +533,13 @@ Macros are the only substitution in text. `@` turns IDs into names.
 - **Which state.** Macros in a message resolve against the state at that message; elsewhere, against the evaluation point (section 11.1). In a scenario's text, openings included, `own` means `state`; session entries have no `own`.
 - **Where.** Macros resolve in author-written text: descriptions, summaries, premises, briefings, notes, entry texts, openings, event messages and directions, variable descriptions, questions, labels, and image `alt` in author content. Entry titles and keys are never resolved. Macros never resolve in text written by players or models, including entries and characters that a model adds: apps MUST store such text with each `\` written as `\\` and each `{{` as `\{{`.
 - **Parsing** is one left-to-right scan. At each `{{`, the longest form in the table, with no spaces outside comments and options, is a macro; otherwise the first `{` is kept and scanning resumes at the next character. A comment runs from `{{//` to the next `}}`. Options can't contain `::` or `}}`. `\{{` produces a literal `{{`, and `\\` a literal `\`.
-- **Unknown macros** are left as written (`UNKNOWN_MACRO`).
 - **Stored text keeps its macros.** They resolve when text is shown or sent.
 
 ---
 
 ## 11. Conditions
 
-Conditions (`when`), `derive` and `compute` use the Common Expression Language (CEL): small, sandboxed and non-Turing-complete. Google maintains implementations in Go, Java and C++, and there are community implementations in JavaScript, Python, Rust and Swift.
+Conditions (`when`), `derive` and `compute` use the Common Expression Language (CEL): small, sandboxed and non-Turing-complete.
 
 ### 11.1 Environment
 
@@ -685,8 +684,6 @@ A message may add entries, owned by `session`. They are candidates from that mes
 - **`hidden`** messages stay for people, but are never sent to models, scanned or summarized.
 - **`stopped`** marks a partial reply.
 - **`summary`** condenses the messages from `from` to its message, and MAY stand in for them in history. Without `knownBy`, it is known by the characters who know every part it covers. Editing or deleting a covered message MUST remove it. Apps MAY rebuild summaries, or leave them out when exporting.
-- **`limits`** belong to the people playing, and apps apply them to every generation (Play 6).
-- **Image parts** reach models that accept images, and other models through `alt`.
 - **Records-only messages.** A system message with empty `content` carries only `changes`, such as player edits (Play 3.3): it is not sent to models, not scanned, and not counted for `scanDepth` or numeric positions.
 
 ---
@@ -736,7 +733,7 @@ Every Troupe document has a top-level `troupe` key with the spec version and a `
 
 ### 14.2 Files
 
-Fields that hold a file accept a relative path inside the package, an `https:` URL, or a `data:` URI with base64 content. Images (`cover`, `avatar`, location `image` and image parts) are PNG, JPEG, WebP, AVIF or GIF. Apps MUST determine the format from the content and reject anything else, SVG included.
+Fields that hold a file accept a relative path inside the package, an `https:` URL, or a `data:` URI with base64 content. Images (`cover`, `avatar`, location `image` and image parts) are PNG, JPEG, WebP, AVIF or GIF, never SVG; apps check the format by content (section 16).
 
 ### 14.3 Packages
 
@@ -765,7 +762,7 @@ Troupe files are shared between strangers.
 1. **No active content.** Apps MUST NOT run scripts or styles from any field or extension, or render raw HTML.
 2. **No dangerous links.** Apps MUST NOT follow Markdown links whose scheme isn't `http` or `https`.
 3. **No silent network requests.** Apps MUST NOT fetch remote files without the user's consent, including images in Markdown, which work as tracking pixels.
-4. **Known media only.** Apps MUST check file formats by content and cap decoded image size.
+4. **Known media only.** Apps MUST determine file formats by content, reject formats section 14.2 doesn't list, and cap decoded image size.
 5. **Linear-time regex.** Regex keys and `matches()` MUST use an engine that runs in linear time, such as RE2.
 6. **Sandboxed conditions.** CEL MUST be evaluated by a CEL implementation, never translated into another language.
 7. **Safe archives.** Readers MUST reject absolute paths, `..` segments, backslashes, paths outside section 14.3's grammar, symbolic links, encryption and duplicate names, and MUST cap entry count, unpacked size and compression ratio.

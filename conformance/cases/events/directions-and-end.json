@@ -150,14 +150,6 @@
     },
     {
       "type": "directions",
-      "name": "and its regenerations (same parent)",
-      "at": "3",
-      "expect": [
-        "Raise the stakes to {{state.stakes}}."
-      ]
-    },
-    {
-      "type": "directions",
       "name": "a model message on the path ends it; a model trigger directs the next reply",
       "at": "5",
       "expect": [

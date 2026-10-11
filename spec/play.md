@@ -135,9 +135,7 @@ interface ModelOutput {
 - **Structured reply.** The story model returns the whole payload in its reply. For the narrator and the single voice, its System slot also carries the tracker's input other than the messages, so it knows which values it may change. Variables have no `knownBy`, so a character's generation in `characters` mode gets no tracker input, and apps keep only the `parts` of its reply.
 - **Plain reply.** Without structure, the reply is one text part whose `speaker` is the message's `char`, or none for the narrator. Apps MUST NOT guess `knownBy` from plain text.
 
-Apps record `changes` as `{"by": "model", …}`, prepared as in section 3.3, on the newest message covered; `entries` as session entries on the same message; and `characters` in the header. Speakers and `knownBy` IDs that name no character in the session, newcomers included, are dropped. An extraction that finds nothing SHOULD record `{"by": "model", "set": {}}`, which marks where the next one starts. Failure is not fatal. The event pass after a message waits for any extraction the app runs on it.
-
-A condition written in plain words, such as "Elena has told the crew about the key", is a `bool` variable with `by: ["model"]` and `oneWay`, whose description is that sentence. Once set, it stays set and replays exactly.
+Apps apply a payload in this order: `characters` join the header; `parts` are stored, dropping speakers and `knownBy` IDs that name no character in the session, newcomers included; `changes` are recorded as `{"by": "model", …}`, prepared as in section 3.3, on the newest message covered; and `entries` become session entries on the same message. An extraction that finds nothing SHOULD record `{"by": "model", "set": {}}`, which marks where the next one starts. Failure is not fatal. The event pass after a message waits for any extraction the app runs on it.
 
 ### 3.5 Edits and regeneration
 
@@ -246,11 +244,11 @@ Troupe defines what goes into a prompt and in which slot; formatting, mapping to
 
 | Slot | Contents, in order |
 | --- | --- |
-| **System** | the app's own prompt; the session's `limits` (Format 12.4); selected entries placed in `system`; event directions (section 3.3) |
+| **System** | the app's own prompt; the session's `limits` (Format 12); selected entries placed in `system`; event directions (section 3.3) |
 | **Setting** | the premise; world descriptions; the current location and its parents |
 | **People** | present model-played characters, then the character being generated for if absent: description and cast `notes`; the players' characters, with their cast `notes`; offstage cast characters whose name or alias, as a plain key, matches the scanned text (section 5.2) of the last 4 messages, as the generation can see it: their `summary`, a character without one contributing nothing; dialogue examples of the present model-played characters and the character being generated for |
 | **Context** | selected entries placed in `context`; pinned messages |
-| **History** | messages on the path with parts the generation can see, with summaries it can see standing in for messages they cover where the app chooses, and entries with a numeric position inserted at their depth |
+| **History** | messages on the path with parts the generation can see, image parts reaching models without image input as their `alt`, with summaries it can see standing in for messages they cover where the app chooses, and entries with a numeric position inserted at their depth |
 
 Entries keep file order within a slot, and everything in a slot is filtered by section 7. Apps MUST apply the session's `limits` to every generation in the session, media included, in the System slot and in the app's own wording, and never drop them to save space. Conformance covers what each slot holds and its order, not the order of slots.
 
@@ -287,7 +285,7 @@ A conforming **app** reads files as a conforming reader (Format 17.1), and also 
 | Decision | Instead of | Why |
 | --- | --- | --- |
 | Story fixed, fitting a recorded baseline | Specifying only content, or only procedures | Outcomes replay exactly, and better fitting can come later. |
-| Identical entry selection is a MUST | Leaving selection to each app | Lorebooks behaving differently in every app is the most common complaint about today's cards. |
+| Identical entry selection is a MUST | Leaving selection to each app | Sessions replay exactly, and the conformance suite can test selection. |
 | Events in a single pass, once per round, one message per pass | Cascading rules | Deterministic, terminating, no accidental branches. |
 | Witness knowledge, `["narrator"]` | Everyone knows everything; `[]` | Offstage characters miss events; no empty-list footgun. |
 | Presence from openings, offstage summaries on mention | Everyone present, every summary | Casts and rosters scale. |

@@ -9,6 +9,7 @@ This guide is informative. It collects advice for apps that show and play Troupe
 ## Authoring
 
 - **YAML.** Editors may let authors write a bundle in YAML that maps one to one onto JSON, for block scalars and comments. Export and share the JSON.
+- **CEL.** Google maintains CEL implementations in Go, Java and C++, and there are community implementations in JavaScript, Python, Rust and Swift (Format 11).
 
 ## Telling people what's wrong
 

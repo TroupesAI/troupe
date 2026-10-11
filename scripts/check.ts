@@ -3,7 +3,7 @@
 //   - examples/ matches the examples in spec/format.md (--write-examples rewrites them);
 //   - the spec version agrees across the documents, schema URLs, examples, bundles in Markdown and cases;
 //   - every conformance case is valid JSON, named <area>/<topic>.json, and the files it names exist;
-//   - relative Markdown links and #anchors resolve.
+//   - relative Markdown links and #anchors resolve, and every "Format N.N" or "Play N.N" names a section.
 import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import Ajv2020 from "ajv/dist/2020.js";
@@ -38,7 +38,9 @@ const format = read("spec/format.md");
 const block = (heading: string, lang: string): string => {
   const at = format.indexOf(heading);
   if (at < 0) throw new Error(`spec/format.md has no heading "${heading}"`);
-  const start = format.indexOf("```" + lang + "\n", at) + lang.length + 4;
+  const fence = format.indexOf("```" + lang + "\n", at);
+  if (fence < 0) throw new Error(`spec/format.md has no ${lang} block after "${heading}"`);
+  const start = fence + lang.length + 4;
   return format.slice(start, format.indexOf("\n```", start)) + "\n";
 };
 const examples: Record<string, string> = {
@@ -145,6 +147,18 @@ for (const doc of markdown) {
     else if (anchor && target.endsWith(".md") && !anchors(target).has(anchor)) fail(`${doc}: no heading for #${anchor} in ${target}`);
   }
 }
+
+// Section citations: "Format 7.2" and "Play 3.3" anywhere, and "section 7.2" within a spec document
+const sections = (path: string) => new Set([...read(path).matchAll(/^#{2,3} (\d+(?:\.\d+)?)[. ]/gm)].map((m) => m[1]));
+const specSections: Record<string, Set<string>> = { Format: sections("spec/format.md"), Play: sections("spec/play.md") };
+const cite = (where: string, text: string, own?: string) => {
+  for (const m of text.matchAll(/\b(Format|Play) (\d+(?:\.\d+)?)\b/g))
+    if (!specSections[m[1]].has(m[2])) fail(`${where}: cites ${m[1]} ${m[2]}, which doesn't exist`);
+  if (own) for (const m of text.matchAll(/\bsections? (\d+(?:\.\d+)?)\b(?! of Troupe)/g))
+    if (!specSections[own].has(m[1])) fail(`${where}: cites section ${m[1]}, which doesn't exist`);
+};
+for (const doc of markdown) cite(doc, read(doc), { "spec/format.md": "Format", "spec/play.md": "Play" }[doc]);
+for (const f of cases) cite(`conformance/cases/${f}`, read(`conformance/cases/${f}`));
 
 if (problems.length) {
   console.error(problems.join("\n"));

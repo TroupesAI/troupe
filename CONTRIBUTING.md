@@ -22,7 +22,7 @@ When the spec doesn't decide a question, fix the text; never record a reading on
 
 ## Checks
 
-Requires [Bun](https://bun.sh). `bun install`, then `bun run check` runs what CI runs: the schemas compile; the examples, and every complete bundle in a Markdown document, validate; `examples/` matches the spec; the version agrees everywhere; cases parse; and relative links and anchors resolve.
+Requires [Bun](https://bun.sh). `bun install`, then `bun run check` runs what CI runs: the schemas compile; the examples, and every complete bundle in a Markdown document, validate; `examples/` matches the spec; the version agrees everywhere; cases parse; and relative links, anchors and section citations resolve.
 
 ## Versions
 

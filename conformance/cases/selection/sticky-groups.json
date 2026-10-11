@@ -1,0 +1,142 @@
+{
+  "description": "Sticky entries that share a group (Play 5.5 step 1): the highest priority stays, ties broken by file order, and the others are excluded for the message",
+  "note": "Such records arise because pulled entries ignore groups (Play 5.6). Message 2 is at turn 1 and the message being built at turn 2, so d = 1 and all four are kept by sticky; none is recorded again.",
+  "bundle": {
+    "troupe": "0.11",
+    "kind": "bundle",
+    "characters": [
+      {
+        "id": "a",
+        "name": "Ann",
+        "description": "Ann."
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s",
+        "cast": [
+          {},
+          {
+            "character": "a"
+          }
+        ],
+        "entries": [
+          {
+            "id": "e1",
+            "keys": [
+              "zzz"
+            ],
+            "group": "g",
+            "priority": 60,
+            "sticky": 3,
+            "text": "e1"
+          },
+          {
+            "id": "e2",
+            "keys": [
+              "zzz"
+            ],
+            "group": "g",
+            "priority": 40,
+            "sticky": 3,
+            "text": "e2"
+          },
+          {
+            "id": "e4",
+            "keys": [
+              "zzz"
+            ],
+            "group": "h",
+            "priority": 50,
+            "sticky": 3,
+            "text": "e4"
+          },
+          {
+            "id": "e5",
+            "keys": [
+              "zzz"
+            ],
+            "group": "h",
+            "priority": 50,
+            "sticky": 3,
+            "text": "e5"
+          }
+        ]
+      }
+    ]
+  },
+  "session": {
+    "header": {
+      "troupe": "0.11",
+      "kind": "session",
+      "scenario": "s",
+      "seed": "conformanceSeed0001",
+      "characters": [
+        {
+          "id": "p",
+          "name": "Pat",
+          "description": "Pat."
+        }
+      ],
+      "players": [
+        "p"
+      ]
+    },
+    "messages": [
+      {
+        "id": "1",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "Hi."
+          }
+        ]
+      },
+      {
+        "id": "2",
+        "parent": "1",
+        "from": "model",
+        "char": "a",
+        "activated": [
+          "s/e1",
+          "s/e2",
+          "s/e4",
+          "s/e5"
+        ],
+        "content": [
+          {
+            "speaker": "a",
+            "text": "Hello."
+          }
+        ]
+      },
+      {
+        "id": "3",
+        "parent": "2",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "Ok."
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "select",
+      "for": "a",
+      "parent": "3",
+      "messageId": "4",
+      "expect": {
+        "selected": [
+          "s/e1",
+          "s/e4"
+        ],
+        "activated": []
+      }
+    }
+  ]
+}
