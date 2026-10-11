@@ -4,6 +4,30 @@ An open file format for AI roleplay: characters, the worlds they live in, the sc
 
 **Status:** v0.11 draft. Breaking changes are allowed until 1.0 ([road to 1.0](spec/format.md#appendix-d-road-to-10)).
 
+## A first look
+
+A complete Troupe file: one character, and a scenario that starts a chat with her.
+
+```json
+{
+  "troupe": "0.11",
+  "kind": "bundle",
+  "characters": [
+    { "id": "elena", "name": "Elena Voss", "description": "A meticulous thief and mapmaker. Calm, exacting, dry humor." }
+  ],
+  "scenarios": [
+    {
+      "id": "workshop",
+      "openings": [
+        { "id": "late", "content": [{ "speaker": "elena", "text": "You're late. Sit down, and don't touch the maps." }] }
+      ]
+    }
+  ]
+}
+```
+
+The [beginner's guide](guides/beginners.md) grows this card into a full story, with lore, secrets, state and events.
+
 ## Specification
 
 | | |

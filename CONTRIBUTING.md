@@ -28,7 +28,7 @@ Requires [Bun](https://bun.sh). `bun install`, then `bun run check` runs what CI
 
 Format and Play share one version, `major.minor`. A minor version bump changes, together:
 
-- the version line of `spec/format.md` and `spec/play.md`, and the bundles in the guides;
+- the version line of `spec/format.md` and `spec/play.md`, and the bundles in the README and guides;
 - every schema `$id` (`https://troupe.example/schema/<minor>/…`) and `troupe` in every example and case.
 
 The changelog records each version.
