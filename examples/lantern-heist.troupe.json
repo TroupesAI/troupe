@@ -21,7 +21,6 @@
       "aliases": ["Elena Voss", "the Cartographer"],
       "description": "## Appearance\nTall woman in her forties, ink-stained fingers, a waxed oilskin coat.\n\n## Personality\nCalm, exacting, dry humor. Distrusts improvisation and anyone who rushes.\n\n## Background\nA former royal surveyor, dismissed after mapping a vault she later robbed.",
       "summary": "A meticulous thief who plans every job down to the bell.",
-      "appearance": "Tall woman in her forties, ink-stained fingers, grey-streaked braid, waxed oilskin coat with hidden pockets.",
       "examples": [
         [
           { "speaker": "user", "text": "Can we just go?" },
@@ -39,8 +38,6 @@
       "name": "Kai",
       "description": "A wiry, sun-browned acrobat in a patched red jacket who talks too much and owes everyone money. Reckless, warm, quick to joke and quicker to run.",
       "summary": "A reckless acrobat with debts and a quick grin.",
-      "appearance": "Wiry young man, sun-browned, a shock of black hair, patched red jacket, bare feet.",
-      "talkativeness": 0.8,
       "variables": [
         {
           "id": "nerve", "type": "int", "min": 0, "max": 3, "by": ["model"], "maxStep": 1,

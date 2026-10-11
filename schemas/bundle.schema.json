@@ -275,12 +275,6 @@
         "summary": {
           "type": "string"
         },
-        "appearance": {
-          "type": "string"
-        },
-        "voice": {
-          "type": "string"
-        },
         "examples": {
           "type": "array",
           "items": {
@@ -308,10 +302,6 @@
           "items": {
             "$ref": "#/$defs/event"
           }
-        },
-        "talkativeness": {
-          "$ref": "#/$defs/unit",
-          "default": 0.5
         },
         "avatar": {
           "$ref": "#/$defs/image"
@@ -1138,41 +1128,6 @@
             },
             "knownBy": {
               "$ref": "#/$defs/ids"
-            },
-            "generated": {
-              "$ref": "#/$defs/generated"
-            }
-          }
-        },
-        {
-          "title": "Audio part",
-          "type": "object",
-          "required": [
-            "type",
-            "src"
-          ],
-          "additionalProperties": false,
-          "properties": {
-            "type": {
-              "const": "audio"
-            },
-            "src": {
-              "$ref": "#/$defs/audio"
-            },
-            "transcript": {
-              "type": "string"
-            },
-            "speaker": {
-              "$ref": "#/$defs/id"
-            },
-            "knownBy": {
-              "$ref": "#/$defs/ids"
-            },
-            "generated": {
-              "$ref": "#/$defs/generated"
-            },
-            "ext": {
-              "$ref": "#/$defs/ext"
             }
           }
         },
@@ -1240,48 +1195,6 @@
           "$ref": "#/$defs/ext"
         }
       }
-    },
-    "generated": {
-      "type": "object",
-      "required": [
-        "model"
-      ],
-      "additionalProperties": false,
-      "properties": {
-        "model": {
-          "type": "string"
-        },
-        "prompt": {
-          "type": "string"
-        },
-        "seed": {
-          "type": "string"
-        },
-        "from": {
-          "$ref": "#/$defs/strings"
-        },
-        "at": {
-          "$ref": "#/$defs/timestamp"
-        },
-        "ext": {
-          "$ref": "#/$defs/ext"
-        }
-      }
-    },
-    "audio": {
-      "description": "A package path, an https URL, or a base64 data URI of an audio file.",
-      "anyOf": [
-        {
-          "$ref": "#/$defs/packagePath"
-        },
-        {
-          "$ref": "#/$defs/httpsUrl"
-        },
-        {
-          "type": "string",
-          "pattern": "^data:audio/(ogg|mpeg|mp4|flac|wav|x-wav);base64,[A-Za-z0-9+/=]+$"
-        }
-      ]
     }
   }
 }

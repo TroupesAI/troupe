@@ -4,8 +4,8 @@ This guide is informative. It collects advice for apps that show and play Troupe
 
 ## Characters
 
-- **Images.** When a character has no image for the name you want, fall back to `neutral` in the same set, then `neutral`, then `avatar` (Format 4).
-- **Who speaks next** is up to the app (Play 2.3). A good default: prefer present characters named in the last message, weigh `talkativeness`, and let each model-played character speak at most once per player message before returning control.
+- **Images.** Name a character's `images` `neutral`, `happy`, `sad`, `angry`, `surprised`, `afraid` and `embarrassed`, optionally grouped as `<set>/<name>`. When a character has no image for the name you want, fall back to `neutral` in the same set, then `neutral`, then `avatar` (Format 4).
+- **Who speaks next** is up to the app (Play 2.3). A good default: prefer present characters named in the last message, and let each model-played character speak at most once per player message before returning control.
 
 ## Telling people what's wrong
 

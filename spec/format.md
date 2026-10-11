@@ -51,7 +51,7 @@ This document defines the files and what every field means. [Troupe Play](play.m
 - **Mechanics without code.** Stats, clocks, inventories, beats and random outcomes are declared, never scripted.
 - **Model-agnostic and safe to share.** Files hold data and sandboxed conditions, never executable code or model-specific syntax.
 
-Non-goals: prompt templates and sampler settings, image and voice generation settings (their provenance is recorded, their settings are not), app UI, accounts, sync and scripting.
+Non-goals: prompt templates and sampler settings, image and voice generation, app UI, accounts, sync and scripting.
 
 ### 1.2 Documents
 
@@ -215,13 +215,10 @@ interface Character {
   aliases?: string[];              // other names, including a full name
   description: string;             // Markdown; headings such as "## Personality" for structure
   summary?: string;                // short version, shown when they are mentioned offstage
-  appearance?: string;             // what they look like, nothing else; for images
-  voice?: string;                  // how they sound, nothing else; for speech
   examples?: Line[][];             // sample exchanges
   entries?: Entry[];               // lore, direction, secrets, goals (section 7)
   variables?: Variable[];          // the character's own state, read as own.<id> (section 8)
   events?: Event[];
-  talkativeness?: number;          // 0–1, a hint for choosing who speaks; 0.5
   avatar?: string;
   images?: Record<string, string>; // expressions and outfits: "happy", "winter/happy"
   ext?: Ext;
@@ -235,9 +232,7 @@ interface Line {
 ```
 
 - **`description`** is everything the model needs to play the character, appearance included. Its structure is up to the author; apps MUST NOT depend on heading names.
-- **`appearance` and `voice`** are focused extracts for image and speech generation. They are not part of the chat prompt.
 - **`examples`** show how the character talks. `char` is this character and `user` the player's. Examples are never part of history.
-- **`images`:** suggested names are `neutral`, `happy`, `sad`, `angry`, `surprised`, `afraid` and `embarrassed`, optionally grouped as `<set>/<name>`.
 - **The player's character** is usually an ordinary character stored in the session, or a cast member marked `player` (section 6.1).
 
 ---
@@ -545,7 +540,7 @@ Macros are the only substitution in text. `@` turns IDs into names.
 - **`{{user}}`** is the speaker of the first part with a speaker in the latest player message on the path that has one, else the first player's character. In a state path, `user` means the same character.
 - **Rendering.** A value with a label renders as its label. Numbers render as ECMAScript `Number.prototype.toString`, booleans as `true` or `false`, lists as items joined by `, ` (an empty list as nothing), and maps as `Name: value` pairs joined by `, `, with character keys shown by name and other keys with underscores as spaces. Map keys render in declared order (cast order for characters), and `"*"` keys in the order changes added them, a key removed and set again moving to the end. A macro naming a variable that isn't declared is left as written (`UNKNOWN_MACRO`); an absent key of a declared variable, a path below a value that isn't a map, or a variable whose owner isn't in use renders as nothing.
 - **Which state.** Macros in a message resolve against the state at that message; elsewhere, against the evaluation point (section 11.1). In a scenario's text, openings included, `own` means `state`; session entries have no `own`.
-- **Where.** Macros resolve in author-written text: descriptions, summaries, premises, briefings, notes, entry texts, openings, event messages and directions, variable descriptions, questions, labels, and image `alt` and audio `transcript` in author content. Entry titles and keys are never resolved. Macros never resolve in text written by players or models, including entries and characters that a model adds: apps MUST store such text with each `\` written as `\\` and each `{{` as `\{{`.
+- **Where.** Macros resolve in author-written text: descriptions, summaries, premises, briefings, notes, entry texts, openings, event messages and directions, variable descriptions, questions, labels, and image `alt` in author content. Entry titles and keys are never resolved. Macros never resolve in text written by players or models, including entries and characters that a model adds: apps MUST store such text with each `\` written as `\\` and each `{{` as `\{{`.
 - **Parsing** is one left-to-right scan. At each `{{`, the longest form in the table, with no spaces outside comments and options, is a macro; otherwise the first `{` is kept and scanning resumes at the next character. A comment runs from `{{//` to the next `}}`. Options can't contain `::` or `}}`. `\{{` produces a literal `{{`, and `\\` a literal `\`.
 - **Unknown macros** are left as written (`UNKNOWN_MACRO`).
 - **Stored text keeps its macros.** They resolve when text is shown or sent.
@@ -657,19 +652,9 @@ interface Message {
 
 type Part =                         // every part MAY also carry ext
   | { type?: "text"; text: string; speaker?: string; knownBy?: string[] }
-  | { type: "image"; src: string; alt?: string; speaker?: string; knownBy?: string[]; generated?: Generated }
-  | { type: "audio"; src: string; transcript?: string; speaker?: string; knownBy?: string[]; generated?: Generated }
+  | { type: "image"; src: string; alt?: string; speaker?: string; knownBy?: string[] }
   | { type: "reasoning"; text: string }
   | { type: "tool"; name: string; input: Json; output?: Json };
-
-interface Generated {               // provenance of generated media
-  model: string;
-  prompt?: string;
-  seed?: string;
-  from?: string[];                 // source files used
-  at?: string;
-  ext?: Ext;
-}
 
 interface Change {
   by: "rules" | "player" | "model";
@@ -711,8 +696,6 @@ A message may add entries, owned by `session`. They are candidates from that mes
 - **`hidden`** messages stay for people, but are never sent to models, scanned or summarized.
 - **`stopped`** marks a partial reply.
 - **`summary`** condenses the messages from `from` to its message, and MAY stand in for them in history. Without `knownBy`, it is known by the characters who know every part it covers. Editing or deleting a covered message MUST remove it. Apps MAY rebuild summaries, or leave them out when exporting.
-- **`audio`** parts reach text models, scanning and summaries through their `transcript`; without one they are only for people.
-- **`generated`** records how media was made. Apps that generate media SHOULD record it, and writers SHOULD NOT re-encode media they package, so embedded provenance such as C2PA manifests survives.
 - **`limits`** belong to the people playing, and apps apply them to every generation (Play 6).
 - **Image parts** reach models that accept images, and other models through `alt`.
 - **`reasoning`** parts are shown or sent back only if the user opts in; **`tool`** parts are kept for reference.
@@ -770,7 +753,7 @@ Every Troupe document has a top-level `troupe` key with the spec version and a `
 
 ### 14.2 Files
 
-Fields that hold a file accept a relative path inside the package, an `https:` URL, or a `data:` URI with base64 content. Images (`cover`, `avatar`, `images`, location `image` and image parts) are PNG, JPEG, WebP, AVIF or GIF; audio parts are Ogg, MP3, AAC in MP4, FLAC or WAV. Apps MUST determine the format from the content and reject anything else, SVG included.
+Fields that hold a file accept a relative path inside the package, an `https:` URL, or a `data:` URI with base64 content. Images (`cover`, `avatar`, `images`, location `image` and image parts) are PNG, JPEG, WebP, AVIF or GIF. Apps MUST determine the format from the content and reject anything else, SVG included.
 
 ### 14.3 Packages
 
@@ -941,7 +924,6 @@ Two thieves hired by the player to steal a duke's storm lantern before the twelf
       "aliases": ["Elena Voss", "the Cartographer"],
       "description": "## Appearance\nTall woman in her forties, ink-stained fingers, a waxed oilskin coat.\n\n## Personality\nCalm, exacting, dry humor. Distrusts improvisation and anyone who rushes.\n\n## Background\nA former royal surveyor, dismissed after mapping a vault she later robbed.",
       "summary": "A meticulous thief who plans every job down to the bell.",
-      "appearance": "Tall woman in her forties, ink-stained fingers, grey-streaked braid, waxed oilskin coat with hidden pockets.",
       "examples": [
         [
           { "speaker": "user", "text": "Can we just go?" },
@@ -959,8 +941,6 @@ Two thieves hired by the player to steal a duke's storm lantern before the twelf
       "name": "Kai",
       "description": "A wiry, sun-browned acrobat in a patched red jacket who talks too much and owes everyone money. Reckless, warm, quick to joke and quicker to run.",
       "summary": "A reckless acrobat with debts and a quick grin.",
-      "appearance": "Wiry young man, sun-browned, a shock of black hair, patched red jacket, bare feet.",
-      "talkativeness": 0.8,
       "variables": [
         {
           "id": "nerve", "type": "int", "min": 0, "max": 3, "by": ["model"], "maxStep": 1,
@@ -1138,7 +1118,7 @@ Most needs compose from entries, variables, events and conditions.
 
 ### C.1 Author's notes and player limits
 
-Players' lines and veils go in the session's `limits`, which apps apply to every generation, images and voice included. An author's note is a session entry on the root, placed in `system`:
+Players' lines and veils go in the session's `limits`, which apps apply to every generation, media included. An author's note is a session entry on the root, placed in `system`:
 
 ```json
 { "id": "note", "position": "system", "text": "Keep the pace slow; let silences land." }
@@ -1316,7 +1296,7 @@ Each card becomes a bundle with one character and a scenario `main` that holds i
 | `system_prompt` | An entry with `position: "system"` and `knownBy: ["<id>"]`; `{{original}}` is dropped |
 | `post_history_instructions` | An entry with `position: 0` and `knownBy: ["<id>"]` |
 | `extensions.depth_prompt` | An entry at its depth with `knownBy: ["<id>"]`; the role is dropped |
-| `extensions.talkativeness` | `talkativeness` |
+| `extensions.talkativeness` | `ext` |
 | `creator_notes`, `tags`, `creator`, `character_version` | `creatorNotes`, `tags`, `authors`, `version` |
 | `source` | Links in `credits` |
 | `assets` icon / emotion / background | `avatar` / `images` / a location `image` |
@@ -1356,7 +1336,6 @@ A bundle's first character exports with a lossy mapping: `name`, `description`, 
 | Chronicles for continuity | Memories locked in one session or one app | The thing companion users care about most travels with them. |
 | A chronicle is one document, rewritten on write-back | A log of records | Apps read it without folding; revision history is the app's. |
 | Callable events in an extension | Tools, checks and choices in the core | A tracker and an `on: "player"` event already roll checks; calls need tool calling and many rules, so `troupe.calls` proves them first. |
-| Audio parts and media provenance | Text-only sessions | Voice-first and image-heavy play is representable, and generated media stays labeled. |
 | Structured player limits | Limits as ordinary entries | They reach every generation, media included, and can't be dropped. |
 | One `Entry` for lore, instructions, secrets, goals, notes, memories and tracker guidance | A type for each | One pipeline, one shape, one thing to learn. |
 | No keys means always on; `hit()` in conditions; `/…/` keys | Flags, logic modes, match modes | Fewer fields, any boolean logic, exact matching rules. |
@@ -1376,7 +1355,7 @@ A bundle's first character exports with a lossy mapping: `name`, `description`, 
 | Copies with `credits`; export to V3 | Live cross-bundle references, structured provenance; one-way migration | People write attribution as they like; authors can still reach older apps. |
 | No narrator voice | A character that defines the narrator | Narrator-only `system` entries already set its style. |
 | Sessions as an exchange snapshot | Prescribing storage, or an append-only log of edits | Apps keep their own databases; chats still move between apps intact, and readers replay no edits or deletions. |
-| No music, UI grouping or branch labels in the core | Presentation fields | They belong to apps and extensions. |
+| No audio, media provenance, music, speaking hints, UI grouping or branch labels in the core | Media and presentation fields | They belong to apps and extensions such as `troupe.media`. |
 | YAML source | A Markdown mini-language | Readable authoring with no new semantics. |
 | No executable code | Scripts in cards | Scripts in shared cards can steal API keys. |
 | Strict schemas, lenient readers | Either everywhere | Writers catch typos; readers stay forward compatible. |
@@ -1407,7 +1386,7 @@ The specification text is published under CC BY 4.0, and the schemas and conform
 - **`troupe.table`:** play with several people: participants, seat assignment, turn policy, and secrets between human players.
 - **`troupe.calls`:** events that players or the model invoke, such as checks, choices and tools: typed parameters read as `args`, availability while `when` holds, refusal of invalid calls, results returned to the model during generation, and recorded calls.
 - **`troupe.overlay`:** a bundle that patches another by ID (replace objects, merge entries by ID, remove listed ones), for translations, fan patches and mods.
-- **`troupe.media`:** one asset shape for covers, avatars, sprites and backgrounds, with music and ambience.
+- **`troupe.media`:** one asset shape for covers, avatars, sprites and backgrounds; audio parts with transcripts; provenance of generated media; a character's appearance and voice for image and speech generation; music and ambience.
 - **Text transforms** stay out: most rewrite scripts build HTML, fix one model's quirks, or display stats that state now covers.
 
 ---

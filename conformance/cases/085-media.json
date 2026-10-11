@@ -1,5 +1,5 @@
 {
-  "description": "Media (Format 10, 12.4; Play 5.2, 6): audio parts reach models and scanning through their transcript and are skipped without one; image alt and audio transcript resolve macros in author content; generated provenance and author are carried and never sent",
+  "description": "Media (Format 10, 12.4; Play 5.2, 6): an image part reaches text models through its alt, which resolves macros in author content, and is never scanned; a message's author is kept and never sent",
   "bundle": {
     "troupe": "0.11",
     "kind": "bundle",
@@ -55,21 +55,10 @@
               {
                 "type": "image",
                 "src": "img/roof.png",
-                "alt": "{{@kai}} on the roof",
-                "generated": {
-                  "model": "img-model-3",
-                  "prompt": "a lantern on a rooftop",
-                  "seed": "42",
-                  "from": [
-                    "img/kai-sketch.png"
-                  ],
-                  "at": "2026-10-01T10:00:00Z"
-                }
+                "alt": "{{@kai}} on the roof"
               },
               {
-                "type": "audio",
-                "src": "audio/bell.ogg",
-                "transcript": "The bell tolls for {{user}}."
+                "text": "The bell tolls for {{user}}."
               }
             ]
           }
@@ -103,21 +92,10 @@
           {
             "type": "image",
             "src": "img/roof.png",
-            "alt": "{{@kai}} on the roof",
-            "generated": {
-              "model": "img-model-3",
-              "prompt": "a lantern on a rooftop",
-              "seed": "42",
-              "from": [
-                "img/kai-sketch.png"
-              ],
-              "at": "2026-10-01T10:00:00Z"
-            }
+            "alt": "{{@kai}} on the roof"
           },
           {
-            "type": "audio",
-            "src": "audio/bell.ogg",
-            "transcript": "The bell tolls for {{user}}."
+            "text": "The bell tolls for {{user}}."
           }
         ],
         "changes": [
@@ -139,15 +117,8 @@
         "author": "device-7f3a",
         "content": [
           {
-            "type": "audio",
-            "src": "audio/p1.ogg",
             "speaker": "p",
-            "transcript": "Kai, stop humming \\{{user}}."
-          },
-          {
-            "type": "audio",
-            "src": "audio/p2.ogg",
-            "speaker": "p"
+            "text": "Kai, stop humming \\{{user}}."
           }
         ],
         "changes": [
@@ -170,16 +141,8 @@
         "char": "kai",
         "content": [
           {
-            "type": "audio",
-            "src": "audio/k1.ogg",
             "speaker": "kai",
-            "transcript": "Fine.",
-            "generated": {
-              "model": "tts-2",
-              "from": [
-                "audio/kai-sample.ogg"
-              ]
-            }
+            "text": "Fine."
           }
         ]
       }
@@ -231,7 +194,7 @@
     },
     {
       "type": "prompt",
-      "name": "the witness rule covers audio: Ann arrived with message 2, after the opening",
+      "name": "the witness rule: Ann arrived with message 2, after the opening",
       "for": "ann",
       "parent": "3",
       "messageId": "4",

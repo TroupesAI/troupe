@@ -187,7 +187,7 @@ This is also the **file order**; within an owner, entries keep their array order
 
 ### 5.2 Scanned text
 
-An entry's scanned text is built from the last `scanDepth` messages on the path that aren't hidden and have content, newest first. Each text part, and each audio part with a `transcript` taken as its text, that the generation can see, in array order, contributes `<speaker name>: <text>`, or its text when it has no speaker, with comments removed and author macros resolved. Contributions are joined with `\n`. Reasoning, image, tool and untranscribed audio parts are never scanned. A key that names a character therefore matches whenever that character speaks.
+An entry's scanned text is built from the last `scanDepth` messages on the path that aren't hidden and have content, newest first. Each text part that the generation can see, in array order, contributes `<speaker name>: <text>`, or its text when it has no speaker, with comments removed and author macros resolved. Contributions are joined with `\n`. Reasoning, image and tool parts are never scanned. A key that names a character therefore matches whenever that character speaks.
 
 ### 5.3 Matching
 
@@ -246,7 +246,7 @@ Entries keep file order within a slot, and everything in a slot is filtered by s
 Some content is known only to certain characters.
 
 - **Entries** are known by their `knownBy`, or by everyone without it. `["narrator"]` means only the narrator.
-- **History** follows the witness rule: a text, image or audio part is known by its speaker, by the characters present after its message's changes, and, except on a root, by those present before them. `knownBy` on a part replaces this with exactly the listed characters; whispers and thoughts use it.
+- **History** follows the witness rule: a text or image part is known by its speaker, by the characters present after its message's changes, and, except on a root, by those present before them. `knownBy` on a part replaces this with exactly the listed characters; whispers and thoughts use it.
 - **Summaries** follow Format 12.4; **pinned messages** follow their parts.
 
 What a generation **can see**:
