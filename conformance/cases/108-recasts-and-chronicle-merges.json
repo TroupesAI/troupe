@@ -59,59 +59,49 @@
       ],
       "chronicles": [
         {
-          "header": {
-            "troupe": "0.11",
-            "kind": "chronicle",
-            "id": "c-zed",
-            "character": {
-              "id": "zed",
-              "name": "Zed",
-              "description": "A drifter.",
-              "variables": [
-                {
-                  "id": "mood",
-                  "type": "string",
-                  "carry": true,
-                  "description": "d"
-                }
-              ]
-            },
-            "limits": {
-              "lines": [
-                "gore"
-              ],
-              "veils": [
-                "romance"
-              ]
-            }
-          },
-          "records": [
-            {
-              "id": "r1",
-              "set": {
-                "mood": "calm"
+          "troupe": "0.11",
+          "kind": "chronicle",
+          "id": "c-zed",
+          "character": {
+            "id": "zed",
+            "name": "Zed",
+            "description": "A drifter.",
+            "variables": [
+              {
+                "id": "mood",
+                "type": "string",
+                "carry": true,
+                "description": "d"
               }
-            }
-          ]
+            ]
+          },
+          "limits": {
+            "lines": [
+              "gore"
+            ],
+            "veils": [
+              "romance"
+            ]
+          },
+          "values": {
+            "mood": "calm"
+          }
         },
         {
-          "header": {
-            "troupe": "0.11",
-            "kind": "chronicle",
-            "id": "c-kai",
-            "character": {
-              "id": "kai",
-              "name": "Kai",
-              "description": "Kai, remembered."
-            },
-            "limits": {
-              "lines": [
-                "gore",
-                "spiders"
-              ]
-            }
+          "troupe": "0.11",
+          "kind": "chronicle",
+          "id": "c-kai",
+          "character": {
+            "id": "kai",
+            "name": "Kai",
+            "description": "Kai, remembered."
           },
-          "records": []
+          "limits": {
+            "lines": [
+              "gore",
+              "spiders"
+            ]
+          }
         }
       ],
       "expect": {

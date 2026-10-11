@@ -43,7 +43,7 @@ const examples: Record<string, string> = {
   "mira-card.troupe.json": block("### B.1 A card with lore", "json"),
   "lantern-heist.troupe.json": block("### B.2 A story", "json"),
   "lantern-heist.troupe-session.jsonl": block("### B.3 Session", "text"),
-  "mira.troupe-chronicle.jsonl": block("### B.4 Chronicle", "text"),
+  "mira.troupe-chronicle.json": block("### B.4 Chronicle", "json"),
 };
 const writeExamples = process.argv.includes("--write-examples");
 for (const [name, text] of Object.entries(examples)) {
@@ -51,12 +51,10 @@ for (const [name, text] of Object.entries(examples)) {
   if (writeExamples) writeFileSync(join(root, path), text);
   else if (!existsSync(join(root, path)) || read(path) !== text) fail(`${path} differs from spec/format.md (bun run examples)`);
   if (name.endsWith(".troupe.json")) validate("bundle.schema.json", JSON.parse(text), path);
+  else if (name.endsWith(".troupe-chronicle.json")) validate("chronicle.schema.json", JSON.parse(text), path);
   else {
     const lines = text.trimEnd().split("\n").map((l) => JSON.parse(l));
-    const session = name.endsWith("-session.jsonl");
-    lines.forEach((line, i) =>
-      validate(session ? (i === 0 ? "session-header.schema.json" : "message.schema.json") : "chronicle.schema.json", line, `${path}:${i + 1}`),
-    );
+    lines.forEach((line, i) => validate(i === 0 ? "session-header.schema.json" : "message.schema.json", line, `${path}:${i + 1}`));
   }
 }
 const extra = readdirSync(join(root, "examples")).filter((f) => !(f in examples));

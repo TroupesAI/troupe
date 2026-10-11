@@ -193,7 +193,7 @@ Every field of `expect` is optional:
 | `rootId` | The root's ID; `"1"` by default. |
 | `eventMessageId` | The ID for a system message the root's events may add. |
 | `firstMessage` | Without an opening: the player's first message, without `id` and `parent`. |
-| `chronicles` | `start` only: chronicles the session continues, as `{"header", "records"}` objects (section 4.18). |
+| `chronicles` | `start` only: chronicle documents the session continues (Format 13). |
 
 `swipe` adds another root to the case's session. An opening without `content` makes a records-only root (Play 2.1 step 4); the runner doesn't generate the first model message (step 6).
 
@@ -221,7 +221,7 @@ The runner validates the bundle and the session's raw records against the schema
 | `core` | Optional boolean. Also run the Core check, which reports `MECHANICS`. |
 
 - `expect.codes` is the sorted list of distinct diagnostic codes reported. It is compared exactly.
-- Each session line after the header is validated against `message.schema.json`. Chronicle lines are validated against the schema branch their shape selects: header if it has `kind`, deletion if it has `deleted`, else record. Validators assert `format`, so a malformed timestamp is `SCHEMA`.
+- Each session line after the header is validated against `message.schema.json`. A chronicle is validated against `chronicle.schema.json`. Validators assert `format`, so a malformed timestamp is `SCHEMA`.
 - `SCHEMA` covers schema failures, such as `null` in a field the spec defines. `""` and `[]` in optional fields read as missing (Format 2.2) for every other operation, but the raw document still fails the schema where it sets `minLength` or `minItems`, which is reported as `SCHEMA`.
 - `UNKNOWN_FIELD` (Format 15) is located at the property itself (`/characters/0/mystery`).
 - `check` tests don't use `PARSE` or `UNSUPPORTED_VERSION`; `parse` tests (section 4.14) cover reading.
@@ -234,7 +234,7 @@ Locations:
 | In the bundle | A JSON Pointer, with array indices | `/scenarios/0/events/1/when` |
 | In a session header | `header/<pointer>` | `header/players` |
 | In a message (schema failures of message records included) | `message:<id>/<pointer within the message>` | `message:3/changes/0/set/hp` |
-| A record of a chronicle, once folded (the chronicle checks) | `record:<id>/<pointer>` | `record:r2/set/closeness` |
+| In a chronicle | `chronicle/<pointer>` | `chronicle/values/closeness` |
 
 A diagnostic about one value points at that value: a list item at its index (`/requires/0`), a duplicate ID at the duplicate's `id` (`/characters/1/id`), a reference at the field holding it (`/scenarios/0/cast/2/character`). For keys inside `set`, the pointer segment is the key as written (`/set/scene.present`).
 
@@ -282,7 +282,7 @@ Every field of `expect` is optional:
 - `ok` is whether a document is read with no error diagnostics. A newer minor version or an unknown field is a warning, so the input is still `ok`.
 - `codes` is the sorted list of distinct codes reported, compared exactly.
 - `equals` is the bundle read, for `bundle`, `yaml` and `png`, after absent values read as missing (Format 2.2).
-- `ids` is, for `session`, the IDs of the messages read, in line order, and for `chronicle`, the surviving record IDs in the order they were first added.
+- `ids` is, for `session`, the IDs of the messages read, in line order.
 
 ### 4.15 `read`: session lines (Format 12.1)
 
@@ -335,19 +335,16 @@ After the calls, for `by: "player"`, an event pass runs at the message (section 
 - `expect.results` lists, per call, either `{"direct": [texts], "set": {changed values}}` or `{"error": "INVALID_CALL"}`. `direct` holds the event's then the outcome's `direct`, macro-resolved with the call's `args` against the state after the call; `set` is the recorded `set`.
 - `expect.message` is the system message added, or `null`. Its content is the calls' `message` parts, in call order, with `{{args.<id>}}` replaced by the argument's rendered value when recorded; for player calls the event pass's parts follow in the same message.
 
-### 4.18 `chronicle`: chronicle folding and writing back (Format 13; Play 2.2)
+### 4.18 `chronicle`: chronicle checks and writing back (Format 13; Play 2.2)
 
 | Input | Meaning |
 | --- | --- |
-| `chronicle` | `{"header": ChronicleHeader, "records": [record or deletion, …]}`. |
-| `chronicleFile` | Instead of `chronicle`: a path to a `.jsonl` file, relative to the case file. |
-| `writeBack` | Optional. `{head, id, at?}`: build the record written back from the case's session at `head`. |
+| `chronicle` | A chronicle document. |
+| `chronicleFile` | Instead of `chronicle`: a path to a `.troupe-chronicle.json` file, relative to the case file. |
+| `writeBack` | Optional. `{head}`: write back to the chronicle from the case's session at `head`. |
 
-- `expect.records` is the surviving record IDs, in the order the records were first added.
-- `expect.entries` is the folded entries in fold order: by entry ID, the latest version wins, `disabled` removes an entry, and an entry keeps the position where its ID first appeared.
-- `expect.values` is the folded values, `key → value`, with keys without the owner. Folding doesn't filter keys; checks report them.
-- `expect.codes` is optional: the sorted distinct codes from validating every line against `chronicle.schema.json` and checking the chronicle (Format 13). A value key of a keyed variable has exactly one key segment.
-- `expect.record` is the record written back (Play 2.2): `{id, at?, source?, entries?, set?}`. `source` is `{session: header id, message: head}` when the session has an `id`. `set` is keyed without the owner. `entries` lists the carried session entries on the path to `head` whose `knownBy` is absent or names the character, the latest version of each ID, in the order the IDs first appear.
+- `expect.codes` is optional: the sorted distinct codes from validating the chronicle against `chronicle.schema.json` and checking it (Format 13). A value key of a keyed variable has exactly one key segment.
+- `expect.memories` and `expect.values` are the chronicle's `memories` and `values` after writing back (Play 2.2). `values` keeps only carried keys, keyed without the owner. A carried session entry on the path to `head` whose `knownBy` is absent or names the character, the latest version of each ID, replaces the memory with that ID or is added after the others, in the order the IDs first appear.
 
 Starting from chronicles (section 4.11 input `chronicles`) follows Play 2.2. Chronicle characters are added to the header's `characters` in chronicle order, after the test's own `characters`. When the test brings no `characters`, the first chronicle's `persona` fills the first seat.
 

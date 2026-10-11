@@ -1,5 +1,5 @@
 {
-  "description": "Format Appendix B.4 continued: the session started from Mira's chronicle is valid with the chronicle's Mira replacing the card's, replays without the chronicle file, offers the memories in the pull catalog rather than selecting them, and writes back a record citing its source with closeness 61 and only the new memory (Format 12.2, 13; Play 5.6)",
+  "description": "Format Appendix B.4 continued: the session started from Mira's chronicle is valid with the chronicle's Mira replacing the card's, replays without the chronicle file, offers the memories in the pull catalog rather than selecting them, and writes back closeness 61 and the new memory (Format 12.2, 13; Play 5.6)",
   "bundleFile": "../../examples/mira-card.troupe.json",
   "session": {
     "header": {
@@ -170,31 +170,43 @@
     {
       "type": "chronicle",
       "name": "writing back at message 3",
-      "chronicleFile": "../../examples/mira.troupe-chronicle.jsonl",
+      "chronicleFile": "../../examples/mira.troupe-chronicle.json",
       "writeBack": {
-        "head": "3",
-        "id": "r3"
+        "head": "3"
       },
       "expect": {
-        "record": {
-          "id": "r3",
-          "source": {
-            "session": "s-1009",
-            "message": "3"
+        "memories": [
+          {
+            "id": "lake",
+            "title": "The promise about the lake",
+            "pull": true,
+            "carry": true,
+            "knownBy": [
+              "mira"
+            ],
+            "text": "Mira and Mara saw the frozen lake on Thessa together, as she had promised."
           },
-          "entries": [
-            {
-              "id": "part",
-              "carry": true,
-              "knownBy": [
-                "mira"
-              ],
-              "text": "Mara brought Mira a reactor part."
-            }
-          ],
-          "set": {
-            "closeness": 61
+          {
+            "id": "juna",
+            "title": "Juna's signal",
+            "pull": true,
+            "carry": true,
+            "knownBy": [
+              "mira"
+            ],
+            "text": "Mara helped Mira trace a signal that might be from her sister Juna."
+          },
+          {
+            "id": "part",
+            "carry": true,
+            "knownBy": [
+              "mira"
+            ],
+            "text": "Mara brought Mira a reactor part."
           }
+        ],
+        "values": {
+          "closeness": 61
         }
       }
     }

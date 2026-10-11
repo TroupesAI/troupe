@@ -165,7 +165,7 @@
       ]
     },
     "opaqueId": {
-      "description": "A message, bundle, session, chronicle or record ID.",
+      "description": "A message, bundle, session or chronicle ID.",
       "type": "string",
       "pattern": "^[A-Za-z0-9_-]{1,64}$"
     },

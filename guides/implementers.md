@@ -33,5 +33,5 @@ This guide is informative. It collects advice for apps that show and play Troupe
 
 ## Chronicles
 
-- **Edited sources.** When someone edits or deletes a message that a chronicle record came from, offer to drop that record (Play 2.2).
-- **Ownership.** Let people read, edit and delete every record in their chronicles.
+- **Ownership.** Let people read, edit and delete every memory and value in their chronicles.
+- **History.** Keep earlier versions of a chronicle if people may want to undo a write-back; the file holds only the current one.

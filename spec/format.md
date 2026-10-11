@@ -73,7 +73,7 @@ Bundle  (.troupe.json)
 └── scenarios[]    cast, openings, entries, variables, events
 
 Session    (.troupe-session.jsonl)     a header and a forest of messages
-Chronicle  (.troupe-chronicle.jsonl)   one character's memories and relationship across sessions
+Chronicle  (.troupe-chronicle.json)    one character's memories and relationship across sessions
 ```
 
 Six ideas carry the format:
@@ -130,7 +130,7 @@ MUST, MUST NOT, SHOULD, SHOULD NOT and MAY are used as described in RFC 2119 and
 | Kind | Grammar |
 | --- | --- |
 | Author IDs: characters, worlds, scenarios, locations, entries, openings, variables, events, groups, variable keys | `^[a-z][a-z0-9_]{0,63}$` |
-| Message, bundle, session, chronicle and record IDs | `^[A-Za-z0-9_-]{1,64}$` |
+| Message, bundle, session and chronicle IDs | `^[A-Za-z0-9_-]{1,64}$` |
 | Session seeds | `^[A-Za-z0-9_-]{16,64}$` |
 
 - Author IDs MUST NOT be a CEL reserved word: `as`, `break`, `const`, `continue`, `else`, `false`, `for`, `function`, `if`, `import`, `in`, `let`, `loop`, `namespace`, `null`, `package`, `return`, `true`, `var`, `void`, `while`.
@@ -145,6 +145,7 @@ MUST, MUST NOT, SHOULD, SHOULD NOT and MAY are used as described in RFC 2119 and
 | Locations | The bundle and the session |
 | Openings | The same scenario |
 | Messages | The session |
+| Memories | The chronicle |
 
 ### 2.4 References
 
@@ -626,9 +627,9 @@ interface SessionHeader {
   $schema?: string;
   troupe: string;
   kind: "session";
-  id?: string;                     // a random ID, so chronicles can cite the session
+  id?: string;                     // a random ID
   bundle?: string;                 // the bundle's id; omit inside its package
-  chronicles?: string[];           // chronicles the session continues (section 13); requires id
+  chronicles?: string[];           // chronicles the session continues (section 13)
   limits?: Limits;                 // the players' lines and veils
   scenario: string;                // scenario ID
   seed: string;                    // random, at least 96 bits
@@ -741,7 +742,7 @@ When an app renames a character, world or location to resolve a clash, it MUST r
 A chronicle carries one character's continuity, its memories, its relationship with someone and its current definition, from one session to the next and from one app to another. It is what a person keeps of "my Mira after a year".
 
 ```ts
-interface ChronicleHeader {
+interface Chronicle {
   $schema?: string;
   troupe: string;
   kind: "chronicle";
@@ -750,22 +751,14 @@ interface ChronicleHeader {
   persona?: Character;             // who the relationship is with
   bundle?: string;                 // the template's bundle id
   limits?: Limits;
-  ext?: Ext;
-}
-
-interface ChronicleRecord {
-  id: string;
-  at?: string;
-  source?: { session: string; message: string };   // where it came from
-  entries?: Entry[];               // memories and facts
-  set?: Record<string, Json>;      // carried values, keyed without the owner
-  reason?: string;
+  memories?: Entry[];              // memories and facts carried from sessions
+  values?: Record<string, Json>;   // carried values, keyed without the owner
   ext?: Ext;
 }
 ```
 
-- **File.** A chronicle is a JSON Lines file, `.troupe-chronicle.jsonl`: the header, then records. A record whose `id` repeats replaces the earlier one in its original position; `{"id": "<id>", "deleted": true}` forgets it. Readers fold the records in order: an entry ID takes its latest version and keeps the position where it first appeared, and `disabled` removes it; values fold by key. An entry's `knownBy` names only the character, the persona or `narrator`.
-- **Carrying.** A chronicle keeps the character's non-derived variables marked `carry` and the session entries marked `carry`; `carry` is ignored elsewhere. Chronicle values are validated like recorded changes, and keys that aren't carried are dropped. Chronicle entries keep their stored text exactly; since macros never resolve in model-written text, memories name people literally.
+- **File.** A chronicle is one JSON document, `.troupe-chronicle.json`. Apps rewrite it whole when they write back to it (Play 2.2). A memory's `knownBy` names only the character, the persona or `narrator`.
+- **Carrying.** A chronicle keeps the character's non-derived variables marked `carry` and the session entries marked `carry`; `carry` is ignored elsewhere. Chronicle values are validated like recorded changes, and keys that aren't carried are dropped. Memories keep their stored text exactly; since macros never resolve in model-written text, memories name people literally.
 - **Scale.** Long-lived memories SHOULD use `pull` with a `title`, so a chronicle can grow without filling every prompt. A companion can run many bounded sessions with one chronicle.
 
 Play 2.2 says how a session continues a chronicle and writes back to it.
@@ -783,7 +776,7 @@ Play 2.2 says how a session continues a chronicle and writes back to it.
 | Single file | `.troupe.json` | One bundle. Files are URLs or data URIs. | `application/vnd.troupe+json` |
 | Package | `.troupe` | A ZIP archive with `bundle.json`, the files it references, and optionally sessions and chronicles | `application/vnd.troupe+zip` |
 | Session | `.troupe-session.jsonl` | One session outside a package | `application/vnd.troupe.session+jsonl` |
-| Chronicle | `.troupe-chronicle.jsonl` | One character's continuity | `application/vnd.troupe.chronicle+jsonl` |
+| Chronicle | `.troupe-chronicle.json` | One character's continuity | `application/vnd.troupe.chronicle+json` |
 | Authoring source | `.troupe.yaml` | One bundle in YAML (section 14.4) | `application/vnd.troupe+yaml` |
 
 Every Troupe document has a top-level `troupe` key with the spec version and a `kind` key: `"bundle"`, `"session"` or `"chronicle"`. Section 14.5 defines an optional image-embedded form.
@@ -796,7 +789,7 @@ Fields that hold a file accept a relative path inside the package, an `https:` U
 
 - `bundle.json` is at the root. Writers SHOULD make the first entry a file named `mimetype`, stored uncompressed, containing `application/vnd.troupe+zip`.
 - Paths match `^[A-Za-z0-9_-][A-Za-z0-9._-]*(/[A-Za-z0-9_-][A-Za-z0-9._-]*)*$`, with segments of at most 255 bytes, unique when compared case-insensitively.
-- Entries use the store or deflate methods and are not encrypted. Sessions are stored under `sessions/` and chronicles under `chronicles/`, with the `.jsonl` extension.
+- Entries use the store or deflate methods and are not encrypted. Sessions are stored under `sessions/` with the `.troupe-session.jsonl` extension, and chronicles under `chronicles/` with the `.troupe-chronicle.json` extension.
 
 ### 14.4 YAML authoring source
 
@@ -828,7 +821,7 @@ Troupe files are shared between strangers.
 5. **Linear-time regex.** Regex keys and `matches()` MUST use an engine that runs in linear time, such as RE2.
 6. **Sandboxed conditions.** CEL MUST be evaluated by a CEL implementation, never translated into another language.
 7. **Safe archives.** Readers MUST reject absolute paths, `..` segments, backslashes, paths outside section 14.3's grammar, symbolic links, encryption, multiple disks, duplicate names, overlapping entries, and local headers that disagree with the central directory, and MUST cap entry count, unpacked size and compression ratio.
-8. **Bounded parsing.** Readers MUST cap JSON size and depth, `data:` URI size, and session and chronicle length.
+8. **Bounded parsing.** Readers MUST cap JSON size and depth, `data:` URI size, and session length.
 9. **Content stays content.** Text from files and sessions is story material, not instructions to the app, and macros in players' and models' text never resolve (section 10). `credits`, `creatorNotes`, `briefing`, change `reason` and message `author` MUST NOT be sent to the story model; entry `title` reaches it only in a pull catalog.
 
 Writers MUST stay within these limits. Readers MUST accept files within them, and MAY accept or refuse larger ones:
@@ -857,20 +850,20 @@ Messages are never dropped for a failed check, except the lines that `PARSE` and
 
 | Code | Check | Consequence |
 | --- | --- | --- |
-| `PARSE` | The input is I-JSON (section 2.2), JSON Lines or YAML within section 14.4, a Troupe document of a known `kind`, within the limits the reader enforces (section 16), and a safe package (section 16 item 7) or PNG (section 14.5) | The file isn't read; in a session or chronicle, an unreadable line other than the header is skipped |
+| `PARSE` | The input is I-JSON (section 2.2), JSON Lines or YAML within section 14.4, a Troupe document of a known `kind`, within the limits the reader enforces (section 16), and a safe package (section 16 item 7) or PNG (section 14.5) | The file isn't read; in a session, an unreadable line other than the header is skipped |
 | `UNSUPPORTED_VERSION` | `troupe` is the reader's own version (section 15) | Another major version isn't read; another minor version is a warning |
 | `SCHEMA` | The document validates against its schema, apart from unknown properties (section 15) | The reader MAY refuse the file |
 | `UNKNOWN_FIELD` | Every property is known to the reader's schema (section 15) | A warning; the field is kept |
 | `DUPLICATE_ID` | IDs are unique as section 2.3 and section 12.1 require | The first is kept; a scenario variable that clashes with a character or world is ignored instead (section 2.3), and two replacements of one character make the session unplayable (section 12.2) |
 | `UNKNOWN_SCENARIO` | The header's `scenario` names a scenario | The session can't be played |
-| `UNKNOWN_CHARACTER` | Cast members, `players`, `knownBy` (where `narrator` is also allowed), speakers, example speakers (or `char`, `user`), message `char` and character keys name characters in the bundle or session; a chronicle entry's `knownBy` names its character, its persona or `narrator` | The ID is ignored; a cast member or example exchange naming it is skipped |
+| `UNKNOWN_CHARACTER` | Cast members, `players`, `knownBy` (where `narrator` is also allowed), speakers, example speakers (or `char`, `user`), message `char` and character keys name characters in the bundle or session; a memory's `knownBy` names its chronicle's character, persona or `narrator` | The ID is ignored; a cast member or example exchange naming it is skipped |
 | `UNKNOWN_WORLD` | `scenario.worlds` names bundle worlds | The ID is ignored |
 | `UNKNOWN_LOCATION` | Locations in values and `parent` exist, without cycles | The value is invalid; the parent is ignored |
 | `UNKNOWN_OPENING` | A root's `opening` exists | `opening` reads as `""` |
 | `UNKNOWN_NAME` | `activated` and `event` references, and literal names in `count` and `ago`, name entries, events or keys in use | Ignored; an event's values still apply |
-| `UNKNOWN_VARIABLE` | Keys in openings, events, changes and chronicle records, and variables named by `min` and `max`, exist and aren't derived; a chronicle record's keys name carried variables of its character (section 13) | The key or bound is dropped |
-| `INVALID_VALUE` | `initial`, opening and event `set` values, recorded values, chronicle record values and `outcome` indexes are valid | The value is dropped |
-| `UNKNOWN_MESSAGE` | `parent`, the header's `head` and summary `from` name messages, and `from` is on the path to its summary; a chronicle deletion names a record | The head or summary is ignored; a message with an unknown `parent` is skipped with its descendants |
+| `UNKNOWN_VARIABLE` | Keys in openings, events, changes and chronicle values, and variables named by `min` and `max`, exist and aren't derived; a chronicle's value keys name carried variables of its character (section 13) | The key or bound is dropped |
+| `INVALID_VALUE` | `initial`, opening and event `set` values, recorded values, chronicle values and `outcome` indexes are valid | The value is dropped |
+| `UNKNOWN_MESSAGE` | `parent`, the header's `head` and summary `from` name messages, and `from` is on the path to its summary | The head or summary is ignored; a message with an unknown `parent` is skipped with its descendants |
 | `INVALID_CALL` | A recorded call names a callable event that was available, with valid `args` | The call's values still apply; the firing isn't counted |
 | `NOT_PLAYABLE` | `players` names header characters or cast members, with no more header characters than seats | The extra ID is ignored |
 | `CEL_ERROR` | Every expression parses and type-checks | The item never applies |
@@ -890,7 +883,7 @@ The JSON Schema 2020-12 files are normative for structure. Each `$id` is the URL
 | [`bundle.schema.json`](../schemas/bundle.schema.json) | A bundle, and the definitions the other schemas share |
 | [`session-header.schema.json`](../schemas/session-header.schema.json) | The first line of a session |
 | [`message.schema.json`](../schemas/message.schema.json) | Every later line of a session: a message |
-| [`chronicle.schema.json`](../schemas/chronicle.schema.json) | Each line of a chronicle: the header, a record or a deletion |
+| [`chronicle.schema.json`](../schemas/chronicle.schema.json) | A chronicle |
 | [`model-output.schema.json`](../schemas/model-output.schema.json) | A model's structured reply or tracker result (Play 3.4) |
 
 ---
@@ -1124,13 +1117,29 @@ What B.2 and B.3 show:
 
 ### B.4 Chronicle
 
-Mira's chronicle after some weeks with Mara: her current definition, a carried value and two memories, one of them since revised. Her definition is shortened here; a real chronicle keeps it whole, entries included.
+Mira's chronicle after some weeks with Mara: her current definition, a carried value and two memories. Her definition is shortened here; a real chronicle keeps it whole, entries included.
 
-```text
-{"troupe":"0.11","kind":"chronicle","id":"0d4f3a62-5b1e-4c8a-9f27-6a1c2e8b7d40","character":{"id":"mira","name":"Mira","description":"A sarcastic starship engineer who talks to engines more kindly than to people.","variables":[{"id":"closeness","type":"int","min":0,"max":100,"by":["model"],"carry":true,"description":"How close Mira feels to {{user}}."}]},"bundle":"7c1e9a4b-2f3d-4e5a-8b6c-1d2e3f4a5b6c","persona":{"id":"mara","name":"Mara","description":"A courier who keeps the Kestrel stocked."}}
-{"id":"r1","at":"2026-09-20T21:14:00Z","source":{"session":"s-0917","message":"212"},"entries":[{"id":"lake","title":"The promise about the lake","pull":true,"carry":true,"knownBy":["mira"],"text":"Mira promised Mara they would see the frozen lake on Thessa in spring."}],"set":{"closeness":41}}
-{"id":"r2","at":"2026-10-02T08:03:00Z","source":{"session":"s-1001","message":"57"},"entries":[{"id":"juna","title":"Juna's signal","pull":true,"carry":true,"knownBy":["mira"],"text":"Mara helped Mira trace a signal that might be from her sister Juna."}],"set":{"closeness":58}}
-{"id":"r1","at":"2026-10-05T19:40:00Z","source":{"session":"s-1004","message":"9"},"entries":[{"id":"lake","title":"The promise about the lake","pull":true,"carry":true,"knownBy":["mira"],"text":"Mira and Mara saw the frozen lake on Thessa together, as she had promised."}],"set":{"closeness":58}}
+```json
+{
+  "troupe": "0.11",
+  "kind": "chronicle",
+  "id": "0d4f3a62-5b1e-4c8a-9f27-6a1c2e8b7d40",
+  "character": {
+    "id": "mira",
+    "name": "Mira",
+    "description": "A sarcastic starship engineer who talks to engines more kindly than to people.",
+    "variables": [
+      { "id": "closeness", "type": "int", "min": 0, "max": 100, "by": ["model"], "carry": true, "description": "How close Mira feels to {{user}}." }
+    ]
+  },
+  "persona": { "id": "mara", "name": "Mara", "description": "A courier who keeps the Kestrel stocked." },
+  "bundle": "7c1e9a4b-2f3d-4e5a-8b6c-1d2e3f4a5b6c",
+  "memories": [
+    { "id": "lake", "title": "The promise about the lake", "pull": true, "carry": true, "knownBy": ["mira"], "text": "Mira and Mara saw the frozen lake on Thessa together, as she had promised." },
+    { "id": "juna", "title": "Juna's signal", "pull": true, "carry": true, "knownBy": ["mira"], "text": "Mara helped Mira trace a signal that might be from her sister Juna." }
+  ],
+  "values": { "closeness": 58 }
+}
 ```
 
 A new session that continues this chronicle starts with `closeness` at 58 and both memories on its root, ready to be pulled when they matter.
@@ -1361,6 +1370,7 @@ A bundle's first character exports with a lossy mapping: `name`, `description`, 
 | Decision | Instead of | Why |
 | --- | --- | --- |
 | Chronicles for continuity | Memories locked in one session or one app | The thing companion users care about most travels with them. |
+| A chronicle is one document, rewritten on write-back | A log of records | Apps read it without folding; revision history is the app's. |
 | Callable events | Mechanics that can only react | One primitive covers tools, checks and choices, and the model narrates real results. |
 | Audio parts and media provenance | Text-only sessions | Voice-first and image-heavy play is representable, and generated media stays labeled. |
 | Structured player limits | Limits as ordinary entries | They reach every generation, media included, and can't be dropped. |

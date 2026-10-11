@@ -10,11 +10,6 @@
     "scenario",
     "seed"
   ],
-  "dependentRequired": {
-    "chronicles": [
-      "id"
-    ]
-  },
   "additionalProperties": false,
   "properties": {
     "$schema": {

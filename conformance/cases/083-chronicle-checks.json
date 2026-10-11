@@ -1,5 +1,5 @@
 {
-  "description": "Chronicle checks and deletions (Format 13, 17.2): knownBy names the character, the persona or narrator; values name carried variables and are valid; a deletion removes a record",
+  "description": "Chronicle checks (Format 13, 17.2): a memory's knownBy names the character, the persona or narrator; values name carried variables and are valid",
   "bundle": {
     "troupe": "0.11",
     "kind": "bundle",
@@ -68,68 +68,44 @@
     {
       "type": "chronicle",
       "chronicle": {
-        "header": {
-          "troupe": "0.11",
-          "kind": "chronicle",
-          "id": "c-bad",
-          "character": {
-            "id": "mira",
-            "name": "Mira",
-            "description": "d",
-            "variables": [
-              {
-                "id": "closeness",
-                "type": "int",
-                "min": 0,
-                "max": 100,
-                "carry": true,
-                "description": "d"
-              },
-              {
-                "id": "mood",
-                "type": "string",
-                "description": "not carried"
-              }
-            ]
-          }
+        "troupe": "0.11",
+        "kind": "chronicle",
+        "id": "c-bad",
+        "character": {
+          "id": "mira",
+          "name": "Mira",
+          "description": "d",
+          "variables": [
+            {
+              "id": "closeness",
+              "type": "int",
+              "min": 0,
+              "max": 100,
+              "carry": true,
+              "description": "d"
+            },
+            {
+              "id": "mood",
+              "type": "string",
+              "description": "not carried"
+            }
+          ]
         },
-        "records": [
+        "memories": [
           {
-            "id": "r1",
-            "entries": [
-              {
-                "id": "x",
-                "knownBy": [
-                  "kai"
-                ],
-                "text": "t"
-              }
+            "id": "x",
+            "knownBy": [
+              "kai"
             ],
-            "set": {
-              "closeness": 140,
-              "mood": "ok"
-            }
-          },
-          {
-            "id": "r2",
-            "set": {
-              "closeness": 30
-            }
-          },
-          {
-            "id": "r2",
-            "deleted": true
+            "text": "t"
           }
-        ]
-      },
-      "expect": {
-        "records": [
-          "r1"
         ],
         "values": {
           "closeness": 140,
           "mood": "ok"
-        },
+        }
+      },
+      "expect": {
         "codes": [
           "INVALID_VALUE",
           "UNKNOWN_CHARACTER",

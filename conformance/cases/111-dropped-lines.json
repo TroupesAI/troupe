@@ -1,5 +1,5 @@
 {
-  "description": "Dropped lines (Format 12.1, 17.2, 13): a message whose parent names no earlier message is skipped with its descendants (UNKNOWN_MESSAGE); a header that lists chronicles needs an id (SCHEMA)",
+  "description": "Dropped lines (Format 12.1, 17.2): a message whose parent names no earlier message is skipped with its descendants (UNKNOWN_MESSAGE)",
   "bundle": {
     "troupe": "0.11",
     "kind": "bundle",
@@ -92,28 +92,6 @@
         "codes": [
           "UNKNOWN_MESSAGE"
         ]
-      }
-    },
-    {
-      "type": "parse",
-      "name": "chronicles without an id",
-      "kind": "session",
-      "text": "{\"troupe\": \"0.11\", \"kind\": \"session\", \"scenario\": \"s\", \"seed\": \"conformanceSeed0001\", \"characters\": [{\"id\": \"p\", \"name\": \"Pat\", \"description\": \"Pat.\"}], \"players\": [\"p\"], \"chronicles\": [\"c-kai\"]}\n",
-      "expect": {
-        "ok": false,
-        "codes": [
-          "SCHEMA"
-        ]
-      }
-    },
-    {
-      "type": "parse",
-      "name": "chronicles with an id",
-      "kind": "session",
-      "text": "{\"troupe\": \"0.11\", \"kind\": \"session\", \"scenario\": \"s\", \"seed\": \"conformanceSeed0001\", \"characters\": [{\"id\": \"p\", \"name\": \"Pat\", \"description\": \"Pat.\"}], \"players\": [\"p\"], \"id\": \"sess-1\", \"chronicles\": [\"c-kai\"]}\n",
-      "expect": {
-        "ok": true,
-        "codes": []
       }
     }
   ]

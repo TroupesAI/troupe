@@ -1,5 +1,5 @@
 {
-  "description": "Reading sessions and chronicles (Format 12, 12.1, 13, 17.2): lines end with LF or CRLF and the last newline is optional; an unreadable line other than the header is PARSE and skipped; an unreadable header means the file isn't read. ids lists the surviving message or record IDs",
+  "description": "Reading sessions and chronicles (Format 12, 12.1, 13, 17.2): session lines end with LF or CRLF and the last newline is optional; an unreadable line other than the header is PARSE and skipped; an unreadable header means the file isn't read; a chronicle is one JSON document. ids lists the message IDs read",
   "tests": [
     {
       "type": "parse",
@@ -100,28 +100,21 @@
       "type": "parse",
       "name": "a chronicle",
       "kind": "chronicle",
-      "text": "{\"troupe\":\"0.11\",\"kind\":\"chronicle\",\"id\":\"c1\",\"character\":{\"id\":\"mira\",\"name\":\"Mira\",\"description\":\"d\"}}\n{\"id\":\"r1\",\"set\":{}}\n{\"id\":\"r2\",\"set\":{}}\n",
+      "text": "{\"troupe\":\"0.11\",\"kind\":\"chronicle\",\"id\":\"c1\",\"character\":{\"id\":\"mira\",\"name\":\"Mira\",\"description\":\"d\"},\"memories\":[{\"id\":\"met\",\"text\":\"Mira met Mara.\"}],\"values\":{}}\n",
       "expect": {
         "ok": true,
-        "codes": [],
-        "ids": [
-          "r1",
-          "r2"
-        ]
+        "codes": []
       }
     },
     {
       "type": "parse",
-      "name": "an unreadable chronicle record is skipped",
+      "name": "a chronicle followed by another JSON value isn't read",
       "kind": "chronicle",
-      "text": "{\"troupe\":\"0.11\",\"kind\":\"chronicle\",\"id\":\"c1\",\"character\":{\"id\":\"mira\",\"name\":\"Mira\",\"description\":\"d\"}}\n{\"id\":\"r1\",\n{\"id\":\"r2\",\"set\":{}}\n",
+      "text": "{\"troupe\":\"0.11\",\"kind\":\"chronicle\",\"id\":\"c1\",\"character\":{\"id\":\"mira\",\"name\":\"Mira\",\"description\":\"d\"}}\n{\"id\":\"r1\"}\n",
       "expect": {
         "ok": false,
         "codes": [
           "PARSE"
-        ],
-        "ids": [
-          "r2"
         ]
       }
     }
