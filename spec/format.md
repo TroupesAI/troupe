@@ -322,7 +322,7 @@ The narrator's style is set with scenario entries placed in `system` with `known
 - Each opening becomes a separate root message, so people can swipe between openings. Its `id` survives reordering and edits; conditions see the chosen one as `opening`.
 - `set` gives starting values, written like a change (section 8.5), with full keys: `{"scene.location": "vault", "bell": 11, "kai.nerve": 2}`. `own.` isn't resolved there.
 - **Without `content`**, the model writes the first message from the opening's setup, so an opening can be just a starting point: `{"id": "tavern", "title": "At the tavern", "set": {"scene.location": "tavern"}}`. A list of these works as a menu of starting points. Direction for the first reply is an entry with `"when": "opening == 'tavern' && turn == 0"`.
-- Unless `set` lists `scene.present`, the characters present at the start are the players' characters and the characters who speak in the opening; for an opening without `content`, every character in the session's cast when it starts (section 12.2). When `set` lists `scene.present`, the players' characters are added to it. Either way, chronicle characters that join the cast (Play 2.2) are added too.
+- The characters present at the start are those who speak in the opening, or those `set` lists in `scene.present`, with the players' characters; Play 2.1 has the exact rule.
 - A character's actions belong in their own part, usually in italics. Parts without a speaker are scene narration.
 
 ### 6.4 What a session uses
@@ -511,7 +511,7 @@ interface Outcome {
 ```
 
 - **`set` takes plain values; `compute` takes CEL.** `"set": {"scene.location": "vault"}`, `"compute": {"trust.elena": "state.trust.elena - 0.1"}`. An owner's own events write its variables as `own.<id>`.
-- **Firing.** Events run at each root, after each player or model message, and after player edits, in a single pass; `on` limits an event to one kind of message, so events with `on` don't run at an opening. An event fires when its `when` holds, it isn't `once` with an earlier firing, its `cooldown` has passed, and its `chance` roll succeeds. Play 3.3 has the exact rules.
+- **Firing.** An event fires when its `when` holds, unless `once`, `cooldown` or a failed `chance` roll stops it; `on` limits it to after one kind of message. Play 3.3 says when events run.
 - **Timing.** An event `on: "player"` runs before the reply, so it can roll for the action the player just attempted and direct the reply to narrate the result. An event `on: "model"` runs after the reply and its tracking.
 - **Outcomes** pick one weighted alternative per firing, so a random culprit or encounter is one declaration with correct odds. `roll(n)` in an event's or outcome's `compute` rolls a die; each call is a separate roll.
 - **Messages** from all events in one pass form a single narration message after the trigger.

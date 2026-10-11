@@ -1,5 +1,5 @@
 {
-  "description": "Openings without content (Format 6.3; Play 2.1): the root is a records-only system message with the opening's change; without scene.present in set the whole cast starts present, players included; events run at the root, where turn is 0; the root is never sent or scanned; an entry with when \"opening == 'x' && turn == 0\" directs the model's first message",
+  "description": "Openings without content (Play 2.1): the root is a records-only system message with the opening's change; without scene.present in set the whole cast starts present, players included; events run at the root, where turn is 0; the root is never sent or scanned; an entry with when \"opening == 'x' && turn == 0\" directs the model's first message",
   "bundle": {
     "troupe": "0.11",
     "kind": "bundle",
