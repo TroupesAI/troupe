@@ -1,5 +1,5 @@
 {
-  "$schema": "https://troupe.example/schema/0.11/bundle.schema.json",
+  "$schema": "https://troupes.ai/schema/0.11/bundle.schema.json",
   "troupe": "0.11",
   "kind": "bundle",
   "id": "4b7d2c1e-9a3f-4e8b-b6d0-2f5a8c9e1d37",

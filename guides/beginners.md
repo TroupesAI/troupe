@@ -370,7 +370,7 @@ The chat never needs the chronicle file to replay: everything it uses is copied 
 | probability, inclusion groups | `chance`, `group` and `weight` |
 | a chat file with swipes | a session, with swipes as siblings |
 
-A Troupe file can also hide inside a PNG picture, with a V3 copy beside it so older apps can read it. [Character Card V2/V3 and Troupe](character-cards.md) maps every field, in both directions.
+A Troupe file can also hide inside a PNG picture, and an exporter can put a V3 copy beside it so older apps can read it. [Character Card V2/V3 and Troupe](character-cards.md) maps every field, in both directions.
 
 ## 11. Where next
 

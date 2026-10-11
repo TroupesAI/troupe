@@ -29,7 +29,7 @@ Requires [Bun](https://bun.sh). `bun install`, then `bun run check` runs what CI
 Format and Play share one version, `major.minor`. A minor version bump changes, together:
 
 - the version lines of `spec/format.md` and `spec/play.md`, with their dates, and the README's status line;
-- every schema URL (`https://troupe.example/schema/<minor>/…`): the schemas' `$id`s and the `$schema` and `$id` examples in the spec;
+- every schema URL (`https://troupes.ai/schema/<minor>/…`): the schemas' `$id`s and the `$schema` and `$id` examples in the spec;
 - `troupe` in every bundle, session and chronicle: the examples, the cases, and the README and guides, including the example in Format 3's interface;
 - `conformance/cases/parsing/versions.json`, whose inputs name the versions around the current one;
 - a new changelog heading.

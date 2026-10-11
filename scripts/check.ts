@@ -97,7 +97,7 @@ for (const [name, text] of Object.entries(examples)) {
 for (const b of docBundles) if (b.troupe !== version) fail(`${b.where}: troupe is ${b.troupe}, not ${version}`);
 if (!read("README.md").includes(`v${version} draft`)) fail(`README.md: the status line doesn't say v${version}`);
 for (const doc of [...markdown, ...Object.keys(examples).map((n) => `examples/${n}`)])
-  for (const m of read(doc).matchAll(/troupe\.example\/schema\/(\d+\.\d+)\//g))
+  for (const m of read(doc).matchAll(/troupes\.ai\/schema\/(\d+\.\d+)\//g))
     if (m[1] !== version) fail(`${doc}: schema URL for version ${m[1]}, not ${version}`);
 
 // Conformance cases: cases/<area>/<topic>.json, valid JSON, and files they name exist

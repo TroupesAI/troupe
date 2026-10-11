@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://troupe.example/schema/0.11/message.schema.json",
+  "$id": "https://troupes.ai/schema/0.11/message.schema.json",
   "title": "Troupe message",
   "description": "Every line after the first in a Troupe session file: a message.",
   "type": "object",

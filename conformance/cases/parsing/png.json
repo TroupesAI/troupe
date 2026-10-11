@@ -1,5 +1,5 @@
 {
-  "description": "The image-embedded form (Format 14.4): one iTXt chunk with keyword troupe, compressed, holds the bundle, read exactly like a .troupe.json file; readers prefer it to a ccv3 chunk; a PNG with no troupe chunk or with two is PARSE",
+  "description": "The image-embedded form (Format 14.4): one iTXt chunk with keyword troupe, compressed, holds the bundle, read exactly like a .troupe.json file; readers ignore other chunks, such as ccv3; a PNG with no troupe chunk or with two is PARSE",
   "tests": [
     {
       "type": "parse",
@@ -24,7 +24,7 @@
     },
     {
       "type": "parse",
-      "name": "the troupe chunk is preferred to a ccv3 chunk",
+      "name": "a ccv3 chunk beside the troupe chunk is ignored",
       "kind": "png",
       "base64": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAAAAAA6fptVAAAAYXRFWHRjY3YzAGV5SnpjR1ZqSWpvaVkyaGhjbUZmWTJGeVpGOTJNeUlzSW5Od1pXTmZkbVZ5YzJsdmJpSTZJak11TUNJc0ltUmhkR0VpT25zaWJtRnRaU0k2SWsxcGNtRWlmWDA91QvdsQAAAHJpVFh0dHJvdXBlAAEAAAB4nCXLMQqAMAxG4avIPxfRtZsH8ATiENtggxpLWifx7iKOj493o9p5ZYZH1/Y9HDbRCI/l0rgzHEIio1DZCvx0Qz48xAgOSsc3jn9FLsEkVzkVHkNTKllJkhvWVZTZWjzz8wLtnSTuYe1TngAAAApJREFUeJxjYAAAAAIAAUivpHEAAAAASUVORK5CYII=",
       "expect": {

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://troupe.example/schema/0.11/chronicle.schema.json",
+  "$id": "https://troupes.ai/schema/0.11/chronicle.schema.json",
   "title": "Troupe chronicle",
   "description": "A Troupe chronicle: one character's definition, memories and carried values.",
   "type": "object",

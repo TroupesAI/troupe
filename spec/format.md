@@ -6,7 +6,7 @@ Troupe is an open file format for AI roleplay: characters, the worlds they live 
 
 This document defines the files and what every field means. [Troupe Play](play.md) defines how apps play them, so that every app gives the model the same content and records the same outcomes.
 
-> **Status.** This is a draft. Breaking changes are allowed until 1.0. Schema URLs use the placeholder host `troupe.example`. A conformance suite accompanies this draft.
+> **Status.** This is a draft. Breaking changes are allowed until 1.0. A conformance suite accompanies this draft.
 
 ## Contents
 
@@ -37,7 +37,7 @@ This document defines the files and what every field means. [Troupe Play](play.m
 16. [Security and limits](#16-security-and-limits)
 17. [Conformance](#17-conformance)
 
-**Appendices:** [A Schemas](#appendix-a-json-schemas) · [B Examples](#appendix-b-examples) · [C Design decisions](#appendix-c-design-decisions) · [D Road to 1.0](#appendix-d-road-to-10) · [E References](#appendix-e-references)
+**Appendices:** [A Schemas](#appendix-a-json-schemas) · [B Examples](#appendix-b-examples) · [C Design decisions](#appendix-c-design-decisions) · [D Future work](#appendix-d-future-work) · [E References](#appendix-e-references)
 
 ---
 
@@ -160,7 +160,7 @@ Model-facing text is Markdown (CommonMark 0.31.2). Apps MUST NOT render raw HTML
 
 ### 2.6 How to read this document
 
-The JSON Schemas (Appendix A) are normative for structure, the prose for meaning and behavior. Appendices B to D are informative, except where Appendix D sets release requirements; Appendix E lists references. Part I is enough to write bundles.
+The JSON Schemas (Appendix A) are normative for structure, the prose for meaning and behavior. Appendices B to D are informative; Appendix E lists references. Part I is enough to write bundles.
 
 ---
 
@@ -758,7 +758,7 @@ Fields that hold a file accept a relative path inside the package, an `https:` U
 
 ### 14.4 Image-embedded form
 
-A single-file bundle MAY be embedded in a PNG for image hosts: one `iTXt` chunk with keyword `troupe`, compression flag 1, compression method 0, empty language tag and translated keyword, holding the bundle as UTF-8. The image SHOULD be the cover or main avatar. Writers SHOULD also embed a `ccv3` chunk holding a Character Card V3 of the bundle's first character, with the whole bundle under `extensions.troupe`, so Character Card V3 apps can read the same file. Readers that support this form prefer the `troupe` chunk, treat it exactly like a `.troupe.json` file, and cap the decompressed size. A PNG with no `troupe` chunk, or more than one, is `PARSE`. It is never the canonical form, and image hosts often strip it.
+A single-file bundle MAY be embedded in a PNG for image hosts: one `iTXt` chunk with keyword `troupe`, compression flag 1, compression method 0, empty language tag and translated keyword, holding the bundle as UTF-8. The image SHOULD be the cover or main avatar. Readers that support this form read only the `troupe` chunk, treat it exactly like a `.troupe.json` file, and cap the decompressed size. A PNG with no `troupe` chunk, or more than one, is `PARSE`. It is never the canonical form, and image hosts often strip it.
 
 ---
 
@@ -836,7 +836,7 @@ Messages are never dropped for a failed check, except the lines that `PARSE` and
 
 ## Appendix A: JSON Schemas
 
-The JSON Schema 2020-12 files are normative for structure. Each `$id` is the URL the schema is published at, versioned by minor version, such as `https://troupe.example/schema/0.11/bundle.schema.json`; until 1.0 the host is the placeholder `troupe.example` (Appendix D).
+The JSON Schema 2020-12 files are normative for structure. Each `$id` names the schema and its minor version, such as `https://troupes.ai/schema/0.11/bundle.schema.json`.
 
 | File | Validates |
 | --- | --- |
@@ -893,7 +893,7 @@ Two thieves hired by the player to steal a duke's storm lantern before the twelf
 
 ```json
 {
-  "$schema": "https://troupe.example/schema/0.11/bundle.schema.json",
+  "$schema": "https://troupes.ai/schema/0.11/bundle.schema.json",
   "troupe": "0.11",
   "kind": "bundle",
   "id": "4b7d2c1e-9a3f-4e8b-b6d0-2f5a8c9e1d37",
@@ -1127,7 +1127,8 @@ A new session that continues this chronicle starts with `closeness` at 58 and bo
 | Durations in rounds | Messages | The same file behaves the same in solo and group chats. |
 | Player and model text stays literal | Resolving macros everywhere | No hidden state leaks through model output or prompt attacks. |
 | Priority means importance; file order is prompt order | Priority doing three jobs | Authors order lore by writing it in order. |
-| Copies with `credits`; export to V3 | Live cross-bundle references, structured provenance; one-way migration | People write attribution as they like; authors can still reach older apps. |
+| Copies with `credits` | Live cross-bundle references, structured provenance | People write attribution as they like. |
+| A PNG holds only the bundle | A Character Card V3 copy beside it | Compatibility with other formats is a choice for exporters, not a duty of every writer. |
 | No narrator voice | A character that defines the narrator | Narrator-only `system` entries already set its style. |
 | No reasoning or tool parts | Provider transcripts in messages | They mean nothing to the story; apps that keep them use `ext`. |
 | Two modes | A third, `mixed` mode | In `characters` mode the narrator can already take turns, and who speaks next is the app's choice. |
@@ -1141,19 +1142,11 @@ A new session that continues this chronicle starts with `closeness` at 58 and bo
 
 ---
 
-## Appendix D: Road to 1.0
+## Appendix D: Future work
 
-### D.1 Release requirements
+### D.1 Version 1.0
 
-Version 1.0 is tagged when:
-
-1. the schemas are published at a real domain;
-2. the conformance suite covers every roll purpose, weighted picks, three-pass chains, the root witness case, keyed-variable preparation, derived variables, event timing, chronicles and session files;
-3. two independent implementations, at least one not in JavaScript, pass it;
-4. the V2/V3 importer and exporter run against a corpus of real cards, including SillyTavern regex flags;
-5. real multi-character and stat-tracking cards are ported with their authors.
-
-The specification text is published under CC BY 4.0, and the schemas and conformance suite under Apache-2.0.
+Version 1.0 is tagged when no breaking change is pending and the conformance suite covers every roll purpose, weighted picks, three-pass chains, the root witness case, keyed-variable preparation, derived variables, event timing, chronicles and session files.
 
 ### D.2 Draft extensions
 

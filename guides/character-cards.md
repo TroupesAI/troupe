@@ -1,6 +1,6 @@
 # Character Card V2/V3 and Troupe
 
-This guide is informative. It maps [Character Card V2](https://github.com/malfoyslastname/character-card-spec-v2/blob/main/spec_v2.md) and [V3](https://github.com/kwaroran/character-card-spec-v3/blob/main/SPEC_V3.md) cards to Troupe and back, for importers and exporters. [Troupe Format](../spec/format.md) is normative; Format 14.4 defines the `ccv3` chunk of the image-embedded form.
+This guide is informative. It maps [Character Card V2](https://github.com/malfoyslastname/character-card-spec-v2/blob/main/spec_v2.md) and [V3](https://github.com/kwaroran/character-card-spec-v3/blob/main/SPEC_V3.md) cards to Troupe and back, for importers and exporters. [Troupe Format](../spec/format.md) is normative.
 
 ## Importing Character Card V2/V3
 
@@ -47,3 +47,5 @@ Each card becomes a bundle with one character and a scenario `main` that holds i
 ## Exporting to Character Card V3
 
 A bundle's first character exports with a lossy mapping: `name`, `description`, the openings with `content` of the first scenario whose cast includes it as `first_mes` and `alternate_greetings`, its `premise` as `scenario`, `authors` as `creator`, examples as `mes_example`, entries without `when` as a `character_book` (keys, constant, position and depth), and the whole bundle under `extensions.troupe`. Apps that read `extensions.troupe` restore the original exactly.
+
+To let Character Card V3 apps read a Troupe PNG (Format 14.4), an exporter can add a `ccv3` chunk with this card beside the `troupe` chunk. Troupe readers ignore it.
