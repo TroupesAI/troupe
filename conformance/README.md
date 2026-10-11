@@ -192,7 +192,7 @@ Every field of `expect` is optional:
 | `rootId` | The root's ID; `"1"` by default. |
 | `eventMessageId` | The ID for a system message the root's events may add. |
 | `firstMessage` | Without an opening: the player's first message, without `id` and `parent`. |
-| `chronicles` | `start` only: chronicle documents the session continues (Format 13). |
+| `chronicle` | `start` only: the chronicle document the session continues (Format 13). |
 
 `swipe` adds another root to the case's session. An opening without `content` makes a records-only root (Play 2.1 step 4); the runner doesn't generate the first model message (step 6).
 
@@ -319,7 +319,7 @@ Every field of `expect` is optional:
 - `expect.codes` is optional: the sorted distinct codes from validating the chronicle against `chronicle.schema.json` and checking it (Format 13). A value key of a keyed variable has exactly one key segment.
 - `expect.memories` and `expect.values` are the chronicle's `memories` and `values` after writing back (Play 2.2). `values` keeps only carried keys, keyed without the owner. A carried session entry on the path to `head` whose `knownBy` is absent or names the character, the latest version of each ID, replaces the memory with that ID or is added after the others, in the order the IDs first appear.
 
-Starting from chronicles (section 4.11 input `chronicles`) follows Play 2.2. Chronicle characters are added to the header's `characters` in chronicle order, after the test's own `characters`. When the test brings no `characters`, the first chronicle's `persona` fills the first seat.
+Starting from a chronicle (section 4.11 input `chronicle`) follows Play 2.2. The chronicle's character is added to the header's `characters` after the test's own `characters`. When the test brings no `characters`, its `persona` fills the first seat.
 
 ### 4.18 Limits
 

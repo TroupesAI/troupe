@@ -148,62 +148,60 @@
       "name": "carried values are a rules change before the opening's; the memories are root entries",
       "scenario": "kestrel",
       "opening": "docked",
-      "chronicles": [
-        {
-          "troupe": "0.11",
-          "kind": "chronicle",
-          "id": "0d4f3a62-5b1e-4c8a-9f27-6a1c2e8b7d40",
-          "character": {
-            "id": "mira",
-            "name": "Mira",
-            "description": "A sarcastic starship engineer who talks to engines more kindly than to people.",
-            "variables": [
-              {
-                "id": "closeness",
-                "type": "int",
-                "min": 0,
-                "max": 100,
-                "by": [
-                  "model"
-                ],
-                "carry": true,
-                "description": "How close Mira feels to {{user}}."
-              }
-            ]
-          },
-          "bundle": "7c1e9a4b-2f3d-4e5a-8b6c-1d2e3f4a5b6c",
-          "persona": {
-            "id": "mara",
-            "name": "Mara",
-            "description": "A courier who keeps the Kestrel stocked."
-          },
-          "memories": [
+      "chronicle": {
+        "troupe": "0.11",
+        "kind": "chronicle",
+        "id": "0d4f3a62-5b1e-4c8a-9f27-6a1c2e8b7d40",
+        "character": {
+          "id": "mira",
+          "name": "Mira",
+          "description": "A sarcastic starship engineer who talks to engines more kindly than to people.",
+          "variables": [
             {
-              "id": "lake",
-              "title": "The promise about the lake",
-              "pull": true,
-              "carry": true,
-              "knownBy": [
-                "mira"
+              "id": "closeness",
+              "type": "int",
+              "min": 0,
+              "max": 100,
+              "by": [
+                "model"
               ],
-              "text": "Mira and Mara saw the frozen lake on Thessa together, as she had promised."
-            },
-            {
-              "id": "juna",
-              "title": "Juna's signal",
-              "pull": true,
               "carry": true,
-              "knownBy": [
-                "mira"
-              ],
-              "text": "Mara helped Mira trace a signal that might be from her sister Juna."
+              "description": "How close Mira feels to {{user}}."
             }
-          ],
-          "values": {
-            "closeness": 58
+          ]
+        },
+        "bundle": "7c1e9a4b-2f3d-4e5a-8b6c-1d2e3f4a5b6c",
+        "persona": {
+          "id": "mara",
+          "name": "Mara",
+          "description": "A courier who keeps the Kestrel stocked."
+        },
+        "memories": [
+          {
+            "id": "lake",
+            "title": "The promise about the lake",
+            "pull": true,
+            "carry": true,
+            "knownBy": [
+              "mira"
+            ],
+            "text": "Mira and Mara saw the frozen lake on Thessa together, as she had promised."
+          },
+          {
+            "id": "juna",
+            "title": "Juna's signal",
+            "pull": true,
+            "carry": true,
+            "knownBy": [
+              "mira"
+            ],
+            "text": "Mara helped Mira trace a signal that might be from her sister Juna."
           }
+        ],
+        "values": {
+          "closeness": 58
         }
-      ],
+      },
       "expect": {
         "changes": [
           {
@@ -249,9 +247,7 @@
           "mira"
         ],
         "header": {
-          "chronicles": [
-            "0d4f3a62-5b1e-4c8a-9f27-6a1c2e8b7d40"
-          ],
+          "chronicle": "0d4f3a62-5b1e-4c8a-9f27-6a1c2e8b7d40",
           "players": [
             "mara"
           ],
@@ -297,62 +293,60 @@
           "description": "A courier."
         }
       ],
-      "chronicles": [
-        {
-          "troupe": "0.11",
-          "kind": "chronicle",
-          "id": "0d4f3a62-5b1e-4c8a-9f27-6a1c2e8b7d40",
-          "character": {
-            "id": "mira",
-            "name": "Mira",
-            "description": "A sarcastic starship engineer who talks to engines more kindly than to people.",
-            "variables": [
-              {
-                "id": "closeness",
-                "type": "int",
-                "min": 0,
-                "max": 100,
-                "by": [
-                  "model"
-                ],
-                "carry": true,
-                "description": "How close Mira feels to {{user}}."
-              }
-            ]
-          },
-          "bundle": "7c1e9a4b-2f3d-4e5a-8b6c-1d2e3f4a5b6c",
-          "persona": {
-            "id": "mara",
-            "name": "Mara",
-            "description": "A courier who keeps the Kestrel stocked."
-          },
-          "memories": [
+      "chronicle": {
+        "troupe": "0.11",
+        "kind": "chronicle",
+        "id": "0d4f3a62-5b1e-4c8a-9f27-6a1c2e8b7d40",
+        "character": {
+          "id": "mira",
+          "name": "Mira",
+          "description": "A sarcastic starship engineer who talks to engines more kindly than to people.",
+          "variables": [
             {
-              "id": "lake",
-              "title": "The promise about the lake",
-              "pull": true,
-              "carry": true,
-              "knownBy": [
-                "mira"
+              "id": "closeness",
+              "type": "int",
+              "min": 0,
+              "max": 100,
+              "by": [
+                "model"
               ],
-              "text": "Mira and Mara saw the frozen lake on Thessa together, as she had promised."
-            },
-            {
-              "id": "juna",
-              "title": "Juna's signal",
-              "pull": true,
               "carry": true,
-              "knownBy": [
-                "mira"
-              ],
-              "text": "Mara helped Mira trace a signal that might be from her sister Juna."
+              "description": "How close Mira feels to {{user}}."
             }
-          ],
-          "values": {
-            "closeness": 58
+          ]
+        },
+        "bundle": "7c1e9a4b-2f3d-4e5a-8b6c-1d2e3f4a5b6c",
+        "persona": {
+          "id": "mara",
+          "name": "Mara",
+          "description": "A courier who keeps the Kestrel stocked."
+        },
+        "memories": [
+          {
+            "id": "lake",
+            "title": "The promise about the lake",
+            "pull": true,
+            "carry": true,
+            "knownBy": [
+              "mira"
+            ],
+            "text": "Mira and Mara saw the frozen lake on Thessa together, as she had promised."
+          },
+          {
+            "id": "juna",
+            "title": "Juna's signal",
+            "pull": true,
+            "carry": true,
+            "knownBy": [
+              "mira"
+            ],
+            "text": "Mara helped Mira trace a signal that might be from her sister Juna."
           }
+        ],
+        "values": {
+          "closeness": 58
         }
-      ],
+      },
       "firstMessage": {
         "from": "player",
         "content": [

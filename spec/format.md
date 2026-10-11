@@ -611,7 +611,7 @@ interface SessionHeader {
   kind: "session";
   id?: string;                     // a random ID
   bundle?: string;                 // the bundle's id; omit inside its package
-  chronicles?: string[];           // chronicles the session continues (section 13)
+  chronicle?: string;              // the chronicle the session continues (section 13)
   limits?: Limits;                 // the players' lines and veils
   scenario: string;                // scenario ID
   seed: string;                    // random, at least 96 bits
@@ -1108,6 +1108,7 @@ A new session that continues this chronicle starts with `closeness` at 58 and bo
 | Decision | Instead of | Why |
 | --- | --- | --- |
 | Chronicles for continuity | Memories locked in one session or one app | The thing companion users care about most travels with them. |
+| One chronicle per session | Several, merged on the root | A companion needs one; merging needed distinct characters, routing by `knownBy` and renaming clashing memories. |
 | A chronicle is one document, rewritten on write-back | A log of records | Apps read it without folding; revision history is the app's. |
 | Callable events in an extension | Tools, checks and choices in the core | A tracker and an `on: "player"` event already roll checks; calls need tool calling and many rules, so `troupe.calls` proves them first. |
 | Structured player limits | Limits as ordinary entries | They reach every generation, media included, and can't be dropped. |

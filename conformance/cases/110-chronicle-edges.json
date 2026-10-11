@@ -44,37 +44,35 @@
           "description": "A courier."
         }
       ],
-      "chronicles": [
-        {
-          "troupe": "0.11",
-          "kind": "chronicle",
-          "id": "c-kai",
-          "character": {
-            "id": "kai",
-            "name": "Kai",
-            "description": "A drifter.",
-            "variables": [
-              {
-                "id": "feelings",
-                "type": "int",
-                "of": "cast",
-                "min": -10,
-                "max": 10,
-                "carry": true,
-                "description": "d"
-              }
-            ]
-          },
-          "persona": {
-            "id": "mara",
-            "name": "Mara",
-            "description": "d"
-          },
-          "values": {
-            "feelings.mara": 7
-          }
+      "chronicle": {
+        "troupe": "0.11",
+        "kind": "chronicle",
+        "id": "c-kai",
+        "character": {
+          "id": "kai",
+          "name": "Kai",
+          "description": "A drifter.",
+          "variables": [
+            {
+              "id": "feelings",
+              "type": "int",
+              "of": "cast",
+              "min": -10,
+              "max": 10,
+              "carry": true,
+              "description": "d"
+            }
+          ]
+        },
+        "persona": {
+          "id": "mara",
+          "name": "Mara",
+          "description": "d"
+        },
+        "values": {
+          "feelings.mara": 7
         }
-      ],
+      },
       "firstMessage": {
         "from": "player",
         "content": [

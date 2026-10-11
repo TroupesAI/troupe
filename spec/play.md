@@ -41,27 +41,27 @@ Format 2 applies here, including requirement keywords. "Format 7.2" means sectio
 2. Fill the player seats; rename brought-in characters, worlds or locations whose IDs clash (Format 12.5), except characters meant as replacements (Format 12.2).
 3. Ask the questions of variables with `ask`.
 4. Create a root message for the chosen opening: `from: "system"`, with `opening` set and the content copied as written, or empty for an opening without `content`. It records these changes, in order:
-   1. when the session continues chronicles, their values in one `{"by": "rules", "set": …}` change (section 2.2);
+   1. when the session continues a chronicle, its values in one `{"by": "rules", "set": …}` change (section 2.2);
    2. `{"by": "rules", "set": …}` with the opening's `set` and the starting `scene.present`;
    3. `{"by": "player", "set": …}` with the answers.
 
-   The starting `scene.present` is the opening's `scene.present` when its `set` lists one; otherwise the characters who speak in its content, or, for an opening without `content`, every character in the session's cast (Format 12.2). The players' characters and chronicle characters with no bundle character (section 2.2) are added to it.
+   The starting `scene.present` is the opening's `scene.present` when its `set` lists one; otherwise the characters who speak in its content, or, for an opening without `content`, every character in the session's cast (Format 12.2). The players' characters, and the chronicle's character when it has no bundle character (section 2.2), are added to it.
 
-   Without an opening, the player's first message is the root. It records the chronicles' change, then its own changes, then the answers. When a chronicle character with no bundle character joins, the chronicles' change also sets `scene.present`: the presence of section 3.2 plus every such character, in cast order.
+   Without an opening, the player's first message is the root. It records the chronicle's change, then its own changes, then the answers. When the chronicle's character has no bundle character, the chronicle's change also sets `scene.present`: the presence of section 3.2 plus that character, in cast order.
 5. Evaluate events at the root. Opening macros see their results.
 6. For an opening without `content`, generate the first model message as a child of the root (or of the root's event message), for a present model-played character chosen by the app, or the narrator.
 
 Swiping to another opening creates another root, starting again from step 4.
 
-### 2.2 Continuing chronicles
+### 2.2 Continuing a chronicle
 
-- **Starting.** A session that continues a chronicle lists it in `chronicles`.
-  - The chronicle's `character` is copied into the header's `characters`, where it replaces the bundle character with the same ID (Format 12.2). The character keeps that ID for life, so bundle references to it still work. A chronicle character with no bundle character joins the cast and is present at the start (section 2.1).
+- **Starting.** A session continues at most one chronicle, named by `chronicle`.
+  - The chronicle's `character` is copied into the header's `characters`, where it replaces the bundle character with the same ID (Format 12.2). The character keeps that ID for life, so bundle references to it still work. When the character has no bundle character, it joins the cast and is present at the start (section 2.1).
   - `persona` is offered as the player's character for the first seat, and the chronicle's `limits` are added to the session's `lines` and `veils`, without duplicates, in order.
-  - Its `memories` are copied onto the root as session entries, a memory without `knownBy` getting the character's, and the `values` of all its chronicles are recorded on the root in one `{"by": "rules"}` change, before any other change (section 2.1).
+  - Its `memories` are copied onto the root as session entries, a memory without `knownBy` getting the character's, and its `values` are recorded on the root in one `{"by": "rules"}` change, before any other change (section 2.1).
   - The session never needs the chronicle file to replay.
 - **Persona keys.** Keys of carried keyed variables that name the persona are rewritten to the session's first player's character, and back to the persona's ID when written back.
-- **Writing back.** Apps write back to the chronicle when they choose, such as when a conversation pauses, by rewriting it from the head path. `values` keeps only carried keys, and takes the latest value of each carried key that a change on the path set. Each carried session entry on the path, the latest version of its ID, replaces the memory with that ID or is added after the others, and with `disabled` removes it; root entries unchanged from how the start copied them are skipped. With several chronicles in a session, each has a distinct character; a carried entry goes to the chronicle of every character in its `knownBy`, or to all of them without `knownBy`, and clashing entry IDs from different chronicles are renamed on the root.
+- **Writing back.** Apps write back to the chronicle when they choose, such as when a conversation pauses, by rewriting it from the head path. `values` keeps only carried keys, and takes the latest value of each carried key that a change on the path set. Each carried session entry on the path whose `knownBy` is absent or names the character, the latest version of its ID, replaces the memory with that ID or is added after the others, and with `disabled` removes it; root entries unchanged from how the start copied them are skipped.
 
 ### 2.3 Turns
 

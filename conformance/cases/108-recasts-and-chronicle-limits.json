@@ -1,5 +1,5 @@
 {
-  "description": "Two header characters that replace the same bundle character are DUPLICATE_ID and make the session unplayable (Format 12.2). Chronicles' limits are added to the session's without duplicates, in order, and an opening without content starts with every character in the session's cast present, chronicle characters included (Play 2.1, 2.2)",
+  "description": "Two header characters that replace the same bundle character are DUPLICATE_ID and make the session unplayable (Format 12.2). A chronicle's limits become the session's, and an opening without content starts with every character in the session's cast present, the chronicle's character included (Play 2.1, 2.2)",
   "bundle": {
     "troupe": "0.11",
     "kind": "bundle",
@@ -47,7 +47,7 @@
     },
     {
       "type": "start",
-      "name": "two chronicles, one for a character with no bundle character",
+      "name": "a chronicle for a character with no bundle character",
       "scenario": "s",
       "opening": "street",
       "characters": [
@@ -57,53 +57,35 @@
           "description": "d"
         }
       ],
-      "chronicles": [
-        {
-          "troupe": "0.11",
-          "kind": "chronicle",
-          "id": "c-zed",
-          "character": {
-            "id": "zed",
-            "name": "Zed",
-            "description": "A drifter.",
-            "variables": [
-              {
-                "id": "mood",
-                "type": "string",
-                "carry": true,
-                "description": "d"
-              }
-            ]
-          },
-          "limits": {
-            "lines": [
-              "gore"
-            ],
-            "veils": [
-              "romance"
-            ]
-          },
-          "values": {
-            "mood": "calm"
-          }
+      "chronicle": {
+        "troupe": "0.11",
+        "kind": "chronicle",
+        "id": "c-zed",
+        "character": {
+          "id": "zed",
+          "name": "Zed",
+          "description": "A drifter.",
+          "variables": [
+            {
+              "id": "mood",
+              "type": "string",
+              "carry": true,
+              "description": "d"
+            }
+          ]
         },
-        {
-          "troupe": "0.11",
-          "kind": "chronicle",
-          "id": "c-kai",
-          "character": {
-            "id": "kai",
-            "name": "Kai",
-            "description": "Kai, remembered."
-          },
-          "limits": {
-            "lines": [
-              "gore",
-              "spiders"
-            ]
-          }
+        "limits": {
+          "lines": [
+            "gore"
+          ],
+          "veils": [
+            "romance"
+          ]
+        },
+        "values": {
+          "mood": "calm"
         }
-      ],
+      },
       "expect": {
         "changes": [
           {
@@ -126,18 +108,13 @@
         ],
         "characters": [
           "p",
-          "zed",
-          "kai"
+          "zed"
         ],
         "header": {
-          "chronicles": [
-            "c-zed",
-            "c-kai"
-          ],
+          "chronicle": "c-zed",
           "limits": {
             "lines": [
-              "gore",
-              "spiders"
+              "gore"
             ],
             "veils": [
               "romance"
