@@ -29,7 +29,7 @@ Troupe separates **what a story is** (content, state, knowledge and recorded out
 
 ### 1.2 Conventions
 
-Format 2 applies here, including requirement keywords. "Format 7.2" means section 7.2 of Troupe Format; a section number alone means this document. Normative references are listed in Format Appendix E.
+Format 2 applies here, including requirement keywords. "Format 7.2" means section 7.2 of Troupe Format; a section number alone means this document. Normative references are listed in Format Appendix E. Appendix A is informative.
 
 ---
 
@@ -62,7 +62,7 @@ Every later root, from another opening or a player's message, is made the same w
 
 - **Starting.** A session continues at most one chronicle, named by `chronicle`.
   - The chronicle's `character` is copied into the header's `characters`, after the others, where it replaces the bundle character with the same ID (Format 12.2). When the character isn't in the scenario's cast, it joins the cast and is present at the start (section 2.1).
-  - `persona` fills the first seat without a `character`, or adds a seat (Format 12.2), and is listed first in the header's `characters`, unless the people playing bring another character.
+  - Unless the people playing bring another character, `persona` fills the first seat without a `character`, or adds a seat (Format 12.2), and is listed first in the header's `characters`.
   - The chronicle's `limits` are added to the session's `lines` and `veils`, in order, without duplicates.
   - Its `memories` are copied onto each root as carried session entries, a memory without `carry` getting `carry: true` and one without `knownBy` getting the character's ID as its `knownBy`, and its `values` are recorded on each root in one `{"by": "rules"}` change, keyed with the character's ID (`mira.closeness`), before any other change (section 2.1).
   - Value keys and memory `knownBy` IDs that name the persona take effect only when the persona plays with its own ID (section 2.1 step 2).
@@ -110,7 +110,7 @@ A key whose prepared value is no longer valid, such as a set grown past its limi
 
 **Player edits** to state are recorded on a new `from: "system"` child of the head with empty `content`, which becomes the head. Events are then evaluated at that message. An edit whose keys are all dropped records nothing.
 
-**Events.** At each root, after each player or model message once its player and model changes are recorded, and after player edits:
+**Events.** At each root, after each player or model message once its player and model changes and any extraction on it are recorded, and after player edits, an event pass runs before anything is generated after that message:
 
 1. Events in use are evaluated in a single pass, once each, in this order: the scenario's, the scenario's worlds', the session's worlds', then the characters' in cast order, each owner's in array order. An event with `on` is skipped unless the triggering message is of that kind; a root made from an opening and a records-only message are of neither kind. Each sees the state, firings and counts left by those before it. Messages added by events don't trigger evaluation.
 2. An event fires when its `when` is true; it isn't `once` with an earlier firing on the path; its distance from its last firing is greater than `cooldown` (0 when unset), so it fires at most once per round; and its `chance` roll succeeds.
@@ -156,7 +156,6 @@ How an app takes the payload out of a reply is up to it. Output that isn't a JSO
 4. `changes` are recorded as one `{"by": "model", …}` change, prepared as in section 3.3, on the message the tracker runs on or on the reply itself. Every extraction records this change, with an empty `set` when it changes nothing, which marks where the next tracker run starts.
 5. `entries` become session entries on the same message, each replacing one there with its ID and stored with each field it lacks taken from it, as Format 12.3 says of later replacements, with their `knownBy` IDs dropped and emptied as in step 3; on a root they are dropped. An entry that would take the path's session entries past their limit (Format 16) is dropped.
 
-The event pass after a message waits for any extraction the app runs on it.
 
 ---
 
@@ -179,7 +178,7 @@ roll(purpose, seed, messageId, subject):
 | `roll(n)` | `dice` | the triggering message | `<event name>/<part>/<key>/<k>`: key is the compute key as written; part is `e` for the event or the outcome index; *k* numbers the `roll` calls in that expression by where they start, from 0 | `roll mod n + 1` |
 | `{{pick}}` | `pick` | `""` | the options joined by `::`, then `#` and the macro's index among the picks in that string, from 0 | option `roll mod count` |
 
-- **`seed`** is the session's. A message's ID is fixed before its prompt is built, since its rolls use it.
+- **`seed`** is the session's. A message's ID is fixed before its prompt is built.
 - **Weighted pick:** with candidates in order and total integer weight *W*, let `t = roll mod W`; pick the first candidate whose running total of weights exceeds `t`.
 - `chance · 2^48` is exact in double precision, so `chance: 1` always passes and `0` never does.
 
@@ -263,7 +262,7 @@ Troupe defines what goes into a prompt and in which slot; formatting, mapping to
 | **Context** | selected entries placed in `context`; pinned messages |
 | **History** | messages on the path with parts the generation can see, image parts reaching models without image input as their `alt`, with summaries it can see standing in for messages they cover where the app chooses, and entries with a numeric position inserted at their depth |
 
-Entries keep file order within a slot, and everything in a slot is filtered by section 7. Apps MUST apply the session's `limits` to every generation in the session and never drop them to save space.
+Entries keep file order within a slot, and everything in a slot is filtered by section 7. Every generation's System slot carries the session's `limits`, and fitting never drops them.
 
 ---
 

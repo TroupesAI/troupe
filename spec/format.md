@@ -414,7 +414,6 @@ interface Variable {
 - **`maxStep`** is the largest step one change from the model may take; **`oneWay`** lets numbers only rise, a bool only turn true, a set only gain members, and an enum only move later in `values`. Both apply to each key of a keyed variable. Starting values are exempt from `oneWay` (Play 3.3).
 - **`derive`** makes a read-only variable computed from other state whenever it is read, such as `"derive": "state.clock / 24 + 1"` for the day. Derived variables have no `initial`, `by`, `ask`, `of`, `maxStep` or `oneWay`, can't be changed, and can't read other derived variables (`CEL_ERROR`). A `derive` is evaluated at the evaluation point of whatever reads it, with `self` its owner, `char` `""`, and no `hit()`.
 - **`ask`** puts a question to the player when the session starts and records the answer. `ask` is not allowed with `of`.
-- **State reaches the story model** through text that shows it, such as an entry with `{{state.hp}}`, and as tracker input for structured replies (Play 3.4); nothing else sends it.
 
 ### 8.2 Ownership
 
@@ -490,7 +489,7 @@ interface Outcome {
 ```
 
 - **`set` takes plain values; `compute` takes CEL.** `"set": {"scene.location": "vault"}`, `"compute": {"trust.elena": "state.trust.elena - 0.1"}`. Two keys of one `set` or `compute` that name the same full key, such as `own.nerve` and `kai.nerve`, are both dropped (`UNKNOWN_VARIABLE`).
-- **Firing.** Play 3.3 says when events run and fire. An event `on: "player"` runs before the reply; one `on: "model"` runs after the reply and any extraction on it (Play 3.4).
+- **Firing.** Play 3.3 says when events run and fire.
 - **`end`** marks the story finished on that path. It changes nothing else: if play goes on, events and directions work as before, and a `direct` on the same firing still reaches the next model reply.
 
 ---
@@ -517,7 +516,7 @@ Macros are the only substitution in text. `@` turns IDs into names.
 - **Rendering.** A value with a label renders as its label, with the label's own macros resolved; a substituted value is never scanned for macros again. Numbers render as ECMAScript `Number.prototype.toString`, booleans as `true` or `false`, lists as items joined by `, ` (an empty list as nothing), and maps as `Name: value` pairs joined by `, `, with character keys shown by name and other keys with underscores as spaces. Map keys render in declared order (cast order for characters), and `"*"` keys in code point order.
 - **Unresolved.** Text between `{{` and `}}` that is no macro, such as `{{unknown}}`, and a macro naming a variable that isn't declared, as section 11.2 counts declarations, are left as written (`UNKNOWN_MACRO`); an absent key of a declared variable, a path below a value that isn't a map, or a variable whose owner isn't in use renders as nothing.
 - **Which state.** Macros in a message resolve at that message: against its state, with `{{user}}` from the path to it. Elsewhere they resolve at the evaluation point (section 11.1). In message parts and in a scenario's text, `own` means `state`.
-- **Where.** Authors write macros in descriptions, summaries, dialogue examples, premises, briefings, notes, entry texts, openings, event messages and directions, variable descriptions, questions, labels, and image `alt`. Entry titles and keys are never resolved.
+- **Where.** Macros resolve only in descriptions, summaries, dialogue examples, premises, briefings, notes, entry texts, openings, event messages and directions, variable descriptions, questions, labels, and image `alt`. Every other string, such as names, aliases, titles, taglines, warnings, keys, `limits` and expressions, is used as written.
 - **Player and model text** is stored escaped: in message parts' `text` and `alt`, in message `summary` text, and in the `text`, `description` and `summary` of entries and characters a model adds, apps MUST write each `\` as `\\` and each `{{` as `\{{`. Names, aliases, titles, keys and expressions are stored as written. Resolving the escaped text gives back exactly what was written, so macros never take effect in it.
 - **Parsing** is one left-to-right scan. At each `{{`, the longest form in the table, with no spaces outside comments and options, is a macro; otherwise the first `{` is kept and scanning resumes at the next character. A comment runs from `{{//` to the next `}}`. Options can't contain `::` or `}}`. `\{{` produces a literal `{{`, and `\\` a literal `\`.
 - **Stored text keeps its macros.** They resolve when text is shown or sent.
@@ -669,7 +668,7 @@ A message may add entries, owned by `session`. They are candidates from that mes
 
 - **`pinned`** messages are repeated in the Context slot while they remain on the path.
 - **`hidden`** messages are in the transcript, but are never sent to models, scanned or summarized.
-- **`summary`** condenses the messages from `from` to its message (Play 6). Without `knownBy`, it is known by the characters who know every part it covers, and reaches the narrator only if the narrator can see every part (Play 7). A summary MUST match its messages as they are: one whose covered messages changed or are gone is removed.
+- **`summary`** condenses the messages from `from` to its message (Play 6). Without `knownBy`, it is known by the characters who know every part it covers, and reaches the narrator only if the narrator can see every part (Play 7). An app that changes or removes a message a summary covers MUST remove that summary; readers take summaries as written.
 - **Records-only messages.** A system message with empty `content` carries `changes`, such as player edits (Play 3.3), and, on a root made from an opening without `content`, `opening`; it has no `summary`, `activated` or `char`, has `entries` only on a root, and isn't pinned.
 
 ---
@@ -722,7 +721,7 @@ Fields that hold a file (`cover`, `avatar`, location `image` and image parts) ho
 
 - `bundle.json` is at the root.
 - Paths match `^[A-Za-z0-9_-][A-Za-z0-9._-]*(/[A-Za-z0-9_-][A-Za-z0-9._-]*)*$`, with segments of at most 255 bytes, unique when compared case-insensitively.
-- Entries use the store or deflate methods and are not encrypted. Sessions are stored under `sessions/` with the `.troupe-session.jsonl` extension, and chronicles under `chronicles/` with the `.troupe-chronicle.json` extension; readers read sessions and chronicles only there, and other files only as files the bundle references.
+- ZIP entries use the store or deflate methods and are not encrypted. Sessions are stored under `sessions/` with the `.troupe-session.jsonl` extension, and chronicles under `chronicles/` with the `.troupe-chronicle.json` extension; readers read sessions and chronicles only there, and other files only as files the bundle references.
 
 ---
 
