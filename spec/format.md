@@ -360,7 +360,7 @@ interface Entry {
 ### 7.2 Activation
 
 - An entry **without `keys` or `pull`** is always on, subject to `when`.
-- An entry **with `keys`** activates when one appears in recent messages, including speakers' names. Keys match whole words, ignoring case, except in the scripts Play 5.3 lists, such as Chinese, Japanese, Korean and Thai, where keys match anywhere. A key of at least three characters that starts and ends with `/` is a regex (section 16 item 5): `/dragons?/`, `/(?-i)Kai/`.
+- An entry **with `keys`** activates when one appears in recent messages, including speakers' names. Keys match whole words, ignoring case, except in the scripts Play 5.3 lists, such as Han, Kana, Hangul and Thai, where keys match anywhere. A key of at least three characters that starts and ends with `/` is a regex (section 16 item 5): `/dragons?/`, `/(?-i)Kai/`.
 - An entry **with `pull`** is retrieved when it is relevant: requested by the model, or found by the app's similarity search (Play 5.6).
 - **`when`** narrows any kind. `hit("word")` checks recent text with the same rules as keys, so `"when": "hit('glass') && !hit('guard')"` expresses AND and NOT.
 - **`priority`** is importance: it decides group competition and what fitting drops first (Play 5.5).
@@ -626,7 +626,7 @@ interface Message {
   ext?: Ext;
 }
 
-type Part =                         // writers use only these two types; every part MAY also carry ext; no speaker = narration
+type Part =                         // writers create only these two types (section 15); every part MAY also carry ext; no speaker = narration
   | { type?: "text"; text: string; speaker?: string; knownBy?: string[] }
   | { type: "image"; src: string; alt?: string; speaker?: string; knownBy?: string[] };
 
@@ -666,8 +666,8 @@ A message may add entries, owned by `session`. They are candidates from that mes
 
 ### 12.4 Other message fields
 
-- **`pinned`** messages are repeated in the Context slot while they remain on the path.
-- **`hidden`** messages are in the transcript, but are never sent to models, scanned or summarized.
+- **`pinned`** marks a message to repeat in the model's context while it is on the path (Play 6).
+- **`hidden`** messages are in the transcript, but are never sent to models or scanned, and summary knowledge ignores their parts.
 - **`summary`** condenses the messages from `from` to its message (Play 6). Without `knownBy`, it is known by the characters who know every part it covers, and reaches the narrator only if the narrator can see every part (Play 7). An app that changes or removes a message a summary covers MUST remove that summary; readers take summaries as written.
 - **Records-only messages.** A system message with empty `content` carries `changes`, such as player edits (Play 3.3), and, on a root made from an opening without `content`, `opening`; it has no `summary`, `activated` or `char`, has `entries` only on a root, and isn't pinned.
 
@@ -727,7 +727,7 @@ Fields that hold a file (`cover`, `avatar`, location `image` and image parts) ho
 
 ## 15. Extensions and versioning
 
-- **Extensions.** Every object that a Troupe document defines with an interface MAY carry `ext`, keyed by an extension name matching `^[a-z0-9][a-z0-9.-]{0,63}$`, such as `risu.regex`. The `troupe.` prefix is reserved for the draft extensions of Appendix D. Apps MUST NOT add fields anywhere else.
+- **Extensions.** Every object of a bundle, session or chronicle that this document defines with an interface MAY carry `ext`, keyed by an extension name matching `^[a-z0-9][a-z0-9.-]{0,63}$`, such as `risu.regex`. The `troupe.` prefix is reserved for the draft extensions of Appendix D. Apps MUST NOT add fields anywhere else.
 - **Unknown fields.** Readers MUST ignore fields and extensions they don't understand. They MUST keep `ext` unchanged, as a JSON value, through load, save and export; other unknown fields are dropped when the file is written. A property is unknown when its object's interface doesn't define it; for a part, the interface its `type` selects. Each is an `UNKNOWN_FIELD` warning located at the property, and `SCHEMA` is judged with unknown properties removed, so readers never reject a file only for them. A part whose `type` is present and isn't `"text"` or `"image"` is unknown as a whole: an `UNKNOWN_FIELD` warning at its `type`; the reader ignores it, so a message holding only such parts has no content, and writes it back unchanged.
 - **Versions** are `major.minor`, compared as two integers, so `0.10` is newer than `0.9`. A reader refuses a file of another major version (`UNSUPPORTED_VERSION`). From 1.0, minor versions only add what older readers can safely ignore: readers MUST open every file of their major version and report a newer minor as an `UNSUPPORTED_VERSION` warning. Before 1.0, any minor version may break: a reader fully supports only its own, reports any other as an `UNSUPPORTED_VERSION` warning, and MAY still read it.
 
@@ -1108,7 +1108,7 @@ A new session that continues this chronicle starts with `closeness` at 58 and bo
 | No text transforms | Regex scripts that rewrite text | Most build HTML, fix one model's quirks, or display stats that state now covers. |
 | Security rules for showing and reading files are normative | Leaving safety to each app | Files come from strangers; a file safe in one app must be safe in every app. |
 | A replacement session entry takes the fields it lacks from the one it replaces | Replacing an entry whole | A model sees only an entry's ID and text, so its update of a memory keeps the memory's `carry`, `knownBy`, `pull` and `title`. |
-| A joiner listed in `players` fills a seat | Recording how each character joined | The snapshot can't tell a player's own character from a joiner listed in `players`; an app that wants a joiner's keyed values kept leaves it model-played. |
+| A joiner listed in `players` fills a seat | Recording how each character joined | The snapshot can't tell a player's own character from a joiner listed in `players`; so a joiner listed in `players` has no `"characters"` key. |
 | Strict schemas, lenient readers | Either everywhere | Writers catch typos; readers stay forward compatible. |
 | A reader that keeps a file failing its schema removes each failing value | Refusing it, or each reader repairing it its own way | Every lenient reader plays the same story from the same broken file. |
 | Writers leave out empty optional fields and write booleans as they like | Allowing `""` and `[]` anywhere; treating an explicit `false` as different from absent | Two writers of the same story produce the same fields, and typed serializers that write defaults still validate. |
@@ -1127,7 +1127,7 @@ A new session that continues this chronicle starts with `closeness` at 58 and bo
 
 ## Appendix D: Future work
 
-The `troupe.` extension prefix is reserved for these draft extensions, which may join the core once proven:
+These draft extensions use the `troupe.` prefix (section 15) and may join the core once proven:
 
 - **`troupe.tests`:** behavior tests inside a bundle, checked deterministically and by a judge model.
 - **`troupe.time`:** characters who act between messages, with idle events.
