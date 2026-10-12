@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://troupes.ai/schema/0.12/session-header.schema.json",
+  "$id": "https://docs.troupes.ai/schema/0.12/session-header.schema.json",
   "title": "Troupe session header",
   "description": "The first line of a Troupe session file.",
   "type": "object",

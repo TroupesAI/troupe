@@ -802,7 +802,7 @@ A **conforming file** validates against the schemas, passes the checks below, st
 
 ## Appendix A: JSON Schemas
 
-The JSON Schema 2020-12 files are normative for structure. Each `$id` names the schema and its minor version, such as `https://troupes.ai/schema/0.12/bundle.schema.json`.
+The JSON Schema 2020-12 files are normative for structure. Each `$id` names the schema and its minor version, and is where the schema is published, such as `https://docs.troupes.ai/schema/0.12/bundle.schema.json`.
 
 | File | Validates |
 | --- | --- |
@@ -858,7 +858,7 @@ Two thieves hired by the player to steal a duke's storm lantern before the twelf
 
 ```json
 {
-  "$schema": "https://troupes.ai/schema/0.12/bundle.schema.json",
+  "$schema": "https://docs.troupes.ai/schema/0.12/bundle.schema.json",
   "troupe": "0.12",
   "kind": "bundle",
   "id": "4b7d2c1e-9a3f-4e8b-b6d0-2f5a8c9e1d37",
@@ -1109,6 +1109,7 @@ A new session that continues this chronicle starts with `closeness` at 58 and bo
 | Regexes limited to what every RE2 implementation compiles | Whatever an engine accepts | A key is valid or `REGEX_ERROR` alike everywhere, and runs in linear time. |
 | Session characters and players are session-wide | Characters and seats per branch | Who a character is and who plays it are facts about the session; who is present, which is story, is recorded on each path. |
 | Timestamps in UTC with `Z` | Any offset | One zone and one form, so apps compare instants without time zone data. |
+| Schema URLs on docs.troupes.ai, the site built from this repository | URLs on an app's domain | Every released version stays online whatever happens to any app. |
 
 ---
 

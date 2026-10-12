@@ -1,0 +1,37 @@
+---
+import { Image } from "astro:assets";
+import logo from "../assets/logo.webp";
+import { spec } from "../sources.ts";
+
+// Starlight's own site title would load the full-size logo for a 2rem image.
+const { siteTitle, siteTitleHref } = Astro.locals.starlightRoute;
+---
+
+<a href={siteTitleHref}>
+  <Image src={logo} alt="" width={32} densities={[1, 2]} loading="eager" />
+  <span><span translate="no">{siteTitle}</span> <small>{spec.version} {spec.status}</small></span>
+</a>
+
+<style>
+  a {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: var(--sl-color-white);
+    font-family: var(--font-serif);
+    font-size: var(--sl-text-h4);
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  img {
+    border-radius: 50%;
+  }
+  small {
+    margin-inline-start: 0.25rem;
+    color: var(--sl-color-gray-3);
+    font-size: var(--sl-text-sm);
+    font-style: italic;
+    font-weight: 400;
+  }
+</style>

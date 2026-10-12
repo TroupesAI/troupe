@@ -1,0 +1,89 @@
+---
+import { Icon } from "@astrojs/starlight/components";
+
+const themes = [
+  { value: "auto", label: "System", icon: "laptop" },
+  { value: "light", label: "Light", icon: "sun" },
+  { value: "dark", label: "Dark", icon: "moon" },
+] as const;
+---
+
+<theme-select role="group" aria-label="Theme">
+  {
+    themes.map(({ value, label, icon }) => (
+      <button type="button" value={value} aria-label={label} title={label}>
+        <Icon name={icon} size="1rem" />
+      </button>
+    ))
+  }
+</theme-select>
+
+{/* Inlined so the current choice shows before the page paints. Starlight's ThemeProvider keeps the same key. */}
+<script is:inline>
+  document.currentScript.previousElementSibling.querySelectorAll("button").forEach((b) => {
+    b.setAttribute("aria-pressed", String(b.value === (localStorage.getItem("starlight-theme") || "auto")));
+  });
+</script>
+
+<script>
+  type Theme = "auto" | "light" | "dark";
+  const key = "starlight-theme";
+  const light = matchMedia("(prefers-color-scheme: light)");
+  const stored = (): Theme => {
+    const theme = localStorage.getItem(key);
+    return theme === "light" || theme === "dark" ? theme : "auto";
+  };
+
+  function apply(theme: Theme) {
+    document.documentElement.dataset.theme = theme === "auto" ? (light.matches ? "light" : "dark") : theme;
+    localStorage.setItem(key, theme === "auto" ? "" : theme);
+    for (const button of document.querySelectorAll<HTMLButtonElement>("theme-select button")) {
+      button.setAttribute("aria-pressed", String(button.value === theme));
+    }
+  }
+
+  light.addEventListener("change", () => {
+    if (stored() === "auto") apply("auto");
+  });
+
+  customElements.define(
+    "theme-select",
+    class extends HTMLElement {
+      connectedCallback() {
+        this.addEventListener("click", (e) => {
+          const button = (e.target as Element).closest("button");
+          if (button) apply(button.value as Theme);
+        });
+      }
+    },
+  );
+</script>
+
+<style>
+  theme-select {
+    display: inline-flex;
+    align-self: center;
+    gap: 0.125rem;
+    padding: 0.1875rem;
+    border: 1px solid var(--sl-color-gray-5);
+    border-radius: var(--radius-pill);
+  }
+  button {
+    display: grid;
+    place-items: center;
+    width: 1.75rem;
+    height: 1.5rem;
+    border: 0;
+    border-radius: var(--radius-pill);
+    background: none;
+    color: var(--sl-color-gray-3);
+    cursor: pointer;
+  }
+  button:hover {
+    color: var(--sl-color-white);
+  }
+  button[aria-pressed="true"] {
+    background: var(--sl-color-gray-5);
+    color: var(--sl-color-white);
+  }
+</style>

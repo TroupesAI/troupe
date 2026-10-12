@@ -1,0 +1,48 @@
+/* Colors from the logo: a night-violet field and a lavender accent. Starlight's own variables carry them, so its
+   components need no restyling. */
+:root {
+  --sl-color-white: oklch(0.99 0.004 290);
+  --sl-color-gray-1: oklch(0.94 0.01 290);
+  --sl-color-gray-2: oklch(0.85 0.015 290);
+  --sl-color-gray-3: oklch(0.68 0.025 290);
+  --sl-color-gray-4: oklch(0.47 0.03 290);
+  --sl-color-gray-5: oklch(0.3 0.035 290);
+  --sl-color-gray-6: oklch(0.205 0.03 290);
+  --sl-color-black: oklch(0.165 0.025 290);
+  --sl-color-accent-low: oklch(0.31 0.09 295);
+  --sl-color-accent: oklch(0.66 0.17 295);
+  --sl-color-accent-high: oklch(0.86 0.08 295);
+  --radius-pill: 1rem;
+
+  --sl-font: var(--font-sans);
+  --sl-font-mono: var(--font-mono);
+}
+
+:root[data-theme="light"] {
+  --sl-color-white: oklch(0.17 0.03 290);
+  --sl-color-gray-1: oklch(0.24 0.035 290);
+  --sl-color-gray-2: oklch(0.33 0.035 290);
+  --sl-color-gray-3: oklch(0.46 0.03 290);
+  --sl-color-gray-4: oklch(0.63 0.02 290);
+  --sl-color-gray-5: oklch(0.83 0.015 290);
+  --sl-color-gray-6: oklch(0.955 0.008 290);
+  --sl-color-gray-7: oklch(0.975 0.006 290);
+  --sl-color-black: oklch(0.993 0.003 290);
+  --sl-color-accent-low: oklch(0.93 0.04 295);
+  --sl-color-accent: oklch(0.55 0.2 295);
+  --sl-color-accent-high: oklch(0.42 0.19 295);
+}
+
+.hero img {
+  border-radius: 50%;
+}
+
+h1#_top,
+.sl-markdown-content :is(h1, h2, h3, h4) {
+  font-family: var(--font-serif);
+}
+
+/* The home page's text keeps a reading width under the full-width hero. */
+[data-has-hero] .sl-markdown-content {
+  max-width: 50rem;
+}
