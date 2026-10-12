@@ -108,7 +108,7 @@ A key whose prepared value is no longer valid, such as a set grown past its limi
 
 **Readers** re-apply steps 1, 4 and 5 when loading and drop invalid keys, but don't re-check channels, `maxStep` or `oneWay`.
 
-**Player edits** to state are recorded on a new `from: "system"` child of the head with empty `content`, which becomes the head. Events are then evaluated at that message.
+**Player edits** to state are recorded on a new `from: "system"` child of the head with empty `content`, which becomes the head. Events are then evaluated at that message. An edit whose keys are all dropped records nothing.
 
 **Events.** At each root, after each player or model message once its player and model changes are recorded, and after player edits:
 
@@ -146,7 +146,7 @@ type Newcomer = Pick<Character, "id" | "name" | "aliases" | "description" | "sum
 Nothing in the payload takes `ext`, and:
 
 - A newcomer whose ID names a character, world, scenario or scenario variable of the bundle or session, an earlier newcomer of the payload included, or who would take the cast past its limit (Format 16), is dropped.
-- An entry whose ID names a session entry on the path that isn't placed in `context` is dropped; a model may update or disable a context entry, such as a memory.
+- An entry whose ID names a session entry on the path, disabled or not, that isn't placed in `context` is dropped; a model may update or disable a context entry, such as a memory.
 
 Output that isn't a JSON object is discarded, and nothing is recorded. Otherwise apps apply a payload in this order:
 
@@ -154,7 +154,7 @@ Output that isn't a JSON object is discarded, and nothing is recorded. Otherwise
 2. `characters` join the header.
 3. `parts` are stored. A speaker that names no cast character is dropped (a newcomer that joined is in the cast), and so is each `knownBy` ID other than `narrator` that names none. A `knownBy` whose IDs are all dropped becomes `["narrator"]`, or `[<speaker>, "narrator"]` on a part with a speaker.
 4. `changes` are recorded as one `{"by": "model", …}` change, prepared as in section 3.3, on the message the tracker runs on or on the reply itself. Every extraction records this change, with an empty `set` when it changes nothing, which marks where the next tracker run starts.
-5. `entries` become session entries on the same message, each replacing one there with its ID, with their `knownBy` IDs dropped and emptied as in step 3; on a root they are dropped. An entry that would take the path's session entries past their limit (Format 16) is dropped.
+5. `entries` become session entries on the same message, each replacing one there with its ID and stored with the fields it takes from it (Format 12.3), with their `knownBy` IDs dropped and emptied as in step 3; on a root they are dropped. An entry that would take the path's session entries past their limit (Format 16) is dropped.
 
 The event pass after a message waits for any extraction the app runs on it.
 
@@ -259,7 +259,7 @@ Troupe defines what goes into a prompt and in which slot; formatting, mapping to
 | --- | --- |
 | **System** | the app's own prompt; the session's `limits` (Format 12); selected entries placed in `system`; event directions (section 3.3); for a structured reply from the narrator or the single voice, the tracker's input other than the messages, taken at the prompt's evaluation point (section 3.4) |
 | **Setting** | the premise; world descriptions, in the world order of section 5.1; the current location and its parents, innermost first |
-| **People** | present model-played characters, then the character being generated for if absent: description and cast `notes`; the players' characters in cast order: description and cast `notes`; offstage model-played cast characters other than the one being generated for, whose name or alias, as a plain key, matches the scanned text (section 5.2) of the last 4 messages, as the generation can see it: their `summary`, in cast order, a character without one contributing nothing; dialogue examples of the present model-played characters in cast order, then of the character being generated for |
+| **People** | present model-played characters, then the character being generated for if absent: description and cast `notes`; the players' characters in cast order: description and cast `notes`; offstage model-played cast characters other than the one being generated for, whose name or alias, as a plain key, matches the scanned text (section 5.2) of the last 4 messages, as the generation can see it: their `summary`, in cast order, a character without one contributing nothing; dialogue examples of the present model-played characters in cast order, then of the character being generated for if absent |
 | **Context** | selected entries placed in `context`; pinned messages |
 | **History** | messages on the path with parts the generation can see, image parts reaching models without image input as their `alt`, with summaries it can see standing in for messages they cover where the app chooses, and entries with a numeric position inserted at their depth |
 

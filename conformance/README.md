@@ -314,7 +314,7 @@ The test reads the case's raw session lines.
 | Input | Meaning |
 | --- | --- |
 | `reply` | Optional. `{id, parent, char?}`: record a reply as a new model message. |
-| `message` | Instead of `reply`: an existing message, for a tracker extraction. |
+| `message` | Instead of `reply`: an existing message, for a tracker extraction run while it was the head; the messages after it don't affect the result. |
 | `output` | A string for a plain reply, or a `ModelOutput` object. |
 
 The output is applied as Play 3.4 says: properties unknown to `model-output.schema.json` are dropped first (Format 15), model text is stored escaped (Format 10), and changes are recorded as `{"by": "model", "set"}`. No event pass follows; `events` tests cover it.
