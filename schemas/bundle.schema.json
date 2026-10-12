@@ -203,7 +203,7 @@
       "minLength": 1
     },
     "packagePath": {
-      "description": "A relative path inside a package (Format 14.3).",
+      "description": "A relative path inside a package (Format 13.3).",
       "type": "string",
       "pattern": "^[A-Za-z0-9_-][A-Za-z0-9._-]*(/[A-Za-z0-9_-][A-Za-z0-9._-]*)*$"
     },
@@ -1096,7 +1096,7 @@
       }
     },
     "part": {
-      "description": "A text part, or an image part with type image (Format 12). A part of another type is unknown to this version (Format 15): only its type is checked.",
+      "description": "A text part, or an image part with type image (Format 12). A part of another type is unknown to this version (Format 14): only its type is checked.",
       "if": {
         "required": [
           "type"

@@ -1,5 +1,5 @@
 {
-  "description": "Reference checks on a bundle (Format 17.2): each broken reference reports its code; invalid initial, opening and event values and values beyond the value limits are INVALID_VALUE, and comprehensions nested three deep or calling roll() are CEL_ERROR (Format 11.2, 16)",
+  "description": "Reference checks on a bundle (Format 16.2): each broken reference reports its code; invalid initial, opening and event values and values beyond the value limits are INVALID_VALUE, and comprehensions nested three deep or calling roll() are CEL_ERROR (Format 11.2, 15)",
   "bundle": {
     "kind": "bundle",
     "characters": [

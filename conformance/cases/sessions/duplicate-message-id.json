@@ -1,5 +1,5 @@
 {
-  "description": "A message ID appears once (Format 2.3, 17.2): a later line with it is DUPLICATE_ID",
+  "description": "A message ID appears once (Format 2.3, 16.2): a later line with it is DUPLICATE_ID",
   "bundle": {
     "kind": "bundle",
     "characters": [

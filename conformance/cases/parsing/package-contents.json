@@ -1,5 +1,5 @@
 {
-  "description": "Package contents (Format 14.3, 17.2): an exact duplicate name is PARSE; an unreadable line in a session inside a valid package is PARSE; compression methods other than store and deflate, and a referenced file with a path segment over 255 bytes, are PARSE; sessions belong to the package only in their folder",
+  "description": "Package contents (Format 13.3, 16.2): an exact duplicate name is PARSE; an unreadable line in a session inside a valid package is PARSE; compression methods other than store and deflate, and a referenced file with a path segment over 255 bytes, are PARSE; sessions belong to the package only in their folder",
   "tests": [
     {
       "type": "parse",

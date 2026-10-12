@@ -28,14 +28,13 @@ This document defines the files and what every field means.
 **Part II: Sessions**
 
 12. [Session format](#12-session-format)
-13. [Reserved](#13-reserved)
 
 **Part III: Interchange**
 
-14. [Files and packaging](#14-files-and-packaging)
-15. [Extensions and versioning](#15-extensions-and-versioning)
-16. [Security and limits](#16-security-and-limits)
-17. [Conformance](#17-conformance)
+13. [Files and packaging](#13-files-and-packaging)
+14. [Extensions and versioning](#14-extensions-and-versioning)
+15. [Security and limits](#15-security-and-limits)
+16. [Conformance](#16-conformance)
 
 **Appendices:** [A Schemas](#appendix-a-json-schemas) · [B Examples](#appendix-b-examples) · [C Design decisions](#appendix-c-design-decisions) · [D Future work](#appendix-d-future-work) · [E References](#appendix-e-references)
 
@@ -167,7 +166,7 @@ interface Bundle {
   tags?: string[];
   rating?: "general" | "mature" | "explicit";
   warnings?: string[];             // content warnings, free text
-  cover?: string;                  // image (section 14.2)
+  cover?: string;                  // image (section 13.2)
   characters?: Character[];
   worlds?: World[];
   scenarios?: Scenario[];
@@ -345,7 +344,7 @@ interface Entry {
 ### 7.2 Activation
 
 - An entry **without `keys` or `pull`** is always on, subject to `when`.
-- An entry **with `keys`** activates when one appears in its **scanned text**: the last `scanDepth` messages on the path that aren't hidden and have content, each text part known to whoever the message is written for (section 12.5) as its speaker's name and its text. Keys match whole words, ignoring case; a key containing Han, Hiragana, Katakana, Hangul, Thai, Lao, Khmer, Myanmar or Tibetan characters matches anywhere. A key of at least three characters that starts and ends with `/` is a regex (section 16), case-insensitive unless it clears the flag, that matches anywhere: `/dragons?/`, `/(?-i)Kai/`.
+- An entry **with `keys`** activates when one appears in its **scanned text**: the last `scanDepth` messages on the path that aren't hidden and have content, each text part known to whoever the message is written for (section 12.5) as its speaker's name and its text. Keys match whole words, ignoring case; a key containing Han, Hiragana, Katakana, Hangul, Thai, Lao, Khmer, Myanmar or Tibetan characters matches anywhere. A key of at least three characters that starts and ends with `/` is a regex (section 15), case-insensitive unless it clears the flag, that matches anywhere: `/dragons?/`, `/(?-i)Kai/`.
 - An entry **with `pull`** is retrieved when it is relevant, by its `title` or its text, such as on a model's request or by a search.
 - **`when`** narrows any kind. `hit("word")` checks the scanned text as keys do, so `"when": "hit('glass') && !hit('guard')"` expresses AND and NOT; `hit('')` is false.
 - **Timing.** `once`, `sticky` and `cooldown` count from the messages that record the entry in `activated` (section 12.4). `chance` is the probability that the entry activates when it otherwise would.
@@ -437,7 +436,7 @@ Opening and event `set`, `compute` and recorded changes write state by key:
 
 - **Keys** are a scenario variable's ID, or an owner and a variable ID, followed by a key for keyed variables: `bell`, `trust.kai`, `kai.nerve`, `kai.feelings.elena`, `scene.location`, `scene.present`.
 - **Values** are absolute.
-- **Validity.** A key is valid when it is `scene.location` or `scene.present`, or names a variable in use that isn't derived and, for a keyed variable, a key the variable allows. A value is valid when it has the variable's type, uses only listed members, is finite, is an integer within ±(2^53 − 1) for `int` (compared by value, so `8.0`, though writers write `8`, is the integer 8), and is within the value limits of section 16. A numeric value outside `min` and `max` is still valid; it is clamped (section 8.6). A set with duplicate members is valid too; it is normalized. `scene.location` is a location ID of the bundle or session, or `""`; `scene.present` is a list of strings (section 8.6).
+- **Validity.** A key is valid when it is `scene.location` or `scene.present`, or names a variable in use that isn't derived and, for a keyed variable, a key the variable allows. A value is valid when it has the variable's type, uses only listed members, is finite, is an integer within ±(2^53 − 1) for `int` (compared by value, so `8.0`, though writers write `8`, is the integer 8), and is within the value limits of section 15. A numeric value outside `min` and `max` is still valid; it is clamped (section 8.6). A set with duplicate members is valid too; it is normalized. `scene.location` is a location ID of the bundle or session, or `""`; `scene.present` is a list of strings (section 8.6).
 
 ### 8.6 State at a message
 
@@ -574,7 +573,7 @@ state.trust[char] >= 0.8 && hour < 6
 - Expressions use only `bool`, `int`, `double`, `string`, list and map values, and list and map literals hold values of one type. `bytes`, `uint` and `null` literals and type names used as values are a `CEL_ERROR`.
 - Available functions are only `size`, `has`, `all`, `exists`, `exists_one`, `map`, `filter`, `in`, `contains`, `startsWith`, `endsWith`, `matches`, the conversions `int()`, `double()`, `string()` and `bool()`, and the functions above. Conversions don't take strings, except `string()` of a string, and `string()` doesn't take a double.
 - A comprehension's **body** is its predicate and, for `map`, its transform. Bodies nest at most two deep: a comprehension in another's body counts, one in its target doesn't. Inside a body, `roll()` isn't called and `+` doesn't join strings or lists.
-- `matches()` takes a string literal as its pattern, a regex as section 16 defines, and `hit()` a string literal key.
+- `matches()` takes a string literal as its pattern, a regex as section 15 defines, and `hit()` a string literal key.
 - Selecting an absent value, such as a derived variable that failed, a variable whose owner isn't in use or an absent key, is a runtime error. `has()` of such a selection is true exactly when selecting it isn't a runtime error, whatever the value, and is never an error itself.
 - An expression that breaks any of these rules is a `CEL_ERROR`, and so is a `hit()` or `matches()` pattern that isn't a valid regex.
 
@@ -625,7 +624,7 @@ interface Message {
   ext?: Ext;
 }
 
-type Part =                         // writers create only these two types (section 15); every part MAY also carry ext; no speaker = narration
+type Part =                         // writers create only these two types (section 14); every part MAY also carry ext; no speaker = narration
   | { type?: "text"; text: string; speaker?: string; knownBy?: string[] }
   | { type: "image"; src: string; alt?: string; speaker?: string; knownBy?: string[] };
 
@@ -679,17 +678,11 @@ A message part is known by its speaker, by the characters present after its mess
 
 ---
 
-## 13. Reserved
-
-This section held chronicles, which are future work (Appendix D). Its number is kept so that later sections keep theirs.
-
----
-
 # Part III: Interchange
 
-## 14. Files and packaging
+## 13. Files and packaging
 
-### 14.1 Forms
+### 13.1 Forms
 
 | Form | Extension | Contents |
 | --- | --- | --- |
@@ -697,11 +690,11 @@ This section held chronicles, which are future work (Appendix D). Its number is 
 | Package | `.troupe` | A ZIP archive with `bundle.json`, the files it references, and optionally sessions |
 | Session | `.troupe-session.jsonl` | One session outside a package |
 
-### 14.2 Files
+### 13.2 Files
 
 Fields that hold a file (`cover`, `avatar`, location `image` and image parts) hold a PNG, JPEG, WebP, AVIF or GIF image, as a path from the package root, an `https:` URL, or a `data:` URI with base64 content and the lowercase media type `image/png`, `image/jpeg`, `image/webp`, `image/avif` or `image/gif`.
 
-### 14.3 Packages
+### 13.3 Packages
 
 - `bundle.json` is at the root. Sessions are stored under `sessions/` with the `.troupe-session.jsonl` extension. The package's other files are the files that the bundle or sessions reference.
 - Every file under `sessions/` with that extension is a session of the package. The package's files have paths matching `^[A-Za-z0-9_-][A-Za-z0-9._-]*(/[A-Za-z0-9_-][A-Za-z0-9._-]*)*$`, with segments of at most 255 bytes. Every other entry, such as a directory (a name ending in `/`) or a file an archiver adds, isn't part of the package.
@@ -709,7 +702,7 @@ Fields that hold a file (`cover`, `avatar`, location `image` and image parts) ho
 
 ---
 
-## 15. Extensions and versioning
+## 14. Extensions and versioning
 
 - **Extensions.** Every object of a bundle or session that this document defines with an interface MAY carry `ext`, keyed by an extension name matching `^[a-z0-9][a-z0-9.-]{0,63}$`, such as `risu.regex`. The `troupe.` prefix is reserved for the draft extensions of Appendix D. Writers MUST NOT add fields anywhere else, and MUST keep every `ext` of a file they rewrite unchanged, as a JSON value.
 - **Unknown fields.** A property is unknown when its object's interface doesn't define it; for a part, the interface its `type` selects. An unknown property carries no meaning, and is an `UNKNOWN_FIELD` located at the property; `SCHEMA` is judged with unknown properties removed. A part whose `type` is present and isn't `"text"` or `"image"` is unknown as a whole, an `UNKNOWN_FIELD` at its `type`, so a message, opening or event message holding only such parts has no content. Writers MUST keep such parts of a file they rewrite unchanged.
@@ -717,7 +710,7 @@ Fields that hold a file (`cover`, `avatar`, location `image` and image parts) ho
 
 ---
 
-## 16. Security and limits
+## 15. Security and limits
 
 Files hold data and sandboxed expressions (section 11), never scripts, and their size and the work they ask for are bounded. Their text is Markdown, which can hold raw HTML, links and images; how they are shown is the app's.
 
@@ -741,20 +734,20 @@ Files hold data and sandboxed expressions (section 11), never scripts, and their
 
 ---
 
-## 17. Conformance
+## 16. Conformance
 
-### 17.1 Requirements
+### 16.1 Requirements
 
-A **conforming file** validates against the schemas, passes the checks below, stays within the limits of section 16, and follows section 15. A conforming **writer** writes only conforming files, except that a file it rewrites keeps its parts of an unknown type (section 15), whose `UNKNOWN_FIELD` it then still has. A conforming **reader** accepts every conforming file of its version and gives its fields the meaning this document defines; from 1.0, it also accepts conforming files of an older minor version of its major version. Each check has a code, for validators to report it with. Every check runs on the document as written, so one value can fail several.
+A **conforming file** validates against the schemas, passes the checks below, stays within the limits of section 15, and follows section 14. A conforming **writer** writes only conforming files, except that a file it rewrites keeps its parts of an unknown type (section 14), whose `UNKNOWN_FIELD` it then still has. A conforming **reader** accepts every conforming file of its version and gives its fields the meaning this document defines; from 1.0, it also accepts conforming files of an older minor version of its major version. Each check has a code, for validators to report it with. Every check runs on the document as written, so one value can fail several.
 
-### 17.2 Checks
+### 16.2 Checks
 
 | Code | Check |
 | --- | --- |
-| `PARSE` | The input is I-JSON (section 2.2), or session lines of I-JSON (section 12), a Troupe document of the `kind` its form holds (section 14.1), within the limits of section 16 other than the value limits, and a package follows section 14.3 |
-| `UNSUPPORTED_VERSION` | `troupe`, when present, is this document's version (section 15); a missing `troupe`, or one that isn't `major.minor`, is only `SCHEMA` |
-| `SCHEMA` | The document validates against its schema, with `format` asserted, apart from unknown properties (section 15) |
-| `UNKNOWN_FIELD` | Every property is one this document defines (section 15) |
+| `PARSE` | The input is I-JSON (section 2.2), or session lines of I-JSON (section 12), a Troupe document of the `kind` its form holds (section 13.1), within the limits of section 15 other than the value limits, and a package follows section 13.3 |
+| `UNSUPPORTED_VERSION` | `troupe`, when present, is this document's version (section 14); a missing `troupe`, or one that isn't `major.minor`, is only `SCHEMA` |
+| `SCHEMA` | The document validates against its schema, with `format` asserted, apart from unknown properties (section 14) |
+| `UNKNOWN_FIELD` | Every property is one this document defines (section 14) |
 | `DUPLICATE_ID` | IDs are unique as section 2.3 and section 12.2 require |
 | `UNKNOWN_SCENARIO` | The header's `scenario` names a scenario |
 | `UNKNOWN_CHARACTER` | Cast members name bundle characters; `knownBy` (where `narrator` is also allowed), speakers, example speakers (or `char`, `user`), message `char`, members of `scene.present` values and character keys of `initial` objects name characters in the bundle or session |
@@ -763,11 +756,11 @@ A **conforming file** validates against the schemas, passes the checks below, st
 | `UNKNOWN_OPENING` | A root's `opening` exists |
 | `UNKNOWN_NAME` | `activated` and `event` references, and literal names in `count` and `ago`, name entries, events or keys in use |
 | `UNKNOWN_VARIABLE` | Keys in openings, events and changes are valid keys (section 8.5), counting variables as section 11.2 does, no two keys of one `set` or `compute` name the same full key, and variables named by `min` and `max` are valid bounds (section 8.1) |
-| `INVALID_VALUE` | `initial`, opening and event `set` values and recorded values are valid values for their variables (section 8.5), and no change takes a `"*"` map past its limit (section 16); `outcome` is present exactly when the fired event has `outcomes`, and names one; unknown locations and characters in values are reported only as `UNKNOWN_LOCATION` and `UNKNOWN_CHARACTER` |
+| `INVALID_VALUE` | `initial`, opening and event `set` values and recorded values are valid values for their variables (section 8.5), and no change takes a `"*"` map past its limit (section 15); `outcome` is present exactly when the fired event has `outcomes`, and names one; unknown locations and characters in values are reported only as `UNKNOWN_LOCATION` and `UNKNOWN_CHARACTER` |
 | `UNKNOWN_MESSAGE` | `parent` names a message on an earlier line, the header's `head` and summary `from` name messages, and `from` is on the path to its summary |
 | `INVALID_PLAYER` | `players` names header characters or cast members |
 | `CEL_ERROR` | Every expression parses and type-checks, and no `derive` reads a derived variable; comprehensions, `hit()` and `matches()` follow section 11.2 |
-| `REGEX_ERROR` | Every regex key is valid (section 16) |
+| `REGEX_ERROR` | Every regex key is valid (section 15) |
 | `UNKNOWN_MACRO` | Macros are valid and name existing characters and variables; text that isn't one is left as written (section 10) |
 
 ---
@@ -1002,7 +995,6 @@ Two thieves hired by the player to steal a duke's storm lantern before the twelf
 
 | Decision | Instead of | Why |
 | --- | --- | --- |
-| No file for continuity between sessions, for now | Chronicles carrying a character's memories, values and definition from one session, and one app, to the next | The core comes first; how an app carries memory into a new session is its own until use shows what to standardize (Appendix D). |
 | One `Entry` for lore, instructions, secrets, goals, notes and memories | A type for each | One shape, one thing to learn. |
 | No keys means always on; `hit()` in conditions; `/…/` keys | Flags, logic modes, match modes | Fewer fields, any boolean logic, simple matching rules. |
 | Owner-scoped mechanics, `own` | One shared namespace | Characters and worlds stay self-contained when combined. |
@@ -1054,12 +1046,10 @@ Two thieves hired by the player to steal a duke's storm lantern before the twelf
 
 ## Appendix D: Future work
 
-These draft extensions use the `troupe.` prefix (section 15) and may join the core once proven:
+These draft extensions use the `troupe.` prefix (section 14) and may join the core once proven:
 
 - **`troupe.overlay`:** a bundle that patches another by ID, for translations and mods.
 - **`troupe.media`:** sprites, audio, voices and provenance of generated media.
-
-Continuity between sessions, a character's memories and relationship carried from one session to the next, may return as its own document once apps show what it needs.
 
 ---
 

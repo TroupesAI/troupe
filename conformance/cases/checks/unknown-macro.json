@@ -1,5 +1,5 @@
 {
-  "description": "Text between {{ and }} that is no macro, and a macro naming an undeclared variable, are UNKNOWN_MACRO (Format 10, 17.2); a pick needs at least two options, none empty",
+  "description": "Text between {{ and }} that is no macro, and a macro naming an undeclared variable, are UNKNOWN_MACRO (Format 10, 16.2); a pick needs at least two options, none empty",
   "bundle": {
     "kind": "bundle",
     "scenarios": [

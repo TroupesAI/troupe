@@ -1,5 +1,5 @@
 {
-  "description": "Duplicate IDs (Format 2.3, 17.2): characters, worlds and scenarios share one namespace, compared characters first; locations are unique across worlds; openings within a scenario. A cast names each character once and worlds lists each world once",
+  "description": "Duplicate IDs (Format 2.3, 16.2): characters, worlds and scenarios share one namespace, compared characters first; locations are unique across worlds; openings within a scenario. A cast names each character once and worlds lists each world once",
   "bundle": {
     "kind": "bundle",
     "characters": [

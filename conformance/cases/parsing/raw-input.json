@@ -1,5 +1,5 @@
 {
-  "description": "Raw input (Format 2.2, 12, 15, 17.2): a leading byte order mark and an empty session line aren't I-JSON lines, so they are PARSE; a troupe value that isn't major.minor fails the schema; a session of another major version is UNSUPPORTED_VERSION",
+  "description": "Raw input (Format 2.2, 12, 14, 16.2): a leading byte order mark and an empty session line aren't I-JSON lines, so they are PARSE; a troupe value that isn't major.minor fails the schema; a session of another major version is UNSUPPORTED_VERSION",
   "tests": [
     {
       "type": "parse",

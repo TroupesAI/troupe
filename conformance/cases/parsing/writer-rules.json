@@ -1,5 +1,5 @@
 {
-  "description": "Rules in the schemas (Format 2.2, 2.3, 8.1, 12, 15): booleans written as false are defaults; empty optional fields, including {}, and null state values are SCHEMA; reserved IDs; bool labels; integer weights of at least 1; parts of an unknown type and unknown properties on parts, events and outcomes are UNKNOWN_FIELD, not SCHEMA; message shapes",
+  "description": "Rules in the schemas (Format 2.2, 2.3, 8.1, 12, 14): booleans written as false are defaults; empty optional fields, including {}, and null state values are SCHEMA; reserved IDs; bool labels; integer weights of at least 1; parts of an unknown type and unknown properties on parts, events and outcomes are UNKNOWN_FIELD, not SCHEMA; message shapes",
   "tests": [
     {
       "type": "parse",

@@ -1,5 +1,5 @@
 {
-  "description": "Versions (Format 15, 17.2), against this 0.12 document: a file of any other version, minor or major, is UNSUPPORTED_VERSION",
+  "description": "Versions (Format 14, 16.2), against this 0.12 document: a file of any other version, minor or major, is UNSUPPORTED_VERSION",
   "tests": [
     {
       "type": "parse",

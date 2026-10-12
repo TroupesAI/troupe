@@ -1,5 +1,5 @@
 {
-  "description": "min and max may name another numeric variable of the same owner, an int for an int, whose own bounds are numbers (Format 8.1, 17.2): a bound naming no variable, a variable bounded by a variable, or a number variable for an int is UNKNOWN_VARIABLE",
+  "description": "min and max may name another numeric variable of the same owner, an int for an int, whose own bounds are numbers (Format 8.1, 16.2): a bound naming no variable, a variable bounded by a variable, or a number variable for an int is UNKNOWN_VARIABLE",
   "bundle": {
     "kind": "bundle",
     "scenarios": [

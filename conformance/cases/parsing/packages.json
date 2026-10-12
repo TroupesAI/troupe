@@ -1,5 +1,5 @@
 {
-  "description": "Packages (Format 14.3): bundle.json at the root, sessions under sessions/; absolute paths, .. segments, backslashes, names equal when compared case-insensitively, encryption and symbolic links are PARSE; a directory entry (a name ending in /) and an unreferenced file outside the path grammar aren't part of the package",
+  "description": "Packages (Format 13.3): bundle.json at the root, sessions under sessions/; absolute paths, .. segments, backslashes, names equal when compared case-insensitively, encryption and symbolic links are PARSE; a directory entry (a name ending in /) and an unreferenced file outside the path grammar aren't part of the package",
   "tests": [
     {
       "type": "parse",

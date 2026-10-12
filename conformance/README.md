@@ -17,8 +17,8 @@ Cases live in `cases/<area>/<topic>.json`, one folder per area of the spec:
 | `knowledge` | Who knows a part or a summary (Format 7.4, 12.4, 12.5) |
 | `roots` | Roots made from openings (Format 6.3, 12.1) |
 | `sessions` | Session lines, the head, players and the cast (Format 12) |
-| `checks` | Checks and unknown fields (Format 15, 17.2) |
-| `parsing` | Raw files (Format 2.2, 14, 16) |
+| `checks` | Checks and unknown fields (Format 14, 16.2) |
+| `parsing` | Raw files (Format 2.2, 13, 15) |
 | `examples` | The spec's worked examples and the authoring guide's patterns |
 
 The order of cases doesn't matter. A case file is one JSON object, described by [`case.schema.json`](case.schema.json), which `bun run check` applies:
@@ -39,7 +39,7 @@ Bundles and session headers given as objects leave out `troupe`: before anything
 
 Every test starts from a fresh copy of the case's inputs. Tests don't affect each other.
 
-- **Conforming inputs.** `state`, `macro`, `cel`, `ended` and `knows` tests run only on inputs that conform (Format 17.1), since the spec gives files that fail a check no meaning to test. Every case with such tests also has a `check` test that expects no codes, which a runner uses to confirm it.
+- **Conforming inputs.** `state`, `macro`, `cel`, `ended` and `knows` tests run only on inputs that conform (Format 16.1), since the spec gives files that fail a check no meaning to test. Every case with such tests also has a `check` test that expects no codes, which a runner uses to confirm it.
 - **The story.** The session's `scenario` names the scenario. Without a session, use the bundle's first scenario, whose seats are then unfilled and left out of the cast (Format 6.1), so `players` holds only cast members marked `player`. A `check` test without a session checks the bundle once for each scenario (Format 11.2). Header characters replace bundle characters as Format 12.2 says.
 
 ## 3. Tests
@@ -95,14 +95,14 @@ The state is flattened to an object with these keys:
 
 `hit()` always returns false in these tests, and `roll()` isn't called. In CEL, `char` and `user` are plain variables: a computed key is read with brackets (`state.trust[char]`), and `.char` selects the literal key `"char"`. Only `bool`, `int`, `double`, `string`, list and map values are allowed; `null`, `bytes` and `uint` literals and timestamp or duration functions fail to check. If `expect` is a boolean, the expression must type-check and evaluate to it; a runtime error counts as `false`. If `expect` is `{"checkError": b}`, `b` says whether parsing or type-checking fails.
 
-### 3.5 `check`: checks (Format 17.2)
+### 3.5 `check`: checks (Format 16.2)
 
-The runner validates the bundle and the session's lines against the schemas, then runs every other check (Format 17.2). Every check runs on the documents as written, so one value can fail several checks (Format 17.1).
+The runner validates the bundle and the session's lines against the schemas, then runs every other check (Format 16.2). Every check runs on the documents as written, so one value can fail several checks (Format 16.1).
 
 - `expect.codes` is the sorted list of distinct diagnostic codes reported. It is compared exactly.
 - Each session line after the header is validated against `message.schema.json`. Validators assert `format`, so a malformed timestamp is `SCHEMA`.
 - `SCHEMA` covers schema failures, such as `null`, `""` or `[]` in an optional field (Format 2.2).
-- `UNKNOWN_FIELD` (Format 15) is located at the property itself (`/characters/0/mystery`).
+- `UNKNOWN_FIELD` (Format 14) is located at the property itself (`/characters/0/mystery`).
 - `check` tests don't use `PARSE` or `UNSUPPORTED_VERSION`; `parse` tests (section 3.7) cover them.
 - `expect.includes` lists `{code, at}` pairs that must each appear, compared on both fields.
 
@@ -126,7 +126,7 @@ A diagnostic about one value points at that value: a list item at its index (`/s
 
 `expect` is who knows it: the IDs of the characters who know it, and `narrator` when the narrator knows it, in code point order. The single voice knows everything but hidden messages' parts, and isn't listed.
 
-### 3.7 `parse`: raw input (Format 2.2, 12, 14, 15, 16)
+### 3.7 `parse`: raw input (Format 2.2, 12, 13, 14, 15)
 
 | Input | Meaning |
 | --- | --- |
@@ -134,7 +134,7 @@ A diagnostic about one value points at that value: a list item at its index (`/s
 | `text` | The input as a string, encoded as UTF-8 to get its bytes. |
 | `base64` | Instead of `text`: the input's bytes, in base64. Used for bytes that aren't valid UTF-8 text and for binary formats. |
 
-The runner parses the bytes, checks the version and validates against the schema, with unknown properties and parts of unknown type as `UNKNOWN_FIELD` (Format 15). For a package it checks the archive and its `bundle.json` and every session in it (Format 14.3). It runs no other checks; `check` tests cover them.
+The runner parses the bytes, checks the version and validates against the schema, with unknown properties and parts of unknown type as `UNKNOWN_FIELD` (Format 14). For a package it checks the archive and its `bundle.json` and every session in it (Format 13.3). It runs no other checks; `check` tests cover them.
 
 `expect.codes` is the sorted list of distinct codes reported, compared exactly. A conforming input has none.
 
