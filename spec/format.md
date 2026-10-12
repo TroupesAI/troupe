@@ -121,7 +121,7 @@ MUST, MUST NOT, SHOULD, SHOULD NOT and MAY are used as described in RFC 2119 and
 
 - Writers MUST write I-JSON (RFC 7493): UTF-8 without a byte order mark, no duplicate member names, no surrogate or noncharacter code points, written or escaped, numbers that fit an IEEE 754 double, and integer fields and `int` values within ±(2^53 − 1), written without a fraction or exponent. Readers parse UTF-8 JSON (RFC 8259), ignore a leading byte order mark, and need not check the other I-JSON constraints.
 - **Empty values.** Writers MUST NOT write `null` in a field this spec defines or in a state value, and MUST NOT write `""`, `[]` or `{}` in an optional field other than `ext`. State values and `scenario.worlds` are the exception: there `""`, `[]` and `{}` are values. Names and variable descriptions are never empty.
-- Readers MUST treat `null`, `""`, `[]` and `{}` in an optional field like a missing field, with the same exception, and read a list that checks or repairing leave empty the same way; `knownBy: []` reads as section 7.4 says. A `null` state value is invalid (section 8.5).
+- Readers MUST treat `null`, `""`, `[]` and `{}` in an optional field like a missing field, with the same exception. A list that checks or repairing leave empty also reads as missing. A `knownBy` that is or becomes empty reads as section 7.4 says. A `null` state value is invalid (section 8.5).
 - **Defaults are normative.** Every default stated in these documents or their TypeScript comments applies when a field is absent. Every boolean defaults to `false`.
 
 ### 2.3 Identifiers
@@ -157,7 +157,7 @@ Model-facing text is Markdown (CommonMark 0.31.2). Timestamps are RFC 3339 in UT
 
 ### 2.6 How to read this document
 
-The JSON Schemas (Appendix A) are normative for structure, the prose for meaning and behavior. Appendices B to D are informative; Appendix E lists references. Part I is enough to write bundles.
+The JSON Schemas (Appendix A) are normative for structure, the prose for meaning and behavior. Appendices B to D are informative; Appendix E lists references.
 
 ---
 
@@ -361,7 +361,7 @@ interface Entry {
 ### 7.2 Activation
 
 - An entry **without `keys` or `pull`** is always on, subject to `when`.
-- An entry **with `keys`** activates when one appears in recent messages, including speakers' names. Keys match whole words, ignoring case, except that keys in scripts such as Chinese, Japanese and Thai match anywhere (Play 5.3). A key of at least three characters that starts and ends with `/` is a regex (section 16 item 5): `/dragons?/`, `/(?-i)Kai/`.
+- An entry **with `keys`** activates when one appears in recent messages, including speakers' names. Keys match whole words, ignoring case, except in the scripts Play 5.3 lists, such as Chinese, Japanese, Korean and Thai, where keys match anywhere. A key of at least three characters that starts and ends with `/` is a regex (section 16 item 5): `/dragons?/`, `/(?-i)Kai/`.
 - An entry **with `pull`** is retrieved when it is relevant: requested by the model, or found by the app's similarity search (Play 5.6).
 - **`when`** narrows any kind. `hit("word")` checks recent text with the same rules as keys, so `"when": "hit('glass') && !hit('guard')"` expresses AND and NOT.
 - **`priority`** is importance: it decides group competition and what fitting drops first (Play 5.5).
@@ -454,7 +454,7 @@ Opening and event `set`, `compute` and recorded changes write state by key:
 
 - **Keys** are a scenario variable's ID, or an owner and a variable ID, followed by a key for keyed variables: `bell`, `trust.kai`, `kai.nerve`, `kai.feelings.elena`, `scene.location`, `scene.present`.
 - **Values** are absolute.
-- **Validity.** A value is valid if its key names a variable in use that isn't derived, and an allowed key, and the value has the variable's type, uses only listed members, is finite, is an integer within ±(2^53 − 1) for `int`, and is within the value limits of section 16. A numeric value outside `min` and `max` is still valid; it is clamped (Play 3.2, 3.3). So is a set with duplicate members, which preparation removes. `scene.location` is a location ID of the bundle or session, or `""`; `scene.present` is a list of strings (Play 3.3).
+- **Validity.** A value is valid if its key names a variable in use that isn't derived, and an allowed key, and the value has the variable's type, uses only listed members, is finite, is an integer within ±(2^53 − 1) for `int`, and is within the value limits of section 16. A numeric value outside `min` and `max` is still valid; it is clamped (Play 3.2, 3.3). A set with duplicate members is valid too; preparation removes the duplicates. `scene.location` is a location ID of the bundle or session, or `""`; `scene.present` is a list of strings (Play 3.3).
 
 ---
 
@@ -490,7 +490,7 @@ interface Outcome {
 }
 ```
 
-- **`set` takes plain values; `compute` takes CEL.** `"set": {"scene.location": "vault"}`, `"compute": {"trust.elena": "state.trust.elena - 0.1"}`.
+- **`set` takes plain values; `compute` takes CEL.** `"set": {"scene.location": "vault"}`, `"compute": {"trust.elena": "state.trust.elena - 0.1"}`. Two keys of one `set` or `compute` that name the same full key, such as `own.nerve` and `kai.nerve`, are both dropped (`UNKNOWN_VARIABLE`).
 - **Firing.** Play 3.3 says when events run and fire. An event `on: "player"` runs before the reply; one `on: "model"` runs after the reply and its tracking.
 - **`end`** marks the story finished on that path. It changes nothing else: if play goes on, events and directions work as before, and a `direct` on the same firing still reaches the next model reply.
 
@@ -515,7 +515,8 @@ Macros are the only substitution in text. `@` turns IDs into names.
 - **`{{char}}`** in a message part, an event's `message` included, is the part's `speaker`, else the message's `char`, else it is left as written; in a character's other text, that character; in a cast member's `notes`, its character; in other text, the character being generated for, or the scenario's `narrator` for the narrator and the tracker. In a state path, `char` means the same character.
 - **`{{user}}`** is the speaker of the first part with a speaker in the latest player message on the path that has one, else the first player's character, else it is left as written. In a state path, `user` means the same character.
 - A `char` or `user` path segment that means no character names no key, so the macro renders as nothing.
-- **Rendering.** A value with a label renders as its label, resolved first; a substituted value is never scanned for macros again. Numbers render as ECMAScript `Number.prototype.toString`, booleans as `true` or `false`, lists as items joined by `, ` (an empty list as nothing), and maps as `Name: value` pairs joined by `, `, with character keys shown by name and other keys with underscores as spaces. Map keys render in declared order (cast order for characters), and `"*"` keys in code point order. Text between `{{` and `}}` that is no macro, such as `{{unknown}}`, and a macro naming a variable that isn't declared are left as written (`UNKNOWN_MACRO`); an absent key of a declared variable, a path below a value that isn't a map, or a variable whose owner isn't in use renders as nothing.
+- **Rendering.** A value with a label renders as its label, resolved first; a substituted value is never scanned for macros again. Numbers render as ECMAScript `Number.prototype.toString`, booleans as `true` or `false`, lists as items joined by `, ` (an empty list as nothing), and maps as `Name: value` pairs joined by `, `, with character keys shown by name and other keys with underscores as spaces. Map keys render in declared order (cast order for characters), and `"*"` keys in code point order.
+- **Unresolved.** Text between `{{` and `}}` that is no macro, such as `{{unknown}}`, and a macro naming a variable that isn't declared are left as written (`UNKNOWN_MACRO`); an absent key of a declared variable, a path below a value that isn't a map, or a variable whose owner isn't in use renders as nothing.
 - **Which state.** Macros in a message resolve at that message: against its state, with `{{user}}` from the path to it. Elsewhere they resolve at the evaluation point (section 11.1). In message parts and in a scenario's text, `own` means `state`.
 - **Where.** Authors write macros in descriptions, summaries, dialogue examples, premises, briefings, notes, entry texts, openings, event messages and directions, variable descriptions, questions, labels, and image `alt`. Entry titles and keys are never resolved.
 - **Player and model text** is stored escaped: in message parts' `text` and `alt`, in message `summary` text, and in the `text`, `description` and `summary` of entries and characters a model adds, apps MUST write each `\` as `\\` and each `{{` as `\{{`. Names, aliases, titles, keys and expressions are stored as written. Resolving the escaped text gives back exactly what was written, so macros never take effect in it.
@@ -565,7 +566,8 @@ state.trust[char] >= 0.8 && hour < 6
 
 ### 11.2 Rules
 
-- Apps MUST type-check every expression when loading: `state` against the scenario's variables and every character's and world's variables in the bundle and session, and `own` against the expression owner's; a bundle read without a session is checked once for each scenario. An expression that fails is reported, and its entry, event or variable never applies. A `compute` key that fails at runtime is skipped, and the value the firing produced for that key before, if any, stands. Two keys of one `set` or `compute` that name the same full key, such as `own.nerve` and `kai.nerve`, are both dropped (`UNKNOWN_VARIABLE`).
+- Apps MUST type-check every expression when loading: `state` against the scenario's variables and every character's and world's variables in the bundle and session, and `own` against the expression owner's; a bundle read without a session is checked once for each scenario. An expression that fails is reported, and its entry, event or variable never applies.
+- A `compute` key that fails at runtime is skipped, and the value the firing produced for that key before, if any, stands.
 - Conditions have type `bool`; `derive` and `compute` expressions have their variable's type, except that an `int` may set a `number`.
 - Ordering comparisons (`<`, `<=`, `>`, `>=`) between an `int` and a `double` MUST work: `state.trust.kai >= 1`. Everything else takes operands of one type: write `state.bell == 7` and `state.trust.kai - 0.1`.
 - Evaluation follows the CEL language definition, including its errors, such as integer overflow and division by zero. A runtime error makes a condition false; `&&` and `||` absorb an error when their other operand decides the result.
@@ -653,7 +655,7 @@ interface Summary {
 ### 12.2 Players and cast
 
 - **Replacements.** A header character with the ID of a bundle character replaces it for the whole session: it keeps that character's place in the cast and every reference to it. One that replaces a character outside the scenario cast otherwise counts as a new header character. Two header characters that replace the same bundle character make the session unplayable (`DUPLICATE_ID`).
-- `players` lists the characters people control, in seat order. An ID defined in the header's `characters`, other than a replacement of a cast member, fills the next empty seat, or adds a seat after the scenario cast when every seat is filled; a cast member marked `player` fills its own seat and is a player whether or not it is listed, after the listed players in cast order; the ID of another cast member means a person took that character over.
+- `players` lists the characters people control, in seat order. An ID defined in the header's `characters`, other than a replacement of a cast member, fills the next empty seat, or adds a seat after the scenario cast when every seat is filled; a cast member marked `player` fills its own seat and is a player whether or not it is listed, and those `players` doesn't list follow the listed players, in cast order; the ID of another cast member means a person took that character over.
 - The session's **cast** is the scenario cast with seats filled, then the added seats, then the **joiners**: header `characters` that aren't players or replacements of cast members, which joined or appeared during the session.
 - Header characters and `players` hold for the whole session, on every branch; presence is recorded on each path (section 8.4).
 
@@ -734,7 +736,7 @@ Fields that hold a file (`cover`, `avatar`, location `image` and image parts) ho
 
 1. **No active content.** Apps MUST NOT run scripts or styles from any field or extension, or render raw HTML.
 2. **No dangerous links.** Apps MUST NOT follow Markdown links whose scheme isn't `http` or `https`.
-3. **No silent network requests.** Apps MUST NOT fetch remote files without the user's consent, including images in Markdown, which work as tracking pixels.
+3. **No silent network requests.** Apps MUST NOT fetch remote files without the user's consent, including images in Markdown.
 4. **Known media only.** Apps MUST determine file formats by content, reject formats section 14.2 doesn't list, and cap decoded image size.
 5. **Linear-time regex.** A regex, as a key or a `matches()` pattern, is RE2 syntax without `\C`, with groups nested at most 100 deep and counted repetitions that multiply through nesting to at most 1000, so `(a{10}){200}` is too many. Apps MUST match regexes with an engine that runs in linear time, such as RE2.
 6. **Sandboxed conditions.** Apps MUST NOT turn expressions into code they run, such as JavaScript passed to `eval`.
@@ -785,7 +787,7 @@ Messages are never dropped for a failed check, except the lines that `PARSE`, `S
 | `UNKNOWN_LOCATION` | Locations in values and `parent` exist, without cycles | The value is invalid; a `parent` naming no location is ignored, and so is the `parent` of the first location, in file order, on each cycle |
 | `UNKNOWN_OPENING` | A root's `opening` exists | `opening` reads as `""` |
 | `UNKNOWN_NAME` | `activated` and `event` references, and literal names in `count` and `ago`, name entries, events or keys in use | Ignored; an event's values still apply |
-| `UNKNOWN_VARIABLE` | Keys in openings, events, changes and chronicle values exist and aren't derived, and variables named by `min` and `max` are valid bounds (section 8.1); a chronicle's value keys name carried variables of its character (section 13) | The key or bound is dropped |
+| `UNKNOWN_VARIABLE` | Keys in openings, events, changes and chronicle values exist and aren't derived, no two keys of one `set` or `compute` name the same full key, and variables named by `min` and `max` are valid bounds (section 8.1); a chronicle's value keys name carried variables of its character (section 13) | The key or bound is dropped |
 | `INVALID_VALUE` | `initial`, opening and event `set` values, recorded values, chronicle values and `outcome` indexes are valid | The value is dropped |
 | `UNKNOWN_MESSAGE` | `parent`, the header's `head` and summary `from` name messages, and `from` is on the path to its summary | The head or summary is ignored; a message with an unknown `parent` is skipped with its descendants |
 | `INVALID_PLAYER` | `players` names header characters or cast members | The ID is ignored |
@@ -793,7 +795,13 @@ Messages are never dropped for a failed check, except the lines that `PARSE`, `S
 | `REGEX_ERROR` | Every regex key is valid (section 16 item 5) | The key matches nothing |
 | `UNKNOWN_MACRO` | Macros are valid and name existing characters and variables | Left as written |
 
-**Repairing.** A reader that keeps a document failing its schema first reads empty values as section 2.2 says. It then removes the value at the instance location of each failing keyword that asserts something itself, not one that only reports failures beneath it (`allOf`, `anyOf`, `if`, `then`, `else`, `properties`, `additionalProperties`, `items`, `propertyNames`, `$ref`); a `false` subschema fails at the value it applies to, and a failure beneath `propertyNames` removes the property whose name fails. A failing `uniqueItems` removes the later duplicates, and a failing `dependentRequired` the dependent property. It validates again until nothing fails. So an invalid `weight` reads as absent, and an entry without `text` is ignored. A `knownBy` that repairing empties or removes reads as `["narrator"]`, a `keys` list matches nothing, and a cast member whose `character` is removed is skipped; a message line removed as a whole is skipped, and a message that loses its `parent` is skipped like one whose `parent` names no message; a document removed as a whole isn't read. The other checks then run on the repaired document.
+**Repairing.** A reader that keeps a document failing its schema repairs it:
+
+1. It reads empty values as section 2.2 says.
+2. It removes the value at the instance location of each failing keyword that asserts something itself, not one that only reports failures beneath it (`allOf`, `anyOf`, `if`, `then`, `else`, `properties`, `additionalProperties`, `items`, `propertyNames`, `$ref`). A `false` subschema fails at the value it applies to; a failure beneath `propertyNames` removes the property whose name fails; a failing `uniqueItems` removes the later duplicates; a failing `dependentRequired` removes the dependent property.
+3. It validates again, until nothing fails.
+
+So an invalid `weight` reads as absent, and an entry without `text` is ignored. A `knownBy` that repairing empties or removes reads as `["narrator"]`; a `keys` list that it empties or removes matches nothing; a cast member whose `character` it removes is skipped; a message line it removes as a whole is skipped, and a message that loses its `parent` is skipped like one whose `parent` names no message; a document it removes as a whole isn't read. The other checks then run on the repaired document.
 
 ---
 

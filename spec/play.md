@@ -49,16 +49,21 @@ Format 2 applies here, including requirement keywords. "Format 7.2" means sectio
 
    The starting `scene.present` is the opening's `scene.present` when its `set` lists one; otherwise the cast characters who speak in its content, or, for an opening without `content`, every character in the session's cast except the joiners when the root is made (Format 12.2). The players' characters, and the chronicle's character when it isn't in the scenario's cast (section 2.2), are added to it.
 
-   Without an opening, the player's first message is the root. It records the chronicle's change; when the chronicle's character isn't in the scenario's cast, a `{"by": "rules"}` change setting `scene.present` to the presence of section 3.2 plus that character, in cast order; its own changes; then the answers.
+   Without an opening, the player's first message is the root. It records, in order:
+   1. the chronicle's change;
+   2. when the chronicle's character isn't in the scenario's cast, a `{"by": "rules"}` change setting `scene.present` to the presence of section 3.2 plus that character, in cast order;
+   3. its own changes;
+   4. the answers.
 5. Evaluate events at the root.
 
-Every later root, from another opening or a player's message, is made the same way, with the chronicle's change and the entries copied from the first root in line order.
+Every later root, from another opening or a player's message, is made the same way, with the chronicle's change and the entries copied from the session's earliest root line.
 
 ### 2.2 Continuing a chronicle
 
 - **Starting.** A session continues at most one chronicle, named by `chronicle`.
   - The chronicle's `character` is copied into the header's `characters`, after the others, where it replaces the bundle character with the same ID (Format 12.2). The character keeps that ID for life, so bundle references to it still work. When the character isn't in the scenario's cast, it joins the cast and is present at the start (section 2.1).
-  - `persona` fills the first seat without a `character`, or adds a seat (Format 12.2), first in the header's `characters`, unless the people playing bring another character, and the chronicle's `limits` are added to the session's `lines` and `veils`, without duplicates, in order.
+  - `persona` fills the first seat without a `character`, or adds a seat (Format 12.2), and is listed first in the header's `characters`, unless the people playing bring another character.
+  - The chronicle's `limits` are added to the session's `lines` and `veils`, in order, without duplicates.
   - Its `memories` are copied onto each root as carried session entries, a memory without `carry` getting `carry: true` and one without `knownBy` getting the character's ID as its `knownBy`, and its `values` are recorded on each root in one `{"by": "rules"}` change, keyed with the character's ID (`mira.closeness`), before any other change (section 2.1).
   - Value keys and memory `knownBy` IDs that name the persona take effect only when the persona plays with its own ID (section 2.1 step 2).
 - **Writing back** from a path rewrites the chronicle with only what the session changed:
@@ -101,13 +106,13 @@ Before recording a change, apps drop each key whose value isn't valid (Format 8.
 
 A key whose prepared value is no longer valid, such as a set grown past its limit (Format 16), is dropped too. Within a message, changes are recorded in the order they happen: on a root, in the order of section 2.1; on any message, player and model changes before the changes of the events they trigger.
 
-**Readers** re-apply steps 1, 4 and 5 when loading and drop invalid keys, but don't re-check channels, `maxStep` or `oneWay`, so history survives later edits to the bundle.
+**Readers** re-apply steps 1, 4 and 5 when loading and drop invalid keys, but don't re-check channels, `maxStep` or `oneWay`.
 
 **Player edits** to state are recorded on the head if it is a player message, else on a new `from: "system"` child of the head with empty `content`. Events are then evaluated at that message; firings already recorded there still count, so an event that fired there doesn't fire again that round.
 
 **Events.** At each root, after each player or model message once its player and model changes are recorded, and after player edits:
 
-1. Events in use are evaluated once each, in the order scenario, the scenario's worlds, the session's worlds, characters (cast order), each in array order, in a single pass, skipping events whose `on` doesn't match the triggering message; a root made from an opening, and a records-only message, match neither. Each sees the state, firings and counts left by those before it. Messages added by events don't trigger evaluation.
+1. Events in use are evaluated in a single pass, once each, in this order: the scenario's, the scenario's worlds', the session's worlds', then the characters' in cast order, each owner's in array order. An event with `on` is skipped unless the triggering message is of that kind; a root made from an opening and a records-only message are of neither kind. Each sees the state, firings and counts left by those before it. Messages added by events don't trigger evaluation.
 2. An event fires when its `when` is true; it isn't `once` with an earlier firing on the path; its distance from its last firing is greater than `cooldown` (0 when unset), so it fires at most once per round; and its `chance` roll succeeds.
 3. A firing chooses an outcome by a weighted roll, if there are `outcomes`. The event's `set` and `compute`, then the outcome's, produce new values; later keys replace earlier ones. Every `compute` expression sees the state before this firing. Values are prepared as above.
 4. The firing is recorded on the triggering message as `{"by": "rules", "event": name, "outcome": index, "set": {…}}`, even when `set` is empty.
@@ -116,7 +121,7 @@ A key whose prepared value is no longer valid, such as a set grown past its limi
 
 ### 3.4 Model output
 
-Models may produce state as well as story. One payload carries it, through either of two transports. An **extraction** is a tracker run, or a structured reply from the narrator or the single voice. Its schema is `model-output.schema.json` (Format Appendix A):
+One payload carries what a model produces, through either of two transports. An **extraction** is a tracker run, or a structured reply from the narrator or the single voice. Its schema is `model-output.schema.json` (Format Appendix A):
 
 ```ts
 interface ModelOutput {
@@ -129,7 +134,7 @@ interface ModelOutput {
 type Newcomer = Pick<Character, "id" | "name" | "aliases" | "description" | "summary">;
 ```
 
-- **Tracker.** A separate model call or a tool call runs on a message that is sent to models, while it is the head and before the event pass after it. It reads the messages after the last extraction on the path, up to that one, as many of them as the app chooses, and returns everything but `parts`. Its input, at the message it runs on, is:
+- **Tracker.** A tracker run is a model call, separate from the story reply, that runs on a message that is sent to models, while it is the head and before the event pass after it. It reads the messages after the last extraction on the path, up to that one, as many of them as the app chooses, and returns everything but `parts`. Its input, at the message it runs on, is:
   - for each variable in use whose `by` includes `model`, in event order (section 3.3), its key, type, `values` or range, `description` and current value;
   - the scene's values, the ID and name of every location of the bundle and session in world order, and of every cast character in cast order;
   - the entries in use placed in `tracker`, not `disabled`, whose `when` holds: those of the worlds, the cast characters in cast order, the scenario and the session, in the order of section 5.1;
@@ -142,7 +147,15 @@ Nothing in the payload takes `ext`. A model adds story content, never mechanics 
 - A newcomer whose ID names a character, world, scenario or scenario variable of the bundle or session, an earlier newcomer of the payload included, or who would take the cast past its limit (Format 16), is dropped.
 - An entry whose ID names a session entry on the path that isn't placed in `context` is dropped; a model may update or disable a context entry, such as a memory.
 
-Apps apply a payload in this order: `characters` join the header; `parts` are stored; `changes` are recorded as `{"by": "model", …}`, prepared as in section 3.3, on the message the tracker runs on, or the reply itself; and `entries` become session entries on the same message, each replacing one there with its ID; an entry that would take the path's session entries past their limit (Format 16) is dropped. Speakers that name no cast character are dropped (a newcomer that joined is in the cast), and so are `knownBy` IDs other than `narrator` that name none; a `knownBy` whose IDs are all dropped becomes `["narrator"]`, or `[<speaker>, "narrator"]` on a part with a speaker. Before applying a payload, apps read its empty values as Format 2.2 says and drop its unknown properties (Format 15); a part, entry or newcomer that still fails the schema is dropped, and so is an entry or newcomer whose ID an earlier one in the payload has; change keys and values that aren't valid are dropped by preparation. Output that isn't a JSON object, and a structured reply left with no parts, is discarded, and nothing is recorded. Each extraction records one `{"by": "model", …}` change, with an empty `set` when it changes nothing, which marks where the next tracker run starts. The event pass after a message waits for any extraction the app runs on it.
+Output that isn't a JSON object is discarded, and nothing is recorded. Otherwise apps apply a payload in this order:
+
+1. Read its empty values as Format 2.2 says and drop its unknown properties (Format 15). Drop each part, entry or newcomer that still fails the schema, and each entry or newcomer whose ID an earlier one in the payload has. A structured reply left with no parts is discarded, and nothing is recorded.
+2. `characters` join the header.
+3. `parts` are stored. A speaker that names no cast character is dropped (a newcomer that joined is in the cast), and so is each `knownBy` ID other than `narrator` that names none. A `knownBy` whose IDs are all dropped becomes `["narrator"]`, or `[<speaker>, "narrator"]` on a part with a speaker.
+4. `changes` are recorded as one `{"by": "model", …}` change, prepared as in section 3.3, on the message the tracker runs on or on the reply itself. Every extraction records this change, with an empty `set` when it changes nothing, which marks where the next tracker run starts.
+5. `entries` become session entries on the same message, each replacing one there with its ID. An entry that would take the path's session entries past their limit (Format 16) is dropped.
+
+The event pass after a message waits for any extraction the app runs on it.
 
 ---
 
@@ -168,7 +181,6 @@ roll(purpose, seed, messageId, subject):
 - **`seed`** is the session's. A message's ID is fixed before its prompt is built, since its rolls use it.
 - **Weighted pick:** with candidates in order and total integer weight *W*, let `t = roll mod W`; pick the first candidate whose running total of weights exceeds `t`.
 - `chance · 2^48` is exact in double precision, so `chance: 1` always passes and `0` never does.
-- Identical picks in different strings agree.
 
 Test vectors, with seed `k7Qm2xVb9TzR4pLc8NwYfA`:
 
@@ -234,7 +246,7 @@ The app then records the entries selected in steps 1 and 2 that survived step 3,
 
 ### 5.6 Pulling
 
-Entries with `pull` are retrieved when relevant, by either of two methods an app MAY offer: the model sees a catalog of their titles and requests entries by title, for example through a tool; or the app finds entries by similarity search over titles and texts. Only entries the generation can see, that weren't selected or dropped by fitting, and whose `when` holds, with `hit()` checking their scanned text, are eligible; groups, `once`, `sticky`, `cooldown` and `chance` don't apply to pulling. Pulled entries are added after fitting (section 5.5); a pulled entry's text reaches the model, and the entry is recorded in `activated`, so its `sticky`, `cooldown` and `once` then count from that record (section 5.4). In apps that offer neither method, entries with `pull` activate only through their `keys`.
+Entries with `pull` are retrieved when relevant, by either of two methods an app MAY offer: the model sees a catalog of their titles and requests entries by title; or the app finds entries by similarity search over titles and texts. Only entries the generation can see, that weren't selected or dropped by fitting, and whose `when` holds, with `hit()` checking their scanned text, are eligible; groups, `once`, `sticky`, `cooldown` and `chance` don't apply to pulling. Pulled entries are added after fitting (section 5.5); a pulled entry's text reaches the model, and the entry is recorded in `activated`, so its `sticky`, `cooldown` and `once` then count from that record (section 5.4). In apps that offer neither method, entries with `pull` activate only through their `keys`.
 
 ---
 
@@ -246,7 +258,7 @@ Troupe defines what goes into a prompt and in which slot; formatting, mapping to
 | --- | --- |
 | **System** | the app's own prompt; the session's `limits` (Format 12); selected entries placed in `system`; event directions (section 3.3); for a structured reply from the narrator or the single voice, the tracker's input other than the messages, taken at the prompt's evaluation point (section 3.4) |
 | **Setting** | the premise; world descriptions; the current location and its parents, innermost first |
-| **People** | present model-played characters, then the character being generated for if absent: description and cast `notes`; the players' characters in cast order, with their cast `notes`; offstage model-played cast characters other than the one being generated for, whose name or alias, as a plain key, matches the scanned text (section 5.2) of the last 4 messages, as the generation can see it: their `summary`, a character without one contributing nothing; dialogue examples of the present model-played characters and the character being generated for |
+| **People** | present model-played characters, then the character being generated for if absent: description and cast `notes`; the players' characters in cast order: description and cast `notes`; offstage model-played cast characters other than the one being generated for, whose name or alias, as a plain key, matches the scanned text (section 5.2) of the last 4 messages, as the generation can see it: their `summary`, a character without one contributing nothing; dialogue examples of the present model-played characters and the character being generated for |
 | **Context** | selected entries placed in `context`; pinned messages |
 | **History** | messages on the path with parts the generation can see, image parts reaching models without image input as their `alt`, with summaries it can see standing in for messages they cover where the app chooses, and entries with a numeric position inserted at their depth |
 
@@ -270,7 +282,7 @@ What a generation **can see**:
 | the narrator, in `characters` mode | everything except content whose explicit `knownBy` doesn't name `narrator` |
 | the single voice, in `narrator` mode | everything |
 
-Knowledge limits what models see, never what people see; secrets between human players are out of scope.
+Knowledge applies only to what models receive; secrets between human players are out of scope.
 
 ---
 

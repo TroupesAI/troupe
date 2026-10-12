@@ -24,7 +24,7 @@ One page for people and for LLMs asked to write Troupe files. Give it to a model
 }
 ```
 
-**Shapes.** IDs start with a lowercase letter and use only `a–z`, `0–9` and `_`, at most 64 characters. Openings belong to scenarios and are `{"id", "content"}`, or `{"id", "title"}` for one the model writes; `content` and event `message` are arrays of parts, `[{"speaker": "mira", "text": "…"}]`, never strings. `examples` is an array of exchanges, each an array of `{"speaker": "char" | "user" | id, "text"}`. Text is Markdown, never HTML; put a character's actions in italics in their own part.
+**Shapes.** IDs start with a lowercase letter and use only `a–z`, `0–9` and `_`, at most 64 characters. Openings belong to scenarios and are `{"id", "content"}`, or `{"id", "title"}` for one the model writes; `content` and event `message` are arrays of parts, `[{"speaker": "mira", "text": "…"}]`, never strings. `examples` is an array of exchanges, each an array of `{"speaker": "char" | "user" | id, "text"}`. Text is Markdown, never HTML; put a character's actions in italics in the speaker's own part.
 
 **Macros.** `{{char}}` is the character the text belongs to and `{{user}}` the player's character. `{{state.bell}}` and `{{own.nerve}}` show values; `{{@kai}}` shows a name. Name other characters with `{{@kai}}` rather than writing "Kai", so renames and recasts keep working.
 
@@ -44,7 +44,7 @@ One page for people and for LLMs asked to write Troupe files. Give it to a model
 4. Numbers in CEL arithmetic match the variable's type: `state.trust.kai - 0.1` for a `number`, `state.hp - 1` for an `int`.
 5. `chance` is 0–1, not a percentage. `weight` and `priority` are integers.
 6. A numeric `position` is a depth in history, not an order; write `4`, not `"4"`.
-7. Without `by`, only openings, events, chronicle values and answers to `ask` can change a variable.
+7. Without `by`, only openings, events and chronicle values can change a variable, and players can change one with `ask`.
 8. An entry, a variable and an event of the same owner can't share an ID.
 9. `knownBy: ["narrator"]` is for the narrator alone; an explicit `knownBy` hides an entry from the narrator unless it lists `narrator`. Narrator-only clues belong to the scenario, because a character's entries only count while they are present.
 10. Characters, worlds and scenarios can't be called `char`, `user`, `narrator`, `session`, `state`, `scene`, `players` or `own`, and a variable can't be called `scene` or `own`; no ID can be a CEL word such as `var`, `loop`, `function` or `package`.

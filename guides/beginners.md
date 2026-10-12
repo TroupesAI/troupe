@@ -99,7 +99,7 @@ An **entry** is any piece of text the model should read when its conditions hold
 How an entry gets into the prompt:
 
 - **No `keys`:** always on. Rules, secrets and goals are written this way.
-- **With `keys`:** it activates when one of the words appears in the last 4 messages, speakers' names included. Keys match whole words and ignore case, so `vault` doesn't match `vaulted` (in Chinese, Japanese and Thai, keys match anywhere). A key between slashes, such as `/vaults?/`, is a pattern for plurals and partial words.
+- **With `keys`:** it activates when one of the words appears in the last 4 messages, speakers' names included. Keys match whole words and ignore case, so `vault` doesn't match `vaulted` (in Chinese, Japanese, Korean, Thai and a few other scripts, keys match anywhere). A key between slashes, such as `/vaults?/`, is a pattern for plurals and partial words.
 - **With `when`:** a condition must hold too, such as "only after the tenth bell" (chapter 6).
 - **With `pull` and a `title`:** the entry is fetched on demand, by the model asking for it or by the app's search. Large lorebooks use this.
 
@@ -245,11 +245,11 @@ The heist runs on a clock: the harbor bells. A **variable** holds state like thi
 
 - **`type`** is `bool`, `int`, `number`, `string`, `enum` (one of `values`) or `set` (a list of distinct strings, such as an inventory).
 - **`description`** is written for authors and the model alike. The model reads it as its instructions when it updates the value.
-- **`by: ["model"]`** lets the **tracker** change the value. The tracker is a model call, often cheaper than the story model, that reads the latest messages and reports what changed. Without `by`, only openings, events (chapter 7), chronicle values and answers to `ask` change a variable.
+- **`by: ["model"]`** lets the **tracker** change the value. The tracker is a model call, often cheaper than the story model, that reads the latest messages and reports what changed. Without `by`, only openings, events (chapter 7) and chronicle values change a variable, and players can change one with `ask`.
 - **`min`, `max`, `maxStep` and `oneWay`** are guardrails: the bell stays between 6 and 12, moves at most 2 at a time, and never goes back.
 - **`of: "characters"`** keeps one value per character, read as `state.trust.kai`.
 - **`ask`** puts a question to the player when the chat starts; `labels` name the choices.
-- **`spoiler`** hides the value from players' screens until the story ends.
+- **`spoiler`** marks the value as a spoiler until the story ends, so apps can hide it from players.
 
 The model playing a character never sees variables on its own. You choose the wording, and who knows it, with an entry:
 
@@ -295,7 +295,7 @@ An **event** is a story beat written as a rule: when a condition holds, change v
 ```
 
 - **`once`** fires at most once; **`end`** marks the story finished; **`message`** adds narration after the message that triggered it.
-- **`on: "player"`** runs the event after a player's message, before anyone replies, so its **`direct`** can tell the next reply what happens. Directions reach the model once, then expire.
+- **`on: "player"`** runs the event after a player's message, before anyone replies, so its **`direct`** can tell the next reply what happens. Directions reach every prompt until the next model reply, then expire.
 - **`chance`** is a probability from 0 to 1, and **`cooldown`** keeps the patrol away for 3 rounds after it fires.
 - **`outcomes`** pick one weighted alternative each time the event fires: three times in four the patrol passes, once in four it costs the crew an hour.
 - **`set` takes plain values and `compute` takes formulas.** Write `"set": {"bell": 11}` but `"compute": {"bell": "state.bell + 1"}`.
@@ -343,7 +343,7 @@ During a chat, the tracker can add memories as entries on a message, with `carry
 ```mermaid
 flowchart LR
   C["Chronicle: Mira, memories, closeness 58"] -- "copied in at the start" --> S["A new chat"]
-  S -- "written back when it pauses: changed values, new memories" --> C
+  S -- "written back by the app: changed values, new memories" --> C
 ```
 
 The chat never needs the chronicle file to replay: everything it uses is copied in when it starts. Apps should let people read, edit and delete every memory. A long friendship can run as many short chats with one chronicle, instead of one endless chat. [Format Appendix B.4](../spec/format.md#b4-chronicle) shows Mira's chronicle.
