@@ -45,7 +45,7 @@ Bundles, session headers and chronicles given as objects leave out `troupe`: bef
 
 ## 2. Setup for each test
 
-Every test starts from a fresh copy of the case's inputs. Tests don't affect each other. Apart from `check`, `parse` and `read` tests, every test runs on the inputs as a reader keeps them after repairing (Format 17.2).
+Every test starts from a fresh copy of the case's inputs. Tests don't affect each other. Apart from `check`, `parse` and `read` tests, every test runs on the inputs as a reader keeps them after repairing and applying the consequences of failed checks (Format 17.2).
 
 1. **Absent values.** Apply Format 2.2 to the bundle, the session header and every message: `null`, `""`, `[]` and `{}` in optional fields read as missing, except that `knownBy: []` reads as `["narrator"]`. State values (`set`, `initial`) keep `""` and `[]`. `scenario.worlds` keeps `[]`. Required text fields (an entry's or part's `text`, a character's `description`) and message `content` keep `""` and `[]`; an opening's `content` is optional, so `[]` there reads as missing.
 2. **Reading.** Read the session lines as a reader does (Format 12.1, 17.2): a line repeating an earlier message's ID is skipped, a message whose `parent` names no earlier message is skipped with its descendants, and the head is the header's `head` if it names a message, else the last message.
@@ -119,7 +119,7 @@ The state is flattened to an object with these keys:
 | `owner` | Optional. The owner whose own events write the change, so `own.<id>` keys resolve. |
 
 - `expect.set` is the prepared change exactly, with full keys (`own.x` written as `<owner>.x`).
-- `expect.dropped` is the list of input keys dropped, in input order.
+- `expect.dropped` is the list of input keys dropped, in code point order, since JSON member order carries no meaning.
 
 ### 4.5 `select`: entry selection (Play 5)
 
@@ -206,7 +206,7 @@ Every field of `expect` is optional:
 | --- | --- |
 | `scenario` | `start` only: a scenario ID. |
 | `opening` | An opening ID. Omit it when the player writes first. |
-| `characters`, `players` | `start` only: the header's characters and players. `players` defaults to the IDs of the `characters` that replace no bundle character. |
+| `characters`, `players` | `start` only: the header's characters and players. `players` defaults to the IDs of the `characters` that replace no cast member. |
 | `answers` | Answers to `ask` questions, `key → value`. |
 | `seed` | `start` only. Defaults to `"conformance-seed-0001"`. |
 | `rootId` | The root's ID; `"1"` by default. |
@@ -322,7 +322,7 @@ The output is applied as Play 3.4 says: properties unknown to `model-output.sche
 Every field of `expect` is optional:
 
 - `message` is the resulting message, or `null` when nothing is recorded.
-- `dropped` is the list of change keys dropped by preparation, in input order.
+- `dropped` is the list of change keys dropped by preparation, in code point order.
 - `characters` is the header characters' IDs afterwards.
 - `newcomers` is the characters the output added to the header, as stored.
 

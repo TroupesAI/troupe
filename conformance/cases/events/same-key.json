@@ -1,0 +1,141 @@
+{
+  "description": "Event values (Format 11.2; Play 3.3): two keys of one set naming the same full key are both dropped; a compute that fails at runtime leaves the value the firing produced before it",
+  "bundle": {
+    "kind": "bundle",
+    "characters": [
+      {
+        "id": "kai",
+        "name": "Kai",
+        "description": "Kai.",
+        "variables": [
+          {
+            "id": "nerve",
+            "type": "int",
+            "description": "d"
+          }
+        ],
+        "events": [
+          {
+            "id": "twice",
+            "when": "true",
+            "set": {
+              "own.nerve": 1,
+              "kai.nerve": 2
+            }
+          }
+        ]
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s",
+        "cast": [
+          {},
+          {
+            "character": "kai"
+          }
+        ],
+        "variables": [
+          {
+            "id": "x",
+            "type": "int",
+            "description": "d"
+          },
+          {
+            "id": "zero",
+            "type": "int",
+            "description": "d"
+          }
+        ],
+        "events": [
+          {
+            "id": "e",
+            "when": "true",
+            "compute": {
+              "x": "state.x + 1"
+            },
+            "outcomes": [
+              {
+                "compute": {
+                  "x": "1 / state.zero"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "session": {
+    "header": {
+      "kind": "session",
+      "scenario": "s",
+      "seed": "conformanceSeed0001",
+      "characters": [
+        {
+          "id": "p",
+          "name": "Pat",
+          "description": "Pat."
+        }
+      ],
+      "players": [
+        "p"
+      ]
+    },
+    "messages": [
+      {
+        "id": "1",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "x"
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "check",
+      "expect": {
+        "codes": [
+          "UNKNOWN_VARIABLE"
+        ],
+        "includes": [
+          {
+            "code": "UNKNOWN_VARIABLE",
+            "at": "/characters/0/events/0/set/own.nerve"
+          },
+          {
+            "code": "UNKNOWN_VARIABLE",
+            "at": "/characters/0/events/0/set/kai.nerve"
+          }
+        ]
+      }
+    },
+    {
+      "type": "events",
+      "at": "1",
+      "eventMessageId": "e1",
+      "expect": {
+        "changes": [
+          {
+            "by": "rules",
+            "event": "e",
+            "outcome": 0,
+            "set": {
+              "x": 1
+            }
+          },
+          {
+            "by": "rules",
+            "event": "kai/twice",
+            "set": {}
+          }
+        ],
+        "message": null
+      }
+    }
+  ]
+}

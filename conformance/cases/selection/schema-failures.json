@@ -1,5 +1,5 @@
 {
-  "description": "A reader that keeps a file failing its schema repairs it (Format 17.2): it removes the value where each assertion fails, so an out-of-range chance or priority reads as absent, oneWay on a string variable is removed while the variable stays, an entry without text is ignored, and a knownBy emptied by removing a bad ID reads as [\"narrator\"]",
+  "description": "A reader that keeps a file failing its schema repairs it (Format 17.2): it removes the value where each assertion fails, so an out-of-range chance or priority reads as absent, oneWay on a string variable is removed while the variable stays, an entry without text is ignored, and a knownBy emptied by removing a bad ID reads as [\"narrator\"]; a keys list that repairing empties matches nothing; a failing uniqueItems removes the later duplicate",
   "bundle": {
     "kind": "bundle",
     "scenarios": [
@@ -26,6 +26,13 @@
               "Ann"
             ],
             "text": "A secret."
+          },
+          {
+            "id": "badkey",
+            "keys": [
+              ""
+            ],
+            "text": "A key repairing removes."
           }
         ],
         "cast": [
@@ -69,6 +76,7 @@
         }
       ],
       "players": [
+        "p",
         "p"
       ]
     },
@@ -146,6 +154,12 @@
           "label": "a"
         }
       }
+    },
+    {
+      "type": "cel",
+      "name": "a duplicate player is removed, the first kept",
+      "expr": "players == ['p']",
+      "expect": true
     }
   ]
 }

@@ -413,7 +413,7 @@ interface Variable {
 - **`by`.** Openings, events and chronicle values may always change a variable. `player` lets players change it; `model` lets the model that updates state change it (Play 3.4). A variable with `ask` may always be changed by players.
 - **`min` and `max`** are numbers, or name another numeric variable of the same owner that is neither keyed nor derived and whose own bounds are numbers, such as `"max": "max_hp"`; its current value is the bound.
 - **`maxStep`** is the largest step one change from the model may take; **`oneWay`** lets numbers only rise, a bool only turn true, a set only gain members, and an enum only move later in `values`. Both apply to each key of a keyed variable. Starting values (Play 2.1) are exempt.
-- **`derive`** makes a read-only variable computed from other state whenever it is read, such as `"derive": "state.clock / 24 + 1"` for the day. Derived variables have no `initial`, `by`, `ask`, `of`, `maxStep` or `oneWay`, can't be changed, and can't read other derived variables (`CEL_ERROR`).
+- **`derive`** makes a read-only variable computed from other state whenever it is read, such as `"derive": "state.clock / 24 + 1"` for the day. Derived variables have no `initial`, `by`, `ask`, `of`, `maxStep` or `oneWay`, can't be changed, and can't read other derived variables (`CEL_ERROR`). A `derive` is evaluated at the evaluation point of whatever reads it, with `self` its owner, `char` `""`, and no `hit()`.
 - **`ask`** puts a question to the player when the session starts and records the answer; `labels` name the choices. `ask` is not allowed with `of`.
 - **State reaches the story model** through text that shows it, such as an entry with `{{state.hp}}`, and as tracker input for structured replies (Play 3.4); nothing else sends it.
 
@@ -565,7 +565,7 @@ state.trust[char] >= 0.8 && hour < 6
 
 ### 11.2 Rules
 
-- Apps MUST type-check every expression when loading: `state` against the scenario's variables and every character's and world's variables in the bundle and session, and `own` against the expression owner's; a bundle read without a session is checked once for each scenario. An expression that fails is reported, and its entry, event or variable never applies. A `compute` key that fails at runtime is skipped, and any literal for the same key stands.
+- Apps MUST type-check every expression when loading: `state` against the scenario's variables and every character's and world's variables in the bundle and session, and `own` against the expression owner's; a bundle read without a session is checked once for each scenario. An expression that fails is reported, and its entry, event or variable never applies. A `compute` key that fails at runtime is skipped, and the value the firing produced for that key before, if any, stands. Two keys of one `set` or `compute` that name the same full key, such as `own.nerve` and `kai.nerve`, are both dropped (`UNKNOWN_VARIABLE`).
 - Conditions have type `bool`; `derive` and `compute` expressions have their variable's type, except that an `int` may set a `number`.
 - Ordering comparisons (`<`, `<=`, `>`, `>=`) between an `int` and a `double` MUST work: `state.trust.kai >= 1`. Everything else takes operands of one type: write `state.bell == 7` and `state.trust.kai - 0.1`.
 - Evaluation follows the CEL language definition, including its errors, such as integer overflow and division by zero. A runtime error makes a condition false; `&&` and `||` absorb an error when their other operand decides the result.
@@ -574,7 +574,8 @@ state.trust[char] >= 0.8 && hour < 6
 - Available functions are only `size`, `has`, `all`, `exists`, `exists_one`, `map`, `filter`, `in`, `contains`, `startsWith`, `endsWith`, `matches`, the conversions `int()`, `double()`, `string()` and `bool()`, and the functions above. Conversions don't take strings, except `string()` of a string, and `string()` doesn't take a double.
 - A comprehension's **body** is its predicate and, for `map`, its transform. Bodies nest at most two deep: a comprehension in another's body counts, one in its target doesn't. Inside a body, `roll()` isn't called and `+` doesn't join strings or lists.
 - `matches()` takes a string literal as its pattern, a regex as section 16 item 5 defines, and `hit()` a string literal key; both are checked at load.
-- An expression that breaks any of these rules is a `CEL_ERROR`. An app MAY stop an evaluation that exceeds its resources; it then fails the generation or event pass instead of recording a different outcome.
+- Selecting an absent value, such as a derived variable that failed, a variable whose owner isn't in use or an absent key, is a runtime error.
+- An expression that breaks any of these rules is a `CEL_ERROR`, and so is a `hit()` or `matches()` pattern that isn't a valid regex.
 
 ---
 
@@ -724,7 +725,7 @@ Fields that hold a file (`cover`, `avatar`, location `image` and image parts) ho
 ## 15. Extensions and versioning
 
 - **Extensions.** Every object that a Troupe document defines with an interface MAY carry `ext`, keyed by an extension name matching `^[a-z0-9][a-z0-9.-]{0,63}$`, such as `risu.regex`. The `troupe.` prefix is reserved for the draft extensions of Appendix D. Apps MUST NOT add fields anywhere else.
-- **Unknown fields.** Readers MUST ignore fields and extensions they don't understand. They MUST keep `ext` unchanged through load, save and export; other unknown fields are dropped when the file is written. A property is unknown when its object's interface doesn't define it; for a part, the interface its `type` selects. Each is an `UNKNOWN_FIELD` warning located at the property, and `SCHEMA` is judged with unknown properties removed, so readers never reject a file only for them. A part whose `type` is present and isn't `"text"` or `"image"` is unknown as a whole: an `UNKNOWN_FIELD` warning at its `type`; the reader doesn't send or scan it, and writes it back unchanged.
+- **Unknown fields.** Readers MUST ignore fields and extensions they don't understand. They MUST keep `ext` unchanged, as a JSON value, through load, save and export; other unknown fields are dropped when the file is written. A property is unknown when its object's interface doesn't define it; for a part, the interface its `type` selects. Each is an `UNKNOWN_FIELD` warning located at the property, and `SCHEMA` is judged with unknown properties removed, so readers never reject a file only for them. A part whose `type` is present and isn't `"text"` or `"image"` is unknown as a whole: an `UNKNOWN_FIELD` warning at its `type`; the reader doesn't send or scan it, and writes it back unchanged.
 - **Versions** are `major.minor`, compared as two integers, so `0.10` is newer than `0.9`. A reader refuses a file of another major version (`UNSUPPORTED_VERSION`). From 1.0, minor versions only add what older readers can safely ignore: readers MUST open every file of their major version and report a newer minor as an `UNSUPPORTED_VERSION` warning. Before 1.0, any minor version may break: a reader fully supports only its own, reports any other as an `UNSUPPORTED_VERSION` warning, and MAY still read it.
 
 ---
@@ -741,7 +742,7 @@ Fields that hold a file (`cover`, `avatar`, location `image` and image parts) ho
 8. **Bounded parsing.** Readers MUST cap JSON size and depth, `data:` URI size, and session length.
 9. **Private fields.** `credits`, `briefing` and opening `title`s MUST NOT be sent to any model; entry `title` reaches it only in a pull catalog.
 
-Writers MUST stay within these limits. Readers MUST accept files within them, and MAY accept or refuse larger ones:
+Writers MUST stay within these limits. Readers MUST accept files within them, and MAY accept or refuse larger ones. An app MAY stop work that exceeds its resources, such as evaluating an expression or matching keys; it then fails the generation or event pass instead of recording a different outcome.
 
 | Item | Size limit |
 | --- | --- |
@@ -750,8 +751,10 @@ Writers MUST stay within these limits. Readers MUST accept files within them, an
 | ZIP entries in a package / unpacked size | 10,000 / 512 MiB |
 | Image size | 8,192 × 8,192 pixels |
 | JSON nesting depth | 64 |
-| Entries / variables / events in a bundle, and in the characters and worlds a session adds | 10,000 / 1,000 / 1,000 each |
+| Entries / variables / events in a bundle, all owners, and separately in the characters and worlds a session adds | 10,000 / 1,000 / 1,000 |
+| A text value: a part's `text`, an entry's `text` or a description, in UTF-8 | 1 MiB |
 | Session entries on a path, the latest per ID | 10,000 |
+| Chronicle JSON / memories | 32 MiB / 10,000 |
 | One CEL expression or regex key | 4 KiB |
 | Characters in a session's cast | 256 |
 | A string state value, in UTF-8 | 4 KiB |
@@ -790,7 +793,7 @@ Messages are never dropped for a failed check, except the lines that `PARSE`, `S
 | `REGEX_ERROR` | Every regex key is valid (section 16 item 5) | The key matches nothing |
 | `UNKNOWN_MACRO` | Macros are valid and name existing characters and variables | Left as written |
 
-**Repairing.** A reader that keeps a document failing its schema first reads empty values as section 2.2 says. It then removes the value at the instance location of each failing keyword that asserts something itself, not one that only reports failures beneath it (`allOf`, `anyOf`, `if`, `then`, `else`, `properties`, `additionalProperties`, `items`, `propertyNames`, `$ref`); a `false` subschema fails at the value it applies to, and a failure beneath `propertyNames` removes the property whose name fails. It validates again until nothing fails. So an invalid `weight` reads as absent, and an entry without `text` is ignored. A `knownBy` that repairing empties or removes reads as `["narrator"]`; a message line removed as a whole is skipped, and a message that loses its `parent` is skipped like one whose `parent` names no message; a document removed as a whole isn't read. The other checks then run on the repaired document.
+**Repairing.** A reader that keeps a document failing its schema first reads empty values as section 2.2 says. It then removes the value at the instance location of each failing keyword that asserts something itself, not one that only reports failures beneath it (`allOf`, `anyOf`, `if`, `then`, `else`, `properties`, `additionalProperties`, `items`, `propertyNames`, `$ref`); a `false` subschema fails at the value it applies to, and a failure beneath `propertyNames` removes the property whose name fails. A failing `uniqueItems` removes the later duplicates, and a failing `dependentRequired` the dependent property. It validates again until nothing fails. So an invalid `weight` reads as absent, and an entry without `text` is ignored. A `knownBy` that repairing empties or removes reads as `["narrator"]`, a `keys` list matches nothing, and a cast member whose `character` is removed is skipped; a message line removed as a whole is skipped, and a message that loses its `parent` is skipped like one whose `parent` names no message; a document removed as a whole isn't read. The other checks then run on the repaired document.
 
 ---
 

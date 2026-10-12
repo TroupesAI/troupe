@@ -230,14 +230,14 @@
           "inv.lamp": 1
         },
         "dropped": [
+          "a.feelings",
+          "feelings.p",
+          "inv.Torch",
           "rep.army",
           "trust",
-          "trust.zed",
-          "trust.p",
           "trust.char",
-          "inv.Torch",
-          "a.feelings",
-          "feelings.p"
+          "trust.p",
+          "trust.zed"
         ]
       }
     },

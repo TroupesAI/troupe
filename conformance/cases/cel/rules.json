@@ -1,5 +1,5 @@
 {
-  "description": "CEL rules (Format 11.1, 11.2): comprehensions over a map visit keys in code point order; list and map literals hold one type; type names and whole state objects aren't values; CEL's runtime errors (overflow, division by zero, out-of-range conversion) make a condition false; comprehension bodies, not targets, count toward nesting; absent keys of \"*\" maps are absent in CEL (Format 8.3); matches() patterns are valid regexes (Format 16 item 5); an unknown time zone makes hour and weekday −1; with no player, user is \"\"; hit() takes a literal",
+  "description": "CEL rules (Format 11.1, 11.2): comprehensions over a map visit keys in code point order; list and map literals hold one type; type names and whole state objects aren't values; CEL's runtime errors (overflow, division by zero, out-of-range conversion) make a condition false; comprehension bodies, not targets, count toward nesting; absent keys of \"*\" maps are absent in CEL (Format 8.3); matches() patterns are valid regexes (Format 16 item 5); an unknown time zone makes hour and weekday −1; with no player, user is \"\"; hit() takes a literal; selecting an absent value is a runtime error; an invalid hit() regex is a CEL_ERROR",
   "bundle": {
     "kind": "bundle",
     "scenarios": [
@@ -31,6 +31,17 @@
             "type": "int",
             "initial": 7,
             "description": "d"
+          },
+          {
+            "id": "zero",
+            "type": "int",
+            "description": "d"
+          },
+          {
+            "id": "ratio",
+            "type": "int",
+            "derive": "100 / state.zero",
+            "description": "fails at runtime"
           }
         ]
       }
@@ -193,6 +204,27 @@
       "name": "hit() takes a string literal",
       "kind": "entry",
       "expr": "hit(user)",
+      "expect": {
+        "checkError": true
+      }
+    },
+    {
+      "type": "cel",
+      "name": "selecting a derived value that failed is a runtime error",
+      "expr": "state.ratio == 0",
+      "expect": false
+    },
+    {
+      "type": "cel",
+      "name": "negated too",
+      "expr": "!(state.ratio == 0)",
+      "expect": false
+    },
+    {
+      "type": "cel",
+      "name": "an invalid regex in hit() is a CEL_ERROR",
+      "kind": "entry",
+      "expr": "hit('/(/')",
       "expect": {
         "checkError": true
       }

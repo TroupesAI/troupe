@@ -90,8 +90,8 @@
           "scene.location": ""
         },
         "dropped": [
-          "pv",
-          "nv"
+          "nv",
+          "pv"
         ]
       }
     },
