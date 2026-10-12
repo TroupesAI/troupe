@@ -15,7 +15,9 @@ const current = spec();
         <ul>
           {Object.keys(files).map((file) => (
             <li>
-              <a href={`/schema/${version}/${file}`}>{file}</a>
+              <a href={`/schema/${version}/${file}`}>
+                <code>{file}</code>
+              </a>
             </li>
           ))}
         </ul>

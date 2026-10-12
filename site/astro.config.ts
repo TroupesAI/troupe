@@ -63,7 +63,13 @@ export default defineConfig({
         Footer: "./src/components/Footer.astro",
         ThemeSelect: "./src/components/ThemeSelect.astro",
       },
-      expressiveCode: { themes: ["rose-pine-moon", "rose-pine-dawn"], plugins: [codeBlockNames] },
+      // Starlight's colors frame the code blocks, so they sit on the site's own surfaces rather than the themes'.
+      expressiveCode: {
+        themes: ["rose-pine-moon", "rose-pine-dawn"],
+        useStarlightUiThemeColors: true,
+        styleOverrides: { borderRadius: "0.5rem", codeLineHeight: "1.6" },
+        plugins: [codeBlockNames],
+      },
       social: [{ icon: "github", label: "GitHub", href: repo }],
       editLink: { baseUrl: `${repo}/edit/main/site/` },
       markdown: { processedDirs: [".."] },

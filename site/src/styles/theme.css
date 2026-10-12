@@ -16,6 +16,13 @@
 
   --sl-font: var(--font-sans);
   --sl-font-mono: var(--font-mono);
+  --sl-line-height: 1.65;
+  /* Long documents read better with a flatter heading scale than Starlight's desktop one. */
+  --sl-text-h2: var(--sl-text-3xl);
+  --sl-text-h3: var(--sl-text-2xl);
+  --sl-text-h4: var(--sl-text-xl);
+
+  scrollbar-color: var(--sl-color-gray-5) transparent;
 }
 
 :root[data-theme="light"] {
@@ -33,13 +40,115 @@
   --sl-color-accent-high: oklch(0.42 0.19 295);
 }
 
-.hero img {
-  border-radius: 50%;
+::selection {
+  background-color: color-mix(in oklch, var(--sl-color-accent) 35%, transparent);
 }
 
+:focus-visible {
+  outline: 2px solid var(--sl-color-accent);
+  outline-offset: 2px;
+}
+
+/* The header lets the page show through as it scrolls under. */
+.header {
+  background-color: color-mix(in oklch, var(--sl-color-bg-nav) 85%, transparent);
+  backdrop-filter: blur(12px);
+}
+
+/* The current page is a tint of the accent, quieter than Starlight's solid fill. */
+.sidebar-content a[aria-current="page"] {
+  background-color: var(--sl-color-accent-low);
+  color: var(--sl-color-white);
+}
+
+/* Type */
+
 h1#_top,
-.sl-markdown-content :is(h1, h2, h3, h4) {
+.sl-markdown-content :is(h1, h2, h3, h4),
+.pagination-links .link-title {
   font-family: var(--font-serif);
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+.sl-markdown-content p {
+  text-wrap: pretty;
+}
+
+/* A section number, such as the 7.2 of "7.2 Activation", reads quieter than the title. */
+.sl-markdown-content .sn {
+  color: var(--sl-color-gray-3);
+  font-weight: 500;
+  font-variant-numeric: lining-nums;
+}
+
+/* A part of the spec, such as "Part I: Authoring", labels the sections that follow it. */
+.sl-markdown-content h2.part {
+  color: var(--sl-color-text-accent);
+  font-family: var(--font-sans);
+  font-size: var(--sl-text-sm);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.sl-markdown-content hr {
+  margin-block: 3rem;
+}
+
+.sl-markdown-content a {
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+  text-decoration-color: color-mix(in oklch, currentColor 40%, transparent);
+}
+
+.sl-markdown-content a:hover {
+  text-decoration-color: currentColor;
+}
+
+.sl-markdown-content code {
+  border-radius: 0.3em;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+/* Blocks */
+
+.sl-markdown-content blockquote {
+  border-inline-start: 3px solid var(--sl-color-accent);
+  border-radius: 0 0.5rem 0.5rem 0;
+  padding: 0.75rem 1rem;
+  background-color: color-mix(in oklch, var(--sl-color-accent) 8%, transparent);
+  color: var(--sl-color-gray-1);
+}
+
+.sl-markdown-content th {
+  border-bottom-color: var(--sl-color-gray-4);
+  font-size: var(--sl-text-sm);
+}
+
+.sl-markdown-content td {
+  border-bottom-color: var(--sl-color-hairline-light);
+}
+
+/* A table scrolls rather than break a value such as a pattern across lines. */
+.sl-markdown-content td code {
+  white-space: nowrap;
+}
+
+.pagination-links a {
+  box-shadow: none;
+}
+
+.pagination-links a:hover {
+  border-color: var(--sl-color-accent);
+}
+
+/* Home */
+
+.hero img {
+  border-radius: 50%;
+  box-shadow: 0 0 6rem -1rem color-mix(in oklch, var(--sl-color-accent) 45%, transparent);
 }
 
 /* The home page's text keeps a reading width under the full-width hero. */

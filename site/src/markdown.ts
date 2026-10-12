@@ -47,9 +47,20 @@ export const troupeMarkdown: Plugin = ({ fileURL }) => {
         filter: ["h1", "h2", "h3", "h4", "h5", "h6"],
         visit(node, ctx) {
           // The title is taken out before rendering, so an h1 here is a part of the spec, such as "Part I: Authoring".
-          if (node.tagName === "h1") return { ...node, tagName: "h2" };
+          if (node.tagName === "h1") return { ...node, tagName: "h2", properties: { ...node.properties, className: ["part"] } };
           const id = sectionNumber(ctx.textContent(node));
-          if (id) ctx.setProperty(node, "id", id);
+          if (!id) return;
+          // The number gets its own span, so it can read quieter than the title.
+          const properties = { ...node.properties, id };
+          const [first, ...rest] = node.children;
+          const number = first?.type === "text" ? first.value.match(/^\S+(?: [A-Z]:)?(?= )/)?.[0] : undefined;
+          if (first?.type !== "text" || !number) return { ...node, properties };
+          const children: ElementContent[] = [
+            { type: "element", tagName: "span", properties: { className: ["sn"] }, children: [{ type: "text", value: number }] },
+            { type: "text", value: first.value.slice(number.length) },
+            ...rest,
+          ];
+          return { ...node, properties, children };
         },
       },
       {
@@ -75,3 +86,4 @@ export const troupeMarkdown: Plugin = ({ fileURL }) => {
     },
   };
 };
+
