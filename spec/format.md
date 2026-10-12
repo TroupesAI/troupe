@@ -677,6 +677,7 @@ interface Summary {
 - **Replacements.** A header character with the ID of a bundle character replaces it for the whole session: it keeps that character's place in the cast and every reference to it. Two header characters that replace the same bundle character make the session unplayable (`DUPLICATE_ID`).
 - `players` lists the characters people control, in seat order. An ID defined in the header's `characters`, other than a replacement, fills the next empty seat, or adds a seat after the scenario cast when every seat is filled, so more people can play than the author planned for; a cast member marked `player` fills its own seat and is a player whether or not it is listed, after the listed players in cast order; the ID of another cast member means a person took that character over.
 - The session's **cast** is the scenario cast with seats filled, then the added seats, then the **joiners**: header `characters` that aren't players or replacements, which joined or appeared during the session.
+- Header characters and `players` hold for the whole session, on every branch; presence is recorded on each path (section 8.4).
 
 ### 12.3 Session entries
 
@@ -778,7 +779,7 @@ Writers MUST stay within these limits. Readers MUST accept files within them, an
 | --- | --- |
 | Bundle JSON | 32 MiB |
 | Session file / messages | 256 MiB / 100,000 |
-| ZIP entries in a package / unpacked size | 10,000 / 1 GiB |
+| ZIP entries in a package / unpacked size | 10,000 / 512 MiB |
 | Image size | 8,192 × 8,192 pixels |
 | JSON nesting depth | 64 |
 | Troupe entries in a bundle, all owners | 10,000 |
@@ -1117,7 +1118,7 @@ A new session that continues this chronicle starts with `closeness` at 58 and bo
 | Player and model text stored escaped, so it stays literal | Resolving macros in it; deciding by who wrote a text whether to resolve it | Every text resolves the same way, so a reader never needs to know who wrote it, and no hidden state leaks through model output or prompt attacks. |
 | Priority means importance; file order is prompt order | Priority doing three jobs | Authors order lore by writing it in order. |
 | Copies with `credits` | Live cross-bundle references, structured provenance | People write attribution as they like. |
-| `id` only links sessions and chronicles to their bundle | Rules for forks, translations and release order | Nothing could check them. |
+| `id` only links sessions and chronicles to their bundle | Rules for forks, translations, release order, version pins or hashes | Nothing could check them. A session that must keep the exact story it was played with travels in a package with that bundle. |
 | No required Character Card V3 chunk in a PNG | Writers embedding a V3 copy beside the bundle | Compatibility with other formats is a choice for exporters, not a duty of every writer. |
 | No narrator voice | A character that defines the narrator | Narrator-only `system` entries already set its style. |
 | A scenario names its narrator | A fixed English name | `{{char}}` reads naturally in a story in any language. |
@@ -1134,7 +1135,8 @@ A new session that continues this chronicle starts with `closeness` at 58 and bo
 | Standard ZIP checks | Rejecting multi-disk archives, overlapping entries and headers that disagree | A standard ZIP library reads packages; the size, count and ratio caps bound a hostile archive. |
 | Writers write I-JSON; readers use a standard JSON parser | Readers rejecting everything I-JSON forbids | No app needs its own parser. |
 | Apps keep brought-in IDs unique their own way | Prescribed renaming of macros and CEL | Only the brought-in object refers to its own ID, so how it gets a fresh one concerns only the app. |
-| Writers stay within the limits; readers may accept more | Exact limits, or minimums only | Every conforming file opens in every app, and apps can still be generous. |
+| Writers stay within the limits; readers may accept more | Exact limits, or minimums only | Every conforming file opens in every app, and apps can still be generous. A package's 512 MiB holds a full bundle and a full session with room for images, without making every app accept a gigabyte. |
+| Session characters and players are session-wide | Characters and seats per branch | Who a character is and who plays it are facts about the session; who is present, which is story, is recorded on each path. |
 | Before 1.0, readers support only their own minor version and warn about others | Opening every minor version as compatible | Drafts break between minors; a warning says why a file may misbehave, without stranding it. |
 | Timestamps in UTC with `Z` | Any offset | One zone and one form, so apps compare instants without time zone data. |
 
