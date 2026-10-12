@@ -1164,13 +1164,7 @@
           "type": "object",
           "required": [
             "type"
-          ],
-          "properties": {
-            "type": {
-              "type": "string",
-              "minLength": 1
-            }
-          }
+          ]
         },
         "else": {
           "type": "object",

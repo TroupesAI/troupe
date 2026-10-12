@@ -352,6 +352,38 @@
           ]
         }
       }
+    },
+    {
+      "type": "start",
+      "name": "a replacement of a character outside the cast, listed in players, fills the seat",
+      "scenario": "s",
+      "opening": "o",
+      "characters": [
+        {
+          "id": "ghost",
+          "name": "Edited Ghost",
+          "description": "An edited copy of a character outside the cast."
+        }
+      ],
+      "players": [
+        "ghost"
+      ],
+      "expect": {
+        "characters": [
+          "ghost"
+        ],
+        "changes": [
+          {
+            "by": "rules",
+            "set": {
+              "scene.present": [
+                "ghost",
+                "elena"
+              ]
+            }
+          }
+        ]
+      }
     }
   ]
 }

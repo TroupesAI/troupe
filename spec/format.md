@@ -121,7 +121,7 @@ MUST, MUST NOT, SHOULD, SHOULD NOT and MAY are used as described in RFC 2119 and
 
 - Writers MUST write I-JSON (RFC 7493): UTF-8 without a byte order mark, no duplicate member names, no surrogate or noncharacter code points, written or escaped, numbers that fit an IEEE 754 double, and integer fields and `int` values within ±(2^53 − 1), written without a fraction or exponent. Readers parse UTF-8 JSON (RFC 8259), ignore a leading byte order mark, and need not check the other I-JSON constraints.
 - **Empty values.** Writers MUST NOT write `null` in a field this spec defines or in a state value, and MUST NOT write `""`, `[]` or `{}` in an optional field other than `ext`. State values and `scenario.worlds` are the exception: there `""`, `[]` and `{}` are values. Names and variable descriptions are never empty.
-- Readers MUST treat `null`, `""`, `[]` and `{}` in an optional field like a missing field, with the same exception; `knownBy: []` reads as section 7.4 says. A `null` state value is invalid (section 8.5).
+- Readers MUST treat `null`, `""`, `[]` and `{}` in an optional field like a missing field, with the same exception, and read a list that checks or repairing leave empty the same way; `knownBy: []` reads as section 7.4 says. A `null` state value is invalid (section 8.5).
 - **Defaults are normative.** Every default stated in these documents or their TypeScript comments applies when a field is absent. Every boolean defaults to `false`.
 
 ### 2.3 Identifiers
@@ -551,7 +551,7 @@ Every expression is evaluated at a message, its **evaluation point**: for a prom
 | `last.from`, `last.char` | The evaluation point message's `from` and `char`; `""` when it has no `char` |
 | `count(name)` | How many times an event fired, an entry activated, or a change key appeared in a recorded change on the path, matched exactly; 0 for anything else |
 | `ago(name)` | Rounds from that event's, entry's or key's latest firing, activation or change on the path to the evaluation point; 1000000000 if never |
-| `hit(key)` | Entries only: whether `key` matches the entry's scanned text (Play 5.2), or for a tracker entry the messages the tracker reads |
+| `hit(key)` | Entries only: whether `key` matches the entry's scanned text (Play 5.2), or for a tracker entry the messages after the last extraction on the path up to the evaluation point |
 | `roll(n)` | Event and outcome `compute` only: a whole number from 1 to `n`, an `int`; `n` below 1 is a runtime error |
 | `min(a, b)`, `max(a, b)`, `abs(x)` | For numbers of one type |
 
@@ -724,7 +724,7 @@ Fields that hold a file (`cover`, `avatar`, location `image` and image parts) ho
 ## 15. Extensions and versioning
 
 - **Extensions.** Every object that a Troupe document defines with an interface MAY carry `ext`, keyed by an extension name matching `^[a-z0-9][a-z0-9.-]{0,63}$`, such as `risu.regex`. The `troupe.` prefix is reserved for the draft extensions of Appendix D. Apps MUST NOT add fields anywhere else.
-- **Unknown fields.** Readers MUST ignore fields and extensions they don't understand. They MUST keep `ext` unchanged through load, save and export; other unknown fields are dropped when the file is written. A property is unknown when its object's interface doesn't define it; for a part, the interface its `type` selects. Each is an `UNKNOWN_FIELD` warning located at the property, and `SCHEMA` is judged with unknown properties removed, so readers never reject a file only for them. A part whose `type` the reader doesn't know is unknown as a whole: an `UNKNOWN_FIELD` warning at its `type`; the reader doesn't send or scan it, and writes it back unchanged.
+- **Unknown fields.** Readers MUST ignore fields and extensions they don't understand. They MUST keep `ext` unchanged through load, save and export; other unknown fields are dropped when the file is written. A property is unknown when its object's interface doesn't define it; for a part, the interface its `type` selects. Each is an `UNKNOWN_FIELD` warning located at the property, and `SCHEMA` is judged with unknown properties removed, so readers never reject a file only for them. A part whose `type` is present and isn't `"text"` or `"image"` is unknown as a whole: an `UNKNOWN_FIELD` warning at its `type`; the reader doesn't send or scan it, and writes it back unchanged.
 - **Versions** are `major.minor`, compared as two integers, so `0.10` is newer than `0.9`. A reader refuses a file of another major version (`UNSUPPORTED_VERSION`). From 1.0, minor versions only add what older readers can safely ignore: readers MUST open every file of their major version and report a newer minor as an `UNSUPPORTED_VERSION` warning. Before 1.0, any minor version may break: a reader fully supports only its own, reports any other as an `UNSUPPORTED_VERSION` warning, and MAY still read it.
 
 ---
@@ -790,7 +790,7 @@ Messages are never dropped for a failed check, except the lines that `PARSE`, `S
 | `REGEX_ERROR` | Every regex key is valid (section 16 item 5) | The key matches nothing |
 | `UNKNOWN_MACRO` | Macros are valid and name existing characters and variables | Left as written |
 
-**Repairing.** A reader that keeps a document failing its schema first reads empty values as section 2.2 says. It then removes the value at the instance location of each failing keyword that asserts something itself, not one that only reports failures beneath it (`allOf`, `anyOf`, `if`, `then`, `else`, `properties`, `additionalProperties`, `items`, `$ref`); a failing `propertyNames` removes the property whose name fails. It validates again until nothing fails. So an invalid `weight` reads as absent, and an entry without `text` is ignored. A `knownBy` that repairing empties or removes reads as `["narrator"]`; a message line removed as a whole is skipped; a document removed as a whole isn't read. The other checks then run on the repaired document.
+**Repairing.** A reader that keeps a document failing its schema first reads empty values as section 2.2 says. It then removes the value at the instance location of each failing keyword that asserts something itself, not one that only reports failures beneath it (`allOf`, `anyOf`, `if`, `then`, `else`, `properties`, `additionalProperties`, `items`, `propertyNames`, `$ref`); a `false` subschema fails at the value it applies to, and a failure beneath `propertyNames` removes the property whose name fails. It validates again until nothing fails. So an invalid `weight` reads as absent, and an entry without `text` is ignored. A `knownBy` that repairing empties or removes reads as `["narrator"]`; a message line removed as a whole is skipped, and a message that loses its `parent` is skipped like one whose `parent` names no message; a document removed as a whole isn't read. The other checks then run on the repaired document.
 
 ---
 

@@ -45,7 +45,7 @@ Bundles, session headers and chronicles given as objects leave out `troupe`: bef
 
 ## 2. Setup for each test
 
-Every test starts from a fresh copy of the case's inputs. Tests don't affect each other.
+Every test starts from a fresh copy of the case's inputs. Tests don't affect each other. Apart from `check`, `parse` and `read` tests, every test runs on the inputs as a reader keeps them after repairing (Format 17.2).
 
 1. **Absent values.** Apply Format 2.2 to the bundle, the session header and every message: `null`, `""`, `[]` and `{}` in optional fields read as missing, except that `knownBy: []` reads as `["narrator"]`. State values (`set`, `initial`) keep `""` and `[]`. `scenario.worlds` keeps `[]`. Required text fields (an entry's or part's `text`, a character's `description`) and message `content` keep `""` and `[]`; an opening's `content` is optional, so `[]` there reads as missing.
 2. **Reading.** Read the session lines as a reader does (Format 12.1, 17.2): a line repeating an earlier message's ID is skipped, a message whose `parent` names no earlier message is skipped with its descendants, and the head is the header's `head` if it names a message, else the last message.
@@ -363,7 +363,7 @@ Every field of `expect` is optional:
 
 - `variables` is the state names of the variables the tracker may change, in event order (Play 3.3): `bell`, `kai.nerve`.
 - `entries` is the references of the tracker entries it receives, in order.
-- `messages` is the IDs of the messages it reads, in path order.
+- `messages` is the IDs of the messages it may read: those after the last extraction on the path up to `at` that are sent to models, in path order.
 
 ## 5. Floating point and text
 

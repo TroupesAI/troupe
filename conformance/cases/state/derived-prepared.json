@@ -1,5 +1,5 @@
 {
-  "description": "A derived value is prepared like a recorded value, by Play 3.3 steps 1, 4 and 5, and one that is still invalid is absent (Play 3.2)",
+  "description": "A derived value is prepared like a recorded value, by Play 3.3 steps 1, 4 and 5, and one that is still invalid is absent (Play 3.2); a derived value that isn't finite is absent",
   "bundle": {
     "kind": "bundle",
     "scenarios": [
@@ -40,6 +40,12 @@
             "type": "set",
             "derive": "['y', 'x', 'y']",
             "description": "deduplicated"
+          },
+          {
+            "id": "inf",
+            "type": "number",
+            "derive": "1.0 / 0.0",
+            "description": "not finite"
           }
         ]
       }
@@ -58,7 +64,8 @@
         ]
       },
       "absent": [
-        "phase"
+        "phase",
+        "inf"
       ]
     }
   ]

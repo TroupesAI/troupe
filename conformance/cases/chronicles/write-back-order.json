@@ -1,5 +1,5 @@
 {
-  "description": "Writing back (Play 2.2): an opening's starting value on the root isn't written back; later changes are; new memories are added in the order their IDs first appear, a later version replaces an earlier one, and a disabled ID the chronicle doesn't hold changes nothing",
+  "description": "Writing back (Play 2.2): an opening's starting value on the root isn't written back; later changes are; new memories are added in the order their IDs first appear, a later version replaces an earlier one, and a disabled ID the chronicle doesn't hold changes nothing; a replacement of a carried entry is carried (Format 12.3)",
   "bundle": {
     "kind": "bundle",
     "characters": [
@@ -93,6 +93,10 @@
         "changes": [
           {
             "by": "rules",
+            "set": {}
+          },
+          {
+            "by": "rules",
             "set": {
               "kai.feelings.mara": 0,
               "scene.present": [
@@ -155,6 +159,28 @@
             "carry": true,
             "disabled": true,
             "text": "x"
+          }
+        ]
+      },
+      {
+        "id": "4",
+        "parent": "3",
+        "from": "player",
+        "content": [
+          {
+            "text": "Remember the docks?"
+          }
+        ],
+        "changes": [
+          {
+            "by": "model",
+            "set": {}
+          }
+        ],
+        "entries": [
+          {
+            "id": "met",
+            "text": "Kai met Mara at the docks, in the rain."
           }
         ]
       }
@@ -284,7 +310,73 @@
           }
         ]
       }
+    },
+    {
+      "type": "chronicle",
+      "name": "a model's update of a carried memory is carried, though it doesn't say so",
+      "chronicle": {
+        "kind": "chronicle",
+        "id": "c-kai",
+        "character": {
+          "id": "kai",
+          "name": "Kai",
+          "description": "A drifter.",
+          "variables": [
+            {
+              "id": "feelings",
+              "type": "int",
+              "of": "cast",
+              "min": -10,
+              "max": 10,
+              "by": [
+                "model"
+              ],
+              "carry": true,
+              "description": "d"
+            }
+          ]
+        },
+        "persona": {
+          "id": "mara",
+          "name": "Mara",
+          "description": "d"
+        },
+        "memories": [
+          {
+            "id": "met",
+            "carry": true,
+            "text": "Kai met Mara at the docks."
+          }
+        ],
+        "values": {
+          "feelings.mara": 5
+        }
+      },
+      "writeBack": {
+        "head": "4"
+      },
+      "expect": {
+        "values": {
+          "feelings.mara": 2
+        },
+        "memories": [
+          {
+            "id": "met",
+            "text": "Kai met Mara at the docks, in the rain."
+          },
+          {
+            "id": "b_new",
+            "carry": true,
+            "text": "B, revised."
+          },
+          {
+            "id": "a_new",
+            "carry": true,
+            "text": "A."
+          }
+        ]
+      }
     }
   ],
-  "note": "The chronicle held no values when this session started, so the root records only the opening's change. Another session has since written feelings.mara = 5 back to the file."
+  "note": "The chronicle held no values when this session started, so its change on the root is empty. Another session has since written feelings.mara = 5 back to the file."
 }

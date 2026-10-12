@@ -356,6 +356,80 @@
     },
     {
       "type": "start",
+      "name": "a memory without carry or knownBy is copied carried and known by the character",
+      "scenario": "s",
+      "opening": "o",
+      "chronicle": {
+        "kind": "chronicle",
+        "id": "c-kai",
+        "character": {
+          "id": "kai",
+          "name": "Kai",
+          "description": "A drifter.",
+          "variables": [
+            {
+              "id": "feelings",
+              "type": "int",
+              "of": "cast",
+              "min": -10,
+              "max": 10,
+              "carry": true,
+              "description": "d"
+            },
+            {
+              "id": "mood",
+              "type": "string",
+              "description": "not carried"
+            },
+            {
+              "id": "level",
+              "type": "int",
+              "carry": true,
+              "derive": "1",
+              "description": "derived, never carried"
+            }
+          ]
+        },
+        "persona": {
+          "id": "mara",
+          "name": "Mara",
+          "description": "d"
+        },
+        "limits": {
+          "lines": [
+            "gore"
+          ],
+          "veils": [
+            "romance"
+          ]
+        },
+        "memories": [
+          {
+            "id": "met",
+            "text": "Kai met Mara at the docks."
+          }
+        ],
+        "values": {
+          "feelings.mara": 7,
+          "mood": "glum",
+          "level": 3
+        }
+      },
+      "expect": {
+        "entries": [
+          {
+            "id": "met",
+            "carry": true,
+            "knownBy": [
+              "kai"
+            ],
+            "text": "Kai met Mara at the docks."
+          }
+        ]
+      }
+    },
+    {
+      "type": "start",
       "name": "an opening's set leaves out keys the chronicle sets",
       "scenario": "s",
       "opening": "o2",

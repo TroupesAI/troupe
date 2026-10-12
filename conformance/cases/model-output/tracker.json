@@ -1,5 +1,5 @@
 {
-  "description": "Tracker extractions (Play 3.4): changes and entries are recorded on the newest message covered; every extraction records one model change, the {\"by\": \"model\", \"set\": {}} marker when it changes nothing; a model entry with the ID of an earlier session entry replaces it from there on (Format 12.3); a newcomer's text is stored escaped (Format 10)",
+  "description": "Tracker extractions (Play 3.4): changes and entries are recorded on the message it runs on; every extraction records one model change, the {\"by\": \"model\", \"set\": {}} marker when it changes nothing; a model entry with the ID of an earlier session entry replaces it from there on (Format 12.3); a newcomer's text is stored escaped (Format 10)",
   "bundle": {
     "kind": "bundle",
     "characters": [
@@ -114,7 +114,7 @@
   "tests": [
     {
       "type": "output",
-      "name": "an extraction over messages 3 and 4 records on 4, the newest covered",
+      "name": "an extraction over messages 3 and 4 records on 4, the message it runs on",
       "message": "4",
       "output": {
         "changes": {
