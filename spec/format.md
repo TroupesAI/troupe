@@ -774,7 +774,7 @@ A conforming **writer** produces files that validate against the schemas, pass t
 
 ### 17.2 Checks
 
-Messages are never dropped for a failed check, except the lines that `PARSE`, `SCHEMA` and `DUPLICATE_ID` skip and a message whose `parent` names no earlier message, which `UNKNOWN_MESSAGE` skips with its descendants.
+Messages are never dropped for a failed check, except the lines that `PARSE`, `SCHEMA` and `DUPLICATE_ID` skip and a message whose `parent` names no earlier message, which `UNKNOWN_MESSAGE` skips with its descendants. Only lines that are read count for `DUPLICATE_ID` and as parents.
 
 | Code | Check | Consequence |
 | --- | --- | --- |
@@ -803,7 +803,7 @@ Messages are never dropped for a failed check, except the lines that `PARSE`, `S
 2. It removes the value at the instance location of each keyword whose failure makes the document fail and that asserts something itself, not one that only reports failures beneath it (`allOf`, `if`, `then`, `else`, `properties`, `additionalProperties`, `items`, `propertyNames`, `$ref`). A failing `anyOf` removes the value it applies to, whatever its branches report; a `false` subschema fails at the value it applies to; a failure beneath `propertyNames` removes the property whose name fails; a failing `uniqueItems` removes the later duplicates; a failing `dependentRequired` removes the dependent property.
 3. It validates again, until nothing fails.
 
-So an invalid `weight` reads as absent, and an entry without `text` is ignored. A list it empties or removes reads as section 2.2 says; a cast member whose `character` it removes, or a `player` member without one, is skipped; a message line it removes as a whole, such as one left without parts, is skipped, and a message that loses its `parent` is skipped like one whose `parent` names no message; a document it removes as a whole isn't read. The other checks then run on the repaired document.
+So an invalid `weight` reads as absent, and an entry without `text` is ignored. A list it empties or removes reads as section 2.2 says; a cast member whose `character` it removes, or a `player` member without one, is skipped; a message line it removes as a whole, such as a player or model message, or a system message without `changes`, left without parts, is skipped, and a message that loses its `parent` is skipped like one whose `parent` names no message; a document it removes as a whole isn't read. The other checks then run on the repaired document.
 
 ---
 
@@ -1110,6 +1110,7 @@ A new session that continues this chronicle starts with `closeness` at 58 and bo
 | Security rules for showing and reading files are normative | Leaving safety to each app | Files come from strangers; a file safe in one app must be safe in every app. |
 | A replacement session entry takes the fields it lacks from the one it replaces | Replacing an entry whole | A model sees only an entry's ID and text, so its update of a memory keeps the memory's `carry`, `knownBy`, `pull` and `title`. |
 | A header character listed in `players` fills a seat | Recording how each character joined | The snapshot can't tell a player's own character from a newcomer listed in `players`, so neither is a key of an `of: "characters"` variable. |
+| Repair removes a message left without parts, and its replies | Keeping an empty message in place | Repair stays one simple, terminating procedure that every app applies alike; writers that emit valid parts never meet it. |
 | Strict schemas, lenient readers | Either everywhere | Writers catch typos; readers stay forward compatible. |
 | A reader that keeps a file failing its schema removes each failing value | Refusing it, or each reader repairing it its own way | Every lenient reader plays the same story from the same broken file. |
 | Writers leave out empty optional fields and write booleans as they like | Allowing `""` and `[]` anywhere; treating an explicit `false` as different from absent | Two writers of the same story produce the same fields, and typed serializers that write defaults still validate. |
