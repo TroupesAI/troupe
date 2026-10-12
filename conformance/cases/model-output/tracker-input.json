@@ -1,0 +1,288 @@
+{
+  "description": "Tracker input (Play 3.4): the variables in use the model may change, in event order, including an absent cast character's; the tracker entries in use whose when holds at the message the tracker runs on, ignoring knownBy; and the messages after the last extraction that are sent to models",
+  "bundle": {
+    "kind": "bundle",
+    "characters": [
+      {
+        "id": "a",
+        "name": "Ann",
+        "description": "Ann.",
+        "variables": [
+          {
+            "id": "nerve",
+            "type": "int",
+            "by": [
+              "model"
+            ],
+            "description": "d"
+          }
+        ],
+        "entries": [
+          {
+            "id": "ta",
+            "position": "tracker",
+            "knownBy": [
+              "a"
+            ],
+            "text": "Ann's nerve moves slowly."
+          }
+        ]
+      },
+      {
+        "id": "b",
+        "name": "Bea",
+        "description": "Bea.",
+        "variables": [
+          {
+            "id": "mood",
+            "type": "string",
+            "by": [
+              "model"
+            ],
+            "description": "d"
+          }
+        ],
+        "entries": [
+          {
+            "id": "tb",
+            "position": "tracker",
+            "text": "Bea's mood."
+          }
+        ]
+      }
+    ],
+    "worlds": [
+      {
+        "id": "w",
+        "name": "W",
+        "variables": [
+          {
+            "id": "clock",
+            "type": "int",
+            "by": [
+              "model"
+            ],
+            "description": "d"
+          },
+          {
+            "id": "day",
+            "type": "int",
+            "derive": "own.clock / 24 + 1",
+            "description": "d"
+          }
+        ],
+        "entries": [
+          {
+            "id": "tw",
+            "position": "tracker",
+            "text": "An hour passes per scene."
+          }
+        ]
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s",
+        "cast": [
+          {},
+          {
+            "character": "a"
+          },
+          {
+            "character": "b"
+          }
+        ],
+        "variables": [
+          {
+            "id": "bell",
+            "type": "int",
+            "by": [
+              "model"
+            ],
+            "description": "d"
+          },
+          {
+            "id": "gold",
+            "type": "int",
+            "by": [
+              "player"
+            ],
+            "description": "d"
+          }
+        ],
+        "entries": [
+          {
+            "id": "t_gold",
+            "position": "tracker",
+            "when": "state.gold == 3",
+            "text": "Gold is tight."
+          },
+          {
+            "id": "t_off",
+            "position": "tracker",
+            "disabled": true,
+            "text": "Disabled."
+          },
+          {
+            "id": "t_never",
+            "position": "tracker",
+            "when": "false",
+            "text": "Never."
+          },
+          {
+            "id": "lore",
+            "text": "Not for the tracker."
+          }
+        ]
+      }
+    ]
+  },
+  "session": {
+    "header": {
+      "kind": "session",
+      "scenario": "s",
+      "seed": "conformanceSeed0001",
+      "characters": [
+        {
+          "id": "p",
+          "name": "Pat",
+          "description": "Pat."
+        }
+      ],
+      "players": [
+        "p"
+      ]
+    },
+    "messages": [
+      {
+        "id": "1",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "Hi."
+          }
+        ],
+        "changes": [
+          {
+            "by": "rules",
+            "set": {
+              "scene.present": [
+                "p",
+                "a"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "id": "2",
+        "parent": "1",
+        "from": "model",
+        "char": "a",
+        "content": [
+          {
+            "speaker": "a",
+            "text": "Hello."
+          }
+        ],
+        "changes": [
+          {
+            "by": "model",
+            "set": {}
+          }
+        ]
+      },
+      {
+        "id": "3",
+        "parent": "2",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "Where is Bea?"
+          }
+        ]
+      },
+      {
+        "id": "4",
+        "parent": "3",
+        "from": "model",
+        "char": "a",
+        "hidden": true,
+        "content": [
+          {
+            "speaker": "a",
+            "text": "A reply the player hid."
+          }
+        ]
+      },
+      {
+        "id": "5",
+        "parent": "4",
+        "from": "system",
+        "content": [],
+        "changes": [
+          {
+            "by": "player",
+            "set": {
+              "gold": 3
+            }
+          }
+        ]
+      },
+      {
+        "id": "6",
+        "parent": "5",
+        "from": "model",
+        "char": "a",
+        "content": [
+          {
+            "speaker": "a",
+            "text": "Out."
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "tracker",
+      "name": "the first run reads from the root",
+      "at": "1",
+      "expect": {
+        "variables": [
+          "bell",
+          "w.clock",
+          "a.nerve",
+          "b.mood"
+        ],
+        "entries": [
+          "w/tw",
+          "a/ta",
+          "b/tb"
+        ],
+        "messages": [
+          "1"
+        ]
+      }
+    },
+    {
+      "type": "tracker",
+      "name": "after the extraction on 2: hidden and records-only messages aren't read; when holds at the message it runs on",
+      "at": "6",
+      "expect": {
+        "entries": [
+          "w/tw",
+          "a/ta",
+          "b/tb",
+          "s/t_gold"
+        ],
+        "messages": [
+          "3",
+          "6"
+        ]
+      }
+    }
+  ]
+}

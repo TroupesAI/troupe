@@ -66,6 +66,27 @@
       "key": "/",
       "text": "a / b",
       "expect": true
+    },
+    {
+      "type": "match",
+      "name": "counted repetitions multiplying past 1000 make the regex invalid, so it matches nothing (Format 16 item 5)",
+      "key": "/(a{10}){200}/",
+      "text": "aaaa",
+      "expect": false
+    },
+    {
+      "type": "match",
+      "name": "\\C isn't allowed",
+      "key": "/a\\C/",
+      "text": "ab",
+      "expect": false
+    },
+    {
+      "type": "match",
+      "name": "a valid counted repetition matches",
+      "key": "/(?:ab){2}/",
+      "text": "xababx",
+      "expect": true
     }
   ]
 }

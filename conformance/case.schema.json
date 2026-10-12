@@ -102,7 +102,8 @@
               "read",
               "output",
               "chronicle",
-              "edit"
+              "edit",
+              "tracker"
             ]
           }
         },
@@ -1389,6 +1390,63 @@
                 "newId": {
                   "type": "string",
                   "minLength": 1
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "tracker"
+                }
+              },
+              "required": [
+                "type"
+              ]
+            },
+            "then": {
+              "additionalProperties": false,
+              "required": [
+                "expect",
+                "at"
+              ],
+              "properties": {
+                "type": {
+                  "const": "tracker"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "note": {
+                  "type": "string"
+                },
+                "at": {
+                  "type": "string"
+                },
+                "expect": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "variables": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "entries": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "messages": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
                 }
               }
             }

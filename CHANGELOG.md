@@ -8,6 +8,13 @@ Hardening for implementation. Breaking changes from 0.11:
 - **Player and model text** is stored escaped, and every text resolves the same way (Format 10).
 - **Writers** leave out empty optional fields (`""`, `[]`, `{}`) and never write `null` state values, and readers read `knownBy: []` as narrator-only; booleans written as `false` are defaults; writers use only text and image parts, and readers skip others; `own` is reserved for variables (Format 2.2, 2.3, 12).
 - **CEL** is bounded structurally: comprehensions nest at most two deep, `roll()` isn't called inside one, `string()` of a double is a `CEL_ERROR`, and string, set, `"*"` map and cast sizes have limits (Format 11.2, 16).
+- **CEL** agrees across libraries: `==` and other operators take one type, only ordering mixes `int` and `double`; literals hold one type; conversions don't take strings; maps iterate in code point order; type names and whole `state` objects aren't values; CEL's own runtime errors apply; nesting counts comprehension bodies only (Format 11.2).
+- **Regexes** are limited to what every RE2 implementation compiles, and an invalid key matches nothing (Format 16, 17.2).
+- **Limits** cap variables and events at 1,000 each (Format 16).
+- **Preparation** drops invalid keys before preparing, clamps with `max` winning when bounds cross, and exempts starting values from `oneWay`; `int` values stay within ±(2^53 − 1) (Format 8; Play 3.3).
+- **Model output** is read item by item, with empty values as missing; the tracker's input is defined exactly (Play 3.4).
+- **Write-back** skips the root's starting changes, and chronicle memories go on every root (Play 2.2).
+- **History** length is the app's (Play 6).
 - **Chronicles** take back only what a session changed (Play 2.2).
 - **Players** beyond a scenario's seats add seats, and a takeover keeps a character's keys (Format 8.3, 12.2).
 - **Scenarios** name their narrator for `{{char}}` (Format 6, 10).

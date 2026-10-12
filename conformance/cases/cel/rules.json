@@ -1,0 +1,186 @@
+{
+  "description": "CEL rules (Format 11.1, 11.2): comprehensions over a map visit keys in code point order; list and map literals hold one type; type names and whole state objects aren't values; CEL's runtime errors (overflow, division by zero, out-of-range conversion) make a condition false; comprehension bodies, not targets, count toward nesting; absent keys of \"*\" maps are absent in CEL (Format 8.3); matches() patterns are valid regexes (Format 16 item 5); an unknown time zone makes hour and weekday −1",
+  "bundle": {
+    "kind": "bundle",
+    "scenarios": [
+      {
+        "id": "s",
+        "variables": [
+          {
+            "id": "order",
+            "type": "int",
+            "of": [
+              "zeta",
+              "alpha",
+              "mid"
+            ],
+            "initial": 1,
+            "description": "d"
+          },
+          {
+            "id": "inv",
+            "type": "int",
+            "of": "*",
+            "by": [
+              "player"
+            ],
+            "description": "d"
+          },
+          {
+            "id": "bell",
+            "type": "int",
+            "initial": 7,
+            "description": "d"
+          }
+        ]
+      }
+    ]
+  },
+  "session": {
+    "header": {
+      "kind": "session",
+      "scenario": "s",
+      "seed": "conformanceSeed0001",
+      "timezone": "Mars/Olympus"
+    },
+    "messages": [
+      {
+        "id": "1",
+        "from": "player",
+        "at": "2026-10-09T14:30:00Z",
+        "content": [
+          {
+            "text": "x"
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "cel",
+      "name": "a map's keys in code point order, not declared order",
+      "expr": "state.order.map(k, k) == ['alpha', 'mid', 'zeta']",
+      "expect": true
+    },
+    {
+      "type": "cel",
+      "name": "a mixed list literal is a CEL_ERROR",
+      "expr": "size([1, 'a']) == 2",
+      "expect": {
+        "checkError": true
+      }
+    },
+    {
+      "type": "cel",
+      "name": "a mixed map literal is a CEL_ERROR",
+      "expr": "size({'a': 1, 'b': 'x'}) == 2",
+      "expect": {
+        "checkError": true
+      }
+    },
+    {
+      "type": "cel",
+      "name": "type names aren't values",
+      "expr": "int == int",
+      "expect": {
+        "checkError": true
+      }
+    },
+    {
+      "type": "cel",
+      "name": "state is only selected from",
+      "expr": "state == state",
+      "expect": {
+        "checkError": true
+      }
+    },
+    {
+      "type": "cel",
+      "name": "scene is only selected from",
+      "expr": "size(scene) > 0",
+      "expect": {
+        "checkError": true
+      }
+    },
+    {
+      "type": "cel",
+      "name": "integer overflow is a runtime error",
+      "expr": "9223372036854775807 + 1 > 0",
+      "expect": false
+    },
+    {
+      "type": "cel",
+      "name": "division by zero is a runtime error, negated too",
+      "expr": "!(1 / 0 == 0)",
+      "expect": false
+    },
+    {
+      "type": "cel",
+      "name": "int() of an out-of-range double is a runtime error",
+      "expr": "int(1e19) > 0",
+      "expect": false
+    },
+    {
+      "type": "cel",
+      "name": "int division truncates toward zero",
+      "expr": "state.bell / 2 == 3 && -7 / 2 == -3 && -7 % 2 == -1",
+      "expect": true
+    },
+    {
+      "type": "cel",
+      "name": "comprehensions chained through targets are one deep",
+      "expr": "[1, 2].map(x, x).filter(y, y > 1).all(z, z > 1)",
+      "expect": true
+    },
+    {
+      "type": "cel",
+      "name": "+ in a comprehension's target is fine",
+      "expr": "(['a'] + ['b']).all(x, size(x) == 1)",
+      "expect": true
+    },
+    {
+      "type": "cel",
+      "name": "a comprehension in a body's target still counts its body depth",
+      "expr": "[[[1]]].all(a, a.all(b, b.map(c, c).size() > 0))",
+      "expect": {
+        "checkError": true
+      }
+    },
+    {
+      "type": "cel",
+      "name": "an absent key of a \"*\" map is absent",
+      "expr": "!has(state.inv.torch) && !('torch' in state.inv)",
+      "expect": true
+    },
+    {
+      "type": "cel",
+      "name": "reading an absent key is a runtime error, not the default",
+      "expr": "state.inv.torch == 0",
+      "expect": false
+    },
+    {
+      "type": "cel",
+      "name": "matches() with an invalid regex is a CEL_ERROR",
+      "expr": "'a'.matches('[')",
+      "expect": {
+        "checkError": true
+      }
+    },
+    {
+      "type": "cel",
+      "name": "matches() with too many counted repetitions is a CEL_ERROR",
+      "expr": "'a'.matches('(a{10}){200}')",
+      "expect": {
+        "checkError": true
+      }
+    },
+    {
+      "type": "cel",
+      "name": "an unknown time zone makes hour and weekday −1",
+      "expr": "hour == -1 && weekday == -1",
+      "at": "1",
+      "expect": true
+    }
+  ]
+}

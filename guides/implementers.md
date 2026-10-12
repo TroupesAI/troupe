@@ -20,6 +20,7 @@ This guide is informative. It collects advice for apps that show and play Troupe
 
 - **The end.** Show people when an event ends the story on their path (Format 9). They may still continue.
 - **Time.** Set the session's `timezone` from the player's device, so `hour` and `weekday` match where they are (Format 11.1).
+- **Rolls.** Every roll follows from the seed and message IDs (Play 4). If players shouldn't predict or reroll outcomes, assign message IDs on the server and keep the seed from them during play.
 - **State.** Cache state however you like; it is always the bundle's starting values plus the recorded changes (Play 3.2).
 - **Narrator mode.** The single voice sees everything (Play 7). Mark content that only some characters know, such as "Known only to Kai:", so the model keeps secrets in character.
 

@@ -1,5 +1,5 @@
 {
-  "description": "The CEL environment (Format 11.1) at Format Appendix B's messages: turn, opening, scenario, self, last, scene.within, computed keys with brackets, count() and ago(), cross-type comparison, RE2, the function allowlist",
+  "description": "The CEL environment (Format 11.1) at Format Appendix B's messages: turn, opening, scenario, self, last, scene.within, computed keys with brackets, count() and ago(), cross-type ordering and same-type equality, RE2, the function allowlist",
   "bundleFile": "../../../examples/lantern-heist.troupe.json",
   "sessionFile": "../../../examples/lantern-heist.troupe-session.jsonl",
   "tests": [
@@ -90,10 +90,19 @@
     },
     {
       "type": "cel",
-      "expr": "state.bell == 7.0 && state.bell != 7.5",
+      "expr": "state.bell == 7.0",
       "at": "4",
-      "expect": true,
-      "name": "cross-type equality"
+      "expect": {
+        "checkError": true
+      },
+      "name": "equality takes operands of one type (Format 11.2)"
+    },
+    {
+      "type": "cel",
+      "name": "equality within one type",
+      "expr": "state.bell == 7 && state.bell != 8 && state.trust.kai == 0.5",
+      "at": "4",
+      "expect": true
     },
     {
       "type": "cel",

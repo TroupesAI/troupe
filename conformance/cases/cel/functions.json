@@ -1,5 +1,5 @@
 {
-  "description": "CEL functions (Format 11.1, 11.2): exists_one, startsWith, endsWith, the conversions int, double, string and bool, and min, max and abs for numbers of one type",
+  "description": "CEL functions (Format 11.1, 11.2): exists_one, startsWith, endsWith, the conversions int, double, string and bool, which don't take strings except string() of a string, and min, max and abs for numbers of one type",
   "bundle": {
     "kind": "bundle",
     "scenarios": [
@@ -33,31 +33,50 @@
     },
     {
       "type": "cel",
-      "name": "int() truncates toward zero and parses strings",
-      "expr": "int(2.9) == 2 && int(-2.9) == -2 && int('42') == 42",
+      "name": "int() truncates toward zero",
+      "expr": "int(2.9) == 2 && int(-2.9) == -2",
       "expect": true
     },
     {
       "type": "cel",
-      "name": "a conversion that fails is a runtime error, so the condition is false",
-      "expr": "int('many') == 0",
-      "expect": false
+      "name": "conversions don't take strings (Format 11.2)",
+      "expr": "int('42') == 42",
+      "expect": {
+        "checkError": true
+      }
     },
     {
       "type": "cel",
-      "expr": "double(3) == 3.0 && double('1.5') == 1.5",
+      "expr": "double(3) == 3.0",
       "expect": true
     },
     {
       "type": "cel",
-      "name": "string() of an int and of a string",
-      "expr": "string(42) == '42' && string('x') == 'x'",
+      "name": "double() doesn't take a string",
+      "expr": "double('1.5') == 1.5",
+      "expect": {
+        "checkError": true
+      }
+    },
+    {
+      "type": "cel",
+      "name": "string() of an int, a bool and a string",
+      "expr": "string(42) == '42' && string(true) == 'true' && string('x') == 'x'",
+      "expect": true
+    },
+    {
+      "type": "cel",
+      "name": "bool() of a bool",
+      "expr": "bool(true)",
       "expect": true
     },
     {
       "type": "cel",
       "expr": "bool('true') && !bool('false')",
-      "expect": true
+      "expect": {
+        "checkError": true
+      },
+      "name": "bool() doesn't take a string"
     },
     {
       "type": "cel",

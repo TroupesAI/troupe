@@ -85,7 +85,7 @@
       "type": "parse",
       "name": "a chronicle",
       "kind": "chronicle",
-      "text": "{\"troupe\":\"0.12\",\"kind\":\"chronicle\",\"id\":\"c1\",\"character\":{\"id\":\"mira\",\"name\":\"Mira\",\"description\":\"d\"},\"memories\":[{\"id\":\"met\",\"text\":\"Mira met Mara.\"}],\"values\":{}}\n",
+      "text": "{\"troupe\":\"0.12\",\"kind\":\"chronicle\",\"id\":\"c1\",\"character\":{\"id\":\"mira\",\"name\":\"Mira\",\"description\":\"d\"},\"memories\":[{\"id\":\"met\",\"text\":\"Mira met Mara.\"}]}\n",
       "expect": {
         "ok": true,
         "codes": []

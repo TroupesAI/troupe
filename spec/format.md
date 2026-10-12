@@ -121,7 +121,7 @@ MUST, MUST NOT, SHOULD, SHOULD NOT and MAY are used as described in RFC 2119 and
 
 ### 2.2 Values
 
-- Writers MUST write I-JSON (RFC 7493): UTF-8 without a byte order mark, no duplicate member names, no surrogate or noncharacter code points, written or escaped, numbers that fit an IEEE 754 double, integers within ±(2^53 − 1). Readers parse UTF-8 JSON (RFC 8259), ignore a leading byte order mark, and need not check the other I-JSON constraints.
+- Writers MUST write I-JSON (RFC 7493): UTF-8 without a byte order mark, no duplicate member names, no surrogate or noncharacter code points, written or escaped, numbers that fit an IEEE 754 double, integers within ±(2^53 − 1) and written without a fraction or exponent. Readers parse UTF-8 JSON (RFC 8259), ignore a leading byte order mark, and need not check the other I-JSON constraints.
 - **Empty values.** Writers MUST NOT write `null`, and MUST NOT write `""`, `[]` or `{}` in an optional field other than `ext`. State values and `scenario.worlds` are the exception: there `""`, `[]` and `{}` are values. Names and variable descriptions are never empty.
 - Readers MUST treat `null`, `""`, `[]` and `{}` in an optional field like a missing field, with the same exception, and read `knownBy: []` as `["narrator"]`, so an emptied list never reveals a secret. A `null` state value is invalid (section 8.5).
 - **Defaults are normative.** Every default stated in these documents or their TypeScript comments applies when a field is absent. Every boolean defaults to `false`.
@@ -369,7 +369,7 @@ interface Entry {
 ### 7.2 Activation
 
 - An entry **without `keys` or `pull`** is always on, subject to `when`.
-- An entry **with `keys`** activates when one appears in recent messages, including speakers' names. Keys match whole words, ignoring case. A key of at least three characters that starts and ends with `/` is an RE2 pattern for anything else: `/dragons?/`, `/(?-i)Kai/`.
+- An entry **with `keys`** activates when one appears in recent messages, including speakers' names. Keys match whole words, ignoring case. A key of at least three characters that starts and ends with `/` is a regex (section 16 item 5) for anything else: `/dragons?/`, `/(?-i)Kai/`.
 - An entry **with `pull`**, which needs a `title`, is retrieved when it is relevant: requested by the model, or found by the app's similarity search (Play 5.6).
 - **`when`** narrows any kind. `hit("word")` checks recent text with the same rules as keys, so `"when": "hit('glass') && !hit('guard')"` expresses AND and NOT.
 - **`priority`** is importance: the highest-priority candidates compete in a group, and the lowest go first when space runs out. Priority 100 is never dropped. Order in the prompt follows the file.
@@ -378,7 +378,7 @@ interface Entry {
 
 - `"system"`: standing direction, such as tone, rules or an author's note.
 - `"context"` (default): what the model needs to know.
-- `"tracker"`: guidance only for the model that updates state (Play 3.4), such as how to judge time passing.
+- `"tracker"`: guidance only for the model that updates state (Play 3.4), such as how to judge time passing. It applies whenever its `when` holds; its other activation, timing and competition fields and its `knownBy` don't apply.
 - A number *d*: inside history, with *d* history messages after it; 0 is after the last, and a depth greater than the history places it before the first.
 
 ### 7.4 Knowledge
@@ -419,8 +419,8 @@ interface Variable {
 - **Defaults.** Without `initial`: `false`; `0` raised to `min` or lowered to `max`; `""`; the first of `values`; `[]`.
 - **`description`** says what the variable means and what moves it; the model that updates state receives it (Play 3.4).
 - **`by`.** Openings and events may always change a variable. `player` lets players change it; `model` lets the model that updates state change it (Play 3.4).
-- **`min` and `max`** may name another numeric variable of the same owner that is neither keyed nor derived and whose own bounds are numbers, such as `"max": "max_hp"`; its current value is the bound.
-- **`maxStep`** limits each change from the model; **`oneWay`** lets numbers only rise, a bool only turn true, a set only gain members, and an enum only move later in `values`. Both apply to each key of a keyed variable. Starting values are exempt.
+- **`min` and `max`** may name another numeric variable of the same owner that is neither keyed nor derived and whose own bounds are numbers, such as `"max": "max_hp"`; its current value is the bound. When the bounds cross, `max` wins.
+- **`maxStep`** limits each change from the model; **`oneWay`** lets numbers only rise, a bool only turn true, a set only gain members, and an enum only move later in `values`. Both apply to each key of a keyed variable. Starting values (Play 2.1) are exempt.
 - **`derive`** makes a read-only variable computed from other state whenever it is read, such as `"derive": "state.clock / 24 + 1"` for the day. Derived variables have no `initial`, `by`, `ask`, `of`, `maxStep` or `oneWay`, can't be changed, and can't read other derived variables (`CEL_ERROR`).
 - **`ask`** puts a question to the player when the session starts and records the answer, whatever `by` says; `labels` name the choices. `ask` is not allowed with `of` or `derive`.
 - **`spoiler`** marks the value and its changes as spoilers for players until the story ends.
@@ -451,7 +451,7 @@ A character's mood or a world's clock travels with it into every scenario, and t
 
 - Read a key as `state.trust.kai` or `own.feelings.elena`; change it as `trust.kai` or `own.feelings.elena`. In CEL, look up a computed key with brackets: `state.trust[char]`, `own.feelings[user]`. In macros, the path segments `char` and `user` mean those characters: `{{own.feelings.user}}`. Change keys always name keys literally, so `trust.char` names a key `char`.
 - `initial` is one value for every key, or an object of values by key with `*` as an optional default. For preparation, an absent key's current value is its initial value.
-- Keys of `"*"` maps start absent, and `"*"` takes no `initial`: an absent key counts as the type's default, and setting a key to the default removes it. Their keys are in code point order.
+- Keys of `"*"` maps start absent, and `"*"` takes no `initial`. Preparation counts an absent key as the type's default, and setting a key to the default removes it; in CEL an absent key is absent, so test it with `has()` or `in`. Their keys are in code point order.
 
 ### 8.4 The scene
 
@@ -463,7 +463,7 @@ Opening and event `set`, `compute` and recorded changes write state by key:
 
 - **Keys** are a scenario variable's ID, or an owner and a variable ID, followed by a key for keyed variables: `bell`, `trust.kai`, `kai.nerve`, `kai.feelings.elena`, `scene.location`, `scene.present`.
 - **Values** are absolute; a reader applies them without evaluating anything.
-- **Validity.** A value is valid if its key names a variable in use that isn't derived, and an allowed key, and the value has the variable's type, uses only listed members, is finite, is an integer for `int`, and is within the value limits of section 16. A numeric value outside `min` and `max` is still valid; it is clamped (Play 3.2, 3.3). So is a set with duplicate members, which preparation removes. `scene.location` is a location ID of the bundle or session, or `""`; `scene.present` lists cast characters.
+- **Validity.** A value is valid if its key names a variable in use that isn't derived, and an allowed key, and the value has the variable's type, uses only listed members, is finite, is an integer within ±(2^53 − 1) for `int`, and is within the value limits of section 16. A numeric value outside `min` and `max` is still valid; it is clamped (Play 3.2, 3.3). So is a set with duplicate members, which preparation removes. `scene.location` is a location ID of the bundle or session, or `""`; `scene.present` lists cast characters.
 
 ---
 
@@ -524,7 +524,7 @@ Macros are the only substitution in text. `@` turns IDs into names.
 | `{{pick::<a>::<b>…}}` | One option, fixed for the session (Play 4) |
 | `{{// <comment>}}` | Nothing; a note for authors |
 
-- **`{{char}}`** is the owning character in a character's own text; in a message part, the part's `speaker`, else the message's `char`, else it is left as written; in other text, the character being generated for, or the scenario's `narrator` for the narrator. In a state path, `char` means the same character.
+- **`{{char}}`** is the owning character in a character's own text; in a message part, the part's `speaker`, else the message's `char`, else it is left as written; in other text, the character being generated for, or the scenario's `narrator` for the narrator and the tracker. In a state path, `char` means the same character.
 - **`{{user}}`** is the speaker of the first part with a speaker in the latest player message on the path that has one, else the first player's character, else it is left as written. In a state path, `user` means the same character.
 - A `char` or `user` path segment that means no character names no key, so the macro renders as nothing.
 - **Rendering.** A value with a label renders as its label. Numbers render as ECMAScript `Number.prototype.toString`, booleans as `true` or `false`, lists as items joined by `, ` (an empty list as nothing), and maps as `Name: value` pairs joined by `, `, with character keys shown by name and other keys with underscores as spaces. Map keys render in declared order (cast order for characters), and `"*"` keys in code point order. Text between `{{` and `}}` that is no macro, such as `{{unknown}}`, and a macro naming a variable that isn't declared are left as written (`UNKNOWN_MACRO`); an absent key of a declared variable, a path below a value that isn't a map, or a variable whose owner isn't in use renders as nothing.
@@ -542,7 +542,7 @@ Conditions (`when`), `derive` and `compute` use the Common Expression Language (
 
 ### 11.1 Environment
 
-Every expression is evaluated at a message, its **evaluation point**: for a prompt, the parent of the message being built; for events, the triggering message.
+Every expression is evaluated at a message, its **evaluation point**: for a prompt, the parent of the message being built; for events, the triggering message; for a tracker, the message it runs on.
 
 | Name | Value |
 | --- | --- |
@@ -553,7 +553,7 @@ Every expression is evaluated at a message, its **evaluation point**: for a prom
 | `scene.within` | The current location and all its ancestors |
 | `turn` | Rounds so far (Play 3.1) |
 | `elapsed` | Whole seconds between the evaluation point's `at` and its parent's, rounded down; 0 if either is missing or the gap is negative |
-| `hour`, `weekday` | The evaluation point's local hour (0–23) and ISO weekday (1–7) in the session's `timezone`; −1 if either is unknown |
+| `hour`, `weekday` | The evaluation point's local hour (0–23) and ISO weekday (1–7) in the session's `timezone`; −1 if its `at` or the `timezone` is missing, or the zone isn't a known IANA name |
 | `opening` | The path's opening ID, or `""` |
 | `scenario` | The scenario being played |
 | `char` | The character being generated for; `""` for the narrator, events and trackers |
@@ -579,11 +579,14 @@ state.trust[char] >= 0.8 && hour < 6
 
 - Apps MUST type-check every expression when loading: `state` against the scenario's variables and every character's and world's variables in the bundle and session, and `own` against the expression owner's. An expression that fails is reported, and its entry, event or variable never applies. A `compute` key that fails at runtime is skipped, and any literal for the same key stands.
 - Conditions have type `bool`; `derive` and `compute` expressions have their variable's type, except that an `int` may set a `number`.
-- Cross-type numeric comparison, including `==` and `!=`, MUST work: `state.trust.kai >= 1`. Arithmetic doesn't mix types: write `state.trust.kai - 0.1`.
-- Runtime errors make a condition false.
-- `state` and `own` are not indexed by computed strings; keyed variables are.
-- Expressions use only `bool`, `int`, `double`, `string`, list and map values; `bytes`, `uint` and `null` literals and the `timestamp()` and `duration()` functions are a `CEL_ERROR`, and so is `string()` of a double. Available functions are only `size`, `has`, `all`, `exists`, `exists_one`, `map`, `filter`, `in`, `contains`, `startsWith`, `endsWith`, `matches`, `int`, `double`, `string`, `bool`, and the functions above. `matches()` MUST use RE2 semantics.
-- Comprehensions (`all`, `exists`, `exists_one`, `map`, `filter`) nest at most two deep; inside one, `roll()` isn't called and `+` doesn't join strings or lists. `matches()` takes a string literal as its pattern, which is checked at load like a regex key. An expression that breaks any of these is a `CEL_ERROR`. No app-set budget stops an evaluation.
+- Ordering comparisons (`<`, `<=`, `>`, `>=`) between an `int` and a `double` MUST work: `state.trust.kai >= 1`. Everything else takes operands of one type: write `state.bell == 7` and `state.trust.kai - 0.1`.
+- Evaluation follows the CEL language definition, including its errors, such as integer overflow and division by zero. A runtime error makes a condition false; `&&` and `||` absorb an error when their other operand decides the result.
+- `state`, `own`, `scene` and `last` are only selected from, as in `state.bell`: never indexed by computed strings or used as values. Keyed variables are maps, indexed with brackets (section 8.3). A comprehension over a map visits its keys in code point order.
+- Expressions use only `bool`, `int`, `double`, `string`, list and map values, and list and map literals hold values of one type. `bytes`, `uint` and `null` literals and type names used as values are a `CEL_ERROR`.
+- Available functions are only `size`, `has`, `all`, `exists`, `exists_one`, `map`, `filter`, `in`, `contains`, `startsWith`, `endsWith`, `matches`, the conversions `int()`, `double()`, `string()` and `bool()`, and the functions above. Conversions don't take strings, except `string()` of a string, and `string()` doesn't take a double.
+- A comprehension's **body** is its predicate and, for `map`, its transform. Bodies nest at most two deep: a comprehension in another's body counts, one in its target doesn't. Inside a body, `roll()` isn't called and `+` doesn't join strings or lists.
+- `matches()` takes a string literal as its pattern, a regex as section 16 item 5 defines, checked at load.
+- An expression that breaks any of these rules is a `CEL_ERROR`. No app-set budget stops an evaluation.
 
 ---
 
@@ -753,7 +756,7 @@ Troupe files are shared between strangers.
 2. **No dangerous links.** Apps MUST NOT follow Markdown links whose scheme isn't `http` or `https`.
 3. **No silent network requests.** Apps MUST NOT fetch remote files without the user's consent, including images in Markdown, which work as tracking pixels.
 4. **Known media only.** Apps MUST determine file formats by content, reject formats section 14.2 doesn't list, and cap decoded image size.
-5. **Linear-time regex.** Regex keys and `matches()` MUST use an engine that runs in linear time, such as RE2.
+5. **Linear-time regex.** A regex, as a key or a `matches()` pattern, is RE2 syntax without `\C`, with groups nested at most 100 deep and counted repetitions that multiply through nesting to at most 1000, so `(a{10}){200}` is too many. Apps MUST match regexes with an engine that runs in linear time, such as RE2.
 6. **Sandboxed conditions.** CEL MUST be evaluated by a CEL implementation, never translated into another language.
 7. **Safe archives.** Readers MUST reject absolute paths, `..` segments, backslashes, paths outside section 14.3's grammar or segment length, compression methods other than store and deflate, symbolic links, encryption and duplicate names, and MUST cap entry count, unpacked size and compression ratio.
 8. **Bounded parsing.** Readers MUST cap JSON size and depth, `data:` URI size, and session length.
@@ -768,7 +771,7 @@ Writers MUST stay within these limits. Readers MUST accept files within them, an
 | ZIP entries in a package / unpacked size | 10,000 / 512 MiB |
 | Image size | 8,192 × 8,192 pixels |
 | JSON nesting depth | 64 |
-| Troupe entries in a bundle, all owners | 10,000 |
+| Entries / variables / events in a bundle, all owners | 10,000 / 1,000 / 1,000 |
 | One CEL expression or regex key | 4 KiB |
 | Characters in a session's cast | 256 |
 | A string state value, in UTF-8 | 4 KiB |
@@ -804,7 +807,7 @@ Messages are never dropped for a failed check, except the lines that `PARSE` and
 | `UNKNOWN_MESSAGE` | `parent`, the header's `head` and summary `from` name messages, and `from` is on the path to its summary | The head or summary is ignored; a message with an unknown `parent` is skipped with its descendants |
 | `INVALID_PLAYER` | `players` names header characters or cast members | The ID is ignored |
 | `CEL_ERROR` | Every expression parses and type-checks, and no `derive` reads a derived variable; comprehensions and `matches()` follow section 11.2 | The item never applies |
-| `REGEX_ERROR` | Every regex key parses as RE2 | The key is ignored |
+| `REGEX_ERROR` | Every regex key is valid (section 16 item 5) | The key matches nothing |
 | `UNKNOWN_MACRO` | Macros are valid and name existing characters and variables | Left as written |
 
 ---
@@ -1091,6 +1094,9 @@ A new session that continues this chronicle starts with `closeness` at 58 and bo
 | Literal `set`, CEL `compute` | One field with CEL strings | Plain values without quoting traps. |
 | Weighted outcomes, `roll(n)`, `on` | Chains of chance events | Random choices are one declaration with correct odds, rolled at the right moment. |
 | Structural limits on CEL and on values | A cost budget each app sets | Every app evaluates every expression to the same result, and cost stays bounded without measuring it. |
+| CEL equality within one type, ordering across `int` and `double`; no conversions from strings; literals of one type; maps iterated in code point order | CEL's full heterogeneous equality, string parsing and insertion-ordered maps | Common CEL libraries agree on these without custom code, and two apps never disagree about what an expression means. |
+| Regexes limited to what every RE2 implementation compiles | Whatever the app's engine accepts | A key is valid or `REGEX_ERROR` in every app alike; an invalid key matches nothing instead of vanishing and turning its entry always on. |
+| Caps on entries, variables and events | Only a file size cap | They bound the work every message does, so a server can accept any conforming file. |
 | Durations in rounds | Messages | The same file behaves the same in solo and group chats. |
 | Player and model text stored escaped, so it stays literal | Resolving macros in it; deciding by who wrote a text whether to resolve it | Every text resolves the same way, so a reader never needs to know who wrote it, and no hidden state leaks through model output or prompt attacks. |
 | Priority means importance; file order is prompt order | Priority doing three jobs | Authors order lore by writing it in order. |

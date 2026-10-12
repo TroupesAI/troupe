@@ -1,0 +1,91 @@
+{
+  "description": "A regex key that isn't valid is REGEX_ERROR and matches nothing, so an entry whose only keys are invalid never activates through them (Format 16 item 5, 17.2; Play 5.5)",
+  "bundle": {
+    "kind": "bundle",
+    "scenarios": [
+      {
+        "id": "s",
+        "entries": [
+          {
+            "id": "bad",
+            "keys": [
+              "/[/"
+            ],
+            "text": "bad"
+          },
+          {
+            "id": "big",
+            "keys": [
+              "/(a{10}){200}/"
+            ],
+            "text": "too many repetitions"
+          },
+          {
+            "id": "mixed",
+            "keys": [
+              "/[/",
+              "lamp"
+            ],
+            "text": "one good key"
+          },
+          {
+            "id": "plain",
+            "text": "always on"
+          }
+        ]
+      }
+    ]
+  },
+  "session": {
+    "header": {
+      "kind": "session",
+      "scenario": "s",
+      "seed": "conformanceSeed0001"
+    },
+    "messages": [
+      {
+        "id": "1",
+        "from": "player",
+        "content": [
+          {
+            "text": "The lamp [ aaaaaaaaaa"
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "check",
+      "expect": {
+        "codes": [
+          "REGEX_ERROR"
+        ],
+        "includes": [
+          {
+            "code": "REGEX_ERROR",
+            "at": "/scenarios/0/entries/0/keys/0"
+          },
+          {
+            "code": "REGEX_ERROR",
+            "at": "/scenarios/0/entries/1/keys/0"
+          },
+          {
+            "code": "REGEX_ERROR",
+            "at": "/scenarios/0/entries/2/keys/0"
+          }
+        ]
+      }
+    },
+    {
+      "type": "select",
+      "messageId": "2",
+      "expect": {
+        "activated": [
+          "s/mixed",
+          "s/plain"
+        ]
+      }
+    }
+  ]
+}

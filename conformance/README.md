@@ -21,7 +21,7 @@ Cases live in `cases/<area>/<topic>.json`, one folder per area of the spec:
 | `starting` | Starting a session from an opening (Play 2.1) |
 | `sessions` | Session lines, the head, players and the cast (Format 12) |
 | `prompt` | Prompt slots (Play 6) |
-| `model-output` | Model output and its schema (Play 3.4) |
+| `model-output` | Model output, its schema and tracker input (Play 3.4) |
 | `chronicles` | Chronicles (Format 13; Play 2.2) |
 | `checks` | Reference checks and unknown fields (Format 15, 17.2) |
 | `parsing` | Reading raw files (Format 2.2, 14, 16) |
@@ -350,6 +350,18 @@ The edit is prepared as a `player` change (Play 3.3) against the state at the he
 - `expect.message` is the message the edit was recorded on, after the event pass.
 - `expect.events` is the event pass's firings.
 - `expect.head` is the head afterwards.
+
+### 4.19 `tracker`: tracker input (Play 3.4)
+
+| Input | Meaning |
+| --- | --- |
+| `at` | The message the tracker runs on. |
+
+Every field of `expect` is optional:
+
+- `variables` is the state names of the variables the tracker may change, in event order (Play 3.3): `bell`, `kai.nerve`.
+- `entries` is the references of the tracker entries it receives, in order.
+- `messages` is the IDs of the messages it reads, in path order.
 
 ## 5. Floating point and text
 

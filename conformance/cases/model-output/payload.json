@@ -1,5 +1,5 @@
 {
-  "description": "Model output (Play 3.4): one payload from a tracker or a structured reply; a character's structured reply keeps only its parts; plain replies; speakers and knownBy naming no character are dropped, and a knownBy left empty becomes narrator-only; newcomers carry only identity and never replace a character; model entries take no position or priority and never replace an entry outside context; a narrator's structured reply records one model change; model text, entries and characters are stored literal",
+  "description": "Model output (Play 3.4): one payload, read with empty values as missing and invalid items dropped one by one, from a tracker or a structured reply; a character's structured reply keeps only its parts; plain replies; speakers and knownBy naming no character are dropped, and a knownBy left empty becomes narrator-only; newcomers carry only identity and never replace a character; model entries take no position or priority and never replace an entry outside context; a narrator's structured reply records one model change; model text, entries and characters are stored literal",
   "bundle": {
     "kind": "bundle",
     "characters": [
@@ -277,6 +277,79 @@
         "characters": [
           "p",
           "rook"
+        ]
+      }
+    },
+    {
+      "type": "output",
+      "name": "empty values read as missing; a part, entry or newcomer that still fails the schema is dropped, and the rest applies",
+      "reply": {
+        "id": "3",
+        "parent": "2"
+      },
+      "output": {
+        "parts": [
+          {
+            "speaker": "a",
+            "text": "Hi.",
+            "knownBy": null
+          },
+          {
+            "speaker": "b",
+            "text": null
+          }
+        ],
+        "changes": {
+          "mood": "tense"
+        },
+        "entries": [
+          {
+            "id": "met",
+            "title": "",
+            "keys": [],
+            "text": "Ann met them."
+          },
+          {
+            "id": "Bad Id",
+            "text": "x"
+          }
+        ],
+        "characters": [
+          {
+            "id": "Rook",
+            "name": "Rook",
+            "description": "d"
+          }
+        ]
+      },
+      "expect": {
+        "message": {
+          "id": "3",
+          "parent": "2",
+          "from": "model",
+          "content": [
+            {
+              "speaker": "a",
+              "text": "Hi."
+            }
+          ],
+          "changes": [
+            {
+              "by": "model",
+              "set": {
+                "mood": "tense"
+              }
+            }
+          ],
+          "entries": [
+            {
+              "id": "met",
+              "text": "Ann met them."
+            }
+          ]
+        },
+        "characters": [
+          "p"
         ]
       }
     },
