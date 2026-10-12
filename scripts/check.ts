@@ -12,7 +12,7 @@ import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import Ajv2020 from "ajv/dist/2020.js";
 import addFormats from "ajv-formats";
-import { cited, formatCitation, sectionCitation, sections } from "./citations.ts";
+import { cited, formatCitation, sectionCitation, sections, slug } from "./sections.ts";
 
 const root = resolve(import.meta.dir, "..");
 const read = (path: string) => readFileSync(join(root, path), "utf8");
@@ -252,13 +252,6 @@ function schemaCodes(path: string, c: Record<string, any>) {
 }
 
 // Markdown links
-const slug = (heading: string) =>
-  heading
-    .toLowerCase()
-    .replace(/[`*_]/g, "")
-    .replace(/[^\p{L}\p{N}\s-]/gu, "")
-    .trim()
-    .replace(/\s/g, "-");
 const anchors = (path: string) => new Set([...read(path).matchAll(/^#{1,6} (.+)$/gm)].map((m) => slug(m[1])));
 for (const doc of markdown) {
   const text = read(doc).replace(/```[\s\S]*?```/g, "");
@@ -272,7 +265,7 @@ for (const doc of markdown) {
   }
 }
 
-// Section citations (citations.ts) name sections of the spec
+// Section citations name sections of the spec
 const formatSections = sections(format);
 const cite = (where: string, text: string, own = false) => {
   const check = (items: string) => {

@@ -23,6 +23,8 @@ When the spec doesn't decide a question, fix the text; never record a reading on
 
 Requires [Bun](https://bun.sh). `bun install`, then `bun run check` runs what CI runs. The header of [`scripts/check.ts`](scripts/check.ts) lists what it checks.
 
+The site has its own packages: in `site/`, `bun install`, then `bun run dev` to preview it, and `bun run check` and `bun run build` as CI runs them.
+
 ## Versions
 
 The spec has one version, `major.minor`. A minor version bump changes, together:
