@@ -1,5 +1,5 @@
 {
-  "description": "Tracker input (Play 3.4): the variables in use the model may change, in event order, including an absent cast character's; the tracker entries in use whose when holds at the message the tracker runs on, ignoring knownBy; and the messages after the last extraction that are sent to models",
+  "description": "Tracker input (Play 3.4): the variables in use the model may change, in event order, including an absent cast character's; the tracker entries in use whose when holds at the message the tracker runs on, ignoring knownBy; and the messages after the last extraction that are sent to models; context session entries with their IDs; hit() in tracker entries scans with full knowledge",
   "bundle": {
     "kind": "bundle",
     "characters": [
@@ -118,6 +118,12 @@
             "text": "Gold is tight."
           },
           {
+            "id": "t_hit",
+            "position": "tracker",
+            "when": "hit('secretword')",
+            "text": "Someone whispered the word."
+          },
+          {
             "id": "t_off",
             "position": "tracker",
             "disabled": true,
@@ -191,6 +197,17 @@
             "by": "model",
             "set": {}
           }
+        ],
+        "entries": [
+          {
+            "id": "memo",
+            "text": "A memo."
+          },
+          {
+            "id": "aside",
+            "position": "system",
+            "text": "An aside."
+          }
         ]
       },
       {
@@ -201,6 +218,13 @@
           {
             "speaker": "p",
             "text": "Where is Bea?"
+          },
+          {
+            "speaker": "p",
+            "knownBy": [
+              "p"
+            ],
+            "text": "*Thinks of the secretword.*"
           }
         ]
       },
@@ -264,23 +288,28 @@
         ],
         "messages": [
           "1"
-        ]
+        ],
+        "contextEntries": []
       }
     },
     {
       "type": "tracker",
-      "name": "after the extraction on 2: hidden and records-only messages aren't read; when holds at the message it runs on",
+      "name": "after the extraction on 2: hidden and records-only messages aren't read; when holds at the message it runs on; hit() scans with full knowledge, so a whisper counts; only context session entries are listed",
       "at": "6",
       "expect": {
         "entries": [
           "w/tw",
           "a/ta",
           "b/tb",
-          "s/t_gold"
+          "s/t_gold",
+          "s/t_hit"
         ],
         "messages": [
           "3",
           "6"
+        ],
+        "contextEntries": [
+          "session/memo"
         ]
       }
     },

@@ -1454,6 +1454,12 @@
                       "items": {
                         "type": "string"
                       }
+                    },
+                    "contextEntries": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
                     }
                   }
                 }

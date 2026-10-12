@@ -1,5 +1,5 @@
 {
-  "description": "Player edits (Play 3.3): when the head is a player message, the edit is appended to its changes and events are evaluated at that message, where one the edit makes true fires; firings already recorded there still count, so an event doesn't fire twice in a round",
+  "description": "Player edits (Play 3.3): an edit is recorded on a new records-only child of the head, which becomes the head; events are evaluated there, where on: player events don't run",
   "bundle": {
     "kind": "bundle",
     "characters": [
@@ -113,27 +113,17 @@
   "tests": [
     {
       "type": "edit",
-      "name": "the head is a player message: the edit is appended there, and on_gold fires; greet, which already fired there, doesn't fire again",
+      "name": "the head is a player message: the edit goes on a records-only child, where on_gold fires and greet, an on: player event, doesn't run",
       "set": {
         "gold": 5
       },
       "expect": {
         "message": {
-          "id": "3",
-          "parent": "2",
-          "from": "player",
-          "content": [
-            {
-              "speaker": "p",
-              "text": "Again."
-            }
-          ],
+          "id": "e1",
+          "parent": "3",
+          "from": "system",
+          "content": [],
           "changes": [
-            {
-              "by": "rules",
-              "event": "greet",
-              "set": {}
-            },
             {
               "by": "player",
               "set": {
@@ -158,8 +148,9 @@
             }
           }
         ],
-        "head": "3"
-      }
+        "head": "e1"
+      },
+      "newId": "e1"
     },
     {
       "type": "state",

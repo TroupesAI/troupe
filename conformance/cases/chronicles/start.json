@@ -865,6 +865,52 @@
         ]
       },
       "note": "The chronicle file was written back by another session after this one started (feelings.mara is now 3). The path sets kai.feelings.mara only in the chronicle's own root change, so nothing is written back over it."
+    },
+    {
+      "type": "swipe",
+      "name": "a later root copies the earliest root's first change and entries",
+      "opening": "o2",
+      "rootId": "r2",
+      "expect": {
+        "root": {
+          "id": "r2",
+          "opening": "o2",
+          "from": "system",
+          "content": [
+            {
+              "text": "Snow."
+            }
+          ],
+          "changes": [
+            {
+              "by": "rules",
+              "set": {
+                "kai.feelings.mara": 7
+              }
+            },
+            {
+              "by": "rules",
+              "set": {
+                "scene.present": [
+                  "mara",
+                  "kai"
+                ]
+              }
+            }
+          ],
+          "entries": [
+            {
+              "id": "met",
+              "carry": true,
+              "text": "Kai met Mara at the docks.",
+              "knownBy": [
+                "kai"
+              ]
+            }
+          ]
+        },
+        "head": "r2"
+      }
     }
   ]
 }

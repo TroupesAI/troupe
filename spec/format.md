@@ -121,7 +121,7 @@ MUST, MUST NOT, SHOULD, SHOULD NOT and MAY are used as described in RFC 2119 and
 
 - Writers MUST write I-JSON (RFC 7493): UTF-8 without a byte order mark, no duplicate member names, no surrogate or noncharacter code points, written or escaped, numbers that fit an IEEE 754 double, and integer fields and `int` values within ±(2^53 − 1), written without a fraction or exponent. Readers parse UTF-8 JSON (RFC 8259), ignore a leading byte order mark, and need not check the other I-JSON constraints.
 - **Empty values.** Writers MUST NOT write `null` in a field this spec defines or in a state value, and MUST NOT write `""`, `[]` or `{}` in an optional field other than `ext`. State values and `scenario.worlds` are the exception: there `""`, `[]` and `{}` are values. Names and variable descriptions are never empty.
-- Readers MUST treat `null`, `""`, `[]` and `{}` in an optional field like a missing field, with the same exception. A list that checks or repairing leave empty also reads as missing, except that `scenario.worlds` and `cast` read as `[]` and `keys` matches nothing (section 17.2). A `knownBy` that is or becomes empty reads as section 7.4 says. A `null` state value is invalid (section 8.5).
+- Readers MUST treat `null`, `""`, `[]` and `{}` in an optional field like a missing field, with the same exception. A list that checks or repairing empty, or that repairing removes, also reads as missing, except four that mean none: `scenario.worlds` and `cast` read as `[]`, `keys` matches nothing, and `knownBy` reads as `["narrator"]` (section 7.4). A `null` state value is invalid (section 8.5).
 - **Defaults are normative.** Every default stated in these documents or their TypeScript comments applies when a field is absent. Every boolean defaults to `false`.
 
 ### 2.3 Identifiers
@@ -293,7 +293,7 @@ interface Opening {
 ### 6.1 Cast
 
 - The default cast is one player seat followed by every bundle character, in bundle order. A cast may hold only seats. Characters outside the cast take no part in the scenario.
-- **Seats** are cast members without `character`, filled by a character the person brings, and members with `player`, which a person plays as written. A seat that no player fills when the session starts is left out of the cast.
+- **Seats** are cast members without `character`, filled by a character the person brings, and members with `player`, which a person plays as written. A seat that no player fills is left out of the cast.
 
 ### 6.2 Modes
 
@@ -453,7 +453,7 @@ Opening and event `set`, `compute` and recorded changes write state by key:
 
 - **Keys** are a scenario variable's ID, or an owner and a variable ID, followed by a key for keyed variables: `bell`, `trust.kai`, `kai.nerve`, `kai.feelings.elena`, `scene.location`, `scene.present`.
 - **Values** are absolute.
-- **Validity.** A value is valid when its key names a variable in use that isn't derived, and a key the variable allows; and the value has the variable's type, uses only listed members, is finite, is an integer within ±(2^53 − 1) for `int`, and is within the value limits of section 16. A numeric value outside `min` and `max` is still valid; it is clamped (Play 3.2, 3.3). A set with duplicate members is valid too; preparation removes the duplicates. `scene.location` is a location ID of the bundle or session, or `""`; `scene.present` is a list of strings (Play 3.3).
+- **Validity.** A key is valid when it names a variable in use that isn't derived and, for a keyed variable, a key the variable allows. A value is valid when it has the variable's type, uses only listed members, is finite, is an integer within ±(2^53 − 1) for `int`, and is within the value limits of section 16. A numeric value outside `min` and `max` is still valid; it is clamped (Play 3.2, 3.3). A set with duplicate members is valid too; preparation removes the duplicates. `scene.location` is a location ID of the bundle or session, or `""`; `scene.present` is a list of strings (Play 3.3).
 
 ---
 
@@ -653,7 +653,7 @@ interface Summary {
 
 ### 12.2 Players and cast
 
-- **Replacements.** A header character with the ID of a bundle character replaces it for the whole session: it keeps that character's place in the cast and every reference to it. One that replaces a character outside the scenario cast otherwise counts as a new header character. Two header characters that replace the same bundle character make the session unplayable (`DUPLICATE_ID`).
+- **Replacements.** A header character with the ID of a bundle character replaces it for the whole session: it keeps that character's place in the cast and every reference to it. The replaced bundle character takes no part in the session and isn't checked with it. One that replaces a character outside the scenario cast otherwise counts as a new header character. Two header characters that replace the same bundle character make the session unplayable (`DUPLICATE_ID`).
 - `players` lists the characters people control, in seat order:
   - An ID defined in the header's `characters`, other than a replacement of a cast member, fills the next empty seat; when every seat is filled, it adds a seat after the scenario cast.
   - A cast member marked `player` fills its own seat and is a player whether listed or not; those `players` doesn't list follow the listed ones, in cast order.
@@ -663,7 +663,7 @@ interface Summary {
 
 ### 12.3 Session entries
 
-A message may add entries, owned by `session`. They are candidates from that message onward on its path, so they belong to their branch. A later message's entry with the same ID replaces it from there on, and `disabled: true` removes it. A replacement is carried if either entry is (section 13), and takes the replaced entry's `knownBy` when it has none.
+A message may add entries, owned by `session`. They are candidates from that message onward on its path, so they belong to their branch. A later message's entry with the same ID replaces it from there on, and `disabled: true` removes it. A replacement takes each field it lacks, other than `disabled`, from the entry it replaces, such as `carry`, `knownBy`, `title` and `pull`.
 
 ### 12.4 Other message fields
 
@@ -789,8 +789,8 @@ Messages are never dropped for a failed check, except the lines that `PARSE`, `S
 | `UNKNOWN_LOCATION` | Locations in values and `parent` exist, without cycles | The value is invalid; a `parent` naming no location is ignored, and so is the `parent` of the first location, in file order, on each cycle |
 | `UNKNOWN_OPENING` | A root's `opening` exists | `opening` reads as `""` |
 | `UNKNOWN_NAME` | `activated` and `event` references, and literal names in `count` and `ago`, name entries, events or keys in use | Ignored; an event's values still apply |
-| `UNKNOWN_VARIABLE` | Keys in openings, events, changes and chronicle values exist, a keyed variable's key included, and aren't derived, no two keys of one `set` or `compute` name the same full key, and variables named by `min` and `max` are valid bounds (section 8.1); a chronicle's value keys name carried variables of its character (section 13) | The key or bound is dropped |
-| `INVALID_VALUE` | `initial`, opening and event `set` values, recorded values, chronicle values and `outcome` indexes are valid | The value is dropped |
+| `UNKNOWN_VARIABLE` | Keys in openings, events, changes and chronicle values are valid keys (section 8.5), counting variables as section 11.2 does, no two keys of one `set` or `compute` name the same full key, and variables named by `min` and `max` are valid bounds (section 8.1); a chronicle's value keys name carried variables of its character (section 13) | The key or bound is dropped |
+| `INVALID_VALUE` | `initial`, opening and event `set` values, recorded values and chronicle values are valid values for their variables (section 8.5), and `outcome` indexes name outcomes | The value is dropped |
 | `UNKNOWN_MESSAGE` | `parent`, the header's `head` and summary `from` name messages, and `from` is on the path to its summary | The head or summary is ignored; a message with an unknown `parent` is skipped with its descendants |
 | `INVALID_PLAYER` | `players` names header characters or cast members | The ID is ignored |
 | `CEL_ERROR` | Every expression parses and type-checks, and no `derive` reads a derived variable; comprehensions and `matches()` follow section 11.2 | The item never applies |
@@ -800,10 +800,10 @@ Messages are never dropped for a failed check, except the lines that `PARSE`, `S
 **Repairing.** A reader that keeps a document failing its schema repairs it:
 
 1. It reads empty values as section 2.2 says.
-2. It removes the value at the instance location of each keyword whose failure makes the document fail and that asserts something itself, not one that only reports failures beneath it (`allOf`, `anyOf`, `if`, `then`, `else`, `properties`, `additionalProperties`, `items`, `propertyNames`, `$ref`). A `false` subschema fails at the value it applies to; a failure beneath `propertyNames` removes the property whose name fails; a failing `uniqueItems` removes the later duplicates; a failing `dependentRequired` removes the dependent property.
+2. It removes the value at the instance location of each keyword whose failure makes the document fail and that asserts something itself, not one that only reports failures beneath it (`allOf`, `if`, `then`, `else`, `properties`, `additionalProperties`, `items`, `propertyNames`, `$ref`). A failing `anyOf` removes the value it applies to, whatever its branches report; a `false` subschema fails at the value it applies to; a failure beneath `propertyNames` removes the property whose name fails; a failing `uniqueItems` removes the later duplicates; a failing `dependentRequired` removes the dependent property.
 3. It validates again, until nothing fails.
 
-So an invalid `weight` reads as absent, and an entry without `text` is ignored. A `knownBy` that repairing empties or removes reads as `["narrator"]`; a `keys` list that it empties or removes matches nothing; a cast member whose `character` it removes is skipped; a message line it removes as a whole is skipped, and a message that loses its `parent` is skipped like one whose `parent` names no message; a document it removes as a whole isn't read. The other checks then run on the repaired document.
+So an invalid `weight` reads as absent, and an entry without `text` is ignored. A list it empties or removes reads as section 2.2 says; a cast member whose `character` it removes is skipped; a message line it removes as a whole is skipped, and a message that loses its `parent` is skipped like one whose `parent` names no message; a document it removes as a whole isn't read. The other checks then run on the repaired document.
 
 ---
 

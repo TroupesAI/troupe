@@ -1,5 +1,5 @@
 {
-  "description": "A reader that keeps a file failing its schema repairs it (Format 17.2): it removes the value where each assertion fails, so an out-of-range chance or priority reads as absent, oneWay on a string variable is removed while the variable stays, an entry without text is ignored, and a knownBy emptied by removing a bad ID reads as [\"narrator\"]; a keys list that repairing empties matches nothing; a failing uniqueItems removes the later duplicate",
+  "description": "A reader that keeps a file failing its schema repairs it (Format 17.2): it removes the value where each assertion fails, so an out-of-range chance or priority reads as absent, oneWay on a string variable is removed while the variable stays, an entry without text is ignored, and a knownBy emptied by removing a bad ID reads as [\"narrator\"]; a keys list that repairing empties matches nothing; a failing uniqueItems removes the later duplicate; a failing anyOf removes the whole value it applies to",
   "bundle": {
     "kind": "bundle",
     "scenarios": [
@@ -49,6 +49,15 @@
             "initial": "b",
             "by": [
               "player"
+            ],
+            "description": "d"
+          },
+          {
+            "id": "rep",
+            "type": "int",
+            "of": [
+              "Watch",
+              "guild"
             ],
             "description": "d"
           }
@@ -160,6 +169,16 @@
       "name": "a duplicate player is removed, the first kept",
       "expr": "players == ['p']",
       "expect": true
+    },
+    {
+      "type": "state",
+      "name": "a failing anyOf removes its whole value: of goes, and the variable is unkeyed",
+      "expect": {
+        "rep": 0
+      },
+      "absent": [
+        "rep.guild"
+      ]
     }
   ]
 }

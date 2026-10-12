@@ -344,10 +344,10 @@ Starting from a chronicle (section 4.11 input `chronicle`) follows Play 2.2. The
 | Input | Meaning |
 | --- | --- |
 | `set` | The values the player sets, `key → value`. |
-| `newId` | The ID of the records-only system message to add when the head isn't a player message. |
+| `newId` | The ID of the records-only system message the edit is recorded on. |
 | `eventMessageId` | The ID for the system message the event pass may add. |
 
-The edit is prepared as a `player` change (Play 3.3) against the state at the head. If the head is a player message without children, the change is appended to its `changes`; otherwise a new message `{"id": newId, "parent": head, "from": "system", "content": [], "changes": [change]}` is added and becomes the head. Events are then evaluated at that message as in section 4.7, except that its recorded firings are kept and count (Play 3.3), and new firings are recorded after them.
+The edit is prepared as a `player` change (Play 3.3) against the state at the head. A new message `{"id": newId, "parent": head, "from": "system", "content": [], "changes": [change]}` is added and becomes the head. Events are then evaluated at that message as in section 4.7, and their firings are recorded after the change.
 
 - `expect.message` is the message the edit was recorded on, after the event pass.
 - `expect.events` is the event pass's firings.
@@ -363,6 +363,7 @@ Every field of `expect` is optional:
 
 - `variables` is the state names of the variables the tracker may change, in event order (Play 3.3): `bell`, `kai.nerve`.
 - `entries` is the references of the tracker entries it receives, in order.
+- `contextEntries` is the references of the context session entries it receives, in order.
 - `messages` is the IDs of the messages it may read: those after the last extraction on the path up to `at` that are sent to models, in path order.
 
 ## 5. Floating point and text

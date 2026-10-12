@@ -1,0 +1,77 @@
+{
+  "description": "A cast whose every member a check skips is empty, not the default (Format 2.2, 17.2): a player adds a seat, and bundle characters stay out",
+  "bundle": {
+    "kind": "bundle",
+    "characters": [
+      {
+        "id": "a",
+        "name": "Ann",
+        "description": "Ann."
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s",
+        "cast": [
+          {
+            "character": "zed"
+          }
+        ]
+      }
+    ]
+  },
+  "session": {
+    "header": {
+      "kind": "session",
+      "scenario": "s",
+      "seed": "conformanceSeed0001",
+      "characters": [
+        {
+          "id": "p",
+          "name": "Pat",
+          "description": "Pat."
+        }
+      ],
+      "players": [
+        "p"
+      ]
+    },
+    "messages": [
+      {
+        "id": "1",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "Alone?"
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "check",
+      "expect": {
+        "codes": [
+          "UNKNOWN_CHARACTER"
+        ]
+      }
+    },
+    {
+      "type": "state",
+      "at": "1",
+      "expect": {
+        "scene.present": [
+          "p"
+        ]
+      }
+    },
+    {
+      "type": "cel",
+      "at": "1",
+      "expr": "players == ['p'] && !('a' in scene.present)",
+      "expect": true
+    }
+  ]
+}
