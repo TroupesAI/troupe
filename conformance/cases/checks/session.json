@@ -1,5 +1,5 @@
 {
-  "description": "Reference checks on a session (Format 12, 16.2): openings on roots, the message forest, players, recorded values, events, activations and summaries",
+  "description": "Reference checks on a session (Format 12, 16.3): openings on roots, the message forest, players, recorded values, events, activations and summaries",
   "bundle": {
     "kind": "bundle",
     "characters": [

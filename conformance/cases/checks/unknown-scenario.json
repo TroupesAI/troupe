@@ -1,5 +1,5 @@
 {
-  "description": "UNKNOWN_SCENARIO (Format 16.2): the header's scenario must name a scenario; a character's ID doesn't name one",
+  "description": "UNKNOWN_SCENARIO (Format 16.3): the header's scenario must name a scenario; a character's ID doesn't name one",
   "bundle": {
     "kind": "bundle",
     "characters": [

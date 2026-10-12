@@ -1,5 +1,5 @@
 {
-  "description": "Schema failures (Format 16.2): an out-of-range chance or priority, oneWay on a string variable, an entry without text, an empty key, a knownBy item that isn't an ID, a duplicate in a uniqueItems list and a failing anyOf are each SCHEMA; every check runs on the document as written, so the knownBy item is also UNKNOWN_CHARACTER (Format 16.1)",
+  "description": "Schema failures (Format 16.3): an out-of-range chance or priority, oneWay on a string variable, an entry without text, an empty key, a knownBy item that isn't an ID, a duplicate in a uniqueItems list and a failing anyOf are each SCHEMA; every check runs on the document as written, so the knownBy item is also UNKNOWN_CHARACTER (Format 16.1)",
   "bundle": {
     "kind": "bundle",
     "scenarios": [

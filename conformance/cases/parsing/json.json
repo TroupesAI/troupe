@@ -1,5 +1,5 @@
 {
-  "description": "A bundle (Format 2.2, 13.1, 16.2): the input must be I-JSON and a Troupe document of the expected kind, or it is PARSE. An escaped surrogate pair is one character. A bundle nested 64 deep is within the limits (Format 15)",
+  "description": "A bundle (Format 2.2, 13.1, 16.3): the input must be I-JSON and a Troupe document of the expected kind, or it is PARSE. An escaped surrogate pair is one character. A bundle nested 64 deep is within the limits (Format 15)",
   "tests": [
     {
       "type": "parse",

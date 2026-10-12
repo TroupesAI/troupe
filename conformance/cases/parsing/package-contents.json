@@ -1,5 +1,5 @@
 {
-  "description": "Package contents (Format 13.3, 16.2): an exact duplicate name is PARSE; an unreadable line in a session inside a valid package is PARSE; compression methods other than store and deflate, and a referenced file with a path segment over 255 bytes, are PARSE; sessions belong to the package only in their folder",
+  "description": "Package contents (Format 13.3, 16.3): an exact duplicate name is PARSE; an unreadable line in a session inside a valid package is PARSE, for a session reader (Format 16.2); compression methods other than store and deflate, and a referenced file with a path segment over 255 bytes, are PARSE; sessions belong to the package only in their folder",
   "tests": [
     {
       "type": "parse",
@@ -15,6 +15,7 @@
     {
       "type": "parse",
       "name": "an unreadable session line inside a valid package",
+      "level": "session",
       "kind": "package",
       "base64": "UEsDBBQAAAAIAAAAS13aqb7tOgAAADoAAAALAAAAYnVuZGxlLmpzb26rViopyi8tSFWyUjLQMzRS0lHKzsxLUbJSSirNS8lJVdJRKk5OzUssyswvVrKKrlbKBMkVK9XG1gIAUEsDBBQAAAAIAAAAS12TT9A0dAAAALQAAAAjAAAAc2Vzc2lvbnMvZmlyc3QudHJvdXBlLXNlc3Npb24uanNvbmx1jUEKwjAURPce461DsS5zAu8gLkL7hdA0PyQRlNC7S5SCm25n5r1p1KzPJFjOw3jBsPg4YylSiteIoUwSXfbaQ7ZTw/d+xPDIumJJwb0lY5g0VokVe2tUeVUsVz+w3Xdqh/tPcvm7/TetOks4EEkI+nN9AFBLAQIUAxQAAAAIAAAAS13aqb7tOgAAADoAAAALAAAAAAAAAAAAAACAAQAAAABidW5kbGUuanNvblBLAQIUAxQAAAAIAAAAS12TT9A0dAAAALQAAAAjAAAAAAAAAAAAAACAAWMAAABzZXNzaW9ucy9maXJzdC50cm91cGUtc2Vzc2lvbi5qc29ubFBLBQYAAAAAAgACAIoAAAAYAQAAAAA=",
       "expect": {

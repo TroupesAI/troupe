@@ -1,5 +1,5 @@
 {
-  "description": "Size limits (Format 15, 16.2): a CEL expression and a regex key of exactly 4 KiB are within the limits, and they parse; one byte more is PARSE",
+  "description": "Size limits (Format 15, 16.3): a CEL expression and a regex key of exactly 4 KiB are within the limits, and they parse; one byte more is PARSE",
   "bundle": {
     "kind": "bundle",
     "scenarios": [

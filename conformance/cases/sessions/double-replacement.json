@@ -1,5 +1,5 @@
 {
-  "description": "Two header characters that replace the same bundle character are DUPLICATE_ID (Format 12.2, 16.2)",
+  "description": "Two header characters that replace the same bundle character are DUPLICATE_ID (Format 12.2, 16.3)",
   "bundle": {
     "kind": "bundle",
     "characters": [

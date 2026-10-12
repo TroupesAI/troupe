@@ -1,5 +1,5 @@
 {
-  "description": "Checks on messages (Format 12.1, 16.2): a message's char and a part's knownBy name characters (UNKNOWN_CHARACTER); a parent names a message on an earlier line (UNKNOWN_MESSAGE); a firing records outcome exactly when its event has outcomes (INVALID_VALUE)",
+  "description": "Checks on messages (Format 12.1, 16.3): a message's char and a part's knownBy name characters (UNKNOWN_CHARACTER); a parent names a message on an earlier line (UNKNOWN_MESSAGE); a firing records outcome exactly when its event has outcomes (INVALID_VALUE)",
   "bundle": {
     "kind": "bundle",
     "characters": [

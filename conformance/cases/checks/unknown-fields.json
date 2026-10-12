@@ -1,5 +1,5 @@
 {
-  "description": "Fields the format doesn't define are UNKNOWN_FIELD, located at the field, not SCHEMA; a part's fields are those of the interface its type selects (Format 14, 16.2)",
+  "description": "Fields the format doesn't define are UNKNOWN_FIELD, located at the field, not SCHEMA; a part's fields are those of the interface its type selects (Format 14, 16.3)",
   "bundle": {
     "kind": "bundle",
     "futureField": true,

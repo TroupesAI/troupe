@@ -383,6 +383,9 @@
                 "note": {
                   "type": "string"
                 },
+                "level": {
+                  "const": "session"
+                },
                 "expect": {
                   "type": "object",
                   "additionalProperties": false,

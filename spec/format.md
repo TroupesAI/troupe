@@ -738,9 +738,20 @@ Files hold data and sandboxed expressions (section 11), never scripts, and their
 
 ### 16.1 Requirements
 
-A **conforming file** validates against the schemas, passes the checks below, stays within the limits of section 15, and follows section 14. A conforming **writer** writes only conforming files, except that a file it rewrites keeps its parts of an unknown type (section 14), whose `UNKNOWN_FIELD` it then still has. A conforming **reader** accepts every conforming file of its version and gives its fields the meaning this document defines; from 1.0, it also accepts conforming files of an older minor version of its major version. Each check has a code, for validators to report it with. Every check runs on the document as written, so one value can fail several.
+A **conforming file** validates against the schemas, passes the checks of section 16.3, stays within the limits of section 15, and follows section 14. A conforming **writer** writes only conforming files, except that a file it rewrites keeps its parts of an unknown type (section 14), whose `UNKNOWN_FIELD` it then still has.
 
-### 16.2 Checks
+### 16.2 Readers
+
+A conforming **reader** reads at one of two levels:
+
+- A **bundle reader** accepts every conforming single file and package of its version and gives their fields the meaning this document defines. It MAY leave a package's sessions unread.
+- A **session reader** is a bundle reader that also accepts every conforming session of its version, in a package or as a file, and gives its fields their meaning.
+
+From 1.0, a reader also accepts the conforming files of an older minor version of its major version, at its level.
+
+### 16.3 Checks
+
+Each check has a code, for validators to report it with. Every check runs on the document as written, so one value can fail several.
 
 | Code | Check |
 | --- | --- |
@@ -1007,7 +1018,8 @@ Two thieves hired by the player to steal a duke's storm lantern before the twelf
 | Absolute changes, recorded | JSON Patch, or recomputing | Replay needs no evaluation, from any channel. |
 | A schema of files, not of how apps play them | A second document fixing prompt assembly, entry selection, event passes, rolls and model output | Sessions record every outcome, so a reader needs only the meaning of what is stored; how an app writes prompts and calls models is its own, and can improve without a new version. |
 | Valid files, not repair | Rules for reading broken files leniently | A file either conforms or fails a check with a code; what an app does with a broken file is its own. |
-| Readers accept every conforming file and read it as defined | No duty on readers; each app's own limits | A file that conforms opens with the same meaning in every app; that is the whole interoperability promise. |
+| Readers accept every conforming file of their level and read it as defined | No duty on readers; each app's own limits | A file that conforms opens with the same meaning in every app that reads its kind; that is the whole interoperability promise. |
+| Two reader levels: bundles, and bundles with sessions | Every reader reading sessions | Bundles are what authors share; an app or tool that only edits, checks or plays them conforms without reading another app's chats, and apps that exchange chats still read them alike. |
 | Recorded changes apply as written; `by`, `maxStep` and `oneWay` aren't checked | A check that replays every change against its variable | Readers never second-guess a recorded outcome, so a session reads the same everywhere; the fields still tell writers and models what is meant. |
 | `{{pick}}` chosen each time the text resolves | A choice fixed by a seed | Without a defined roll, no seed could make apps agree; text that must not change is written out. |
 | Display safety is the app's | Normative rules for showing Markdown, links and media | A schema can't constrain how text is shown; files still hold no scripts. |
@@ -1026,7 +1038,7 @@ Two thieves hired by the player to steal a duke's storm lantern before the twelf
 | A scenario names its narrator | A fixed English name | `{{char}}` reads naturally in a story in any language. |
 | No reasoning or tool parts | Provider transcripts in messages | They mean nothing to the story; apps that keep them use `ext`. |
 | Two modes | A third, `mixed` mode | In `characters` mode the narrator can already take turns. |
-| Sessions as an exchange snapshot | Prescribing storage, or an append-only log of edits | Apps keep their own databases; chats still move between apps intact, with no edits or deletions to replay. |
+| Sessions as an exchange snapshot | Prescribing storage, or an append-only log of edits | Apps keep their own databases; chats still move intact between session readers, with no edits or deletions to replay. |
 | No sprites, audio, media provenance, music, speaking hints, UI grouping or branch labels in the core | Media and presentation fields | They belong to apps and extensions such as `troupe.media`; the core keeps only what authors say about their story, such as names, images, spoiler marks and ratings. |
 | No executable code | Scripts in cards | Scripts in shared cards can steal API keys. |
 | No text transforms | Regex scripts that rewrite text | Most build HTML, fix one model's quirks, or display stats that state now covers. |

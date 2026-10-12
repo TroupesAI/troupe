@@ -1,5 +1,5 @@
 {
-  "description": "A \"*\" map holds at most 256 keys after a change (Format 15, 16.2): a change that takes it to 256 is valid, and one that takes it past is INVALID_VALUE",
+  "description": "A \"*\" map holds at most 256 keys after a change (Format 15, 16.3): a change that takes it to 256 is valid, and one that takes it past is INVALID_VALUE",
   "bundle": {
     "kind": "bundle",
     "scenarios": [

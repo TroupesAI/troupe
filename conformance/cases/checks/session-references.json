@@ -1,5 +1,5 @@
 {
-  "description": "Reference checks on a session: an unknown cast member, player, location parent, opening, variable, event name or activated reference each report their code; a location cycle is UNKNOWN_LOCATION (Format 16.2)",
+  "description": "Reference checks on a session: an unknown cast member, player, location parent, opening, variable, event name or activated reference each report their code; a location cycle is UNKNOWN_LOCATION (Format 16.3)",
   "bundle": {
     "kind": "bundle",
     "characters": [

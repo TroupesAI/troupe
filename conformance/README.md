@@ -17,7 +17,7 @@ Cases live in `cases/<area>/<topic>.json`, one folder per area of the spec:
 | `knowledge` | Who knows a part or a summary (Format 7.4, 12.4, 12.5) |
 | `roots` | Roots made from openings (Format 6.3, 12.1) |
 | `sessions` | Session lines, the head, players and the cast (Format 12) |
-| `checks` | Checks and unknown fields (Format 14, 16.2) |
+| `checks` | Checks and unknown fields (Format 14, 16.3) |
 | `parsing` | Raw files (Format 2.2, 13, 15) |
 | `examples` | The spec's worked examples and the authoring guide's patterns |
 
@@ -39,7 +39,8 @@ Bundles and session headers given as objects leave out `troupe`: before anything
 
 Every test starts from a fresh copy of the case's inputs. Tests don't affect each other.
 
-- **Conforming inputs.** `state`, `macro`, `cel`, `ended` and `knows` tests run only on inputs that conform (Format 16.1), since the spec gives files that fail a check no meaning to test. Every case with such tests also has a `check` test that expects no codes, which a runner uses to confirm it.
+- **Levels.** An implementation that reads only bundles (Format 16.2) skips the tests of reading sessions: `parse` tests of `kind: "session"`, `check` tests of cases with a `session` or `sessionFile`, and `parse` tests marked `"level": "session"`. Other tests use a case's session only as the chat they run on.
+- **Conforming inputs.** `state`, `macro`, `cel`, `ended` and `knows` tests run only on inputs that conform (Format 16.1), since the spec gives files that fail a check no meaning to test. Every case with such tests also has a `check` test that expects no codes, which a runner that doesn't skip it uses to confirm them.
 - **The story.** The session's `scenario` names the scenario. Without a session, use the bundle's first scenario, whose seats are then unfilled and left out of the cast (Format 6.1), so `players` holds only cast members marked `player`. A `check` test without a session checks the bundle once for each scenario (Format 11.2). Header characters replace bundle characters as Format 12.2 says.
 
 ## 3. Tests
@@ -95,9 +96,9 @@ The state is flattened to an object with these keys:
 
 `hit()` always returns false in these tests, and `roll()` isn't called. In CEL, `char` and `user` are plain variables: a computed key is read with brackets (`state.trust[char]`), and `.char` selects the literal key `"char"`. Only `bool`, `int`, `double`, `string`, list and map values are allowed; `null`, `bytes` and `uint` literals and timestamp or duration functions fail to check. If `expect` is a boolean, the expression must type-check and evaluate to it; a runtime error counts as `false`. If `expect` is `{"checkError": b}`, `b` says whether parsing or type-checking fails.
 
-### 3.5 `check`: checks (Format 16.2)
+### 3.5 `check`: checks (Format 16.3)
 
-The runner validates the bundle and the session's lines against the schemas, then runs every other check (Format 16.2). Every check runs on the documents as written, so one value can fail several checks (Format 16.1).
+The runner validates the bundle and the session's lines against the schemas, then runs every other check (Format 16.3). Every check runs on the documents as written, so one value can fail several checks (Format 16.3).
 
 - `expect.codes` is the sorted list of distinct diagnostic codes reported. It is compared exactly.
 - Each session line after the header is validated against `message.schema.json`. Validators assert `format`, so a malformed timestamp is `SCHEMA`.
@@ -126,15 +127,16 @@ A diagnostic about one value points at that value: a list item at its index (`/s
 
 `expect` is who knows it: the IDs of the characters who know it, and `narrator` when the narrator knows it, in code point order. The single voice knows everything but hidden messages' parts, and isn't listed.
 
-### 3.7 `parse`: raw input (Format 2.2, 12, 13, 14, 15)
+### 3.7 `parse`: raw input (Format 2.2, 12, 13, 14, 15, 16.2)
 
 | Input | Meaning |
 | --- | --- |
 | `kind` | What the input is: `bundle` (a `.troupe.json` file), `session` or `package` (a `.troupe` ZIP archive). |
 | `text` | The input as a string, encoded as UTF-8 to get its bytes. |
 | `base64` | Instead of `text`: the input's bytes, in base64. Used for bytes that aren't valid UTF-8 text and for binary formats. |
+| `level` | Optional. `"session"` when `expect` depends on a package's sessions, which a bundle reader may leave unread (Format 16.2). |
 
-The runner parses the bytes, checks the version and validates against the schema, with unknown properties and parts of unknown type as `UNKNOWN_FIELD` (Format 14). For a package it checks the archive and its `bundle.json` and every session in it (Format 13.3). It runs no other checks; `check` tests cover them.
+The runner parses the bytes, checks the version and validates against the schema, with unknown properties and parts of unknown type as `UNKNOWN_FIELD` (Format 14). For a package it checks the archive and its `bundle.json` and, for a session reader, every session in it (Format 13.3, 16.2). It runs no other checks; `check` tests cover them.
 
 `expect.codes` is the sorted list of distinct codes reported, compared exactly. A conforming input has none.
 

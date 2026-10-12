@@ -1,5 +1,5 @@
 {
-  "description": "Packages (Format 13.3): bundle.json at the root, sessions under sessions/; absolute paths, .. segments, backslashes, names equal when compared case-insensitively, encryption and symbolic links are PARSE; a directory entry (a name ending in /) and an unreferenced file outside the path grammar aren't part of the package",
+  "description": "Packages (Format 13.3, 16.2): bundle.json at the root, sessions under sessions/, which a bundle reader may leave unread; absolute paths, .. segments, backslashes, names equal when compared case-insensitively, encryption and symbolic links are PARSE; a directory entry (a name ending in /) and an unreferenced file outside the path grammar aren't part of the package",
   "tests": [
     {
       "type": "parse",
@@ -13,6 +13,7 @@
     {
       "type": "parse",
       "name": "a package with a session",
+      "note": "A bundle reader accepts it too, and may leave the session unread (Format 16.2).",
       "kind": "package",
       "base64": "UEsDBBQAAAAIAAAAS13aqb7tOgAAADoAAAALAAAAYnVuZGxlLmpzb26rViopyi8tSFWyUjLQMzRS0lHKzsxLUbJSSirNS8lJVdJRKk5OzUssyswvVrKKrlbKBMkVK9XG1gIAUEsDBBQAAAAIAAAAS11FkZf9WwAAAGgAAAAjAAAAc2Vzc2lvbnMvZmlyc3QudHJvdXBlLXNlc3Npb24uanNvbmwVyUEKwkAMQNF9j/HXQ7EucwLvIC5KjRDUpMxEUIa5u3T7XidrfHZFOM3LmcLT/I7QtDULp9A29bVaHMiYOnb8QuFR442wv9afVgpbeKoncu2kfhPhYjPjNqY/UEsBAhQDFAAAAAgAAABLXdqpvu06AAAAOgAAAAsAAAAAAAAAAAAAAIABAAAAAGJ1bmRsZS5qc29uUEsBAhQDFAAAAAgAAABLXUWRl/1bAAAAaAAAACMAAAAAAAAAAAAAAIABYwAAAHNlc3Npb25zL2ZpcnN0LnRyb3VwZS1zZXNzaW9uLmpzb25sUEsFBgAAAAACAAIAigAAAP8AAAAAAA==",
       "expect": {

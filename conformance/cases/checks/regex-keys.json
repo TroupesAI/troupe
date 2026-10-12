@@ -1,5 +1,5 @@
 {
-  "description": "A regex key that isn't valid is REGEX_ERROR (Format 15, 16.2)",
+  "description": "A regex key that isn't valid is REGEX_ERROR (Format 15, 16.3)",
   "bundle": {
     "kind": "bundle",
     "scenarios": [
