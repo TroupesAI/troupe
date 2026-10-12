@@ -51,10 +51,65 @@
   outline-offset: 2px;
 }
 
-/* The header lets the page show through as it scrolls under. */
+/* Header */
+
+/* A slimmer header than Starlight's, in the sidebar's color, so the two frame the page together. The page shows through
+   as it scrolls under. */
+:root {
+  --sl-nav-height: 3rem;
+  --sl-nav-pad-y: 0.5rem;
+  --sl-color-bg-nav: var(--sl-color-bg-sidebar);
+}
+
+@media (min-width: 50em) {
+  :root {
+    --sl-nav-height: 3.25rem;
+  }
+}
+
 .header {
+  border-bottom-color: var(--sl-color-hairline-light);
   background-color: color-mix(in oklch, var(--sl-color-bg-nav) 85%, transparent);
   backdrop-filter: blur(12px);
+}
+
+.social-icons::after {
+  height: 1.25rem;
+}
+
+/* The header's controls share one look: a pill outlined in a hairline, with gray icons that brighten on hover. */
+site-search button[data-open-modal],
+site-search button > kbd,
+mobile-starlight-toc .toggle {
+  border-radius: var(--radius-pill);
+}
+
+site-search button[data-open-modal] {
+  height: 2rem;
+  max-width: 18rem;
+  background: none;
+}
+
+.social-icons a {
+  color: var(--sl-color-gray-3);
+}
+
+.sl-menu-button,
+:root[data-theme="light"] .sl-menu-button {
+  border: 1px solid var(--sl-color-gray-5);
+  background: none;
+  box-shadow: none;
+  color: var(--sl-color-gray-2);
+}
+
+.sl-menu-button:hover,
+.sl-menu-button:has(~ :popover-open) {
+  color: var(--sl-color-white);
+}
+
+.sl-menu-button:has(~ :popover-open),
+:root[data-theme="light"] .sl-menu-button:has(~ :popover-open) {
+  background-color: var(--sl-color-gray-5);
 }
 
 /* The current page is a tint of the accent, quieter than Starlight's solid fill. */
