@@ -1,5 +1,5 @@
 {
-  "description": "Session characters replace bundle characters by ID (Format 12.2): the replacement takes the bundle character's cast position and every reference to it for the whole session; it isn't a DUPLICATE_ID and fills no seat; its own variables, entries and events replace the original's; players listing it means a person took that cast member over. A replacement of a character outside the cast counts as a new header character, here a joiner",
+  "description": "Session characters replace bundle characters by ID (Format 12.2): the replacement takes the bundle character's cast position and every reference to it for the whole session; it isn't a DUPLICATE_ID and fills no seat; its own variables, entries and events replace the original's; players listing it means a person took that cast member over. A replacement of a character outside the cast counts as a new header character, here a joiner; expressions type-check against the replacement",
   "bundle": {
     "kind": "bundle",
     "characters": [
@@ -45,6 +45,11 @@
           {
             "id": "e_kai",
             "text": "Elena distrusts {{@kai}}."
+          },
+          {
+            "id": "e_old",
+            "when": "state.kai.old_only > 0",
+            "text": "Only the old Kai had this."
           }
         ]
       },
@@ -223,9 +228,17 @@
     },
     {
       "type": "check",
-      "name": "a replacement isn't a DUPLICATE_ID",
+      "name": "a replacement isn't a DUPLICATE_ID; expressions type-check against the replacement, not the original",
       "expect": {
-        "codes": []
+        "codes": [
+          "CEL_ERROR"
+        ],
+        "includes": [
+          {
+            "code": "CEL_ERROR",
+            "at": "/characters/1/entries/1/when"
+          }
+        ]
       }
     },
     {

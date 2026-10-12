@@ -810,6 +810,39 @@
           ]
         }
       }
+    },
+    {
+      "type": "output",
+      "name": "a top-level property that fails the schema is dropped; the extraction still records its marker",
+      "message": "2",
+      "output": {
+        "changes": [
+          [
+            "mood",
+            "tense"
+          ]
+        ]
+      },
+      "expect": {
+        "message": {
+          "id": "2",
+          "parent": "1",
+          "from": "model",
+          "char": "a",
+          "content": [
+            {
+              "speaker": "a",
+              "text": "Hello."
+            }
+          ],
+          "changes": [
+            {
+              "by": "model",
+              "set": {}
+            }
+          ]
+        }
+      }
     }
   ]
 }

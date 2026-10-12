@@ -49,7 +49,7 @@ Every test starts from a fresh copy of the case's inputs. Tests don't affect eac
 
 1. **Absent values.** Apply Format 2.2 to the bundle, the session header and every message: `null`, `""`, `[]` and `{}` in optional fields read as missing, except that `knownBy: []` reads as `["narrator"]`. State values (`set`, `initial`) keep `""` and `[]`. `scenario.worlds` keeps `[]`. Required text fields (an entry's or part's `text`, a character's `description`) and message `content` keep `""` and `[]`; an opening's `content` is optional, so `[]` there reads as missing.
 2. **Reading.** Read the session lines as a reader does (Format 12.1, 17.2): a line repeating an earlier message's ID is skipped, a message whose `parent` names no earlier message is skipped with its descendants, and the head is the header's `head` if it names a message, else the last message.
-3. **The story.** The session's `scenario` names the scenario. Without a session, a `start` test names it with `scenario`; otherwise use the bundle's first scenario, whose seats are then unfilled and left out of the cast (Format 6.1), so `players` is `[]`. A `check` test without a session checks the bundle once for each scenario (Format 11.2). Header characters replace bundle characters as Format 12.2 says.
+3. **The story.** The session's `scenario` names the scenario. Without a session, a `start` test names it with `scenario`; otherwise use the bundle's first scenario, whose seats are then unfilled and left out of the cast (Format 6.1), so `players` holds only cast members marked `player`. A `check` test without a session checks the bundle once for each scenario (Format 11.2). Header characters replace bundle characters as Format 12.2 says.
 
 `check` tests skip steps 1 and 2 on their own copy and validate the raw inputs (section 4.12). `read` tests read the raw lines themselves.
 
@@ -347,7 +347,7 @@ Starting from a chronicle (section 4.11 input `chronicle`) follows Play 2.2. The
 | `newId` | The ID of the records-only system message to add when the head isn't a player message. |
 | `eventMessageId` | The ID for the system message the event pass may add. |
 
-The edit is prepared as a `player` change (Play 3.3) against the state at the head. If the head is a player message, the change is appended to its `changes`; otherwise a new message `{"id": newId, "parent": head, "from": "system", "content": [], "changes": [change]}` is added and becomes the head. Events are then evaluated at that message as in section 4.7, except that its recorded firings are kept and count (Play 3.3), and new firings are recorded after them.
+The edit is prepared as a `player` change (Play 3.3) against the state at the head. If the head is a player message without children, the change is appended to its `changes`; otherwise a new message `{"id": newId, "parent": head, "from": "system", "content": [], "changes": [change]}` is added and becomes the head. Events are then evaluated at that message as in section 4.7, except that its recorded firings are kept and count (Play 3.3), and new firings are recorded after them.
 
 - `expect.message` is the message the edit was recorded on, after the event pass.
 - `expect.events` is the event pass's firings.

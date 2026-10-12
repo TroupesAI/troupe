@@ -68,7 +68,7 @@ Every later root, from another opening or a player's message, is made the same w
   - Value keys and memory `knownBy` IDs that name the persona take effect only when the persona plays with its own ID (section 2.1 step 2).
 - **Writing back** from a path rewrites the chronicle with only what the session changed:
   - `values` keeps only carried keys, keyed without the owner, and takes the latest value of each carried key that a change on the path set, except the root's `by: "rules"` changes without an `event`, which hold the starting values.
-  - The memories written back are the carried session entries on the path, the latest version of each ID with the `carry` and `knownBy` it takes from earlier versions (Format 12.3), whose `knownBy` is absent or names the character. An entry whose latest version on the path is on a root is skipped: a root's entries are the chronicle's copies.
+  - The memories written back are the carried session entries on the path, the latest version of each ID with the `carry` and `knownBy` it takes from earlier versions (Format 12.3), whose `knownBy` is absent or names the character. An entry whose latest version on the path is on a root is skipped.
   - Each keeps in `knownBy` only the character, the persona and `narrator`.
   - Each replaces the memory with its ID, or is added after the others in the order the IDs first appear, unless the chronicle would pass its limit (Format 16); one with `disabled` removes that memory and is never added.
   - `character`, `persona`, `limits` and the rest of the chronicle stay as they are.
@@ -104,7 +104,7 @@ Before recording a change, apps drop each key whose value isn't valid (Format 8.
 4. round `number` values to the nearest double to the decimal that ECMAScript `Number.prototype.toFixed(6)` produces;
 5. clamp: raise the value to `min`, then lower it to `max`.
 
-A key whose prepared value is no longer valid, such as a set grown past its limit (Format 16), is dropped too. Within a message, changes are recorded in the order they happen: on a root, in the order of section 2.1; on any message, player and model changes before the changes of the events they trigger.
+A key whose prepared value is no longer valid, such as a set grown past its limit (Format 16), is dropped too, and so is a key that would take a `"*"` map past its limit, counting the keys kept before it in the change. Within a message, changes are recorded in the order they happen: on a root, in the order of section 2.1; on any message, player and model changes before the changes of the events they trigger.
 
 **Readers** re-apply steps 1, 4 and 5 when loading and drop invalid keys, but don't re-check channels, `maxStep` or `oneWay`.
 
@@ -138,7 +138,7 @@ type Newcomer = Pick<Character, "id" | "name" | "aliases" | "description" | "sum
   - for each variable in use whose `by` includes `model`, in event order (section 3.3), its key, type, `values` or range, `description` and current value;
   - the scene's values, the ID and name of every location of the bundle and session in world order, and of every cast character in cast order;
   - the entries in use placed in `tracker`, not `disabled`, whose `when` holds: those of the worlds, the cast characters in cast order, the scenario and the session, in the order of section 5.1;
-  - the session entries on the path placed in `context`, with their IDs and texts;
+  - the session entries on the path placed in `context`, with their IDs and texts: those the generation can see, and all of them for a tracker run;
   - the messages it reads that are sent to models (Format 12.4), with full knowledge.
 - **Structured reply.** The story model returns the whole payload in its reply. For the narrator and the single voice, the System slot also carries the tracker's input (section 6). Variables have no `knownBy`, so a character's generation in `characters` mode gets no tracker input, and apps keep only the `parts` of its reply.
 - **Plain reply.** Without structure, the reply is one text part whose `speaker` is the message's `char`, or none for the narrator. Apps MUST NOT guess `knownBy` from plain text.
@@ -150,7 +150,7 @@ Nothing in the payload takes `ext`. A model adds story content, never mechanics 
 
 Output that isn't a JSON object is discarded, and nothing is recorded. Otherwise apps apply a payload in this order:
 
-1. Read its empty values as Format 2.2 says and drop its unknown properties (Format 15). Drop each part, entry or newcomer that still fails the schema, and each entry or newcomer whose ID an earlier one in the payload has. A structured reply left with no parts is discarded, and nothing is recorded.
+1. Read its empty values as Format 2.2 says and drop its unknown properties (Format 15). Drop each top-level property, part, entry or newcomer that still fails the schema, and each entry or newcomer whose ID an earlier one in the payload has. A structured reply left with no parts is discarded, and nothing is recorded.
 2. `characters` join the header.
 3. `parts` are stored. A speaker that names no cast character is dropped (a newcomer that joined is in the cast), and so is each `knownBy` ID other than `narrator` that names none. A `knownBy` whose IDs are all dropped becomes `["narrator"]`, or `[<speaker>, "narrator"]` on a part with a speaker.
 4. `changes` are recorded as one `{"by": "model", …}` change, prepared as in section 3.3, on the message the tracker runs on or on the reply itself. Every extraction records this change, with an empty `set` when it changes nothing, which marks where the next tracker run starts.

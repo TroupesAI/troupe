@@ -121,7 +121,7 @@ MUST, MUST NOT, SHOULD, SHOULD NOT and MAY are used as described in RFC 2119 and
 
 - Writers MUST write I-JSON (RFC 7493): UTF-8 without a byte order mark, no duplicate member names, no surrogate or noncharacter code points, written or escaped, numbers that fit an IEEE 754 double, and integer fields and `int` values within ±(2^53 − 1), written without a fraction or exponent. Readers parse UTF-8 JSON (RFC 8259), ignore a leading byte order mark, and need not check the other I-JSON constraints.
 - **Empty values.** Writers MUST NOT write `null` in a field this spec defines or in a state value, and MUST NOT write `""`, `[]` or `{}` in an optional field other than `ext`. State values and `scenario.worlds` are the exception: there `""`, `[]` and `{}` are values. Names and variable descriptions are never empty.
-- Readers MUST treat `null`, `""`, `[]` and `{}` in an optional field like a missing field, with the same exception. A list that checks or repairing leave empty also reads as missing, except `scenario.worlds`, which reads as `[]`. A `knownBy` that is or becomes empty reads as section 7.4 says. A `null` state value is invalid (section 8.5).
+- Readers MUST treat `null`, `""`, `[]` and `{}` in an optional field like a missing field, with the same exception. A list that checks or repairing leave empty also reads as missing, except that `scenario.worlds` and `cast` read as `[]` and `keys` matches nothing (section 17.2). A `knownBy` that is or becomes empty reads as section 7.4 says. A `null` state value is invalid (section 8.5).
 - **Defaults are normative.** Every default stated in these documents or their TypeScript comments applies when a field is absent. Every boolean defaults to `false`.
 
 ### 2.3 Identifiers
@@ -516,7 +516,7 @@ Macros are the only substitution in text. `@` turns IDs into names.
 - **`{{user}}`** is the speaker of the first part with a speaker in the latest player message on the path that has one, else the first player's character, else it is left as written. In a state path, `user` means the same character.
 - A `char` or `user` path segment that means no character names no key, so the macro renders as nothing.
 - **Rendering.** A value with a label renders as its label, resolved first; a substituted value is never scanned for macros again. Numbers render as ECMAScript `Number.prototype.toString`, booleans as `true` or `false`, lists as items joined by `, ` (an empty list as nothing), and maps as `Name: value` pairs joined by `, `, with character keys shown by name and other keys with underscores as spaces. Map keys render in declared order (cast order for characters), and `"*"` keys in code point order.
-- **Unresolved.** Text between `{{` and `}}` that is no macro, such as `{{unknown}}`, and a macro naming a variable that isn't declared are left as written (`UNKNOWN_MACRO`); an absent key of a declared variable, a path below a value that isn't a map, or a variable whose owner isn't in use renders as nothing.
+- **Unresolved.** Text between `{{` and `}}` that is no macro, such as `{{unknown}}`, and a macro naming a variable that isn't declared, as section 11.2 counts declarations, are left as written (`UNKNOWN_MACRO`); an absent key of a declared variable, a path below a value that isn't a map, or a variable whose owner isn't in use renders as nothing.
 - **Which state.** Macros in a message resolve at that message: against its state, with `{{user}}` from the path to it. Elsewhere they resolve at the evaluation point (section 11.1). In message parts and in a scenario's text, `own` means `state`.
 - **Where.** Authors write macros in descriptions, summaries, dialogue examples, premises, briefings, notes, entry texts, openings, event messages and directions, variable descriptions, questions, labels, and image `alt`. Entry titles and keys are never resolved.
 - **Player and model text** is stored escaped: in message parts' `text` and `alt`, in message `summary` text, and in the `text`, `description` and `summary` of entries and characters a model adds, apps MUST write each `\` as `\\` and each `{{` as `\{{`. Names, aliases, titles, keys and expressions are stored as written. Resolving the escaped text gives back exactly what was written, so macros never take effect in it.
@@ -566,7 +566,7 @@ state.trust[char] >= 0.8 && hour < 6
 
 ### 11.2 Rules
 
-- Apps MUST type-check every expression when loading: `state` against the scenario's variables and every character's and world's variables in the bundle and session, and `own` against the expression owner's; a bundle read without a session is checked once for each scenario. An expression that fails is reported, and its entry, event or variable never applies.
+- Apps MUST type-check every expression when loading: `state` against the scenario's variables and the variables of every character and world of the bundle and session, header characters in place of those they replace, and `own` against the expression owner's; a bundle read without a session is checked once for each scenario. An expression that fails is reported, and its entry, event or variable never applies.
 - A `compute` key that fails at runtime is skipped, and the value the firing produced for that key before, if any, stands.
 - Conditions have type `bool`; `derive` and `compute` expressions have their variable's type, except that an `int` may set a `number`.
 - Ordering comparisons (`<`, `<=`, `>`, `>=`) between an `int` and a `double` MUST work: `state.trust.kai >= 1`. Everything else takes operands of one type: write `state.bell == 7` and `state.trust.kai - 0.1`.
@@ -744,7 +744,7 @@ Fields that hold a file (`cover`, `avatar`, location `image` and image parts) ho
 8. **Bounded parsing.** Readers MUST cap JSON size and depth, `data:` URI size, and session length.
 9. **Private fields.** `credits`, `briefing` and opening `title`s MUST NOT be sent to any model; entry `title` reaches it only in a pull catalog.
 
-Writers MUST stay within these limits. Readers MUST accept files within them, and MAY accept or refuse larger ones. An app MAY stop work that exceeds its resources, such as evaluating an expression or matching keys; it then fails the generation or event pass instead of recording a different outcome.
+Writers MUST stay within these limits. Readers MUST accept files within them, and MAY accept or refuse larger ones. An app MAY stop work that exceeds its resources, such as evaluating an expression or matching keys; it then fails the generation or event pass instead of recording a different outcome, and doesn't continue the session from the message that triggered it.
 
 | Item | Size limit |
 | --- | --- |
@@ -778,7 +778,7 @@ Messages are never dropped for a failed check, except the lines that `PARSE`, `S
 | --- | --- | --- |
 | `PARSE` | The input is UTF-8 JSON (section 2.2) or JSON Lines, a Troupe document of the `kind` its form holds (section 14.1), within the limits the reader enforces (section 16), and a safe package (section 16 item 7) | The file isn't read; in a session, an unreadable line other than the header is skipped |
 | `UNSUPPORTED_VERSION` | `troupe`, when present, is the reader's own version (section 15); a missing `troupe`, or one that isn't `major.minor`, is only `SCHEMA` | Another major version isn't read; another minor version is a warning (from 1.0, only a newer one) |
-| `SCHEMA` | The document validates against its schema, apart from unknown properties (section 15) | The reader MAY refuse the file; otherwise it repairs it (below) |
+| `SCHEMA` | The document validates against its schema, with `format` asserted, apart from unknown properties (section 15) | The reader MAY refuse the file; otherwise it repairs it (below) |
 | `UNKNOWN_FIELD` | Every property is known to the reader's schema (section 15) | A warning |
 | `DUPLICATE_ID` | IDs are unique as section 2.3 and section 12.2 require | The first is kept; a scenario variable that clashes with a character or world is ignored instead (section 2.3), and two replacements of one character make the session unplayable (section 12.2) |
 | `UNKNOWN_SCENARIO` | The header's `scenario` names a scenario | The session can't be played |
