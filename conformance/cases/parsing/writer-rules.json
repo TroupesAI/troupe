@@ -179,14 +179,24 @@
     },
     {
       "type": "parse",
-      "name": "a records-only message with entries",
+      "name": "a records-only message with entries, other than a root",
       "kind": "session",
-      "text": "{\"troupe\": \"0.12\", \"kind\": \"session\", \"scenario\": \"s\", \"seed\": \"conformanceSeed0001\"}\n{\"id\": \"1\", \"from\": \"system\", \"content\": [], \"changes\": [{\"by\": \"player\", \"set\": {}}], \"entries\": [{\"id\": \"e\", \"text\": \"t\"}]}\n",
+      "text": "{\"troupe\": \"0.12\", \"kind\": \"session\", \"scenario\": \"s\", \"seed\": \"conformanceSeed0001\"}\n{\"id\": \"1\", \"from\": \"player\", \"content\": [{\"text\": \"x\"}]}\n{\"id\": \"2\", \"parent\": \"1\", \"from\": \"system\", \"content\": [], \"changes\": [{\"by\": \"player\", \"set\": {}}], \"entries\": [{\"id\": \"e\", \"text\": \"t\"}]}\n",
       "expect": {
         "ok": false,
         "codes": [
           "SCHEMA"
         ]
+      }
+    },
+    {
+      "type": "parse",
+      "name": "a records-only root may hold entries, such as a chronicle's memories",
+      "kind": "session",
+      "text": "{\"troupe\": \"0.12\", \"kind\": \"session\", \"scenario\": \"s\", \"seed\": \"conformanceSeed0001\"}\n{\"id\": \"1\", \"opening\": \"o\", \"from\": \"system\", \"content\": [], \"changes\": [{\"by\": \"rules\", \"set\": {\"scene.present\": []}}], \"entries\": [{\"id\": \"e\", \"text\": \"t\"}]}\n",
+      "expect": {
+        "ok": true,
+        "codes": []
       }
     },
     {

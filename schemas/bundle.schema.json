@@ -444,7 +444,8 @@
         "scanDepth": {
           "type": "integer",
           "minimum": 0,
-          "default": 4
+          "default": 4,
+          "maximum": 100
         },
         "once": {
           "type": "boolean"

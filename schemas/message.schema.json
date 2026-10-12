@@ -115,7 +115,7 @@
       }
     },
     {
-      "description": "A records-only message carries changes, and on a root an opening, and nothing a model or reader would use as content.",
+      "description": "A records-only message carries changes, and on a root an opening and entries, and nothing a model or reader would use as content.",
       "if": {
         "properties": {
           "content": {
@@ -136,7 +136,8 @@
           "anyOf": [
             {
               "required": [
-                "entries"
+                "entries",
+                "parent"
               ]
             },
             {

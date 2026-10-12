@@ -1,5 +1,5 @@
 {
-  "description": "Set normalization and the scene (Format 8.4; Play 3.3): dedupe, declared order, unlisted members, oneWay sets keep members and accept additions, cast order",
+  "description": "Set normalization and the scene (Format 8.4; Play 3.3): dedupe, declared order, unlisted members, oneWay sets keep members and accept additions, scene.present deduplicated, filtered to the cast and in cast order",
   "bundle": {
     "kind": "bundle",
     "characters": [
@@ -173,18 +173,22 @@
     },
     {
       "type": "prepare",
-      "name": "only cast characters",
+      "name": "IDs that name no cast character are removed, and the rest stands",
       "by": "model",
       "set": {
         "scene.present": [
-          "zed"
+          "b",
+          "zed",
+          "a"
         ]
       },
       "expect": {
-        "set": {},
-        "dropped": [
-          "scene.present"
-        ]
+        "set": {
+          "scene.present": [
+            "a",
+            "b"
+          ]
+        }
       }
     },
     {
@@ -218,6 +222,21 @@
       "name": "sets render with labels, joined by ', '",
       "text": "{{state.seen}} / {{state.inv}}",
       "expect": "an x, y / "
+    },
+    {
+      "type": "prepare",
+      "name": "a list of only unknown IDs empties the scene",
+      "by": "model",
+      "set": {
+        "scene.present": [
+          "zed"
+        ]
+      },
+      "expect": {
+        "set": {
+          "scene.present": []
+        }
+      }
     }
   ]
 }

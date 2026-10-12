@@ -405,6 +405,79 @@
     },
     {
       "type": "output",
+      "name": "a structured reply left with no parts is discarded, and nothing is recorded",
+      "reply": {
+        "id": "3",
+        "parent": "2"
+      },
+      "output": {
+        "parts": [
+          {
+            "speaker": "a"
+          }
+        ],
+        "changes": {
+          "mood": "tense"
+        }
+      },
+      "expect": {
+        "message": null,
+        "characters": [
+          "p"
+        ]
+      }
+    },
+    {
+      "type": "output",
+      "name": "an entry whose ID an earlier one in the payload has is dropped",
+      "reply": {
+        "id": "3",
+        "parent": "2"
+      },
+      "output": {
+        "parts": [
+          {
+            "text": "Rain."
+          }
+        ],
+        "entries": [
+          {
+            "id": "e",
+            "text": "First."
+          },
+          {
+            "id": "e",
+            "text": "Second."
+          }
+        ]
+      },
+      "expect": {
+        "message": {
+          "id": "3",
+          "parent": "2",
+          "from": "model",
+          "content": [
+            {
+              "text": "Rain."
+            }
+          ],
+          "changes": [
+            {
+              "by": "model",
+              "set": {}
+            }
+          ],
+          "entries": [
+            {
+              "id": "e",
+              "text": "First."
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "output",
       "name": "a model adds content, never mechanics or direction",
       "note": "Unknown properties (newcomer events and entries, entry position and priority) are dropped first. Newcomer b names a bundle character and is dropped; entry note names the root's system entry and is dropped; Ann and ghost name no character. Entry depth_note names the root's depth-2 entry and is dropped; newcomer mood names a scenario variable and is dropped. A narrator's structured reply is an extraction, so it records the empty marker.",
       "reply": {

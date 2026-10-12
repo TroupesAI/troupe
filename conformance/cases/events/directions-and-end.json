@@ -48,6 +48,13 @@
               }
             ],
             "on": "model"
+          },
+          {
+            "id": "later",
+            "when": "turn == 3",
+            "set": {
+              "stakes": 5
+            }
           }
         ]
       }
@@ -209,6 +216,24 @@
           "Raise the stakes to {{state.stakes}}."
         ],
         "ended": false
+      }
+    },
+    {
+      "type": "events",
+      "name": "after end, events still run if play goes on (Format 9)",
+      "at": "5",
+      "eventMessageId": "6",
+      "expect": {
+        "changes": [
+          {
+            "by": "rules",
+            "event": "later",
+            "set": {
+              "stakes": 5
+            }
+          }
+        ],
+        "message": null
       }
     }
   ]

@@ -1,0 +1,69 @@
+{
+  "description": "A reader that plays a file failing its schema removes each value where validation fails (Format 17.2): an out-of-range chance reads as absent, and an entry without text is ignored",
+  "bundle": {
+    "kind": "bundle",
+    "scenarios": [
+      {
+        "id": "s",
+        "entries": [
+          {
+            "id": "lucky",
+            "chance": 1.5,
+            "text": "Chance reads as absent, so 1."
+          },
+          {
+            "id": "blank",
+            "when": "true"
+          },
+          {
+            "id": "plain",
+            "priority": 150,
+            "text": "Priority reads as absent, so 50."
+          }
+        ]
+      }
+    ]
+  },
+  "session": {
+    "header": {
+      "kind": "session",
+      "scenario": "s",
+      "seed": "conformanceSeed0001"
+    },
+    "messages": [
+      {
+        "id": "1",
+        "from": "player",
+        "content": [
+          {
+            "text": "x"
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "check",
+      "expect": {
+        "codes": [
+          "SCHEMA"
+        ]
+      }
+    },
+    {
+      "type": "select",
+      "messageId": "2",
+      "maxEntries": 1,
+      "expect": {
+        "selected": [
+          "s/lucky"
+        ],
+        "dropped": [
+          "s/plain"
+        ]
+      },
+      "note": "Both read as priority 50, so fitting drops the later one in file order; had priority 150 been clamped to 100, s/lucky would be dropped instead."
+    }
+  ]
+}

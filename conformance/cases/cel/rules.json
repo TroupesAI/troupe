@@ -1,5 +1,5 @@
 {
-  "description": "CEL rules (Format 11.1, 11.2): comprehensions over a map visit keys in code point order; list and map literals hold one type; type names and whole state objects aren't values; CEL's runtime errors (overflow, division by zero, out-of-range conversion) make a condition false; comprehension bodies, not targets, count toward nesting; absent keys of \"*\" maps are absent in CEL (Format 8.3); matches() patterns are valid regexes (Format 16 item 5); an unknown time zone makes hour and weekday −1",
+  "description": "CEL rules (Format 11.1, 11.2): comprehensions over a map visit keys in code point order; list and map literals hold one type; type names and whole state objects aren't values; CEL's runtime errors (overflow, division by zero, out-of-range conversion) make a condition false; comprehension bodies, not targets, count toward nesting; absent keys of \"*\" maps are absent in CEL (Format 8.3); matches() patterns are valid regexes (Format 16 item 5); an unknown time zone makes hour and weekday −1; with no player, user is \"\"; hit() takes a literal",
   "bundle": {
     "kind": "bundle",
     "scenarios": [
@@ -181,6 +181,21 @@
       "expr": "hour == -1 && weekday == -1",
       "at": "1",
       "expect": true
+    },
+    {
+      "type": "cel",
+      "name": "with no player, user is \"\" and players is []",
+      "expr": "user == '' && players == []",
+      "expect": true
+    },
+    {
+      "type": "cel",
+      "name": "hit() takes a string literal",
+      "kind": "entry",
+      "expr": "hit(user)",
+      "expect": {
+        "checkError": true
+      }
     }
   ]
 }

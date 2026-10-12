@@ -49,7 +49,7 @@ Every test starts from a fresh copy of the case's inputs. Tests don't affect eac
 
 1. **Absent values.** Apply Format 2.2 to the bundle, the session header and every message: `null`, `""`, `[]` and `{}` in optional fields read as missing, except that `knownBy: []` reads as `["narrator"]`. State values (`set`, `initial`) keep `""` and `[]`. `scenario.worlds` keeps `[]`. Required text fields (an entry's or part's `text`, a character's `description`) and message `content` keep `""` and `[]`; an opening's `content` is optional, so `[]` there reads as missing.
 2. **Reading.** Read the session lines as a reader does (Format 12.1, 17.2): a line repeating an earlier message's ID is skipped, a message whose `parent` names no earlier message is skipped with its descendants, and the head is the header's `head` if it names a message, else the last message.
-3. **The story.** The session's `scenario` names the scenario. Without a session, a `start` test names it with `scenario`; otherwise use the bundle's first scenario. Header characters replace bundle characters as Format 12.2 says.
+3. **The story.** The session's `scenario` names the scenario. Without a session, a `start` test names it with `scenario`; otherwise use the bundle's first scenario, whose seats are then unfilled and left out of the cast (Format 6.1), so `players` is `[]`. A `check` test without a session checks the bundle once for each scenario (Format 11.2). Header characters replace bundle characters as Format 12.2 says.
 
 `check` tests skip steps 1 and 2 on their own copy and validate the raw inputs (section 4.12). `read` tests read the raw lines themselves.
 
@@ -226,7 +226,7 @@ Every field of `expect` is optional:
 | `head` | The head. |
 | `questions` | The state names of variables with `ask` that weren't answered, in code point order. |
 | `state` | A subset of the flattened state at the root. |
-| `rendered` | The root's text parts, macro-resolved: `{{char}}` is each part's speaker, `{{user}}` follows the path. |
+| `rendered` | The resolved `text` of each of the root's text parts, in order, without speakers: `{{char}}` is each part's speaker, `{{user}}` follows the path. |
 | `entries` | The root's session `entries`. |
 | `characters` | The header characters' IDs. |
 | `header` | A subset of the resulting session header (top-level keys compared by deep equality). |
@@ -254,7 +254,7 @@ A diagnostic about one value points at that value: a list item at its index (`/s
 
 ### 4.13 `prompt`: prompt slots (Play 6)
 
-Inputs are as for `select`, plus `summaries`: an optional boolean that lets every summary the generation can see stand in for the messages it covers (Play 6); without it, no summary does. The prompt has five slots: `system`, `setting`, `people`, `context` and `history`. Each slot is a list of items, written as strings:
+Inputs are as for `select`, plus `summaries`: an optional boolean that lets every summary the generation can see stand in for the messages it covers (Play 6), without which no summary does; and `structured`: an optional boolean for a structured reply from the narrator or the single voice, whose System slot carries the tracker's input (Play 3.4). The prompt has five slots: `system`, `setting`, `people`, `context` and `history`. Each slot is a list of items, written as strings:
 
 | Item | String |
 | --- | --- |
@@ -272,8 +272,9 @@ Inputs are as for `select`, plus `summaries`: an optional boolean that lets ever
 | A history message | `message:<id>` |
 | A summary standing in for the messages it covers, where the last of them would be | `summary:<id>`, the ID of the message holding it |
 | The session's limits, right after `app`; the wording is the app's | `limits` |
+| The tracker's input, last in System, for a `structured` prompt | `tracker` |
 
-The text of a `character:<id>` item is the character's resolved `description`; its cast `notes` reach the prompt too, but are not part of the compared text. In the People slot, offstage characters without a `summary` contribute nothing, and `examples:<id>` items come only for present model-played characters and the character being generated for.
+An item appears only when it has text, so there is no `premise` without a premise and no `world:<id>` for a world without a `description`; `location:<id>` items, which carry at least the name, always appear. The text of a `character:<id>` item is the character's resolved `description`; its cast `notes` reach the prompt too, but are not part of the compared text. In the People slot, offstage characters without a `summary` contribute nothing, and `examples:<id>` items come only for present model-played characters and the character being generated for.
 
 Every field of `expect` is optional:
 
@@ -320,8 +321,8 @@ The output is applied as Play 3.4 says: properties unknown to `model-output.sche
 
 Every field of `expect` is optional:
 
-- `message` is the resulting message.
-- `dropped` is the list of change keys dropped by preparation.
+- `message` is the resulting message, or `null` when nothing is recorded.
+- `dropped` is the list of change keys dropped by preparation, in input order.
 - `characters` is the header characters' IDs afterwards.
 - `newcomers` is the characters the output added to the header, as stored.
 
@@ -344,6 +345,7 @@ Starting from a chronicle (section 4.11 input `chronicle`) follows Play 2.2. The
 | --- | --- |
 | `set` | The values the player sets, `key → value`. |
 | `newId` | The ID of the records-only system message to add when the head isn't a player message. |
+| `eventMessageId` | The ID for the system message the event pass may add. |
 
 The edit is prepared as a `player` change (Play 3.3) against the state at the head. If the head is a player message, the change is appended to its `changes`; otherwise a new message `{"id": newId, "parent": head, "from": "system", "content": [], "changes": [change]}` is added and becomes the head. Events are then evaluated at that message as in section 4.7, except that its recorded firings are kept and count (Play 3.3), and new firings are recorded after them.
 

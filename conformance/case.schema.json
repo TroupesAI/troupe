@@ -1079,6 +1079,9 @@
                   "items": {
                     "type": "string"
                   }
+                },
+                "structured": {
+                  "type": "boolean"
                 }
               }
             }
@@ -1240,7 +1243,10 @@
                   "additionalProperties": false,
                   "properties": {
                     "message": {
-                      "type": "object"
+                      "type": [
+                        "object",
+                        "null"
+                      ]
                     },
                     "dropped": {
                       "type": "array",
@@ -1390,6 +1396,9 @@
                 "newId": {
                   "type": "string",
                   "minLength": 1
+                },
+                "eventMessageId": {
+                  "type": "string"
                 }
               }
             }

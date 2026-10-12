@@ -283,6 +283,19 @@
           "6"
         ]
       }
+    },
+    {
+      "type": "prompt",
+      "name": "a structured reply from the narrator carries the tracker's input in System (Play 3.4, 6)",
+      "parent": "6",
+      "messageId": "7",
+      "structured": true,
+      "expect": {
+        "system": [
+          "app",
+          "tracker"
+        ]
+      }
     }
   ]
 }

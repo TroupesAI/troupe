@@ -121,7 +121,7 @@ MUST, MUST NOT, SHOULD, SHOULD NOT and MAY are used as described in RFC 2119 and
 
 ### 2.2 Values
 
-- Writers MUST write I-JSON (RFC 7493): UTF-8 without a byte order mark, no duplicate member names, no surrogate or noncharacter code points, written or escaped, numbers that fit an IEEE 754 double, integers within ±(2^53 − 1) and written without a fraction or exponent. Readers parse UTF-8 JSON (RFC 8259), ignore a leading byte order mark, and need not check the other I-JSON constraints.
+- Writers MUST write I-JSON (RFC 7493): UTF-8 without a byte order mark, no duplicate member names, no surrogate or noncharacter code points, written or escaped, numbers that fit an IEEE 754 double, and integer fields and `int` values within ±(2^53 − 1), written without a fraction or exponent. Readers parse UTF-8 JSON (RFC 8259), ignore a leading byte order mark, and need not check the other I-JSON constraints.
 - **Empty values.** Writers MUST NOT write `null`, and MUST NOT write `""`, `[]` or `{}` in an optional field other than `ext`. State values and `scenario.worlds` are the exception: there `""`, `[]` and `{}` are values. Names and variable descriptions are never empty.
 - Readers MUST treat `null`, `""`, `[]` and `{}` in an optional field like a missing field, with the same exception, and read `knownBy: []` as `["narrator"]`, so an emptied list never reveals a secret. A `null` state value is invalid (section 8.5).
 - **Defaults are normative.** Every default stated in these documents or their TypeScript comments applies when a field is absent. Every boolean defaults to `false`.
@@ -141,7 +141,7 @@ MUST, MUST NOT, SHOULD, SHOULD NOT and MAY are used as described in RFC 2119 and
 | --- | --- |
 | Characters, worlds, scenarios | All of them, compared in the order the bundle's characters, worlds and scenarios, then the session's characters and worlds; a session character replacing a bundle character is no duplicate (section 12.2) |
 | Scenario variables | Each other, the scenario's entries and events, and every character and world ID in the bundle or session; on a clash with a character or world the variable is ignored |
-| Entries, variables and events | Each other within the same owner, compared in that order: a variable or event that reuses an earlier ID is the duplicate |
+| Entries, variables and events | Each other within the same owner, compared in that order: a variable or event that reuses an earlier ID is the duplicate. Session entries are unique within each message (section 12.3) |
 | Locations | The bundle and the session, compared in world order, the session's worlds last |
 | Openings | The same scenario |
 | Messages | The session |
@@ -298,7 +298,7 @@ interface Opening {
 ### 6.1 Cast
 
 - The default cast is one player seat followed by every bundle character, in bundle order. A cast may hold only seats. Characters outside the cast take no part in the scenario.
-- **Seats** are cast members without `character`, filled by a character the person brings, and members with `player`, which a person plays as written. Every seat is filled when a session starts.
+- **Seats** are cast members without `character`, filled by a character the person brings, and members with `player`, which a person plays as written. Every seat is filled when a session starts; a seat that no player fills is left out of the cast.
 
 ### 6.2 Modes
 
@@ -333,10 +333,10 @@ interface Entry {
   keys?: string[];                 // words that activate it; "/…/" is an RE2 pattern
   pull?: boolean;                  // retrieved on demand by meaning (Play 5.6); needs a title
   when?: string;                   // CEL condition that must hold
-  scanDepth?: number;              // integer ≥ 0; messages scanned for keys; 4
+  scanDepth?: number;              // integer 0–100; messages scanned for keys; 4
 
   // timing, in rounds (Play 3.1)
-  once?: boolean;                  // activates at most once on a path
+  once?: boolean;                  // activates at most once on a path, pulling aside
   sticky?: number;                 // integer ≥ 1; stays active this many rounds after activating
   cooldown?: number;               // integer ≥ 1; then can't activate for this many rounds
   chance?: number;                 // 0–1; 1
@@ -446,7 +446,7 @@ A character's mood or a world's clock travels with it into every scenario, and t
 | `"*"` | any author ID; keys appear when a change sets them, such as `"inventory.torch": 2` |
 
 - Read a key as `state.trust.kai` or `own.feelings.elena`; change it as `trust.kai` or `own.feelings.elena`. In CEL, look up a computed key with brackets: `state.trust[char]`, `own.feelings[user]`. In macros, the path segments `char` and `user` mean those characters: `{{own.feelings.user}}`. Change keys always name keys literally, so `trust.char` names a key `char`.
-- `initial` is one value for every key, or an object of values by key with `*` as an optional default. For preparation, an absent key's current value is its initial value.
+- `initial` is one value for every key, or an object of values by key with `*` as an optional default; keys outside the key set are ignored, and a key without a value or `*` takes the type's default. For preparation, an absent key's current value is its initial value.
 - Keys of `"*"` maps start absent, and `"*"` takes no `initial`. Preparation counts an absent key as the type's default, and setting a key to the default removes it; in CEL an absent key is absent, so test it with `has()` or `in`. Their keys are in code point order.
 
 ### 8.4 The scene
@@ -459,7 +459,7 @@ Opening and event `set`, `compute` and recorded changes write state by key:
 
 - **Keys** are a scenario variable's ID, or an owner and a variable ID, followed by a key for keyed variables: `bell`, `trust.kai`, `kai.nerve`, `kai.feelings.elena`, `scene.location`, `scene.present`.
 - **Values** are absolute.
-- **Validity.** A value is valid if its key names a variable in use that isn't derived, and an allowed key, and the value has the variable's type, uses only listed members, is finite, is an integer within ±(2^53 − 1) for `int`, and is within the value limits of section 16. A numeric value outside `min` and `max` is still valid; it is clamped (Play 3.2, 3.3). So is a set with duplicate members, which preparation removes. `scene.location` is a location ID of the bundle or session, or `""`; `scene.present` lists cast characters.
+- **Validity.** A value is valid if its key names a variable in use that isn't derived, and an allowed key, and the value has the variable's type, uses only listed members, is finite, is an integer within ±(2^53 − 1) for `int`, and is within the value limits of section 16. A numeric value outside `min` and `max` is still valid; it is clamped (Play 3.2, 3.3). So is a set with duplicate members, which preparation removes. `scene.location` is a location ID of the bundle or session, or `""`; `scene.present` is a list of IDs, and preparation removes those that name no cast character (Play 3.3).
 
 ---
 
@@ -498,7 +498,7 @@ interface Outcome {
 - **`set` takes plain values; `compute` takes CEL.** `"set": {"scene.location": "vault"}`, `"compute": {"trust.elena": "state.trust.elena - 0.1"}`. An owner's own events write its variables as `own.<id>`.
 - **Firing.** Play 3.3 says when events run and fire. An event `on: "player"` runs before the reply; one `on: "model"` runs after the reply and its tracking.
 - **Outcomes** pick one weighted alternative per firing. `roll(n)` in an event's or outcome's `compute` rolls a die; each call is a separate roll.
-- **`end`** marks the story finished on that path; a `direct` on the same firing still reaches the next model reply.
+- **`end`** marks the story finished on that path. It changes nothing else: if play goes on, events and directions work as before, and a `direct` on the same firing still reaches the next model reply.
 
 ---
 
@@ -518,13 +518,13 @@ Macros are the only substitution in text. `@` turns IDs into names.
 | `{{pick::<a>::<b>…}}` | One option, fixed for the session (Play 4) |
 | `{{// <comment>}}` | Nothing; a note for authors |
 
-- **`{{char}}`** is the owning character in a character's own text; in a message part, the part's `speaker`, else the message's `char`, else it is left as written; in other text, the character being generated for, or the scenario's `narrator` for the narrator and the tracker. In a state path, `char` means the same character.
+- **`{{char}}`** in a message part, an event's `message` included, is the part's `speaker`, else the message's `char`, else it is left as written; in a character's other text, that character; in other text, the character being generated for, or the scenario's `narrator` for the narrator and the tracker. In a state path, `char` means the same character.
 - **`{{user}}`** is the speaker of the first part with a speaker in the latest player message on the path that has one, else the first player's character, else it is left as written. In a state path, `user` means the same character.
 - A `char` or `user` path segment that means no character names no key, so the macro renders as nothing.
-- **Rendering.** A value with a label renders as its label. Numbers render as ECMAScript `Number.prototype.toString`, booleans as `true` or `false`, lists as items joined by `, ` (an empty list as nothing), and maps as `Name: value` pairs joined by `, `, with character keys shown by name and other keys with underscores as spaces. Map keys render in declared order (cast order for characters), and `"*"` keys in code point order. Text between `{{` and `}}` that is no macro, such as `{{unknown}}`, and a macro naming a variable that isn't declared are left as written (`UNKNOWN_MACRO`); an absent key of a declared variable, a path below a value that isn't a map, or a variable whose owner isn't in use renders as nothing.
-- **Which state.** Macros in a message resolve against the state at that message; elsewhere, against the evaluation point (section 11.1). In a scenario's text, openings included, `own` means `state`.
-- **Where.** Authors write macros in descriptions, summaries, premises, briefings, notes, entry texts, openings, event messages and directions, variable descriptions, questions, labels, and image `alt`. Entry titles and keys are never resolved.
-- **Player and model text** is stored escaped: in message parts' `text` and `alt`, and in the `text`, `description` and `summary` of entries and characters a model adds, apps MUST write each `\` as `\\` and each `{{` as `\{{`. Names, aliases, titles, keys and expressions are stored as written. Resolving the escaped text gives back exactly what was written, so macros never take effect in it.
+- **Rendering.** A value with a label renders as its label, resolved first; a substituted value is never scanned for macros again. Numbers render as ECMAScript `Number.prototype.toString`, booleans as `true` or `false`, lists as items joined by `, ` (an empty list as nothing), and maps as `Name: value` pairs joined by `, `, with character keys shown by name and other keys with underscores as spaces. Map keys render in declared order (cast order for characters), and `"*"` keys in code point order. Text between `{{` and `}}` that is no macro, such as `{{unknown}}`, and a macro naming a variable that isn't declared are left as written (`UNKNOWN_MACRO`); an absent key of a declared variable, a path below a value that isn't a map, or a variable whose owner isn't in use renders as nothing.
+- **Which state.** Macros in a message resolve at that message: against its state, with `{{user}}` from the path to it. Elsewhere they resolve at the evaluation point (section 11.1). In messages and in a scenario's text, `own` means `state`.
+- **Where.** Authors write macros in descriptions, summaries, dialogue examples, premises, briefings, notes, entry texts, openings, event messages and directions, variable descriptions, questions, labels, and image `alt`. Entry titles and keys are never resolved.
+- **Player and model text** is stored escaped: in message parts' `text` and `alt`, in message `summary` text, and in the `text`, `description` and `summary` of entries and characters a model adds, apps MUST write each `\` as `\\` and each `{{` as `\{{`. Names, aliases, titles, keys and expressions are stored as written. Resolving the escaped text gives back exactly what was written, so macros never take effect in it.
 - **Parsing** is one left-to-right scan. At each `{{`, the longest form in the table, with no spaces outside comments and options, is a macro; otherwise the first `{` is kept and scanning resumes at the next character. A comment runs from `{{//` to the next `}}`. Options can't contain `::` or `}}`. `\{{` produces a literal `{{`, and `\\` a literal `\`.
 - **Stored text keeps its macros.** They resolve when text is shown or sent.
 
@@ -551,13 +551,13 @@ Every expression is evaluated at a message, its **evaluation point**: for a prom
 | `opening` | The path's opening ID, or `""` |
 | `scenario` | The scenario being played |
 | `char` | The character being generated for; `""` for the narrator, events and trackers |
-| `user` | The player's character `{{user}}` means |
+| `user` | The player's character `{{user}}` means, or `""` |
 | `self` | The owner of the expression: a character, world or scenario ID, or `session` |
 | `players` | The players' character IDs |
 | `last.from`, `last.char` | The evaluation point message's `from` and `char`; `""` when it has no `char` |
 | `count(name)` | How many times an event fired, an entry activated, or a change key appeared in a recorded change on the path, matched exactly; 0 for anything else |
-| `ago(name)` | Rounds from that event's, entry's or key's latest firing, activation or change to the evaluation point; 1000000000 if never |
-| `hit(key)` | Entries only: whether `key` matches the entry's scanned text (Play 5.2) |
+| `ago(name)` | Rounds from that event's, entry's or key's latest firing, activation or change on the path to the evaluation point; 1000000000 if never |
+| `hit(key)` | Entries only: whether `key` matches the entry's scanned text (Play 5.2), or for a tracker entry the messages the tracker reads |
 | `roll(n)` | Event and outcome `compute` only: a whole number from 1 to `n`, an `int`; `n` below 1 is a runtime error |
 | `min(a, b)`, `max(a, b)`, `abs(x)` | For numbers of one type |
 
@@ -571,7 +571,7 @@ state.trust[char] >= 0.8 && hour < 6
 
 ### 11.2 Rules
 
-- Apps MUST type-check every expression when loading: `state` against the scenario's variables and every character's and world's variables in the bundle and session, and `own` against the expression owner's. An expression that fails is reported, and its entry, event or variable never applies. A `compute` key that fails at runtime is skipped, and any literal for the same key stands.
+- Apps MUST type-check every expression when loading: `state` against the scenario's variables and every character's and world's variables in the bundle and session, and `own` against the expression owner's; a bundle read without a session is checked once for each scenario. An expression that fails is reported, and its entry, event or variable never applies. A `compute` key that fails at runtime is skipped, and any literal for the same key stands.
 - Conditions have type `bool`; `derive` and `compute` expressions have their variable's type, except that an `int` may set a `number`.
 - Ordering comparisons (`<`, `<=`, `>`, `>=`) between an `int` and a `double` MUST work: `state.trust.kai >= 1`. Everything else takes operands of one type: write `state.bell == 7` and `state.trust.kai - 0.1`.
 - Evaluation follows the CEL language definition, including its errors, such as integer overflow and division by zero. A runtime error makes a condition false; `&&` and `||` absorb an error when their other operand decides the result.
@@ -579,8 +579,8 @@ state.trust[char] >= 0.8 && hour < 6
 - Expressions use only `bool`, `int`, `double`, `string`, list and map values, and list and map literals hold values of one type. `bytes`, `uint` and `null` literals and type names used as values are a `CEL_ERROR`.
 - Available functions are only `size`, `has`, `all`, `exists`, `exists_one`, `map`, `filter`, `in`, `contains`, `startsWith`, `endsWith`, `matches`, the conversions `int()`, `double()`, `string()` and `bool()`, and the functions above. Conversions don't take strings, except `string()` of a string, and `string()` doesn't take a double.
 - A comprehension's **body** is its predicate and, for `map`, its transform. Bodies nest at most two deep: a comprehension in another's body counts, one in its target doesn't. Inside a body, `roll()` isn't called and `+` doesn't join strings or lists.
-- `matches()` takes a string literal as its pattern, a regex as section 16 item 5 defines, checked at load.
-- An expression that breaks any of these rules is a `CEL_ERROR`. No app-set budget stops an evaluation.
+- `matches()` takes a string literal as its pattern, a regex as section 16 item 5 defines, and `hit()` a string literal key; both are checked at load.
+- An expression that breaks any of these rules is a `CEL_ERROR`. An app MAY stop an evaluation that exceeds its resources; it then fails the generation or event pass instead of recording a different outcome.
 
 ---
 
@@ -660,7 +660,7 @@ interface Summary {
 
 - **Replacements.** A header character with the ID of a bundle character replaces it for the whole session: it keeps that character's place in the cast and every reference to it. Two header characters that replace the same bundle character make the session unplayable (`DUPLICATE_ID`).
 - `players` lists the characters people control, in seat order. An ID defined in the header's `characters`, other than a replacement, fills the next empty seat, or adds a seat after the scenario cast when every seat is filled; a cast member marked `player` fills its own seat and is a player whether or not it is listed, after the listed players in cast order; the ID of another cast member means a person took that character over.
-- The session's **cast** is the scenario cast with seats filled, then the added seats, then the **joiners**: header `characters` that aren't players or replacements, which joined or appeared during the session.
+- The session's **cast** is the scenario cast with seats filled, then the added seats, then the **joiners**: header `characters` that aren't players or replacements of cast members, which joined or appeared during the session.
 - Header characters and `players` hold for the whole session, on every branch; presence is recorded on each path (section 8.4).
 
 ### 12.3 Session entries
@@ -672,7 +672,7 @@ A message may add entries, owned by `session`. They are candidates from that mes
 - **`pinned`** messages are repeated in the Context slot while they remain on the path.
 - **`hidden`** messages are in the transcript, but are never sent to models, scanned or summarized.
 - **`summary`** condenses the messages from `from` to its message, and MAY stand in for them in history. Without `knownBy`, it is known by the characters who know every part it covers, and reaches the narrator only if the narrator can see every part (Play 7). A summary MUST match its messages as they are: one whose covered messages changed or are gone is removed.
-- **Records-only messages.** A system message with empty `content` carries `changes`, such as player edits (Play 3.3), and, on a root made from an opening without `content`, `opening`; it has no `entries`, `summary`, `activated` or `char` and isn't pinned. It is not sent to models, not scanned, and not counted for `scanDepth` or numeric positions.
+- **Records-only messages.** A system message with empty `content` carries `changes`, such as player edits (Play 3.3), and, on a root made from an opening without `content`, `opening`; it has no `summary`, `activated` or `char`, has `entries` only on a root, and isn't pinned. It is not sent to models, not scanned, and not counted for `scanDepth` or numeric positions.
 
 ---
 
@@ -761,7 +761,8 @@ Writers MUST stay within these limits. Readers MUST accept files within them, an
 | ZIP entries in a package / unpacked size | 10,000 / 512 MiB |
 | Image size | 8,192 × 8,192 pixels |
 | JSON nesting depth | 64 |
-| Entries / variables / events in a bundle, all owners | 10,000 / 1,000 / 1,000 |
+| Entries / variables / events in a bundle, and in the characters and worlds a session adds | 10,000 / 1,000 / 1,000 each |
+| Session entries on a path, the latest per ID | 10,000 |
 | One CEL expression or regex key | 4 KiB |
 | Characters in a session's cast | 256 |
 | A string state value, in UTF-8 | 4 KiB |
@@ -777,17 +778,17 @@ A conforming **writer** produces files that validate against the schemas, pass t
 
 ### 17.2 Checks
 
-Messages are never dropped for a failed check, except the lines that `PARSE` and `DUPLICATE_ID` skip and a message whose `parent` names no earlier message, which `UNKNOWN_MESSAGE` skips with its descendants.
+Messages are never dropped for a failed check, except the lines that `PARSE`, `SCHEMA` and `DUPLICATE_ID` skip and a message whose `parent` names no earlier message, which `UNKNOWN_MESSAGE` skips with its descendants.
 
 | Code | Check | Consequence |
 | --- | --- | --- |
 | `PARSE` | The input is UTF-8 JSON (section 2.2) or JSON Lines, a Troupe document of the `kind` its form holds (section 14.1), within the limits the reader enforces (section 16), and a safe package (section 16 item 7) | The file isn't read; in a session, an unreadable line other than the header is skipped |
 | `UNSUPPORTED_VERSION` | `troupe`, when present, is the reader's own version (section 15); a missing `troupe`, or one that isn't `major.minor`, is only `SCHEMA` | Another major version isn't read; another minor version is a warning (from 1.0, only a newer one) |
-| `SCHEMA` | The document validates against its schema, apart from unknown properties (section 15) | The reader MAY refuse the file |
+| `SCHEMA` | The document validates against its schema, apart from unknown properties (section 15) | The reader MAY refuse the file. Otherwise it removes each value at a location where validation fails and validates again, until nothing fails: an invalid `weight` reads as absent, an entry without `text` is ignored, a message line that fails is skipped, and a document that fails as a whole isn't read |
 | `UNKNOWN_FIELD` | Every property is known to the reader's schema (section 15) | A warning |
 | `DUPLICATE_ID` | IDs are unique as section 2.3 and section 12.1 require | The first is kept; a scenario variable that clashes with a character or world is ignored instead (section 2.3), and two replacements of one character make the session unplayable (section 12.2) |
 | `UNKNOWN_SCENARIO` | The header's `scenario` names a scenario | The session can't be played |
-| `UNKNOWN_CHARACTER` | Cast members, `knownBy` (where `narrator` is also allowed), speakers, example speakers (or `char`, `user`), message `char`, members of `scene.present` values and character keys name characters in the bundle or session; a memory's `knownBy` names its chronicle's character, persona or `narrator` | The ID is ignored; a cast member or example exchange naming it is skipped |
+| `UNKNOWN_CHARACTER` | Cast members, `knownBy` (where `narrator` is also allowed), speakers, example speakers (or `char`, `user`), message `char`, members of `scene.present` values and character keys name characters in the bundle or session; a memory's `knownBy` names its chronicle's character, persona or `narrator` | The ID is ignored, and a `knownBy` left empty reads as `["narrator"]`; a cast member or example exchange naming it is skipped |
 | `UNKNOWN_WORLD` | `scenario.worlds` names bundle worlds | The ID is ignored |
 | `UNKNOWN_LOCATION` | Locations in values and `parent` exist, without cycles | The value is invalid; a `parent` naming no location is ignored, and so is the `parent` of the first location, in file order, on each cycle |
 | `UNKNOWN_OPENING` | A root's `opening` exists | `opening` reads as `""` |
@@ -1083,10 +1084,10 @@ A new session that continues this chronicle starts with `closeness` at 58 and bo
 | Absolute changes, recorded | JSON Patch, or recomputing | Replay needs no evaluation, from any channel. |
 | Literal `set`, CEL `compute` | One field with CEL strings | Plain values without quoting traps. |
 | Weighted outcomes, `roll(n)`, `on` | Chains of chance events | Random choices are one declaration with correct odds, rolled at the right moment. |
-| Structural limits on CEL and on values | A cost budget each app sets | Every app evaluates every expression to the same result, and cost stays bounded without measuring it. |
+| Structural limits on CEL and on values; an app out of resources fails instead of recording a different outcome | A cost budget the spec sets, or each app's budget deciding results | Every app evaluates every expression to the same result, and a server can still defend itself against a hostile file. |
 | CEL equality within one type, ordering across `int` and `double`; no conversions from strings; literals of one type; maps iterated in code point order | CEL's full heterogeneous equality, string parsing and insertion-ordered maps | Common CEL libraries agree on these without custom code, and two apps never disagree about what an expression means. |
 | Regexes limited to what every RE2 implementation compiles | Whatever the app's engine accepts | A key is valid or `REGEX_ERROR` in every app alike; an invalid key matches nothing instead of vanishing and turning its entry always on. |
-| Caps on entries, variables and events | Only a file size cap | They bound the work every message does, so a server can accept any conforming file. |
+| Caps on entries, variables, events and `scanDepth`, counting what a session adds | Only a file size cap | They bound the work every message does. |
 | Durations in rounds | Messages | The same file behaves the same in solo and group chats. |
 | Player and model text stored escaped, so it stays literal | Resolving macros in it; deciding by who wrote a text whether to resolve it | Every text resolves the same way, so a reader never needs to know who wrote it, and no hidden state leaks through model output or prompt attacks. |
 | Priority means importance; file order is prompt order | Priority doing three jobs | Authors order lore by writing it in order. |
@@ -1103,6 +1104,7 @@ A new session that continues this chronicle starts with `closeness` at 58 and bo
 | No executable code | Scripts in cards | Scripts in shared cards can steal API keys. |
 | No text transforms | Regex scripts that rewrite text | Most build HTML, fix one model's quirks, or display stats that state now covers. |
 | Strict schemas, lenient readers | Either everywhere | Writers catch typos; readers stay forward compatible. |
+| A reader that keeps a file failing its schema removes each failing value | Refusing it, or each reader repairing it its own way | Every lenient reader plays the same story from the same broken file. |
 | Writers leave out empty optional fields and write booleans as they like | Allowing `""` and `[]` anywhere; treating an explicit `false` as different from absent | Two writers of the same story produce the same fields, and typed serializers that write defaults still validate. |
 | Writers use two part types; readers skip others | Open part types; refusing unknown ones | A later version can add a media part that older readers skip instead of refusing the session. |
 | Readers must keep only `ext` | Keeping every unknown field, and stamping the newer version | Apps add data only in `ext`, so other unknown fields are typos or come from a version the reader doesn't support. |
