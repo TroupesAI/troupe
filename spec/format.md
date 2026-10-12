@@ -441,7 +441,7 @@ In an owner's own events, a key written `own.nerve` means `kai.nerve`; recorded 
 
 - Read a key as `state.trust.kai` or `own.feelings.elena`; change it as `trust.kai` or `own.feelings.elena`. In CEL, look up a computed key with brackets: `state.trust[char]`, `own.feelings[user]`. Change keys always name keys literally, so `trust.char` names a key `char`.
 - `initial` is one value for every key, or an object of values by key with `*` as an optional default; keys outside the key set are ignored, and a key without a value or `*` takes the type's default. For preparation, an absent key's current value is its initial value.
-- Keys of `"*"` maps start absent, and `"*"` takes no `initial`. Preparation counts an absent key as the type's default, and setting a key to the default removes it; in CEL an absent key is absent, so test it with `has()` or `in`. Their keys are in code point order.
+- Keys of `"*"` maps start absent, and `"*"` takes no `initial`. Preparation counts an absent key as the type's default (section 8.1), and setting a key to the default removes it; in CEL an absent key is absent, so test it with `has()` or `in`. Their keys are in code point order.
 
 ### 8.4 The scene
 

@@ -1,0 +1,122 @@
+{
+  "description": "World order in play (Play 3.3, 5.1): a scenario's worlds run and contribute entries in its worlds order, not bundle order",
+  "bundle": {
+    "kind": "bundle",
+    "worlds": [
+      {
+        "id": "a",
+        "name": "A",
+        "variables": [
+          {
+            "id": "n",
+            "type": "int",
+            "description": "d"
+          }
+        ],
+        "entries": [
+          {
+            "id": "ea",
+            "text": "A."
+          }
+        ],
+        "events": [
+          {
+            "id": "ev",
+            "when": "true",
+            "set": {
+              "own.n": 1
+            }
+          }
+        ]
+      },
+      {
+        "id": "b",
+        "name": "B",
+        "variables": [
+          {
+            "id": "n",
+            "type": "int",
+            "description": "d"
+          }
+        ],
+        "entries": [
+          {
+            "id": "eb",
+            "text": "B."
+          }
+        ],
+        "events": [
+          {
+            "id": "ev",
+            "when": "true",
+            "set": {
+              "own.n": 1
+            }
+          }
+        ]
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s",
+        "worlds": [
+          "b",
+          "a"
+        ]
+      }
+    ]
+  },
+  "session": {
+    "header": {
+      "kind": "session",
+      "scenario": "s",
+      "seed": "conformanceSeed0001"
+    },
+    "messages": [
+      {
+        "id": "1",
+        "from": "player",
+        "content": [
+          {
+            "text": "x"
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "select",
+      "messageId": "2",
+      "expect": {
+        "activated": [
+          "b/eb",
+          "a/ea"
+        ]
+      }
+    },
+    {
+      "type": "events",
+      "at": "1",
+      "eventMessageId": "e1",
+      "expect": {
+        "changes": [
+          {
+            "by": "rules",
+            "event": "b/ev",
+            "set": {
+              "b.n": 1
+            }
+          },
+          {
+            "by": "rules",
+            "event": "a/ev",
+            "set": {
+              "a.n": 1
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

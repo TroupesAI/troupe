@@ -899,6 +899,55 @@
           ]
         }
       }
+    },
+    {
+      "type": "output",
+      "name": "an item dropped for its schema doesn't count as an earlier ID",
+      "reply": {
+        "id": "3",
+        "parent": "2"
+      },
+      "output": {
+        "parts": [
+          {
+            "text": "Rain."
+          }
+        ],
+        "entries": [
+          {
+            "id": "memo",
+            "text": null
+          },
+          {
+            "id": "memo",
+            "text": "Real."
+          }
+        ]
+      },
+      "expect": {
+        "message": {
+          "id": "3",
+          "parent": "2",
+          "from": "model",
+          "content": [
+            {
+              "text": "Rain."
+            }
+          ],
+          "changes": [
+            {
+              "by": "model",
+              "set": {}
+            }
+          ],
+          "entries": [
+            {
+              "id": "memo",
+              "text": "Real."
+            }
+          ]
+        }
+      }
     }
   ]
 }

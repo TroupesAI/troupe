@@ -53,7 +53,7 @@ Format 2 applies here, including requirement keywords. "Format 7.2" means sectio
    3. its own changes;
    4. the answers.
 
-   In both, a change that would set nothing isn't recorded, except the chronicle's, which every root of a session that continues a chronicle records first.
+   In both, a change whose prepared `set` is empty isn't recorded, except the chronicle's, which every root of a session that continues a chronicle records first.
 5. Evaluate events at the root.
 
 Every later root, from another opening or a player's message, is made by steps 3 to 5; in a session that continues a chronicle, its first change and its entries are copies of the first change and the entries of the session's earliest root line.
@@ -112,7 +112,7 @@ A key whose prepared value is no longer valid, such as a set grown past its limi
 
 **Events.** At each root, after each player or model message once its player and model changes and any extraction on it are recorded, and after player edits, an event pass runs before anything is generated after that message:
 
-1. Events in use are evaluated in a single pass, once each, in this order: the scenario's, the scenario's worlds', the session's worlds', then the characters' in cast order, each owner's in array order. An event with `on` is skipped unless the triggering message is of that kind; a root made from an opening and a records-only message are of neither kind. Each sees the state, firings and counts left by those before it. Messages added by events don't trigger evaluation.
+1. Events in use are evaluated in a single pass, once each, in this order: the scenario's, its worlds' in its `worlds` order (bundle order when absent), the session's worlds' in header order, then the characters' in cast order, each owner's in array order. An event with `on` is skipped unless the triggering message is of that kind; a root made from an opening and a records-only message are of neither kind. Each sees the state, firings and counts left by those before it. Messages added by events don't trigger evaluation.
 2. An event fires when its `when` is true; it isn't `once` with an earlier firing on the path; its distance from its last firing is greater than `cooldown` (0 when unset), so it fires at most once per round; and its `chance` roll succeeds.
 3. A firing chooses an outcome by a weighted roll, if there are `outcomes`. The event's `set` and `compute`, then the outcome's, produce new values; later keys replace earlier ones. Every `compute` expression sees the state before this firing. Values are prepared as above.
 4. The firing is recorded on the triggering message as `{"by": "rules", "event": name, "outcome": index, "set": {…}}`, even when `set` is empty.
@@ -150,7 +150,7 @@ Nothing in the payload takes `ext`, and:
 
 How an app takes the payload out of a reply is up to it. Output that isn't a JSON object is discarded, and nothing is recorded. Otherwise apps apply a payload in this order:
 
-1. Read its empty values as Format 2.2 says, except that an empty `knownBy` stays empty for steps 3 and 5, and drop its unknown properties (Format 15), and a tracker run's `parts`. Drop each top-level property, part, entry or newcomer that still fails the schema, and each entry or newcomer whose ID an earlier one in the payload has. A structured reply left with no parts is discarded, and nothing is recorded.
+1. Read its empty values as Format 2.2 says, except that `knownBy: []` stays empty for steps 3 and 5, and drop its unknown properties (Format 15), and a tracker run's `parts`. Drop each top-level property, part, entry or newcomer that still fails the schema, and then each entry or newcomer whose ID an earlier remaining one has. A structured reply left with no parts is discarded, and nothing is recorded.
 2. `characters` join the header, after its other characters, in payload order.
 3. `parts` are stored. A speaker that names no cast character is dropped (a newcomer that joined is in the cast), and so is each `knownBy` ID other than `narrator` that names none. A `knownBy` that is empty, or whose IDs are all dropped, becomes `["narrator"]`, or `[<speaker>, "narrator"]` on a part with a speaker.
 4. `changes` are recorded as one `{"by": "model", …}` change, prepared as in section 3.3, on the message the tracker runs on or on the reply itself. Every extraction records this change, with an empty `set` when it changes nothing, which marks where the next tracker run starts.
@@ -203,7 +203,7 @@ This section is the deterministic baseline for choosing entries. Given the same 
 
 When a prompt is built for a new message, the candidates are the entries, not `disabled` and not placed in `tracker`, of:
 
-1. the scenario's worlds, then the session's worlds;
+1. the scenario's worlds, in its `worlds` order (bundle order when absent), then the session's worlds, in header order;
 2. present characters in cast order, then the character being generated for if absent;
 3. the scenario;
 4. the session: entries added by messages on the path, the latest per ID, in the order their IDs first appear.
