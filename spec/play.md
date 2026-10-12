@@ -117,7 +117,7 @@ A key whose prepared value is no longer valid, such as a set grown past its limi
 3. A firing chooses an outcome by a weighted roll, if there are `outcomes`. The event's `set` and `compute`, then the outcome's, produce new values; later keys replace earlier ones. Every `compute` expression sees the state before this firing. Values are prepared as above.
 4. The firing is recorded on the triggering message as `{"by": "rules", "event": name, "outcome": index, "set": {…}}`, even when `set` is empty.
 5. The `message` parts of all firings in the pass, event before outcome, form one `from: "system"` message, a child of the triggering message, which becomes the head.
-6. The `direct` texts of the firings recorded on the triggering message, each event's before its outcome's, go into the System slot of every prompt built while no model message that isn't hidden lies on the path after it.
+6. The `direct` texts of the firings recorded on the triggering message, each event's before its outcome's and in path order across messages, go into the System slot of every prompt built while no model message that isn't hidden lies on the path after it.
 
 ### 3.4 Model output
 
@@ -178,7 +178,7 @@ roll(purpose, seed, messageId, subject):
 | `{{pick}}` | `pick` | `""` | the options joined by `::`, then `#` and the macro's index among the picks in that string, from 0 | option `roll mod count` |
 
 - **`seed`** is the session's. A message's ID is fixed before its prompt is built.
-- **Weighted pick:** with candidates in order and total integer weight *W*, let `t = roll mod W`; pick the first candidate whose running total of weights exceeds `t`.
+- **Weighted pick:** with candidates in order (file order for a group, array order for outcomes) and total integer weight *W*, let `t = roll mod W`; pick the first candidate whose running total of weights exceeds `t`.
 - `chance · 2^48` is exact in double precision, so `chance: 1` always passes and `0` never does.
 
 Test vectors, with seed `k7Qm2xVb9TzR4pLc8NwYfA`:
@@ -219,7 +219,7 @@ An entry's scanned text is built from the last `scanDepth` messages on the path,
 Matching works on Unicode scalar values, with scanned text and plain keys normalized to NFC. Apps SHOULD use Unicode 15.1 or later.
 
 - **Case:** comparison uses simple case folding (statuses C and S of `CaseFolding.txt`).
-- **Plain keys** match where no letter, digit or mark (General Categories L, N and M) directly touches either end of an occurrence. Keys containing Han, Hiragana, Katakana, Hangul, Thai, Lao, Khmer, Myanmar or Tibetan characters match anywhere.
+- **Plain keys** match where no letter, digit or mark (General Categories L, N and M) directly touches either end of an occurrence. Keys containing characters whose Script property is Han, Hiragana, Katakana, Hangul, Thai, Lao, Khmer, Myanmar or Tibetan match anywhere.
 - **Regex keys** are compiled unchanged as RE2 patterns, case-insensitive unless the pattern clears the flag, and match anywhere.
 - An empty key, as in `hit('')`, matches nothing.
 

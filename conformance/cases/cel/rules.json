@@ -1,5 +1,5 @@
 {
-  "description": "CEL rules (Format 11.1, 11.2): comprehensions over a map visit keys in code point order; list and map literals hold one type; type names and whole state objects aren't values; CEL's runtime errors (overflow, division by zero, out-of-range conversion) make a condition false; comprehension bodies, not targets, count toward nesting; absent keys of \"*\" maps are absent in CEL (Format 8.3); matches() patterns are valid regexes (Format 16 item 5); an unknown time zone makes hour and weekday −1; with no player, user is \"\"; hit() takes a literal; selecting an absent value is a runtime error; an invalid hit() regex is a CEL_ERROR",
+  "description": "CEL rules (Format 11.1, 11.2): comprehensions over a map visit keys in code point order; list and map literals hold one type; type names and whole state objects aren't values; CEL's runtime errors (overflow, division by zero, out-of-range conversion) make a condition false; comprehension bodies, not targets, count toward nesting; absent keys of \"*\" maps are absent in CEL (Format 8.3); matches() patterns are valid regexes (Format 16 item 5); an unknown time zone makes hour and weekday −1; with no player, user is \"\"; hit() takes a literal; selecting an absent value is a runtime error; an invalid hit() regex is a CEL_ERROR; has() is true exactly when the selection isn't a runtime error",
   "bundle": {
     "kind": "bundle",
     "scenarios": [
@@ -42,6 +42,29 @@
             "type": "int",
             "derive": "100 / state.zero",
             "description": "fails at runtime"
+          },
+          {
+            "id": "crew",
+            "type": "set",
+            "description": "d"
+          }
+        ],
+        "cast": [
+          {}
+        ]
+      }
+    ],
+    "characters": [
+      {
+        "id": "zed",
+        "name": "Zed",
+        "description": "Not in the cast.",
+        "variables": [
+          {
+            "id": "mood",
+            "type": "string",
+            "initial": "calm",
+            "description": "d"
           }
         ]
       }
@@ -152,7 +175,7 @@
     },
     {
       "type": "cel",
-      "name": "a comprehension in a body's target still counts its body depth",
+      "name": "a comprehension in a nested body is three deep",
       "expr": "[[[1]]].all(a, a.all(b, b.map(c, c).size() > 0))",
       "expect": {
         "checkError": true
@@ -228,6 +251,24 @@
       "expect": {
         "checkError": true
       }
+    },
+    {
+      "type": "cel",
+      "name": "has() is true for a present value, even zero or empty",
+      "expr": "has(state.zero) && has(state.crew)",
+      "expect": true
+    },
+    {
+      "type": "cel",
+      "name": "has() is false for a derived value that failed, never an error",
+      "expr": "!has(state.ratio)",
+      "expect": true
+    },
+    {
+      "type": "cel",
+      "name": "has() is false for a variable whose owner isn't in use",
+      "expr": "!has(state.zed.mood)",
+      "expect": true
     }
   ]
 }
