@@ -21,13 +21,22 @@ export const sources = [
 
 export const url = (route: string) => (route === "index" ? "/" : `/${route}/`);
 
-// The README's first paragraph, which says what Troupe is.
-export const tagline = read("README.md").match(/^# .+\n+(.+)\n/)?.[1];
+// The documents are read on each use rather than once, so astro dev shows edits without a restart.
+
+// The README as the home page: its first paragraph says what Troupe is, and its main part ends where its sections for
+// the repository begin.
+export const readme = (text = read("README.md")) => {
+  const [, tagline, main] = text.match(/^# .+\n+(.+)\n([\s\S]*?)\n## Contributing\n/) ?? [];
+  if (!main) throw new Error("README.md has no first paragraph or no Contributing section");
+  return { tagline, main };
+};
 
 // From the spec's version line, "**Version 0.12 (draft)** · October 12, 2026".
-const [, version, status] = read("spec/format.md").match(/^\*\*Version (\S+) \((\w+)\)\*\*/m) ?? [];
-if (!version) throw new Error("spec/format.md has no version line");
-export const spec = { version, status };
+export const spec = () => {
+  const [, version, status] = read("spec/format.md").match(/^\*\*Version (\S+) \((\w+)\)\*\*/m) ?? [];
+  if (!version) throw new Error("spec/format.md has no version line");
+  return { version, status };
+};
 
 // A heading's id on the site is its section number when it has one, such as 7.2 or B.1, so links read like
 // citations; other headings keep the GitHub anchor that the documents' own links use.
@@ -45,7 +54,7 @@ export const resolve = (href: string, from: string): string => {
   const source = sources.find((s) => s.file === file);
   if (source) return `${path ? url(source.route) : ""}${hash ? `#${anchor(file, hash)}` : ""}`;
   if (file === "schemas") return "/schema/";
-  if (/^schemas\/[^/]+\.json$/.test(file)) return `/schema/${spec.version}/${file.slice("schemas/".length)}`;
+  if (/^schemas\/[^/]+\.json$/.test(file)) return `/schema/${spec().version}/${file.slice("schemas/".length)}`;
   if (existsSync(join(root, file))) {
     return `${repo}/${statSync(join(root, file)).isDirectory() ? "tree" : "blob"}/main/${file}${hash ? `#${hash}` : ""}`;
   }
