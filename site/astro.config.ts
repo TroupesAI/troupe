@@ -46,6 +46,7 @@ export default defineConfig({
         SiteTitle: "./src/components/SiteTitle.astro",
         PageTitle: "./src/components/PageTitle.astro",
         Footer: "./src/components/Footer.astro",
+        ThemeSelect: "./src/components/ThemeSelect.astro",
       },
       expressiveCode: { themes: ["rose-pine-moon", "rose-pine-dawn"] },
       social: [{ icon: "github", label: "GitHub", href: repo }],
