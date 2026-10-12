@@ -214,7 +214,7 @@ Every field of `expect` is optional:
 | `firstMessage` | Without an opening: the player's first message, without `id` and `parent`. |
 | `chronicle` | `start` only: the chronicle document the session continues (Format 13). |
 
-`start` ignores the case's session and starts a new one. `swipe` adds another root to the case's session, and the new root becomes the head. An opening without `content` makes a records-only root (Play 2.1 step 4); the runner doesn't generate the first model message (step 6).
+`start` ignores the case's session and starts a new one. `swipe` adds another root to the case's session, and the new root becomes the head. An opening without `content` makes a records-only root (Play 2.1 step 4); the runner doesn't generate the first model message.
 
 Every field of `expect` is optional:
 

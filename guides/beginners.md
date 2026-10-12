@@ -99,7 +99,7 @@ An **entry** is any piece of text the model should read when its conditions hold
 How an entry gets into the prompt:
 
 - **No `keys`:** always on. Rules, secrets and goals are written this way.
-- **With `keys`:** it activates when one of the words appears in the last 4 messages, speakers' names included. Keys match whole words and ignore case, so `vault` doesn't match `vaulted`. A key between slashes, such as `/vaults?/`, is a pattern for plurals and partial words.
+- **With `keys`:** it activates when one of the words appears in the last 4 messages, speakers' names included. Keys match whole words and ignore case, so `vault` doesn't match `vaulted` (in Chinese, Japanese and Thai, keys match anywhere). A key between slashes, such as `/vaults?/`, is a pattern for plurals and partial words.
 - **With `when`:** a condition must hold too, such as "only after the tenth bell" (chapter 6).
 - **With `pull` and a `title`:** the entry is fetched on demand, by the model asking for it or by the app's search. Large lorebooks use this.
 
@@ -186,7 +186,7 @@ A heist needs a city, a target and a crew. A **world** is a setting that scenari
 - **`premise`** is the situation, sent to the model. **`briefing`** is for the players and is never sent to the model.
 - **`set`** in an opening gives starting values, here the location. The model learns where the scene is, and conditions can test it (chapter 6).
 - **An opening without `content`**, like `harbor`, lets the model write the first message. A list of these works as a menu of starting points.
-- **Presence.** The players' characters and the characters who speak in an opening start present, or the whole cast for an opening without `content`. Everyone else is offstage. An offstage character's description stays out of the prompt, and when someone mentions them, the model gets only their `summary`.
+- **Presence.** The players' characters and the characters who speak in an opening start present, or the whole cast for an opening without `content`, unless the opening's `set` lists `scene.present`. Everyone else is offstage. An offstage character's description stays out of the prompt, and when someone mentions them, the model gets only their `summary`.
 
 The weather entries show the timing and competition options:
 

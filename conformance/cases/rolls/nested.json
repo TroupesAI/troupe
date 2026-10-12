@@ -1,5 +1,5 @@
 {
-  "description": "Nested roll() calls are numbered by where they start (Play 4): in roll(roll(6)) the outer call is 0 and the inner 1",
+  "description": "Nested roll() calls are numbered by where they start (Play 4): in roll(roll(6)) the outer call is 0 and the inner 1; roll() of a number below 1 is a runtime error, so its compute key is skipped and the literal for the same key stands (Format 11.1, 11.2)",
   "note": "Inner: roll('dice', 'conformanceSeed0001', '1', 'e/e/x/1') mod 6 + 1 = 4. Outer: roll('dice', 'conformanceSeed0001', '1', 'e/e/x/0') mod 4 + 1 = 4.",
   "bundle": {
     "kind": "bundle",
@@ -11,6 +11,11 @@
             "id": "x",
             "type": "int",
             "description": "d"
+          },
+          {
+            "id": "y",
+            "type": "int",
+            "description": "d"
           }
         ],
         "events": [
@@ -19,6 +24,16 @@
             "when": "true",
             "compute": {
               "x": "roll(roll(6))"
+            }
+          },
+          {
+            "id": "zero",
+            "when": "true",
+            "set": {
+              "y": 5
+            },
+            "compute": {
+              "y": "roll(0)"
             }
           }
         ]
@@ -55,6 +70,13 @@
             "event": "e",
             "set": {
               "x": 4
+            }
+          },
+          {
+            "by": "rules",
+            "event": "zero",
+            "set": {
+              "y": 5
             }
           }
         ]

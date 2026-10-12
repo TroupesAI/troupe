@@ -2,7 +2,7 @@
 
 **Version 0.12 (draft)** · October 12, 2026
 
-This document defines how an app plays Troupe files: how it starts and continues a session, computes state, runs events, rolls dice, activates entries, fills a prompt and applies knowledge. Apps that follow it give the model the same content and record the same outcomes for the same files, seed and message IDs; formatting and the order of prompt slots stay the app's. [Troupe Format](format.md) defines the files and comes first.
+This document defines how an app plays Troupe files: how it starts and continues a session, computes state, runs events, rolls dice, activates entries, fills a prompt and applies knowledge. Apps that follow it give the model the same content and record the same outcomes for the same files, seed and message IDs. [Troupe Format](format.md) defines the files and comes first.
 
 > **Status.** This is a draft. Breaking changes are allowed until 1.0. It has the same version as Troupe Format.
 
@@ -38,7 +38,7 @@ Format 2 applies here, including requirement keywords. "Format 7.2" means sectio
 ### 2.1 Starting
 
 1. Generate a `seed` of at least 96 random bits, such as 16 bytes in base64url.
-2. Fill the player seats. A character, world or location brought into the session has an ID that Format 2.3 allows there: unique, except for a character meant as a replacement (Format 12.2).
+2. Fill the player seats.
 3. Ask the questions of variables in use that have `ask`.
 4. Create a root message for the chosen opening: `from: "system"`, with `opening` set and the content copied as written, or empty for an opening without `content`. It records these changes, in order:
    1. when the session continues a chronicle, its values in one `{"by": "rules", "set": …}` change (section 2.2);
@@ -51,7 +51,6 @@ Format 2 applies here, including requirement keywords. "Format 7.2" means sectio
 
    Without an opening, the player's first message is the root. It records the chronicle's change, then its own changes, then the answers. When the chronicle's character has no bundle character, the chronicle's change also sets `scene.present`: the presence of section 3.2 plus that character, in cast order.
 5. Evaluate events at the root. Opening macros see their results.
-6. For an opening without `content`, the first model message is a child of the root, or of the root's event message, generated for a present model-played character or the narrator.
 
 Another opening tried in the same session gets its own root, made by steps 4 and 5.
 
@@ -114,7 +113,7 @@ A key whose prepared value is no longer valid, such as a set grown past its limi
 3. A firing chooses an outcome by a weighted roll, if there are `outcomes`. The event's `set` and `compute`, then the outcome's, produce new values; later keys replace earlier ones. Every `compute` expression sees the state before this firing. Values are prepared as above.
 4. The firing is recorded on the triggering message as `{"by": "rules", "event": name, "outcome": index, "set": {…}}`, even when `set` is empty.
 5. The `message` parts of all firings in the pass, event before outcome, form one `from: "system"` message, a child of the triggering message, which becomes the head.
-6. `direct` texts go into the System slot of every prompt built while no model message lies on the path after the triggering message. `end` finishes the story on that path.
+6. The `direct` texts of the firings recorded on the triggering message, each event's before its outcome's, go into the System slot of every prompt built while no model message lies on the path after it.
 
 ### 3.4 Model output
 
@@ -141,8 +140,8 @@ type Newcomer = Pick<Character, "id" | "name" | "aliases" | "description" | "sum
 
 Nothing in the payload takes `ext`. A model adds story content, never mechanics or standing direction:
 
-- A newcomer has only `id`, `name`, `aliases`, `description` and `summary`; any other field is unknown (Format 15). A newcomer whose ID names a character, world, scenario or scenario variable of the bundle or session, an earlier newcomer of the payload included, or who would take the cast past its limit (Format 16), is dropped.
-- An entry takes no `position` or `priority`, which are unknown there, so it is placed in `context` with priority 50. An entry whose ID names a session entry on the path that isn't placed in `context` is dropped; a model may update or disable a context entry, such as a memory.
+- A newcomer whose ID names a character, world, scenario or scenario variable of the bundle or session, an earlier newcomer of the payload included, or who would take the cast past its limit (Format 16), is dropped.
+- An entry is placed in `context` with priority 50. An entry whose ID names a session entry on the path that isn't placed in `context` is dropped; a model may update or disable a context entry, such as a memory.
 
 Apps apply a payload in this order: `characters` join the header; `parts` are stored; `changes` are recorded as `{"by": "model", …}`, prepared as in section 3.3, on the newest message covered; and `entries` become session entries on the same message. Speakers that name no character in the session, newcomers included, are dropped, and so are `knownBy` IDs other than `narrator` that name none; a `knownBy` whose IDs are all dropped becomes `["narrator"]`, or `[<speaker>, "narrator"]` on a part with a speaker. Before applying a payload, apps read its empty values as Format 2.2 says and drop its unknown properties (Format 15); a part, entry or newcomer that still fails the schema is dropped, and change keys and values that aren't valid are dropped by preparation. Output that isn't a JSON object is discarded, and nothing is recorded. An **extraction** is a tracker run, or a structured reply from the narrator or the single voice. Each records one `{"by": "model", …}` change, with an empty `set` when it changes nothing, which marks where the next tracker run starts. The event pass after a message waits for any extraction the app runs on it.
 
@@ -262,7 +261,7 @@ Entries keep file order within a slot, and everything in a slot is filtered by s
 
 Some content is known only to certain characters.
 
-- **Entries** are known by their `knownBy`, or by everyone without it. `["narrator"]` means only the narrator.
+- **Entries** follow Format 7.4.
 - **History** follows the witness rule: a text or image part is known by its speaker, by the characters present after its message's changes, and, except on a root, by those present before them. `knownBy` on a part replaces this with exactly the listed characters; whispers and thoughts use it.
 - **Summaries** follow Format 12.4; **pinned messages** follow their parts.
 
@@ -289,7 +288,7 @@ A conforming **app** reads files as a conforming reader (Format 17.1), and also 
 | Decision | Instead of | Why |
 | --- | --- | --- |
 | Write-back carries only what a session changed | Rewriting every carried value from the path | Two sessions that continue one chronicle keep each other's progress; a key both changed takes the later write. |
-| App actions unspecified: editing, deleting, continuing, previews, turn order | Procedures for each | A reader only ever sees the snapshot those actions leave, so the spec constrains the snapshot (permanent message IDs, summaries that match their messages) and leaves the actions to apps. |
+| App actions unspecified: editing, deleting, continuing, previews, turn order | Procedures for each | A reader only ever sees the snapshot those actions leave, so the spec constrains the snapshot (summaries that match their messages) and leaves the actions to apps. |
 | Story fixed, fitting a recorded baseline | Specifying only content, or only procedures | Outcomes replay exactly, and better fitting can come later. |
 | Identical entry selection is a MUST | Leaving selection to each app | Every app gives the model the same lore for the same file and session, and the conformance suite can test selection. |
 | Events in a single pass, once per round, one message per pass | Cascading rules | Deterministic, terminating, no accidental branches. |

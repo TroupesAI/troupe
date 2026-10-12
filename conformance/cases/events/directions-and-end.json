@@ -1,5 +1,5 @@
 {
-  "description": "Directions apply while no model message follows the trigger; end finishes the path (Play 3.3 step 6)",
+  "description": "Directions apply while no model message follows the trigger; end finishes the path (Format 9; Play 3.3 step 6)",
   "bundle": {
     "kind": "bundle",
     "characters": [
