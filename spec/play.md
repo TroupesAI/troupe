@@ -102,7 +102,7 @@ Before recording a change, apps drop each key that isn't valid, or whose value i
 2. for `by: "model"`, limit the difference from the current value to `maxStep`;
 3. for `oneWay` variables, except in a root's chronicle, opening and answer changes (section 2.1), keep the current value instead of a move backward; a set becomes its current members followed by the value's new ones, normalized as in step 1;
 4. round `number` values to the nearest double to the decimal that ECMAScript `Number.prototype.toFixed(6)` produces;
-5. clamp: raise the value to `min`, then lower it to `max`.
+5. clamp: raise the value to `min`, then lower it to `max`; a bound named by a variable the same change sets is that variable's prepared new value.
 
 A key whose prepared value is no longer valid, such as a set grown past its limit (Format 16), is dropped too, and so is a key that would take a `"*"` map past its limit, after applying the keys kept before it in the change. Within a message, changes are recorded in the order they happen: on a root, in the order of section 2.1, then any extraction's change; on any message, player and model changes before the changes of the events they trigger.
 
@@ -148,9 +148,9 @@ Nothing in the payload takes `ext`, and:
 - A newcomer whose ID names a character, world, scenario or scenario variable of the bundle or session, an earlier newcomer of the payload included, or who would take the cast past its limit (Format 16), is dropped.
 - An entry is dropped when the latest version of the session entry with its ID on the path, merged as Format 12.3 says and disabled or not, isn't placed in `context`; a model may update or disable a context entry, such as a memory.
 
-Output that isn't a JSON object is discarded, and nothing is recorded. Otherwise apps apply a payload in this order:
+How an app takes the payload out of a reply, such as from a tool call or a fenced block, is up to it. Output that isn't a JSON object is discarded, and nothing is recorded. Otherwise apps apply a payload in this order:
 
-1. Read its empty values as Format 2.2 says, an empty `knownBy` aside (step 3), and drop its unknown properties (Format 15), and a tracker run's `parts`. Drop each top-level property, part, entry or newcomer that still fails the schema, and each entry or newcomer whose ID an earlier one in the payload has. A structured reply left with no parts is discarded, and nothing is recorded.
+1. Read its empty values as Format 2.2 says, except that an empty `knownBy` stays empty for steps 3 and 5, and drop its unknown properties (Format 15), and a tracker run's `parts`. Drop each top-level property, part, entry or newcomer that still fails the schema, and each entry or newcomer whose ID an earlier one in the payload has. A structured reply left with no parts is discarded, and nothing is recorded.
 2. `characters` join the header.
 3. `parts` are stored. A speaker that names no cast character is dropped (a newcomer that joined is in the cast), and so is each `knownBy` ID other than `narrator` that names none. A `knownBy` that is empty, or whose IDs are all dropped, becomes `["narrator"]`, or `[<speaker>, "narrator"]` on a part with a speaker.
 4. `changes` are recorded as one `{"by": "model", …}` change, prepared as in section 3.3, on the message the tracker runs on or on the reply itself. Every extraction records this change, with an empty `set` when it changes nothing, which marks where the next tracker run starts.
@@ -308,6 +308,8 @@ A conforming **app** reads files as a conforming reader (Format 17.1), follows F
 | Model output adds story content only: newcomers without mechanics, entries without placement, no replacing characters, state names or directions | Accepting full characters and entries from a model | A reply, or text a player coaxes out of a model, can't add rules, recast a character or plant a standing instruction. |
 | A model payload is read leniently, item by item | Discarding a payload that fails its schema | Models write `null` and empty values for optional fields; a bad newcomer or entry shouldn't lose a reply's text and changes. |
 | `scene.present` filtered to the cast | Dropping a whole presence change for one unknown ID | Trackers often name someone the story never introduced; the rest of the change is still right. |
+| A repeated write-back starts after the app's last one | Recording write-back points in the session | Keeps the file app-neutral; an app that receives a session without that point writes back from the root. |
+| A root holds only the start's entries | Letting an extraction on a root add entries | Later roots copy a root's entries and write-back skips them, so model entries there would be copied as memories and never written back. |
 | Player edits on a new records-only message | Appending to the head when it is a player message | One place for every edit, and recorded firings never need re-evaluating. |
 | Starting values exempt from `oneWay` | Preparing them like any change | An opening or a chronicle sets where the story starts, which may be below the variable's default. |
 | Prompt slots, not a fixed order or history length | One mandated order; rules for trimming history | Apps keep prompt caches warm, and fit history to their models as they see fit; numeric positions count the history as sent. |

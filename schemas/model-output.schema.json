@@ -50,10 +50,10 @@
   "$defs": {
     "names": {
       "type": "array",
-      "minItems": 1,
       "items": {
         "$ref": "bundle.schema.json#/$defs/nonEmpty"
-      }
+      },
+      "description": "knownBy IDs as a model wrote them; an empty list is narrator-only (Play 3.4)."
     },
     "entry": {
       "description": "A session entry a model adds: an Entry without position or priority (Play 3.4).",

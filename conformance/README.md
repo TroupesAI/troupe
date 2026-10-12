@@ -364,7 +364,7 @@ Every field of `expect` is optional:
 - `variables` is the state names of the variables the tracker may change, in event order (Play 3.3): `bell`, `kai.nerve`.
 - `entries` is the references of the tracker entries it receives, in order.
 - `contextEntries` is the references of the context session entries it receives, in order.
-- `messages` is the IDs of the messages it may read: those after the last extraction on the path up to `at` that are sent to models, in path order.
+- `messages` is the IDs of the messages it may read: those after the last extraction on the path before `at`, up to `at`, that aren't hidden and have content, in path order.
 
 ## 5. Floating point and text
 

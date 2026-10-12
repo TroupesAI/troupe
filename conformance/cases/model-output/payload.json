@@ -843,6 +843,62 @@
           ]
         }
       }
+    },
+    {
+      "type": "output",
+      "name": "an empty knownBy on a part keeps its speaker; on an entry it is narrator-only",
+      "reply": {
+        "id": "3",
+        "parent": "2"
+      },
+      "output": {
+        "parts": [
+          {
+            "speaker": "a",
+            "knownBy": [],
+            "text": "*A private thought.*"
+          }
+        ],
+        "entries": [
+          {
+            "id": "hunch",
+            "knownBy": [],
+            "text": "A hunch."
+          }
+        ]
+      },
+      "expect": {
+        "message": {
+          "id": "3",
+          "parent": "2",
+          "from": "model",
+          "content": [
+            {
+              "speaker": "a",
+              "knownBy": [
+                "a",
+                "narrator"
+              ],
+              "text": "*A private thought.*"
+            }
+          ],
+          "changes": [
+            {
+              "by": "model",
+              "set": {}
+            }
+          ],
+          "entries": [
+            {
+              "id": "hunch",
+              "knownBy": [
+                "narrator"
+              ],
+              "text": "A hunch."
+            }
+          ]
+        }
+      }
     }
   ]
 }

@@ -1,5 +1,5 @@
 {
-  "description": "min and max may name another variable of the same owner, whose current value is the bound, unless that variable's own bounds name variables (Format 8.1); rounding comes before clamping (Play 3.3 steps 4–5)",
+  "description": "min and max may name another variable of the same owner, whose current value is the bound, unless that variable's own bounds name variables (Format 8.1); rounding comes before clamping (Play 3.3 steps 4–5); a bound the same change sets applies with its prepared new value",
   "bundle": {
     "kind": "bundle",
     "characters": [
@@ -159,6 +159,22 @@
             "at": "/scenarios/0/variables/4/max"
           }
         ]
+      }
+    },
+    {
+      "type": "prepare",
+      "name": "a bound the same change sets is its new value: hp isn't clamped to the old max_hp",
+      "at": "1",
+      "by": "rules",
+      "set": {
+        "hp": 35,
+        "max_hp": 40
+      },
+      "expect": {
+        "set": {
+          "hp": 35,
+          "max_hp": 40
+        }
       }
     }
   ]
