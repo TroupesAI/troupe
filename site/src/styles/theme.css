@@ -69,8 +69,21 @@
 
 .header {
   border-bottom-color: var(--sl-color-hairline-light);
+  background-color: transparent;
+}
+
+/* The blur reaches past the header's bottom edge and is masked back to it. A blur that stops at the edge leaves the
+   tops of lines crossing under it sharp, which on phones show as a strip of half letters above the solid table of
+   contents bar. */
+.header::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 0 0 -100%;
   background-color: color-mix(in oklch, var(--sl-color-bg-nav) 85%, transparent);
   backdrop-filter: blur(12px);
+  mask-image: linear-gradient(black 50%, transparent 50%);
+  pointer-events: none;
 }
 
 .social-icons::after {
