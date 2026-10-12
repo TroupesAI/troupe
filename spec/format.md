@@ -130,7 +130,7 @@ MUST, MUST NOT, SHOULD, SHOULD NOT and MAY are used as described in RFC 2119 and
 | Kind | Grammar |
 | --- | --- |
 | Author IDs: characters, worlds, scenarios, locations, entries, openings, variables, events, groups, variable keys | `^[a-z][a-z0-9_]{0,63}$` |
-| Message, bundle, session and chronicle IDs | `^[A-Za-z0-9_-]{1,64}$` |
+| Message, bundle and chronicle IDs | `^[A-Za-z0-9_-]{1,64}$` |
 | Session seeds | `^[A-Za-z0-9_-]{16,64}$` |
 
 - Author IDs MUST NOT be a CEL reserved word: `as`, `break`, `const`, `continue`, `else`, `false`, `for`, `function`, `if`, `import`, `in`, `let`, `loop`, `namespace`, `null`, `package`, `return`, `true`, `var`, `void`, `while`.
@@ -309,9 +309,9 @@ interface Opening {
 
 ### 6.3 Openings
 
-- Each opening becomes a separate root message. Its `id` survives reordering and edits; conditions see the chosen one as `opening`.
+- Each opening that is played starts its own root message. Its `id` survives reordering and edits; conditions see the chosen one as `opening`.
 - `set` gives starting values, written like a change (section 8.5), with full keys: `{"scene.location": "vault", "bell": 11, "kai.nerve": 2}`. `own.` isn't resolved there.
-- **Without `content`**, the model writes the first message from the opening's setup: `{"id": "tavern", "title": "At the tavern", "set": {"scene.location": "tavern"}}`.
+- **Without `content`**, the model writes the first message, shaped by the opening's `set` and by entries that test `opening`: `{"id": "tavern", "title": "At the tavern", "set": {"scene.location": "tavern"}}`. `title` is never sent to models.
 - Play 2.1 says who is present at the start.
 - Parts without a speaker are scene narration.
 
@@ -503,7 +503,7 @@ interface Outcome {
 - **Outcomes** pick one weighted alternative per firing. `roll(n)` in an event's or outcome's `compute` rolls a die; each call is a separate roll.
 - **Messages** from all events in one pass form a single narration message after the trigger.
 - **`direct`** reaches the System slot of the next model reply and its regenerations, then expires.
-- **`end`** marks the story finished on that path; a `direct` on the same firing still reaches any later reply.
+- **`end`** marks the story finished on that path; a `direct` on the same firing still reaches the next model reply.
 
 ---
 
@@ -582,7 +582,7 @@ state.trust[char] >= 0.8 && hour < 6
 - Runtime errors make a condition false.
 - `state` and `own` are not indexed by computed strings; keyed variables are.
 - Expressions use only `bool`, `int`, `double`, `string`, list and map values; `bytes`, `uint` and `null` literals and the `timestamp()` and `duration()` functions are a `CEL_ERROR`, and so is `string()` of a double. Available functions are only `size`, `has`, `all`, `exists`, `exists_one`, `map`, `filter`, `in`, `contains`, `startsWith`, `endsWith`, `matches`, `int`, `double`, `string`, `bool`, and the functions above. `matches()` MUST use RE2 semantics.
-- Comprehensions (`all`, `exists`, `exists_one`, `map`, `filter`) nest at most two deep, and `roll()` isn't called inside one; an expression that breaks either is a `CEL_ERROR`. Apps evaluate every expression in full.
+- Comprehensions (`all`, `exists`, `exists_one`, `map`, `filter`) nest at most two deep, and `roll()` isn't called inside one; an expression that breaks either is a `CEL_ERROR`. No app-set budget stops an evaluation.
 
 ---
 
@@ -605,7 +605,7 @@ interface SessionHeader {
   scenario: string;                // scenario ID
   seed: string;                    // random, at least 96 bits
   timezone?: string;               // IANA time zone, for hour and weekday
-  characters?: Character[];        // players', joiners', newcomers' and replacements (section 12.2)
+  characters?: Character[];        // players', joiners' and replacements (section 12.2)
   players?: string[];              // distinct characters people control, in seat order
   worlds?: World[];                // lore packs added to the session
   head?: string;                   // the last message on the current path; the last message
@@ -625,7 +625,7 @@ interface Message {
   from: "player" | "model" | "system";
   char?: string;                   // model messages only: the character it was generated for; absent for the narrator
   content: Part[];                 // empty only for a records-only message (section 12.4)
-  at?: string;
+  at?: string;                     // when the message was written
   changes?: Change[];
   activated?: string[];            // distinct entry references (Play 5.4)
   entries?: Entry[];               // entries added from here on (section 12.3)
@@ -1095,6 +1095,7 @@ A new session that continues this chronicle starts with `closeness` at 58 and bo
 | Priority means importance; file order is prompt order | Priority doing three jobs | Authors order lore by writing it in order. |
 | Copies with `credits` | Live cross-bundle references, structured provenance | People write attribution as they like. |
 | `id` only links sessions and chronicles to their bundle | Rules for forks, translations, release order, version pins or hashes | Nothing could check them. A session that must keep the exact story it was played with travels in a package with that bundle. |
+| No authorship, model, partial-reply, reason or session ID fields | Message `author`, `model` and `stopped`, change `reason`, a header `id` | No rule reads them; apps keep such data in `ext`. |
 | No image-embedded form | Bundles hidden in PNG chunks for image hosts | Hosts strip the chunks, and a package or single file already carries a story with its images. |
 | No narrator voice | A character that defines the narrator | Narrator-only `system` entries already set its style. |
 | A scenario names its narrator | A fixed English name | `{{char}}` reads naturally in a story in any language. |

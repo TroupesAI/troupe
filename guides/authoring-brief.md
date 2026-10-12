@@ -47,7 +47,7 @@ One page for people and for LLMs asked to write Troupe files. Give it to a model
 7. Without `by`, only openings, events and answers to `ask` can change a variable.
 8. An entry, a variable and an event of the same owner can't share an ID.
 9. `knownBy: ["narrator"]` is for the narrator alone; an explicit `knownBy` hides an entry from the narrator unless it lists `narrator`. Narrator-only clues belong to the scenario, because a character's entries only count while they are present.
-10. Characters, worlds and scenarios can't be called `char`, `user`, `narrator`, `session`, `state`, `scene`, `players` or `own`, and a variable can't be called `scene`; no ID can be a CEL word such as `var`, `loop`, `function` or `package`.
+10. Characters, worlds and scenarios can't be called `char`, `user`, `narrator`, `session`, `state`, `scene`, `players` or `own`, and a variable can't be called `scene` or `own`; no ID can be a CEL word such as `var`, `loop`, `function` or `package`.
 11. Leave the player's character out unless the story defines it; then mark its cast member `player`.
 12. Don't write `null`. Leave fields out.
 

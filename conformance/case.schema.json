@@ -975,9 +975,6 @@
                       }
                     }
                   }
-                },
-                "chronicle": {
-                  "type": "object"
                 }
               }
             }

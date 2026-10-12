@@ -39,7 +39,7 @@ Format 2 applies here, including requirement keywords. "Format 7.2" means sectio
 
 1. Generate a `seed` of at least 96 random bits, such as 16 bytes in base64url.
 2. Fill the player seats. A character, world or location brought into the session has an ID that Format 2.3 allows there: unique, except for a character meant as a replacement (Format 12.2).
-3. Ask the questions of variables with `ask`.
+3. Ask the questions of variables in use that have `ask`.
 4. Create a root message for the chosen opening: `from: "system"`, with `opening` set and the content copied as written, or empty for an opening without `content`. It records these changes, in order:
    1. when the session continues a chronicle, its values in one `{"by": "rules", "set": …}` change (section 2.2);
    2. `{"by": "rules", "set": …}` with the opening's `set` and the starting `scene.present`;
@@ -47,7 +47,7 @@ Format 2 applies here, including requirement keywords. "Format 7.2" means sectio
 
    Of these, a change that would set nothing isn't recorded.
 
-   The starting `scene.present` is the opening's `scene.present` when its `set` lists one; otherwise the cast characters who speak in its content, or, for an opening without `content`, every character in the session's cast when it starts (Format 12.2). The players' characters, and the chronicle's character when it has no bundle character (section 2.2), are added to it.
+   The starting `scene.present` is the opening's `scene.present` when its `set` lists one; otherwise the cast characters who speak in its content, or, for an opening without `content`, every character in the session's cast when the root is made (Format 12.2). The players' characters, and the chronicle's character when it has no bundle character (section 2.2), are added to it.
 
    Without an opening, the player's first message is the root. It records the chronicle's change, then its own changes, then the answers. When the chronicle's character has no bundle character, the chronicle's change also sets `scene.present`: the presence of section 3.2 plus that character, in cast order.
 5. Evaluate events at the root. Opening macros see their results.
@@ -244,7 +244,7 @@ Troupe defines what goes into a prompt and in which slot; formatting, mapping to
 
 | Slot | Contents, in order |
 | --- | --- |
-| **System** | the app's own prompt; the session's `limits` (Format 12); selected entries placed in `system`; event directions (section 3.3) |
+| **System** | the app's own prompt; the session's `limits` (Format 12); selected entries placed in `system`; event directions (section 3.3); for a structured reply from the narrator or the single voice, the tracker's input other than the messages (section 3.4) |
 | **Setting** | the premise; world descriptions; the current location and its parents, innermost first |
 | **People** | present model-played characters, then the character being generated for if absent: description and cast `notes`; the players' characters, with their cast `notes`; offstage cast characters whose name or alias, as a plain key, matches the scanned text (section 5.2) of the last 4 messages, as the generation can see it: their `summary`, a character without one contributing nothing; dialogue examples of the present model-played characters and the character being generated for |
 | **Context** | selected entries placed in `context`; pinned messages |

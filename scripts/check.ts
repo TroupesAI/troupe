@@ -148,7 +148,13 @@ const caseFiles = (readdirSync(join(root, "conformance/cases"), { recursive: tru
 const cases = caseFiles.filter((f) => f.endsWith(".json"));
 const validCase = ajv.compile(JSON.parse(read("conformance/case.schema.json")));
 for (const f of caseFiles.filter((f) => f.endsWith(".jsonl"))) {
-  const header = JSON.parse(read(`conformance/cases/${f}`).split("\n")[0]);
+  let header: { troupe?: string };
+  try {
+    header = JSON.parse(read(`conformance/cases/${f}`).split("\n")[0]);
+  } catch (e) {
+    fail(`conformance/cases/${f}: ${(e as Error).message}`);
+    continue;
+  }
   if (header.troupe !== version) fail(`conformance/cases/${f}: troupe is ${header.troupe}, not ${version}`);
 }
 for (const f of cases) {

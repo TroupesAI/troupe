@@ -49,7 +49,7 @@ Every test starts from a fresh copy of the case's inputs. Tests don't affect eac
 
 1. **Absent values.** Apply Format 2.2 to the bundle, the session header and every message: `null`, `""` and `[]` in optional fields read as missing. State values (`set`, `initial`) keep `""` and `[]`. `scenario.worlds` keeps `[]`. Required text fields (an entry's or part's `text`, a character's `description`) and message `content` keep `""` and `[]`; an opening's `content` is optional, so `[]` there reads as missing.
 2. **Reading.** Read the session lines as a reader does (Format 12.1, 17.2): a line repeating an earlier message's ID is skipped, a message whose `parent` names no earlier message is skipped with its descendants, and the head is the header's `head` if it names a message, else the last message.
-3. **The story.** The session's `scenario` names the scenario. Without a session, a test may name it with `scenario`; otherwise use the bundle's first scenario. Header characters replace bundle characters as Format 12.2 says.
+3. **The story.** The session's `scenario` names the scenario. Without a session, a `start` test names it with `scenario`; otherwise use the bundle's first scenario. Header characters replace bundle characters as Format 12.2 says.
 
 `check` tests skip steps 1 and 2 on their own copy and validate the raw inputs (section 4.12). `read` tests read the raw lines themselves.
 
@@ -74,7 +74,7 @@ Each test has `type`, an optional `name` and `note` (informative), the inputs be
 - **Equality** is deep JSON equality. Object key order is ignored, array order matters, and numbers compare as IEEE 754 doubles.
 - **Subset** comparisons check only the keys `expect` lists; other keys in the actual result are ignored.
 - Lists of entry references, IDs and names are compared in the order the spec defines: file order, cast order, firing order or line order, as stated for each test.
-- Where `expect` gives a list of changes, firings or IDs, an absent field in the result counts as `[]`. Whole messages are compared as written: a message records only what the spec says it records, so a runner adds no `at`, `model` or `author`, and a message with no changes has no `changes`.
+- Where `expect` gives a list of changes, firings or IDs, an absent field in the result counts as `[]`. Whole messages are compared as written: a message records only what the spec says it records, so a runner adds no `at`, and a message with no changes has no `changes`.
 
 ### 4.1 `roll`: rolls (Play 4)
 
