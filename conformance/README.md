@@ -105,7 +105,7 @@ The state is flattened to an object with these keys:
 - `scene.location` and `scene.present`
 - every variable in use by its state name: the variable ID for a scenario's, `<owner>.<id>` for a character's or world's
 - one key per map key for keyed variables, such as `trust.kai` or `kai.feelings.elena`. Absent keys of `"*"` maps aren't listed.
-- derived variables, by state name, computed at that message; one whose expression fails at runtime is absent
+- derived variables, by state name, computed and prepared at that message; one whose expression fails at runtime, or whose prepared value is invalid, is absent (Play 3.2)
 
 `expect` is a subset of the flattened state.
 
@@ -194,7 +194,7 @@ Every field of `expect` is optional:
 | --- | --- |
 | `expr` | A CEL expression. |
 | `kind` | `"entry"` or `"event"`, which decides whether `hit()` is available; `"event"` by default. |
-| `at` | The evaluation point. Omit it for none: `turn` 0, the initial state, `opening` and `last.*` `""`, `elapsed` 0, `hour` and `weekday` −1; `players` and `user` come from the session's header. |
+| `at` | The evaluation point. Omit it for none: `turn` 0, the initial state, `opening` and `last.*` `""`, `elapsed` 0, `hour` and `weekday` −1; `players` comes from the session's header, and `user` is the first player's character, or `""`. |
 | `char` | The value of `char`; `""` by default. |
 | `self` | The expression's owner, which also types `own`; the scenario by default. |
 

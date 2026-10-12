@@ -130,62 +130,49 @@
         "properties": {
           "from": {
             "const": "system"
+          },
+          "summary": false,
+          "activated": false,
+          "char": false,
+          "pinned": {
+            "const": false
           }
         },
-        "not": {
-          "anyOf": [
-            {
-              "required": [
-                "entries",
-                "parent"
-              ]
-            },
-            {
-              "required": [
-                "summary"
-              ]
-            },
-            {
-              "required": [
-                "activated"
-              ]
-            },
-            {
-              "required": [
-                "char"
-              ]
-            },
-            {
-              "required": [
-                "pinned"
-              ],
-              "properties": {
-                "pinned": {
-                  "const": true
-                }
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "description": "A root made from an opening is a system message without a parent.",
-      "if": {
-        "required": [
-          "opening"
-        ]
-      },
-      "then": {
-        "not": {
+        "if": {
           "required": [
             "parent"
           ]
         },
-        "properties": {
-          "from": {
-            "const": "system"
+        "then": {
+          "properties": {
+            "entries": false
           }
+        }
+      }
+    },
+    {
+      "description": "Only a root that is a system message names an opening.",
+      "if": {
+        "anyOf": [
+          {
+            "required": [
+              "parent"
+            ]
+          },
+          {
+            "not": {
+              "properties": {
+                "from": {
+                  "const": "system"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "then": {
+        "properties": {
+          "opening": false
         }
       }
     },
@@ -201,10 +188,8 @@
         }
       },
       "then": {
-        "not": {
-          "required": [
-            "char"
-          ]
+        "properties": {
+          "char": false
         }
       }
     }

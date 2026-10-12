@@ -1,5 +1,5 @@
 {
-  "description": "A reader that plays a file failing its schema removes each value where validation fails (Format 17.2): an out-of-range chance reads as absent, and an entry without text is ignored",
+  "description": "A reader that keeps a file failing its schema repairs it (Format 17.2): it removes the value where each assertion fails, so an out-of-range chance or priority reads as absent, oneWay on a string variable is removed while the variable stays, an entry without text is ignored, and a knownBy emptied by removing a bad ID reads as [\"narrator\"]",
   "bundle": {
     "kind": "bundle",
     "scenarios": [
@@ -19,8 +19,40 @@
             "id": "plain",
             "priority": 150,
             "text": "Priority reads as absent, so 50."
+          },
+          {
+            "id": "secret",
+            "knownBy": [
+              "Ann"
+            ],
+            "text": "A secret."
+          }
+        ],
+        "cast": [
+          {},
+          {
+            "character": "a"
+          }
+        ],
+        "variables": [
+          {
+            "id": "label",
+            "type": "string",
+            "oneWay": true,
+            "initial": "b",
+            "by": [
+              "player"
+            ],
+            "description": "d"
           }
         ]
+      }
+    ],
+    "characters": [
+      {
+        "id": "a",
+        "name": "Ann",
+        "description": "Ann."
       }
     ]
   },
@@ -28,7 +60,17 @@
     "header": {
       "kind": "session",
       "scenario": "s",
-      "seed": "conformanceSeed0001"
+      "seed": "conformanceSeed0001",
+      "characters": [
+        {
+          "id": "p",
+          "name": "Pat",
+          "description": "Pat."
+        }
+      ],
+      "players": [
+        "p"
+      ]
     },
     "messages": [
       {
@@ -36,6 +78,7 @@
         "from": "player",
         "content": [
           {
+            "speaker": "p",
             "text": "x"
           }
         ]
@@ -53,6 +96,9 @@
     },
     {
       "type": "select",
+      "name": "chance and priority read as absent; fitting drops the later of two at 50",
+      "note": "Had priority 150 been clamped to 100, s/lucky would be dropped instead.",
+      "for": "a",
       "messageId": "2",
       "maxEntries": 1,
       "expect": {
@@ -62,8 +108,44 @@
         "dropped": [
           "s/plain"
         ]
+      }
+    },
+    {
+      "type": "select",
+      "name": "the emptied knownBy is narrator-only",
+      "for": "a",
+      "messageId": "2",
+      "expect": {
+        "activated": [
+          "s/lucky",
+          "s/plain"
+        ]
+      }
+    },
+    {
+      "type": "select",
+      "name": "the narrator knows the secret",
+      "messageId": "2",
+      "expect": {
+        "activated": [
+          "s/lucky",
+          "s/plain",
+          "s/secret"
+        ]
+      }
+    },
+    {
+      "type": "prepare",
+      "name": "oneWay was removed, so the string moves back",
+      "by": "player",
+      "set": {
+        "label": "a"
       },
-      "note": "Both read as priority 50, so fitting drops the later one in file order; had priority 150 been clamped to 100, s/lucky would be dropped instead."
+      "expect": {
+        "set": {
+          "label": "a"
+        }
+      }
     }
   ]
 }

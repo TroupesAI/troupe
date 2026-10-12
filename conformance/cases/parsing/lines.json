@@ -102,6 +102,38 @@
           "PARSE"
         ]
       }
+    },
+    {
+      "type": "parse",
+      "name": "a message failing the schema at one value keeps the rest: the bad at is removed",
+      "kind": "session",
+      "text": "{\"troupe\":\"0.12\",\"kind\":\"session\",\"scenario\":\"s\",\"seed\":\"conformanceSeed0001\"}\n{\"id\":\"1\",\"from\":\"player\",\"at\":\"yesterday\",\"content\":[{\"text\":\"x\"}]}\n{\"id\":\"2\",\"parent\":\"1\",\"from\":\"model\",\"content\":[{\"text\":\"y\"}]}\n",
+      "expect": {
+        "ok": false,
+        "codes": [
+          "SCHEMA"
+        ],
+        "ids": [
+          "1",
+          "2"
+        ]
+      }
+    },
+    {
+      "type": "parse",
+      "name": "a message failing as a whole is skipped, with its descendants",
+      "kind": "session",
+      "text": "{\"troupe\":\"0.12\",\"kind\":\"session\",\"scenario\":\"s\",\"seed\":\"conformanceSeed0001\"}\n{\"id\":\"1\",\"from\":\"player\",\"content\":[{\"text\":\"x\"}]}\n{\"id\":\"2\",\"parent\":\"1\",\"from\":\"narrator\",\"content\":[{\"text\":\"y\"}]}\n{\"id\":\"3\",\"parent\":\"2\",\"from\":\"player\",\"content\":[{\"text\":\"z\"}]}\n",
+      "expect": {
+        "ok": false,
+        "codes": [
+          "SCHEMA",
+          "UNKNOWN_MESSAGE"
+        ],
+        "ids": [
+          "1"
+        ]
+      }
     }
   ]
 }

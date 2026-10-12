@@ -832,10 +832,8 @@
             }
           },
           "then": {
-            "not": {
-              "required": [
-                "values"
-              ]
+            "properties": {
+              "values": false
             }
           }
         },
@@ -852,10 +850,8 @@
             }
           },
           "then": {
-            "not": {
-              "required": [
-                "labels"
-              ]
+            "properties": {
+              "labels": false
             }
           }
         },
@@ -871,24 +867,10 @@
             }
           },
           "else": {
-            "not": {
-              "anyOf": [
-                {
-                  "required": [
-                    "min"
-                  ]
-                },
-                {
-                  "required": [
-                    "max"
-                  ]
-                },
-                {
-                  "required": [
-                    "maxStep"
-                  ]
-                }
-              ]
+            "properties": {
+              "min": false,
+              "max": false,
+              "maxStep": false
             }
           }
         },
@@ -947,23 +929,12 @@
         {
           "if": {
             "required": [
-              "ask"
+              "of"
             ]
           },
           "then": {
-            "not": {
-              "anyOf": [
-                {
-                  "required": [
-                    "of"
-                  ]
-                },
-                {
-                  "required": [
-                    "derive"
-                  ]
-                }
-              ]
+            "properties": {
+              "ask": false
             }
           }
         },
@@ -974,31 +945,12 @@
             ]
           },
           "then": {
-            "not": {
-              "anyOf": [
-                {
-                  "required": [
-                    "initial"
-                  ]
-                },
-                {
-                  "required": [
-                    "by"
-                  ]
-                },
-                {
-                  "required": [
-                    "of"
-                  ]
-                },
-                {
-                  "required": [
-                    "maxStep"
-                  ]
-                }
-              ]
-            },
             "properties": {
+              "initial": false,
+              "by": false,
+              "of": false,
+              "maxStep": false,
+              "ask": false,
               "oneWay": {
                 "const": false
               }
@@ -1017,10 +969,8 @@
             }
           },
           "then": {
-            "not": {
-              "required": [
-                "initial"
-              ]
+            "properties": {
+              "initial": false
             }
           }
         },

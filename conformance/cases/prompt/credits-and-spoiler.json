@@ -1,5 +1,5 @@
 {
-  "description": "Credits and spoilers (Format 3, 6.1): bundle credits are Markdown for people, never sent to models; a cast member's spoiler is informative for interfaces and changes nothing in the engine",
+  "description": "Credits and spoilers (Format 6, 16): bundle credits are Markdown for people, never sent to models; a cast member's spoiler is informative for interfaces and changes nothing in the engine",
   "bundle": {
     "kind": "bundle",
     "name": "The Cellar",

@@ -120,7 +120,7 @@ MUST, MUST NOT, SHOULD, SHOULD NOT and MAY are used as described in RFC 2119 and
 ### 2.2 Values
 
 - Writers MUST write I-JSON (RFC 7493): UTF-8 without a byte order mark, no duplicate member names, no surrogate or noncharacter code points, written or escaped, numbers that fit an IEEE 754 double, and integer fields and `int` values within ±(2^53 − 1), written without a fraction or exponent. Readers parse UTF-8 JSON (RFC 8259), ignore a leading byte order mark, and need not check the other I-JSON constraints.
-- **Empty values.** Writers MUST NOT write `null`, and MUST NOT write `""`, `[]` or `{}` in an optional field other than `ext`. State values and `scenario.worlds` are the exception: there `""`, `[]` and `{}` are values. Names and variable descriptions are never empty.
+- **Empty values.** Writers MUST NOT write `null` in a field this spec defines or in a state value, and MUST NOT write `""`, `[]` or `{}` in an optional field other than `ext`. State values and `scenario.worlds` are the exception: there `""`, `[]` and `{}` are values. Names and variable descriptions are never empty.
 - Readers MUST treat `null`, `""`, `[]` and `{}` in an optional field like a missing field, with the same exception; `knownBy: []` reads as section 7.4 says. A `null` state value is invalid (section 8.5).
 - **Defaults are normative.** Every default stated in these documents or their TypeScript comments applies when a field is absent. Every boolean defaults to `false`.
 
@@ -427,7 +427,7 @@ A variable belongs to the scenario, world or character that declares it.
 | a scenario | `state.bell` | `state.bell` (and `own.bell`) | `bell` |
 | a character or world | `state.kai.nerve` | `own.nerve` | `kai.nerve` |
 
-A character's mood or a world's clock travels with it into every scenario, and two characters can each have a `mood`. In an owner's own events, a key written `own.nerve` means `kai.nerve`; recorded changes always use the full key. Session entries have no `own`: in their text `{{own.…}}` is left as written, and in their conditions `own` is a `CEL_ERROR`.
+A character's mood or a world's clock travels with it into every scenario, and two characters can each have a `mood`. An event's `message` parts are message parts, where `own` means `state` (section 10). In an owner's own events, a key written `own.nerve` means `kai.nerve`; recorded changes always use the full key. Session entries have no `own`: in their text `{{own.…}}` is left as written, and in their conditions `own` is a `CEL_ERROR`.
 
 ### 8.3 Keyed variables
 
@@ -455,7 +455,7 @@ Opening and event `set`, `compute` and recorded changes write state by key:
 
 - **Keys** are a scenario variable's ID, or an owner and a variable ID, followed by a key for keyed variables: `bell`, `trust.kai`, `kai.nerve`, `kai.feelings.elena`, `scene.location`, `scene.present`.
 - **Values** are absolute.
-- **Validity.** A value is valid if its key names a variable in use that isn't derived, and an allowed key, and the value has the variable's type, uses only listed members, is finite, is an integer within ±(2^53 − 1) for `int`, and is within the value limits of section 16. A numeric value outside `min` and `max` is still valid; it is clamped (Play 3.2, 3.3). So is a set with duplicate members, which preparation removes. `scene.location` is a location ID of the bundle or session, or `""`; `scene.present` is a list of IDs, and preparation removes those that name no cast character (Play 3.3).
+- **Validity.** A value is valid if its key names a variable in use that isn't derived, and an allowed key, and the value has the variable's type, uses only listed members, is finite, is an integer within ±(2^53 − 1) for `int`, and is within the value limits of section 16. A numeric value outside `min` and `max` is still valid; it is clamped (Play 3.2, 3.3). So is a set with duplicate members, which preparation removes. `scene.location` is a location ID of the bundle or session, or `""`; `scene.present` is a list of strings, and preparation removes those that name no cast character (Play 3.3).
 
 ---
 
@@ -507,7 +507,7 @@ Macros are the only substitution in text. `@` turns IDs into names.
 | `{{user}}` | The player's character being answered (below) |
 | `{{@<id>}}` | That character's name, e.g. `{{@kai}}` |
 | `{{state.<path>}}`, `{{own.<path>}}` | A state value, e.g. `{{state.bell}}`, `{{own.nerve}}`, `{{state.trust.char}}` |
-| `{{@state.<path>}}`, `{{@own.<path>}}` | The value, with each string that is a character or location ID rendered as its name |
+| `{{@state.<path>}}`, `{{@own.<path>}}` | The value, with each string that is a character ID, else a location ID, rendered as its name |
 | `{{scene.location}}`, `{{@scene.location}}` | The current location's ID, or its name |
 | `{{@scene.present}}`, `{{@players}}` | The names of the characters present, or of the players' characters |
 | `{{pick::<a>::<b>…}}` | One option, fixed for the session (Play 4) |
@@ -539,7 +539,7 @@ Every expression is evaluated at a message, its **evaluation point**: for a prom
 | `state.<owner>.<id>` | Each variable of a character or world in use |
 | `own.<id>` | The variables of the expression's owner; for a scenario, its own |
 | `scene.location`, `scene.present` | The scene |
-| `scene.within` | The current location and all its ancestors |
+| `scene.within` | The current location, then its ancestors, innermost first |
 | `turn` | Rounds so far (Play 3.1) |
 | `elapsed` | Whole seconds between the evaluation point's `at` and its parent's, rounded down; 0 if either is missing or the gap is negative |
 | `hour`, `weekday` | The evaluation point's local hour (0–23) and ISO weekday (1–7) in the session's `timezone`; −1 if its `at` or the `timezone` is missing, or the zone isn't a known IANA name |
@@ -776,7 +776,7 @@ Messages are never dropped for a failed check, except the lines that `PARSE`, `S
 | --- | --- | --- |
 | `PARSE` | The input is UTF-8 JSON (section 2.2) or JSON Lines, a Troupe document of the `kind` its form holds (section 14.1), within the limits the reader enforces (section 16), and a safe package (section 16 item 7) | The file isn't read; in a session, an unreadable line other than the header is skipped |
 | `UNSUPPORTED_VERSION` | `troupe`, when present, is the reader's own version (section 15); a missing `troupe`, or one that isn't `major.minor`, is only `SCHEMA` | Another major version isn't read; another minor version is a warning (from 1.0, only a newer one) |
-| `SCHEMA` | The document validates against its schema, apart from unknown properties (section 15) | The reader MAY refuse the file. Otherwise it removes each value at a location where validation fails and validates again, until nothing fails: an invalid `weight` reads as absent, an entry without `text` is ignored, a message line that fails is skipped, and a document that fails as a whole isn't read |
+| `SCHEMA` | The document validates against its schema, apart from unknown properties (section 15) | The reader MAY refuse the file; otherwise it repairs it (below) |
 | `UNKNOWN_FIELD` | Every property is known to the reader's schema (section 15) | A warning |
 | `DUPLICATE_ID` | IDs are unique as section 2.3 and section 12.2 require | The first is kept; a scenario variable that clashes with a character or world is ignored instead (section 2.3), and two replacements of one character make the session unplayable (section 12.2) |
 | `UNKNOWN_SCENARIO` | The header's `scenario` names a scenario | The session can't be played |
@@ -792,6 +792,8 @@ Messages are never dropped for a failed check, except the lines that `PARSE`, `S
 | `CEL_ERROR` | Every expression parses and type-checks, and no `derive` reads a derived variable; comprehensions and `matches()` follow section 11.2 | The item never applies |
 | `REGEX_ERROR` | Every regex key is valid (section 16 item 5) | The key matches nothing |
 | `UNKNOWN_MACRO` | Macros are valid and name existing characters and variables | Left as written |
+
+**Repairing.** A reader that keeps a document failing its schema first reads empty values as section 2.2 says. It then removes the value at the instance location of each failing keyword other than the applicators (`allOf`, `anyOf`, `if`, `then`, `else`, `properties`, `items`, `$ref`), and validates again, until nothing fails. So an invalid `weight` reads as absent, and an entry without `text` is ignored. A `knownBy` emptied this way reads as `["narrator"]`; a message line removed as a whole is skipped; a document removed as a whole isn't read. The other checks then run on the repaired document.
 
 ---
 

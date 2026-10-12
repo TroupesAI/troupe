@@ -59,6 +59,54 @@
       }
     ]
   },
+  "session": {
+    "header": {
+      "kind": "session",
+      "scenario": "s",
+      "seed": "conformanceSeed0001",
+      "characters": [
+        {
+          "id": "p",
+          "name": "Pat",
+          "description": "Pat."
+        }
+      ],
+      "players": [
+        "p"
+      ]
+    },
+    "messages": [
+      {
+        "id": "1",
+        "opening": "early",
+        "from": "system",
+        "content": [
+          {
+            "speaker": "a",
+            "text": "Early."
+          }
+        ],
+        "changes": [
+          {
+            "by": "rules",
+            "set": {
+              "bell": 3,
+              "scene.present": [
+                "p",
+                "a"
+              ]
+            }
+          },
+          {
+            "by": "player",
+            "set": {
+              "phase": "setup"
+            }
+          }
+        ]
+      }
+    ]
+  },
   "tests": [
     {
       "type": "start",
@@ -96,6 +144,20 @@
         "state": {
           "bell": 3,
           "phase": "setup"
+        }
+      }
+    },
+    {
+      "type": "prepare",
+      "name": "a later change may not move it back",
+      "at": "1",
+      "by": "player",
+      "set": {
+        "bell": 2
+      },
+      "expect": {
+        "set": {
+          "bell": 3
         }
       }
     }

@@ -64,9 +64,9 @@ Another opening tried in the same session gets its own root, made by steps 3 to 
   - The session never needs the chronicle file to replay.
 - **Writing back** from a path rewrites the chronicle with only what the session changed:
   - `values` keeps only carried keys, keyed without the owner, and takes the latest value of each carried key that a change on the path set, except the root's `by: "rules"` changes without an `event`, which hold the starting values.
-  - The memories written back are the carried session entries on the path, the latest version of each ID, whose `knownBy` is absent or names the character. An entry whose latest version on the path is on the root is skipped.
+  - The memories written back are the carried session entries on the path, the latest version of each ID, whose `knownBy` is absent or names the character. A memory the start copied onto the root is skipped unless a later message on the path holds a newer version.
   - Each keeps in `knownBy` only the character, the persona and `narrator`.
-  - Each replaces the memory with its ID, or is added after the others in the order the IDs first appear; one with `disabled` removes that memory.
+  - Each replaces the memory with its ID, or is added after the others in the order the IDs first appear; one with `disabled` removes that memory and is never added.
   - `character`, `persona`, `limits` and the rest of the chronicle stay as they are.
 
 ---
@@ -85,10 +85,10 @@ Another opening tried in the same session gets its own root, made by steps 3 to 
 
 The state at a message is computed by applying, in order:
 
-1. every variable's initial value, clamped as in section 3.3; no location; the whole cast present except the joiners (Format 12.2);
+1. every variable's initial value, a set normalized and a number clamped as in section 3.3; no location; the whole cast present except the joiners (Format 12.2);
 2. the `changes` of every message on the path from the root to that message, in path order, and within a message in array order.
 
-Playing never modifies a bundle: state is the bundle's starting values plus the changes recorded in the session. Derived variables are computed from that state when read and prepared by steps 1, 4 and 5 of section 3.3; one whose expression fails at runtime, or whose value is then invalid, is absent. Readers apply recorded changes and never re-run events or trackers on load. Keys, values and validity are defined in Format 8.5.
+Playing never modifies a bundle: state is the bundle's starting values plus the changes recorded in the session. Derived variables are computed from that state when read and prepared by steps 1, 4 and 5 of section 3.3; one whose expression fails at runtime, or whose value then fails Format 8.5's rules for its type, members and size, is absent. Readers apply recorded changes and never re-run events or trackers on load. Keys, values and validity are defined in Format 8.5.
 
 ### 3.3 Recording changes
 
@@ -143,7 +143,7 @@ Nothing in the payload takes `ext`. A model adds story content, never mechanics 
 - A newcomer whose ID names a character, world, scenario or scenario variable of the bundle or session, an earlier newcomer of the payload included, or who would take the cast past its limit (Format 16), is dropped.
 - An entry whose ID names a session entry on the path that isn't placed in `context` is dropped; a model may update or disable a context entry, such as a memory.
 
-Apps apply a payload in this order: `characters` join the header; `parts` are stored; `changes` are recorded as `{"by": "model", …}`, prepared as in section 3.3, on the newest message it reads, or the reply itself; and `entries` become session entries on the same message. Speakers that name no cast character are dropped (a newcomer that joined is in the cast), and so are `knownBy` IDs other than `narrator` that name none; a `knownBy` whose IDs are all dropped becomes `["narrator"]`, or `[<speaker>, "narrator"]` on a part with a speaker. Before applying a payload, apps read its empty values as Format 2.2 says and drop its unknown properties (Format 15); a part, entry or newcomer that still fails the schema is dropped, and so is an entry or newcomer whose ID an earlier one in the payload has; change keys and values that aren't valid are dropped by preparation. Output that isn't a JSON object, and a structured reply left with no parts, is discarded, and nothing is recorded. An **extraction** is a tracker run, or a structured reply from the narrator or the single voice. Each records one `{"by": "model", …}` change, with an empty `set` when it changes nothing, which marks where the next tracker run starts. The event pass after a message waits for any extraction the app runs on it.
+Apps apply a payload in this order: `characters` join the header; `parts` are stored; `changes` are recorded as `{"by": "model", …}`, prepared as in section 3.3, on the newest message it reads, or the reply itself (a tracker run that reads no message records nothing); and `entries` become session entries on the same message. Speakers that name no cast character are dropped (a newcomer that joined is in the cast), and so are `knownBy` IDs other than `narrator` that name none; a `knownBy` whose IDs are all dropped becomes `["narrator"]`, or `[<speaker>, "narrator"]` on a part with a speaker. Before applying a payload, apps read its empty values as Format 2.2 says and drop its unknown properties (Format 15); a part, entry or newcomer that still fails the schema is dropped, and so is an entry or newcomer whose ID an earlier one in the payload has; change keys and values that aren't valid are dropped by preparation. Output that isn't a JSON object, and a structured reply left with no parts, is discarded, and nothing is recorded. An **extraction** is a tracker run, or a structured reply from the narrator or the single voice. Each records one `{"by": "model", …}` change, with an empty `set` when it changes nothing, which marks where the next tracker run starts. The event pass after a message waits for any extraction the app runs on it.
 
 ---
 
@@ -247,7 +247,7 @@ Troupe defines what goes into a prompt and in which slot; formatting, mapping to
 | --- | --- |
 | **System** | the app's own prompt; the session's `limits` (Format 12); selected entries placed in `system`; event directions (section 3.3); for a structured reply from the narrator or the single voice, the tracker's input other than the messages (section 3.4) |
 | **Setting** | the premise; world descriptions; the current location and its parents, innermost first |
-| **People** | present model-played characters, then the character being generated for if absent: description and cast `notes`; the players' characters, with their cast `notes`; offstage cast characters whose name or alias, as a plain key, matches the scanned text (section 5.2) of the last 4 messages, as the generation can see it: their `summary`, a character without one contributing nothing; dialogue examples of the present model-played characters and the character being generated for |
+| **People** | present model-played characters, then the character being generated for if absent: description and cast `notes`; the players' characters, with their cast `notes`; offstage model-played cast characters whose name or alias, as a plain key, matches the scanned text (section 5.2) of the last 4 messages, as the generation can see it: their `summary`, a character without one contributing nothing; dialogue examples of the present model-played characters and the character being generated for |
 | **Context** | selected entries placed in `context`; pinned messages |
 | **History** | messages on the path with parts the generation can see, image parts reaching models without image input as their `alt`, with summaries it can see standing in for messages they cover where the app chooses, and entries with a numeric position inserted at their depth |
 
