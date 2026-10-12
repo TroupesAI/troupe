@@ -102,7 +102,7 @@ Before recording a change, apps drop each key that isn't valid, or whose value i
 2. for `by: "model"`, limit the difference from the current value to `maxStep`;
 3. for `oneWay` variables, except in a root's chronicle, opening and answer changes (section 2.1), keep the current value instead of a move backward; a set becomes its current members followed by the value's new ones, normalized as in step 1;
 4. round `number` values to the nearest double to the decimal that ECMAScript `Number.prototype.toFixed(6)` produces;
-5. clamp: raise the value to `min`, then lower it to `max`; a bound named by a variable the same change sets is that variable's prepared new value.
+5. clamp: raise the value to `min`, then lower it to `max`; a bound named by a variable whose key the change keeps is that variable's prepared new value.
 
 A key whose prepared value is no longer valid, such as a set grown past its limit (Format 16), is dropped too, and so is a key that would take a `"*"` map past its limit, after applying the keys kept before it in the change. Within a message, changes are recorded in the order they happen: on a root, in the order of section 2.1, then any extraction's change; on any message, player and model changes before the changes of the events they trigger.
 
@@ -309,7 +309,7 @@ A conforming **app** reads files as a conforming reader (Format 17.1), follows F
 | A model payload is read leniently, item by item | Discarding a payload that fails its schema | Models write `null` and empty values for optional fields; a bad newcomer or entry shouldn't lose a reply's text and changes. |
 | `scene.present` filtered to the cast | Dropping a whole presence change for one unknown ID | Trackers often name someone the story never introduced; the rest of the change is still right. |
 | A repeated write-back starts after the app's last one | Recording write-back points in the session | Keeps the file app-neutral; an app that receives a session without that point writes back from the root. |
-| A root holds only the start's entries | Letting an extraction on a root add entries | Later roots copy a root's entries and write-back skips them, so model entries there would be copied as memories and never written back. |
+| A root holds only the start's entries | Letting an extraction on a root add entries | In a session that continues a chronicle, later roots copy a root's entries and write-back skips them, so model entries there would be copied as memories and never written back. |
 | Player edits on a new records-only message | Appending to the head when it is a player message | One place for every edit, and recorded firings never need re-evaluating. |
 | Starting values exempt from `oneWay` | Preparing them like any change | An opening or a chronicle sets where the story starts, which may be below the variable's default. |
 | Prompt slots, not a fixed order or history length | One mandated order; rules for trimming history | Apps keep prompt caches warm, and fit history to their models as they see fit; numeric positions count the history as sent. |

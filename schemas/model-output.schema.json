@@ -53,7 +53,7 @@
       "items": {
         "$ref": "bundle.schema.json#/$defs/nonEmpty"
       },
-      "description": "knownBy IDs as a model wrote them; an empty list is narrator-only (Play 3.4)."
+      "description": "knownBy IDs as a model wrote them; Play 3.4 drops those that name no character and reads an empty list."
     },
     "entry": {
       "description": "A session entry a model adds: an Entry without position or priority (Play 3.4).",
