@@ -120,7 +120,6 @@
         "changes": {
           "mood": "tense"
         },
-        "reason": "Guards are coming.",
         "entries": [
           {
             "id": "plan",
@@ -145,8 +144,7 @@
               "by": "model",
               "set": {
                 "mood": "tense"
-              },
-              "reason": "Guards are coming."
+              }
             }
           ],
           "entries": [

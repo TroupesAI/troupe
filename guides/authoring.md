@@ -8,7 +8,7 @@ Most needs compose from entries, variables, events and conditions.
 
 ### Author's notes and player limits
 
-Players' lines and veils go in the session's `limits`, which apps apply to every generation, media included. An author's note is a session entry on the root, placed in `system`:
+Players' lines and veils go in the session's `limits`, which apps apply to every generation. An author's note is a session entry on the root, placed in `system`:
 
 ```json
 { "id": "note", "position": "system", "text": "Keep the pace slow; let silences land." }

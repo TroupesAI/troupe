@@ -30,9 +30,6 @@
     "char": {
       "$ref": "bundle.schema.json#/$defs/characterId"
     },
-    "author": {
-      "$ref": "bundle.schema.json#/$defs/nonEmpty"
-    },
     "content": {
       "type": "array",
       "items": {
@@ -41,12 +38,6 @@
     },
     "at": {
       "$ref": "bundle.schema.json#/$defs/timestamp"
-    },
-    "model": {
-      "$ref": "bundle.schema.json#/$defs/nonEmpty"
-    },
-    "stopped": {
-      "type": "boolean"
     },
     "changes": {
       "type": "array",
@@ -242,9 +233,6 @@
         "outcome": {
           "type": "integer",
           "minimum": 0
-        },
-        "reason": {
-          "$ref": "bundle.schema.json#/$defs/nonEmpty"
         },
         "ext": {
           "$ref": "bundle.schema.json#/$defs/ext"

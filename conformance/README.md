@@ -286,7 +286,7 @@ Every field of `expect` is optional:
 
 | Input | Meaning |
 | --- | --- |
-| `kind` | What the input is read as: `bundle` (a `.troupe.json` file), `session`, `chronicle`, `package` (a `.troupe` ZIP archive), `png` (Format 14.4) or `modelOutput` (JSON validated against `model-output.schema.json`, Play 3.4). |
+| `kind` | What the input is read as: `bundle` (a `.troupe.json` file), `session`, `chronicle`, `package` (a `.troupe` ZIP archive) or `modelOutput` (JSON validated against `model-output.schema.json`, Play 3.4). |
 | `text` | The input as a string, encoded as UTF-8 to get its bytes. |
 | `base64` | Instead of `text`: the input's bytes, in base64. Used for bytes that aren't valid UTF-8 text and for binary formats. |
 
@@ -296,7 +296,7 @@ Every field of `expect` is optional:
 
 - `ok` is whether no error is reported. Every code is an error except `UNKNOWN_FIELD` and `UNSUPPORTED_VERSION` for another minor version, which are warnings; a skipped session line (`PARSE`) is an error.
 - `codes` is the sorted list of distinct codes reported, compared exactly.
-- `equals` is the bundle read, for `bundle` and `png`, after absent values read as missing (Format 2.2).
+- `equals` is the bundle read, for `bundle`, after absent values read as missing (Format 2.2).
 - `ids` is, for `session`, the IDs of the messages read, in line order.
 
 ### 4.15 `read`: session lines (Format 12.1)
@@ -316,7 +316,7 @@ The test reads the case's raw session lines.
 | `message` | Instead of `reply`: an existing message, for a tracker extraction. |
 | `output` | A string for a plain reply, or a `ModelOutput` object. |
 
-The output is applied as Play 3.4 says: properties unknown to `model-output.schema.json` are dropped first (Format 15), model text is stored escaped (Format 10), and changes are recorded as `{"by": "model", "set", "reason"?}`. No event pass follows; `events` tests cover it.
+The output is applied as Play 3.4 says: properties unknown to `model-output.schema.json` are dropped first (Format 15), model text is stored escaped (Format 10), and changes are recorded as `{"by": "model", "set"}`. No event pass follows; `events` tests cover it.
 
 Every field of `expect` is optional:
 

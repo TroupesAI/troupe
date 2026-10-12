@@ -11,7 +11,8 @@ Hardening for implementation. Breaking changes from 0.11:
 - **Chronicles** take back only what a session changed (Play 2.2).
 - **Players** beyond a scenario's seats add seats (Format 12.2).
 - **Scenarios** name their narrator for `{{char}}` (Format 6, 10).
-- **Readers** ignore a leading BOM and empty session lines, read the PNG `iTXt` chunk compressed or not, and reject other ZIP compression methods; the unpacked package limit is 512 MiB (Format 2.2, 12, 14, 16).
+- **Readers** ignore a leading BOM and empty session lines and reject other ZIP compression methods; the unpacked package limit is 512 MiB (Format 2.2, 12, 14, 16).
+- **Removed:** the PNG-embedded form; message `author`, `model` and `stopped`; change and model-output `reason`; the session header's `id`. No rule read them; apps keep such data in `ext`.
 - **App actions** (editing, deleting, continuing, previews, turn order) and UX wording left the spec; the session snapshot keeps its invariants (Format 12; Play Appendix A).
 - Readings the suite relied on are now stated in the text, and the suite gained cases for the gaps and a case schema.
 

@@ -5,7 +5,7 @@
       "type": "parse",
       "name": "a structured reply",
       "kind": "modelOutput",
-      "text": "{\"parts\":[{\"speaker\":\"kai\",\"text\":\"Fine.\"},{\"text\":\"*He looks away.*\",\"knownBy\":[\"kai\"]}],\"changes\":{\"kai.nerve\":2},\"reason\":\"He's rattled.\"}",
+      "text": "{\"parts\":[{\"speaker\":\"kai\",\"text\":\"Fine.\"},{\"text\":\"*He looks away.*\",\"knownBy\":[\"kai\"]}],\"changes\":{\"kai.nerve\":2}}",
       "expect": {
         "ok": true,
         "codes": []
@@ -110,6 +110,18 @@
         "ok": false,
         "codes": [
           "PARSE"
+        ]
+      }
+    },
+    {
+      "type": "parse",
+      "name": "reason is no longer a field",
+      "kind": "modelOutput",
+      "text": "{\"changes\":{\"bell\":8},\"reason\":\"An hour passed.\"}",
+      "expect": {
+        "ok": true,
+        "codes": [
+          "UNKNOWN_FIELD"
         ]
       }
     }

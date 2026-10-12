@@ -124,7 +124,6 @@ Models may produce state as well as story. One payload carries it, through eithe
 interface ModelOutput {
   parts?: { speaker?: string; text: string; knownBy?: string[] }[];   // a reply's parts
   changes?: Record<string, Json>;  // keys that changed, with new values
-  reason?: string;
   entries?: Entry[];               // session entries to add, such as memories; no position or priority
   characters?: Newcomer[];         // newcomers who appeared, with a change adding them to scene.present
 }
@@ -251,7 +250,7 @@ Troupe defines what goes into a prompt and in which slot; formatting, mapping to
 | **Context** | selected entries placed in `context`; pinned messages |
 | **History** | messages on the path with parts the generation can see, image parts reaching models without image input as their `alt`, with summaries it can see standing in for messages they cover where the app chooses, and entries with a numeric position inserted at their depth |
 
-Entries keep file order within a slot, and everything in a slot is filtered by section 7. Apps MUST apply the session's `limits` to every generation in the session, media included, in the System slot and in the app's own wording, and never drop them to save space. Conformance covers what each slot holds and its order, not the order of slots.
+Entries keep file order within a slot, and everything in a slot is filtered by section 7. Apps MUST apply the session's `limits` to every generation in the session and never drop them to save space. Conformance covers what each slot holds and its order, not the order of slots.
 
 ---
 

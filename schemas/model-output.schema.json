@@ -31,9 +31,6 @@
     "changes": {
       "$ref": "bundle.schema.json#/$defs/stateValues"
     },
-    "reason": {
-      "$ref": "bundle.schema.json#/$defs/nonEmpty"
-    },
     "entries": {
       "type": "array",
       "minItems": 1,

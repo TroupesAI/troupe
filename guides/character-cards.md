@@ -46,5 +46,3 @@ Each card becomes a bundle with one character and a scenario `main` that holds i
 ## Exporting to Character Card V3
 
 A bundle's first character exports with a lossy mapping: `name`, `description`, the openings with `content` of the first scenario whose cast includes it as `first_mes` and `alternate_greetings`, its `premise` as `scenario`, `authors` as `creator`, examples as `mes_example`, entries without `when` as a `character_book` (keys, constant, position and depth), and the whole bundle under `extensions.troupe`. Apps that read `extensions.troupe` restore the original exactly.
-
-To let Character Card V3 apps read a Troupe PNG (Format 14.4), an exporter can add a `ccv3` chunk with this card beside the `troupe` chunk. Troupe readers ignore it.

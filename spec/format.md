@@ -599,7 +599,6 @@ interface SessionHeader {
   $schema?: string;
   troupe: string;
   kind: "session";
-  id?: string;                     // a random ID
   bundle?: string;                 // the bundle's id; omit inside its package
   chronicle?: string;              // the chronicle the session continues (section 13)
   limits?: Limits;                 // the players' lines and veils
@@ -625,11 +624,8 @@ interface Message {
   opening?: string;                // on roots made from an opening, which are system messages
   from: "player" | "model" | "system";
   char?: string;                   // model messages only: the character it was generated for; absent for the narrator
-  author?: string;                 // an opaque handle for the person who wrote or edited it; never contact details, never sent to models
   content: Part[];                 // empty only for a records-only message (section 12.4)
   at?: string;
-  model?: string;                  // which model wrote it
-  stopped?: boolean;               // generation was stopped; content is partial
   changes?: Change[];
   activated?: string[];            // distinct entry references (Play 5.4)
   entries?: Entry[];               // entries added from here on (section 12.3)
@@ -648,7 +644,6 @@ interface Change {
   set: Record<string, Json>;       // full key → new value
   event?: string;                  // the event that fired; only with by: "rules"
   outcome?: number;                // the chosen outcome's index; only with event
-  reason?: string;                 // for people; never sent to models
   ext?: Ext;
 }
 
@@ -682,7 +677,6 @@ A message may add entries, owned by `session`. They are candidates from that mes
 
 - **`pinned`** messages are repeated in the Context slot while they remain on the path.
 - **`hidden`** messages are in the transcript, but are never sent to models, scanned or summarized.
-- **`stopped`** marks a partial reply.
 - **`summary`** condenses the messages from `from` to its message, and MAY stand in for them in history. Without `knownBy`, it is known by the characters who know every part it covers, and reaches the narrator only if the narrator can see every part (Play 7). A summary MUST match its messages as they are: one whose covered messages changed or are gone is removed.
 - **Records-only messages.** A system message with empty `content` carries `changes`, such as player edits (Play 3.3), and, on a root made from an opening without `content`, `opening`; it has no `entries`, `summary`, `activated` or `char` and isn't pinned. It is not sent to models, not scanned, and not counted for `scanDepth` or numeric positions.
 
@@ -728,7 +722,7 @@ Play 2.2 says how a session continues a chronicle and writes back to it.
 | Session | `.troupe-session.jsonl` | One session outside a package |
 | Chronicle | `.troupe-chronicle.json` | One character's continuity |
 
-Every Troupe document has a top-level `troupe` key with the spec version and a `kind` key: `"bundle"`, `"session"` or `"chronicle"`. Section 14.4 defines an optional image-embedded form.
+Every Troupe document has a top-level `troupe` key with the spec version and a `kind` key: `"bundle"`, `"session"` or `"chronicle"`.
 
 ### 14.2 Files
 
@@ -739,10 +733,6 @@ Fields that hold a file accept a relative path inside the package, an `https:` U
 - `bundle.json` is at the root.
 - Paths match `^[A-Za-z0-9_-][A-Za-z0-9._-]*(/[A-Za-z0-9_-][A-Za-z0-9._-]*)*$`, with segments of at most 255 bytes, unique when compared case-insensitively.
 - Entries use the store or deflate methods and are not encrypted. Sessions are stored under `sessions/` with the `.troupe-session.jsonl` extension, and chronicles under `chronicles/` with the `.troupe-chronicle.json` extension; readers read sessions and chronicles only there, and other files only as files the bundle references.
-
-### 14.4 Image-embedded form
-
-A single-file bundle MAY be embedded in a PNG for image hosts: one `iTXt` chunk with keyword `troupe`, compression flag 1, compression method 0, empty language tag and translated keyword, holding the bundle as UTF-8. Readers that support this form read only the `iTXt` chunk with keyword `troupe`, compressed or not, whatever its language tag and translated keyword, treat it exactly like a `.troupe.json` file, and cap the decompressed size; other chunk types with that keyword are ignored. A PNG with no such chunk, or more than one, is `PARSE`. It is never the canonical form.
 
 ---
 
@@ -766,7 +756,7 @@ Troupe files are shared between strangers.
 6. **Sandboxed conditions.** CEL MUST be evaluated by a CEL implementation, never translated into another language.
 7. **Safe archives.** Readers MUST reject absolute paths, `..` segments, backslashes, paths outside section 14.3's grammar or segment length, compression methods other than store and deflate, symbolic links, encryption and duplicate names, and MUST cap entry count, unpacked size and compression ratio.
 8. **Bounded parsing.** Readers MUST cap JSON size and depth, `data:` URI size, and session length.
-9. **Content stays content.** Text from files and sessions is story material, not instructions to the app, and macros never take effect in players' and models' text (section 10). `credits`, `briefing`, change `reason` and message `author` MUST NOT be sent to any model; entry `title` reaches it only in a pull catalog.
+9. **Content stays content.** Text from files and sessions is story material, not instructions to the app, and macros never take effect in players' and models' text (section 10). `credits` and `briefing` MUST NOT be sent to any model; entry `title` reaches it only in a pull catalog.
 
 Writers MUST stay within these limits. Readers MUST accept files within them, and MAY accept or refuse larger ones:
 
@@ -797,7 +787,7 @@ Messages are never dropped for a failed check, except the lines that `PARSE` and
 
 | Code | Check | Consequence |
 | --- | --- | --- |
-| `PARSE` | The input is UTF-8 JSON (section 2.2) or JSON Lines, a Troupe document of the `kind` its form holds (section 14.1), within the limits the reader enforces (section 16), and a safe package (section 16 item 7) or PNG (section 14.4) | The file isn't read; in a session, an unreadable line other than the header is skipped |
+| `PARSE` | The input is UTF-8 JSON (section 2.2) or JSON Lines, a Troupe document of the `kind` its form holds (section 14.1), within the limits the reader enforces (section 16), and a safe package (section 16 item 7) | The file isn't read; in a session, an unreadable line other than the header is skipped |
 | `UNSUPPORTED_VERSION` | `troupe`, when present, is the reader's own version (section 15); a missing `troupe`, or one that isn't `major.minor`, is only `SCHEMA` | Another major version isn't read; another minor version is a warning (from 1.0, only a newer one) |
 | `SCHEMA` | The document validates against its schema, apart from unknown properties (section 15) | The reader MAY refuse the file |
 | `UNKNOWN_FIELD` | Every property is known to the reader's schema (section 15) | A warning |
@@ -1041,18 +1031,9 @@ Two thieves hired by the player to steal a duke's storm lantern before the twelf
 {"troupe":"0.12","kind":"session","scenario":"heist","seed":"k7Qm2xVb9TzR4pLc8NwYfA","characters":[{"id":"mara","name":"Mara","description":"A retired smuggler with a debt to settle."}],"players":["mara"],"head":"4"}
 {"id":"1","opening":"rooftop_briefing","from":"system","content":[{"text":"Rain hammers the slate roofs above the Duke's manor."},{"speaker":"elena","text":"*Elena unrolls a soaked map.* Two guards on the east stair. We go at the eighth bell."},{"speaker":"kai","text":"Or we go now, while they're drunk. *He grins at {{user}}.* Your call, boss."}],"changes":[{"by":"rules","set":{"scene.location":"rooftops","scene.present":["mara","elena","kai"]}},{"by":"player","set":{"approach":"quiet"}}]}
 {"id":"2","parent":"1","from":"player","content":[{"speaker":"mara","text":"We wait for the eighth bell. Kai, you take the east stair."}]}
-{"id":"3","parent":"2","from":"model","char":"kai","activated":["veyra/weather_fog","kai/voice","kai/deal","heist/style","heist/clock"],"content":[{"speaker":"kai","text":"East stair. Sure. *He's gone before anyone can stop him.*"}],"changes":[{"by":"model","set":{"scene.present":["mara","elena"],"kai.nerve":1},"reason":"Kai left for the east stair, uneasy."}]}
-{"id":"4","parent":"2","from":"model","char":"kai","activated":["veyra/weather_rain","kai/voice","kai/deal","heist/style","heist/clock"],"content":[{"text":"The seventh bell rolls across the harbor."},{"speaker":"kai","text":"*Kai hesitates, then nods.* Fine. Your plan, boss. For once."},{"speaker":"kai","knownBy":["kai"],"text":"*If the Duke's men are early, this ends badly for all of us.*"}],"changes":[{"by":"model","set":{"bell":7,"trust.kai":0.5},"reason":"An hour passed; Mara trusted Kai with the stair."}],"entries":[{"id":"stair","knownBy":["kai"],"text":"Mara gave Kai the east stair, the post closest to the Duke's trap."}]}
+{"id":"3","parent":"2","from":"model","char":"kai","activated":["veyra/weather_fog","kai/voice","kai/deal","heist/style","heist/clock"],"content":[{"speaker":"kai","text":"East stair. Sure. *He's gone before anyone can stop him.*"}],"changes":[{"by":"model","set":{"scene.present":["mara","elena"],"kai.nerve":1}}]}
+{"id":"4","parent":"2","from":"model","char":"kai","activated":["veyra/weather_rain","kai/voice","kai/deal","heist/style","heist/clock"],"content":[{"text":"The seventh bell rolls across the harbor."},{"speaker":"kai","text":"*Kai hesitates, then nods.* Fine. Your plan, boss. For once."},{"speaker":"kai","knownBy":["kai"],"text":"*If the Duke's men are early, this ends badly for all of us.*"}],"changes":[{"by":"model","set":{"bell":7,"trust.kai":0.5}}],"entries":[{"id":"stair","knownBy":["kai"],"text":"Mara gave Kai the east stair, the post closest to the Duke's trap."}]}
 ```
-
-What B.2 and B.3 show:
-
-- **One primitive for text.** Style rules, the visible clock, Kai's voice, his secret deal, his readiness to confess and the tracker's guidance about bells are all entries; only placement, conditions and `knownBy` differ. Kai's voice reaches only his own turns.
-- **Self-contained characters.** Kai carries his own `nerve` variable and the entry that reads it as `own.nerve`, so he brings both into any scenario; the tracker updates it as `kai.nerve`.
-- **Openings are roots.** The root records the opening's starting values and the player's answer. Swiping to "Already caught" would add a second root that starts in the vault at the eleventh bell; Kai, who doesn't speak in it, starts absent and doesn't know its narration.
-- **Declared state and events.** The bell is a one-way clock the model advances; trust is per character and a spoiler. A rooftop patrol may pass after a player message, with weighted outcomes that direct the reply; Kai's confession costs Elena's trust; the twelfth bell ends the story.
-- **Rolls and records.** Messages 3 and 4 are siblings with different IDs, so each rolls the weather group itself: message 3 gets fog and message 4 gets rain (Play 4's vectors). The chosen weather then stays for 6 rounds, and cooldown keeps it out for the next 4.
-- **Knowledge.** Kai's deal reaches only Kai's generations. In branch 3 he has left, so by the witness rule he won't hear what Elena and Mara say next. Message 4 adds a session entry only Kai knows.
 
 ### B.4 Chronicle
 
@@ -1094,7 +1075,7 @@ A new session that continues this chronicle starts with `closeness` at 58 and bo
 | The persona plays as itself | Rewriting persona keys to whichever character fills the seat | One ID in the session and the chronicle, with no mapping to keep in step. |
 | A chronicle is one document, rewritten on write-back | A log of records | Apps read it without folding; revision history is the app's. |
 | Callable events in an extension | Tools, checks and choices in the core | A tracker and an `on: "player"` event already roll checks; calls need tool calling and many rules, so `troupe.calls` proves them first. |
-| Structured player limits | Limits as ordinary entries | They reach every generation, media included, and can't be dropped. |
+| Structured player limits | Limits as ordinary entries | They reach every generation and can't be dropped. |
 | One `Entry` for lore, instructions, secrets, goals, notes, memories and tracker guidance | A type for each | One pipeline, one shape, one thing to learn. |
 | No keys means always on; `hit()` in conditions; `/…/` keys | Flags, logic modes, match modes | Fewer fields, any boolean logic, exact matching rules. |
 | `pull` for retrieval by model or by similarity | Keywords only, or a separate semantic flag | Large lorebooks work with today's models; outcomes are still recorded. |
@@ -1114,7 +1095,7 @@ A new session that continues this chronicle starts with `closeness` at 58 and bo
 | Priority means importance; file order is prompt order | Priority doing three jobs | Authors order lore by writing it in order. |
 | Copies with `credits` | Live cross-bundle references, structured provenance | People write attribution as they like. |
 | `id` only links sessions and chronicles to their bundle | Rules for forks, translations, release order, version pins or hashes | Nothing could check them. A session that must keep the exact story it was played with travels in a package with that bundle. |
-| No required Character Card V3 chunk in a PNG | Writers embedding a V3 copy beside the bundle | Compatibility with other formats is a choice for exporters, not a duty of every writer. |
+| No image-embedded form | Bundles hidden in PNG chunks for image hosts | Hosts strip the chunks, and a package or single file already carries a story with its images. |
 | No narrator voice | A character that defines the narrator | Narrator-only `system` entries already set its style. |
 | A scenario names its narrator | A fixed English name | `{{char}}` reads naturally in a story in any language. |
 | No reasoning or tool parts | Provider transcripts in messages | They mean nothing to the story; apps that keep them use `ext`. |
@@ -1122,6 +1103,7 @@ A new session that continues this chronicle starts with `closeness` at 58 and bo
 | Sessions as an exchange snapshot | Prescribing storage, or an append-only log of edits | Apps keep their own databases; chats still move between apps intact, and readers replay no edits or deletions. |
 | No sprites, audio, media provenance, music, speaking hints, UI grouping or branch labels in the core | Media and presentation fields | They belong to apps and extensions such as `troupe.media`. |
 | No executable code | Scripts in cards | Scripts in shared cards can steal API keys. |
+| No text transforms | Regex scripts that rewrite text | Most build HTML, fix one model's quirks, or display stats that state now covers. |
 | Strict schemas, lenient readers | Either everywhere | Writers catch typos; readers stay forward compatible. |
 | Writers leave out empty optional fields and write booleans as they like | Allowing `""` and `[]` anywhere; treating an explicit `false` as different from absent | Two writers of the same story produce the same fields, and typed serializers that write defaults still validate. |
 | Two part types, closed | Open part types | Every reader shows and sends every part; new media belongs in `ext` until a version adds a type. |
@@ -1145,13 +1127,14 @@ Version 1.0 is tagged when no breaking change is pending and the conformance sui
 
 ### D.2 Draft extensions
 
-- **`troupe.tests`:** behavior tests inside a bundle. Each test sets up a scenario, an opening, starting values and a short history, then expects entries to activate or not, a CEL condition on state, and plain-language assertions scored by a judge model ("Kai deflects and doesn't admit the deal"), over several samples with a pass rate. The deterministic part runs without a model; the judged part tells people which models play a card well.
-- **`troupe.time`:** characters who act between messages. `on: "idle"` events evaluated at a records-only message when an app wakes a quiet session, and `reply` to ask a character for a turn, with opt-in and frequency caps.
-- **`troupe.table`:** play with several people: participants, seat assignment, turn policy, and secrets between human players.
-- **`troupe.calls`:** events that players or the model invoke, such as checks, choices and tools: typed parameters read as `args`, availability while `when` holds, refusal of invalid calls, results returned to the model during generation, and recorded calls.
-- **`troupe.overlay`:** a bundle that patches another by ID (replace objects, merge entries by ID, remove listed ones), for translations, fan patches and mods.
-- **`troupe.media`:** one asset shape for covers, avatars, sprites and backgrounds; audio parts with transcripts; provenance of generated media; a character's appearance and voice for image and speech generation; music and ambience.
-- **Text transforms** stay out: most rewrite scripts build HTML, fix one model's quirks, or display stats that state now covers.
+The `troupe.` extension prefix is reserved for these drafts, which may join the core once proven:
+
+- **`troupe.tests`:** behavior tests inside a bundle, checked deterministically and by a judge model.
+- **`troupe.time`:** characters who act between messages, with idle events.
+- **`troupe.table`:** play with several people: turn policy and secrets between human players.
+- **`troupe.calls`:** events that players or the model invoke, such as checks, choices and tools.
+- **`troupe.overlay`:** a bundle that patches another by ID, for translations and mods.
+- **`troupe.media`:** sprites, audio, voices and provenance of generated media.
 
 ---
 
@@ -1164,5 +1147,4 @@ Version 1.0 is tagged when no breaking change is pending and the conformance sui
 - [CEL](https://github.com/google/cel-spec/blob/master/doc/langdef.md); [RE2 syntax](https://github.com/google/re2/wiki/Syntax)
 - [UAX #15](https://www.unicode.org/reports/tr15/); [CaseFolding.txt](https://www.unicode.org/Public/UCD/latest/ucd/CaseFolding.txt)
 - [FIPS 180-4](https://csrc.nist.gov/pubs/fips/180-4/upd1/final): SHA-256
-- [PKWARE APPNOTE](https://pkware.cachefly.net/webdocs/casestudies/APPNOTE.TXT); [PNG, Third Edition](https://www.w3.org/TR/png-3/)
-- [Character Card V3](https://github.com/kwaroran/character-card-spec-v3/blob/main/SPEC_V3.md), [V2](https://github.com/malfoyslastname/character-card-spec-v2/blob/main/spec_v2.md)
+- [PKWARE APPNOTE](https://pkware.cachefly.net/webdocs/casestudies/APPNOTE.TXT)

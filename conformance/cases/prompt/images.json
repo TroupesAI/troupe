@@ -112,7 +112,6 @@
         "id": "2",
         "parent": "1",
         "from": "player",
-        "author": "device-7f3a",
         "content": [
           {
             "speaker": "p",

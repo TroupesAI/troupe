@@ -21,9 +21,6 @@
     "kind": {
       "const": "session"
     },
-    "id": {
-      "$ref": "bundle.schema.json#/$defs/opaqueId"
-    },
     "bundle": {
       "$ref": "bundle.schema.json#/$defs/opaqueId"
     },

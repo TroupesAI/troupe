@@ -34,7 +34,6 @@
   "session": {
     "header": {
       "kind": "session",
-      "id": "sess-9",
       "scenario": "s",
       "seed": "conformanceSeed0001",
       "chronicle": "c-kai",

@@ -1,5 +1,5 @@
 {
-  "description": "Fields that never reach a model (Format 16 item 9): a scenario's briefing, a change's reason and a message's author appear in no prompt item",
+  "description": "Fields that never reach a model (Format 16 item 9): a bundle's credits and a scenario's briefing appear in no prompt item",
   "bundle": {
     "kind": "bundle",
     "characters": [
@@ -31,7 +31,8 @@
           }
         ]
       }
-    ]
+    ],
+    "credits": "CREDITS: CC BY 4.0."
   },
   "session": {
     "header": {
@@ -54,7 +55,6 @@
       {
         "id": "1",
         "from": "player",
-        "author": "handle-77",
         "content": [
           {
             "speaker": "p",
@@ -66,8 +66,7 @@
             "by": "player",
             "set": {
               "gold": 1
-            },
-            "reason": "REASON: Pat found a coin."
+            }
           }
         ]
       },
@@ -76,7 +75,6 @@
         "parent": "1",
         "from": "model",
         "char": "a",
-        "author": "handle-78",
         "content": [
           {
             "speaker": "a",

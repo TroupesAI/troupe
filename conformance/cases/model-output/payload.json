@@ -203,7 +203,6 @@
             "rook"
           ]
         },
-        "reason": "A stranger arrived.",
         "entries": [
           {
             "id": "met",
@@ -254,8 +253,7 @@
                   "b",
                   "rook"
                 ]
-              },
-              "reason": "A stranger arrived."
+              }
             }
           ],
           "entries": [
