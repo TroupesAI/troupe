@@ -136,7 +136,7 @@ type Newcomer = Pick<Character, "id" | "name" | "aliases" | "description" | "sum
 
 - **Tracker.** A tracker run is a model call separate from the story reply. It runs on a message that isn't hidden and has content, while that message is the head and before the event pass after it. It reads the messages after the last extraction on the path before that message, up to that message, as many of them as the app chooses, and returns everything but `parts`. Its input, at the message it runs on, is:
   - for each variable in use whose `by` includes `model`, in event order (section 3.3), its key, type, `values` or range (a named bound at its current value), `description` and current value, and for a keyed variable its keys, or that any author ID may be one;
-  - the scene's values, the ID and name of every location of the bundle and session in world order, and of every cast character in cast order;
+  - the scene's values, the ID and name of every location of the bundle and session in world order (Format 2.3), and of every cast character in cast order;
   - the entries in use placed in `tracker`, not `disabled`, whose `when` holds: those of the worlds, the cast characters in cast order, the scenario and the session, in the order of section 5.1;
   - the session entries on the path placed in `context`, in the order of section 5.1: for a tracker run, all of them that aren't `disabled`, with their IDs and texts; for a structured reply, the IDs of those the Context slot carries;
   - the messages it reads that aren't hidden and have content, with full knowledge.

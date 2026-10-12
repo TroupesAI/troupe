@@ -1,5 +1,5 @@
 {
-  "description": "Duplicate IDs (Format 2.3, 17.2): characters, worlds and scenarios share one namespace, compared characters first; locations are unique across worlds; openings within a scenario. The first is kept",
+  "description": "Duplicate IDs (Format 2.3, 17.2): characters, worlds and scenarios share one namespace, compared characters first; locations are unique across worlds; openings within a scenario. The first is kept; a cast names each character once and worlds lists each world once",
   "bundle": {
     "kind": "bundle",
     "characters": [
@@ -7,6 +7,11 @@
         "id": "x",
         "name": "X",
         "description": "X."
+      },
+      {
+        "id": "kai",
+        "name": "Kai",
+        "description": "Kai."
       }
     ],
     "worlds": [
@@ -48,6 +53,23 @@
             "title": "Again"
           }
         ]
+      },
+      {
+        "id": "t",
+        "cast": [
+          {},
+          {
+            "character": "kai"
+          },
+          {
+            "character": "kai",
+            "player": true
+          }
+        ],
+        "worlds": [
+          "w1",
+          "w1"
+        ]
       }
     ]
   },
@@ -70,6 +92,14 @@
           {
             "code": "DUPLICATE_ID",
             "at": "/scenarios/0/openings/1/id"
+          },
+          {
+            "code": "DUPLICATE_ID",
+            "at": "/scenarios/1/cast/2/character"
+          },
+          {
+            "code": "DUPLICATE_ID",
+            "at": "/scenarios/1/worlds/1"
           }
         ]
       }

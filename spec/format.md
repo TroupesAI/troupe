@@ -119,7 +119,7 @@ MUST, MUST NOT, SHOULD, SHOULD NOT and MAY are used as described in RFC 2119 and
 
 ### 2.2 Values
 
-- Writers MUST write I-JSON (RFC 7493): UTF-8 without a byte order mark, no duplicate member names, no surrogate or noncharacter code points, written or escaped, numbers that fit an IEEE 754 double, and integer fields and `int` values within ±(2^53 − 1), written without a fraction or exponent. Readers parse UTF-8 JSON (RFC 8259), ignore a leading byte order mark, and need not check the other I-JSON constraints.
+- Writers MUST write I-JSON (RFC 7493): UTF-8 without a byte order mark, no duplicate member names, no surrogate or noncharacter code points, written or escaped, numbers that fit an IEEE 754 double, and integer fields and `int` values within ±(2^53 − 1), written without a fraction or exponent. Readers parse UTF-8 JSON (RFC 8259), ignore a leading byte order mark, take the last of duplicate member names, and need not check the other I-JSON constraints.
 - **Empty values.** Writers MUST NOT write `null` in a field this spec defines or in a state value, and MUST NOT write `""`, `[]` or `{}` in an optional field other than `ext`. State values and `scenario.worlds` are the exception: there `""`, `[]` and `{}` are values. Names and variable descriptions are never empty.
 - Readers MUST treat `null`, `""`, `[]` and `{}` in an optional field like a missing field, except in `ext`, state values and `scenario.worlds`, and except that `knownBy: []` reads as `["narrator"]` (section 7.4). A list other than a state value that checks or repairing leave empty, or that repairing removes as a whole, also reads as missing, with four exceptions: `scenario.worlds` and `cast` read as `[]`, `keys` matches nothing, and `knownBy` reads as `["narrator"]`. A `null` state value is invalid (section 8.5).
 - **Defaults are normative.** Every default stated in these documents or their TypeScript comments applies when a field is absent. Every boolean defaults to `false`, and one written `false` is the same as an absent one.
@@ -140,7 +140,8 @@ MUST, MUST NOT, SHOULD, SHOULD NOT and MAY are used as described in RFC 2119 and
 | Characters, worlds, scenarios | All of them, compared in this order: the bundle's characters, worlds and scenarios, then the session's characters and worlds; a session character replacing a bundle character is no duplicate (section 12.2) |
 | Scenario variables | Also every character and world ID in the bundle or session |
 | Entries, variables and events | Each other within the same owner, compared in that order: a variable or event that reuses an earlier ID is the duplicate. Session entries are unique within each message (section 12.3) |
-| Locations | The bundle and the session, compared in world order, the session's worlds last |
+| Locations | The bundle and the session, compared in **world order**: the bundle's worlds in array order, then the session's |
+| A scenario's cast members and `worlds` | The scenario: each names a character or world once |
 | Openings | The same scenario |
 | Messages | The session |
 | Memories | The chronicle |
@@ -410,7 +411,7 @@ interface Variable {
 - **Defaults.** Without `initial`: `false`; `0` raised to `min` or lowered to `max`; `""`; the first of `values`; `[]`.
 - **`description`** reaches the model that updates state (Play 3.4).
 - **`by`.** Openings, events and chronicle values may always change a variable. `player` lets players change it; `model` lets the model that updates state change it (Play 3.4). A variable with `ask` may always be changed by players.
-- **`min` and `max`** are numbers, or name another numeric variable of the same owner, an `int` for an `int`, that is neither keyed nor derived and whose own bounds are numbers, such as `"max": "max_hp"`; its current value, or its new value when the same change sets it (Play 3.3), is the bound.
+- **`min` and `max`** are numbers, or name another numeric variable of the same owner, an `int` for an `int`, that is neither keyed nor derived and whose own bounds, as written, are numbers, such as `"max": "max_hp"`; its current value, or its new value when the same change sets it (Play 3.3), is the bound.
 - **`maxStep`** is the largest step one change from the model may take; **`oneWay`** lets numbers only rise, a bool only turn true, a set only gain members, and an enum only move later in `values`. Both apply to each key of a keyed variable. Starting values are exempt from `oneWay` (Play 3.3).
 - **`derive`** makes a read-only variable computed from other state whenever it is read, such as `"derive": "state.clock / 24 + 1"` for the day. Derived variables have no `initial`, `by`, `ask`, `of`, `maxStep` or `oneWay`, can't be changed, and can't read other derived variables (`CEL_ERROR`). A `derive` is evaluated at the evaluation point of whatever reads it, with `self` its owner, `char` `""`, and no `hit()`.
 - **`ask`** puts a question to the player when the session starts and records the answer. `ask` is not allowed with `of`.
@@ -693,7 +694,7 @@ interface Chronicle {
 }
 ```
 
-- **File.** A chronicle is one JSON document holding the current state. A memory's `knownBy` names only the character, the persona or `narrator`.
+- **File.** A chronicle is one JSON document holding the current state. Its persona's ID differs from its character's, and a memory's `knownBy` names only the character, the persona or `narrator`.
 - **Carrying.** A chronicle keeps the character's non-derived variables marked `carry` and the carried session entries (section 12.3); `carry` is ignored elsewhere. A chronicle read alone is checked as if its character played a scenario without variables. Chronicle values are validated like recorded changes when a session starts, and keys that aren't carried are dropped; in the file, a key of a carried keyed variable may be any author ID, such as the persona's.
 
 Play 2.2 says how a session continues a chronicle and writes back to it.
@@ -715,20 +716,20 @@ Play 2.2 says how a session continues a chronicle and writes back to it.
 
 ### 14.2 Files
 
-Fields that hold a file (`cover`, `avatar`, location `image` and image parts) hold a PNG, JPEG, WebP, AVIF or GIF image, as a relative path inside the package, an `https:` URL, or a `data:` URI with base64 content and the lowercase media type `image/png`, `image/jpeg`, `image/webp`, `image/avif` or `image/gif`.
+Fields that hold a file (`cover`, `avatar`, location `image` and image parts) hold a PNG, JPEG, WebP, AVIF or GIF image, as a path from the package root, an `https:` URL, or a `data:` URI with base64 content and the lowercase media type `image/png`, `image/jpeg`, `image/webp`, `image/avif` or `image/gif`.
 
 ### 14.3 Packages
 
 - `bundle.json` is at the root.
-- Paths match `^[A-Za-z0-9_-][A-Za-z0-9._-]*(/[A-Za-z0-9_-][A-Za-z0-9._-]*)*$`, with segments of at most 255 bytes, unique when compared case-insensitively.
-- ZIP entries use the store or deflate methods and are not encrypted. Sessions are stored under `sessions/` with the `.troupe-session.jsonl` extension, and chronicles under `chronicles/` with the `.troupe-chronicle.json` extension; readers read sessions and chronicles only there, and other files only as files that the package's bundle, sessions or chronicles reference. A ZIP entry whose name ends in `/` is a directory: readers ignore it, and its name without the final `/` follows the path grammar.
+- Writers give every entry a path matching `^[A-Za-z0-9_-][A-Za-z0-9._-]*(/[A-Za-z0-9_-][A-Za-z0-9._-]*)*$`, with segments of at most 255 bytes, unique when compared case-insensitively. Readers hold to the grammar the entries they read.
+- ZIP entries use the store or deflate methods and are not encrypted. Sessions are stored under `sessions/` with the `.troupe-session.jsonl` extension, and chronicles under `chronicles/` with the `.troupe-chronicle.json` extension; readers read sessions and chronicles only there, and other files only as files that the package's bundle, sessions or chronicles reference. Readers ignore every other entry, such as a directory (a name ending in `/`) or a file an archiver adds.
 
 ---
 
 ## 15. Extensions and versioning
 
 - **Extensions.** Every object of a bundle, session or chronicle that this document defines with an interface MAY carry `ext`, keyed by an extension name matching `^[a-z0-9][a-z0-9.-]{0,63}$`, such as `risu.regex`. The `troupe.` prefix is reserved for the draft extensions of Appendix D. Apps MUST NOT add fields anywhere else.
-- **Unknown fields.** Readers MUST ignore fields and extensions they don't understand. They MUST keep `ext` unchanged, as a JSON value, through load, save and export; other unknown fields are dropped when the file is written. A property is unknown when its object's interface doesn't define it; for a part, the interface its `type` selects. Each is an `UNKNOWN_FIELD` warning located at the property, and `SCHEMA` is judged with unknown properties removed, so readers never reject a file only for them. A part whose `type` is present and isn't `"text"` or `"image"` is unknown as a whole: an `UNKNOWN_FIELD` warning at its `type`. Readers ignore it and MUST write it back unchanged, so a message holding only such parts has no content.
+- **Unknown fields.** Readers MUST ignore fields and extensions they don't understand. They MUST keep `ext` unchanged, as a JSON value, through load, save and export; other unknown fields are dropped when the file is written. A property is unknown when its object's interface doesn't define it; for a part, the interface its `type` selects. Each is an `UNKNOWN_FIELD` warning located at the property, and `SCHEMA` is judged with unknown properties removed, so readers never reject a file only for them. A part whose `type` is present and isn't `"text"` or `"image"` is unknown as a whole: an `UNKNOWN_FIELD` warning at its `type`. Readers ignore it and MUST write it back unchanged, so a message, opening or event message holding only such parts has no content.
 - **Versions** are `major.minor`, compared as two integers, so `0.10` is newer than `0.9`. A reader refuses a file of another major version (`UNSUPPORTED_VERSION`). From 1.0, minor versions only add what older readers can safely ignore: readers MUST open every file of their major version and report a newer minor as an `UNSUPPORTED_VERSION` warning. Before 1.0, any minor version may break: a reader fully supports only its own, reports any other as an `UNSUPPORTED_VERSION` warning, and MAY still read it.
 
 ---
@@ -741,8 +742,8 @@ Fields that hold a file (`cover`, `avatar`, location `image` and image parts) ho
 4. **Known media only.** Apps MUST determine file formats by content, reject formats section 14.2 doesn't list, and cap decoded image size.
 5. **Linear-time regex.** A regex, as a key or a `matches()` pattern, is RE2 syntax without `\C`, with groups nested at most 100 deep and counted repetitions that multiply through nesting to at most 1000, so `(a{10}){200}` is too many. Apps MUST match regexes with an engine that runs in linear time, such as RE2.
 6. **Sandboxed conditions.** Apps MUST NOT turn expressions into code they run, such as JavaScript passed to `eval`.
-7. **Safe archives.** Readers MUST reject absolute paths, `..` segments, backslashes, paths outside section 14.3's grammar or segment length, compression methods other than store and deflate, symbolic links, encryption and duplicate names, and MUST cap entry count, unpacked size and compression ratio.
-8. **Bounded parsing.** Readers MUST cap JSON size and depth, `data:` URI size, and session length.
+7. **Safe archives.** Readers MUST reject a package with an entry that has an absolute path, a `..` segment or a backslash, is a symbolic link, is encrypted, uses a compression method other than store and deflate, or has the name of another entry compared case-insensitively, and one whose entries they read break section 14.3's grammar. They MUST cap entry count and unpacked size.
+8. **Bounded parsing.** Readers MUST cap JSON size and depth, and session length.
 9. **Private fields.** `credits`, `briefing` and opening `title`s MUST NOT be sent to any model; entry `title` reaches it only in a pull catalog.
 
 Writers MUST stay within these limits. Readers MUST accept files within them, and MAY accept or refuse larger ones. An app MAY stop work that exceeds its resources, such as evaluating an expression or matching keys; it then fails the generation or event pass instead of recording a different outcome, and doesn't continue the session from the message that triggered it.
@@ -1115,7 +1116,8 @@ A new session that continues this chronicle starts with `closeness` at 58 and bo
 | Writers create two part types; readers skip others and write them back | Open part types; refusing unknown ones | A later version can add a media part that older readers skip instead of refusing the session. |
 | Readers must keep only `ext` | Keeping every unknown field, and stamping the newer version | Apps add data only in `ext`, so other unknown fields are typos or come from a version the reader doesn't support. |
 | No `requires` and no rules for extension data | Files declaring extensions they need; duties on extension authors | An app that lacks an extension ignores its data, and nothing could check those duties. |
-| Standard ZIP checks | Rejecting multi-disk archives, overlapping entries and headers that disagree | A standard ZIP library reads packages; the size, count and ratio caps bound a hostile archive. |
+| Standard ZIP checks | Rejecting multi-disk archives, overlapping entries and headers that disagree | A standard ZIP library reads packages; the size and count caps bound a hostile archive. |
+| Readers ignore entries they don't read | Rejecting any entry outside the path grammar | Archivers add files such as `__MACOSX/` and `.DS_Store`, and people zip folders with stray files; only the entries a reader reads need the grammar, while unsafe entries are still rejected. |
 | Writers write I-JSON; readers use a standard JSON parser | Readers rejecting everything I-JSON forbids | No app needs its own parser. |
 | Apps give characters and worlds they add to a session unique IDs their own way | Prescribed renaming of macros and CEL | Only the added object refers to its own ID, so how it gets a fresh one concerns only the app. |
 | Writers stay within the limits; readers may accept more | Exact limits, or minimums only | Every conforming file opens in every app, and apps can still be generous. A package's 512 MiB holds a full bundle and a full session with room for images, without making every app accept a gigabyte. |
