@@ -44,7 +44,7 @@ One page for people and for LLMs asked to write Troupe files. Give it to a model
 4. Numbers in CEL arithmetic match the variable's type: `state.trust.kai - 0.1` for a `number`, `state.hp - 1` for an `int`.
 5. `chance` is 0–1, not a percentage. `weight` and `priority` are integers.
 6. A numeric `position` is a depth in history, not an order; write `4`, not `"4"`.
-7. Without `by`, only openings, events and chronicle values can change a variable, and players can change one with `ask`.
+7. Without `by`, only openings and events can change a variable, and players can change one with `ask`.
 8. An entry, a variable and an event of the same owner can't share an ID.
 9. `knownBy: ["narrator"]` is for the narrator alone; an explicit `knownBy` hides an entry from the narrator unless it lists `narrator`. Narrator-only clues belong to the scenario, because a character's entries only count while they are present.
 10. Characters, worlds and scenarios can't be called `char`, `user`, `narrator`, `session`, `state`, `scene`, `players` or `own`, and a variable can't be called `scene` or `own`; no ID can be a CEL word such as `var`, `loop`, `function` or `package`.

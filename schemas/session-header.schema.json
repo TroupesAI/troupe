@@ -24,9 +24,6 @@
     "bundle": {
       "$ref": "bundle.schema.json#/$defs/opaqueId"
     },
-    "chronicle": {
-      "$ref": "bundle.schema.json#/$defs/opaqueId"
-    },
     "limits": {
       "$ref": "bundle.schema.json#/$defs/limits"
     },

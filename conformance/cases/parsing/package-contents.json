@@ -1,5 +1,5 @@
 {
-  "description": "Package contents (Format 14.3, 17.2): an exact duplicate name is PARSE; chronicles under chronicles/ belong to the package; an unreadable line in a session inside a valid package is PARSE; compression methods other than store and deflate, and a referenced file with a path segment over 255 bytes, are PARSE; sessions and chronicles belong to the package only in their folders",
+  "description": "Package contents (Format 14.3, 17.2): an exact duplicate name is PARSE; an unreadable line in a session inside a valid package is PARSE; compression methods other than store and deflate, and a referenced file with a path segment over 255 bytes, are PARSE; sessions belong to the package only in their folder",
   "tests": [
     {
       "type": "parse",
@@ -9,26 +9,6 @@
       "expect": {
         "codes": [
           "PARSE"
-        ]
-      }
-    },
-    {
-      "type": "parse",
-      "name": "a chronicle under chronicles/",
-      "kind": "package",
-      "base64": "UEsDBBQAAAAIAAAAS11m3axbIQAAACEAAAALAAAAYnVuZGxlLmpzb26rViopyi8tSFWyUjLQMzRS0lHKzsxLAfKSSvNSclKVagFQSwMEFAAAAAgAAABLXRlLUNpUAAAAaAAAACUAAABjaHJvbmljbGVzL21pcmEudHJvdXBlLWNocm9uaWNsZS5qc29uJcxBDoAgDATAv/RsjHjkDz6iKSQ0SiEVT4S/W+W2O5tsh6blqRE8bKvbYYGTJVijpEWYrmjEPzhLlFCRWlTwfXJmRRsE8/dxzBbiTcq1cRHDAGO8UEsBAhQDFAAAAAgAAABLXWbdrFshAAAAIQAAAAsAAAAAAAAAAAAAAIABAAAAAGJ1bmRsZS5qc29uUEsBAhQDFAAAAAgAAABLXRlLUNpUAAAAaAAAACUAAAAAAAAAAAAAAIABSgAAAGNocm9uaWNsZXMvbWlyYS50cm91cGUtY2hyb25pY2xlLmpzb25QSwUGAAAAAAIAAgCMAAAA4QAAAAAA",
-      "expect": {
-        "codes": []
-      }
-    },
-    {
-      "type": "parse",
-      "name": "a chronicle under chronicles/ without a character fails the schema",
-      "kind": "package",
-      "base64": "UEsDBBQAAAAIAAAAS11m3axbIQAAACEAAAALAAAAYnVuZGxlLmpzb26rViopyi8tSFWyUjLQMzRS0lHKzsxLAfKSSvNSclKVagFQSwMEFAAAAAgAAABLXT79N6IqAAAALgAAACUAAABjaHJvbmljbGVzL21pcmEudHJvdXBlLWNocm9uaWNsZS5qc29uq1YqKcovLUhVslIy0DM0UtJRys7MSwHykjOK8vMyk3NSgUKZYAFDpVoAUEsBAhQDFAAAAAgAAABLXWbdrFshAAAAIQAAAAsAAAAAAAAAAAAAAIABAAAAAGJ1bmRsZS5qc29uUEsBAhQDFAAAAAgAAABLXT79N6IqAAAALgAAACUAAAAAAAAAAAAAAIABSgAAAGNocm9uaWNsZXMvbWlyYS50cm91cGUtY2hyb25pY2xlLmpzb25QSwUGAAAAAAIAAgCMAAAAtwAAAAAA",
-      "expect": {
-        "codes": [
-          "SCHEMA"
         ]
       }
     },

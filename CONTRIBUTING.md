@@ -33,7 +33,7 @@ A minor version bump changes, together:
 
 - the version line of `spec/format.md`, with its date, and the README's status line;
 - every schema URL (`https://docs.troupes.ai/schema/<minor>/…`): the schemas' `$id`s and the `$schema` and `$id` examples in the spec;
-- `troupe` in every bundle, session and chronicle: the examples, the cases' raw `parse` inputs, and the README and guides, including the example in Format 3's interface;
+- `troupe` in every bundle and session: the examples, the cases' raw `parse` inputs, and the README and guides, including the example in Format 3's interface;
 - `conformance/cases/parsing/versions.json`, whose inputs name the versions around the current one.
 
 `bun run check` reports a version out of step in the version line, schema URLs, examples, cases, and JSON blocks in Markdown. Raw `parse` inputs and other text need a look by hand.

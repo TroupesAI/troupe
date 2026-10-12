@@ -1,6 +1,6 @@
 # Troupe
 
-An open file format for AI roleplay: characters, the worlds they live in, the scenarios that bring them together, the mechanics that drive a story, and sessions: the chats people play, exported so any app can continue them.
+An open file format for AI roleplay: characters, the worlds they live in, the scenarios that bring them together, the mechanics that drive a story, and sessions: the chats people play, with every outcome recorded.
 
 **Status:** v0.12 draft. Breaking changes are allowed until 1.0, which is tagged once none is pending and the conformance suite covers the spec.
 
@@ -32,7 +32,7 @@ The [beginner's guide](guides/beginners.md) grows this card into a full story, w
 
 | | |
 | --- | --- |
-| [Troupe Format](spec/format.md) | The files and what every field means: bundles, characters, worlds, scenarios, entries, variables, events, sessions and chronicles. |
+| [Troupe Format](spec/format.md) | The files and what every field means: bundles, characters, worlds, scenarios, entries, variables, events and sessions. |
 | [Schemas](schemas/) | JSON Schemas, normative for structure (Format Appendix A). |
 | [Conformance suite](conformance/) | Language-neutral test cases and the [protocol](conformance/README.md) a test runner follows. |
 | [Examples](examples/) | The spec's worked examples as files. |

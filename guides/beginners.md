@@ -24,7 +24,7 @@ A model has no memory of its own. Each time it replies, it reads what it needs: 
 
 So a roleplay file mostly says what the model should read, and when. A Troupe file declares it; how each app puts it in front of a model is up to the app.
 
-Most shared characters today are Character Card V2 or V3 files. A card describes one character, its greetings and a lorebook of facts with keywords. That works for a single companion, but people now use cards for much more. Group stories have to pretend to be one character, stats and inventories are faked with text tricks, every character in a group chat sees every secret, and a companion's memories stay locked in one app. Troupe is designed to fix each of these, and the chapters below show how.
+Most shared characters today are Character Card V2 or V3 files. A card describes one character, its greetings and a lorebook of facts with keywords. That works for a single companion, but people now use cards for much more. Group stories have to pretend to be one character, stats and inventories are faked with text tricks, and every character in a group chat sees every secret. Troupe is designed to fix each of these, and the chapters below show how.
 
 ## 2. A first card
 
@@ -232,7 +232,7 @@ The heist runs on a clock: the harbor bells. A **variable** holds state like thi
 
 - **`type`** is `bool`, `int`, `number`, `string`, `enum` (one of `values`) or `set` (a list of distinct strings, such as an inventory).
 - **`description`** is written for authors and the model alike: what the value means and what moves it.
-- **`by: ["model"]`** lets a model change the value as the story goes. Without `by`, only openings, events (chapter 7) and chronicle values change a variable, and players can change one with `ask`.
+- **`by: ["model"]`** lets a model change the value as the story goes. Without `by`, only openings and events (chapter 7) change a variable, and players can change one with `ask`.
 - **`min`, `max`, `maxStep` and `oneWay`** are guardrails: the bell stays between 6 and 12, moves at most 2 at a time, and never goes back.
 - **`of: "characters"`** keeps one value per character, read as `state.trust.kai`.
 - **`ask`** is a question for the player when the chat starts; `labels` name the choices.
@@ -303,7 +303,7 @@ flowchart TD
   O2["Opening: at the harbor"]
 ```
 
-Every outcome is written into the message where it happened: which entries activated, which values changed and who changed them, which events fired. Branches never share state: time lost on one branch is still there to spend on the other. Because every outcome is recorded, a chat saved by one app continues in another with the same history and state. [Format Appendix B.3](../spec/format.md#b3-session) shows this chat as a file.
+Every outcome is written into the message where it happened: which entries activated, which values changed and who changed them, which events fired. Branches never share state: time lost on one branch is still there to spend on the other. Because every outcome is recorded, a saved chat reopens with the same history and state, without replaying anything. [Format Appendix B.3](../spec/format.md#b3-session) shows this chat as a file.
 
 The player's character usually lives in the session, not the bundle. A session can also carry its own version of a bundle character, which replaces it for that chat. Text that names other characters with `{{@kai}}` instead of writing "Kai" keeps working after such a recast.
 
@@ -311,29 +311,23 @@ The people playing can set **limits**: `lines`, things never to show, and `veils
 
 ## 9. Companions who remember
 
-A companion needs only a character and a small scenario, like the first card in chapter 2. What makes a companion feel real is memory, and Troupe keeps memory in a **chronicle**: a file that carries one character's current definition, memories and relationship from one chat to the next, and from one app to another.
+A companion needs only a character and a small scenario, like the first card in chapter 2. What makes a companion feel real is memory.
 
-Mark what should be kept with `carry`. A variable for closeness goes in the character's own `variables`:
+A variable for closeness goes in the character's own `variables`, so it travels with her into any story:
 
 ```json
-{ "id": "closeness", "type": "int", "min": 0, "max": 100, "by": ["model"], "carry": true,
+{ "id": "closeness", "type": "int", "min": 0, "max": 100, "by": ["model"],
   "description": "How close {{char}} feels to {{user}}." }
 ```
 
-During a chat, a model can add memories as entries on a message, with `carry` so they are kept and `pull` with a `title` so each is retrieved only when it matters:
+During a chat, a model can add memories as entries on a message, with `pull` and a `title` so each is retrieved only when it matters:
 
 ```json
-{ "id": "lake", "title": "The promise about the lake", "pull": true, "carry": true, "knownBy": ["mira"],
+{ "id": "lake", "title": "The promise about the lake", "pull": true, "knownBy": ["mira"],
   "text": "Mira promised Mara they would see the frozen lake on Thessa in spring." }
 ```
 
-```mermaid
-flowchart LR
-  C["Chronicle: Mira, memories, closeness 58"] -- "copied in at the start" --> S["A new chat"]
-  S -- "written back: changed values, new memories" --> C
-```
-
-The chat never needs the chronicle file to replay: everything it uses is copied in when it starts. A long friendship can run as many short chats with one chronicle, instead of one endless chat. [Format Appendix B.4](../spec/format.md#b4-chronicle) shows Mira's chronicle.
+A memory added on a message holds from there on, on that branch only, so a reply that is swiped away takes its memories with it.
 
 ## 10. Coming from Character Card V2/V3
 

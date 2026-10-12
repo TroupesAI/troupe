@@ -66,17 +66,6 @@
           "UNSUPPORTED_VERSION"
         ]
       }
-    },
-    {
-      "type": "parse",
-      "name": "a chronicle of another major",
-      "kind": "chronicle",
-      "text": "{\"troupe\":\"1.0\",\"kind\":\"chronicle\",\"id\":\"c1\",\"character\":{\"id\":\"mira\",\"name\":\"Mira\",\"description\":\"d\"}}\n",
-      "expect": {
-        "codes": [
-          "UNSUPPORTED_VERSION"
-        ]
-      }
     }
   ]
 }

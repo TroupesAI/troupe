@@ -1,5 +1,5 @@
 {
-  "description": "Sessions and chronicles (Format 12, 13, 17.2): session lines end with LF or CRLF and the last newline is optional; an unreadable line is PARSE; a chronicle is one JSON document",
+  "description": "Sessions (Format 12, 17.2): session lines end with LF or CRLF and the last newline is optional; an unreadable line is PARSE",
   "tests": [
     {
       "type": "parse",
@@ -57,26 +57,6 @@
       "name": "a bundle where a session is expected",
       "kind": "session",
       "text": "{\"troupe\":\"0.12\",\"kind\":\"bundle\"}\n",
-      "expect": {
-        "codes": [
-          "PARSE"
-        ]
-      }
-    },
-    {
-      "type": "parse",
-      "name": "a chronicle",
-      "kind": "chronicle",
-      "text": "{\"troupe\":\"0.12\",\"kind\":\"chronicle\",\"id\":\"c1\",\"character\":{\"id\":\"mira\",\"name\":\"Mira\",\"description\":\"d\"},\"memories\":[{\"id\":\"met\",\"text\":\"Mira met Mara.\"}]}\n",
-      "expect": {
-        "codes": []
-      }
-    },
-    {
-      "type": "parse",
-      "name": "a chronicle followed by another JSON value isn't read",
-      "kind": "chronicle",
-      "text": "{\"troupe\":\"0.12\",\"kind\":\"chronicle\",\"id\":\"c1\",\"character\":{\"id\":\"mira\",\"name\":\"Mira\",\"description\":\"d\"}}\n{\"id\":\"r1\"}\n",
       "expect": {
         "codes": [
           "PARSE"

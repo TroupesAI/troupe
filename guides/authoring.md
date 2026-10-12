@@ -96,7 +96,7 @@ Mark the ghost's cast member `spoiler`, a secret until the players walk into the
 
 ### Companions that remember
 
-Give a companion `carry` variables for the relationship, such as `{"id": "closeness", "type": "int", "min": 0, "max": 100, "by": ["model"], "carry": true, "description": "How close {{char}} feels to {{user}}."}`, and let a model add memories as session entries with `carry`, and `pull` with a `title`. A chronicle (Format 13) then takes both into every later session, in any app.
+Give a companion its own variables for the relationship, such as `{"id": "closeness", "type": "int", "min": 0, "max": 100, "by": ["model"], "description": "How close {{char}} feels to {{user}}."}`, and let a model add memories as session entries with `pull` and a `title` (Format 12.3), so each comes back only when it matters.
 
 ### Time awareness
 

@@ -159,7 +159,7 @@
       ]
     },
     "opaqueId": {
-      "description": "A message, bundle or chronicle ID.",
+      "description": "A message or bundle ID.",
       "type": "string",
       "pattern": "^[A-Za-z0-9_-]{1,64}$"
     },
@@ -498,9 +498,6 @@
         },
         "pull": {
           "type": "boolean"
-        },
-        "carry": {
-          "type": "boolean"
         }
       },
       "if": {
@@ -792,9 +789,6 @@
         },
         "derive": {
           "$ref": "#/$defs/cel"
-        },
-        "carry": {
-          "type": "boolean"
         }
       },
       "allOf": [

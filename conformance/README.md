@@ -17,7 +17,6 @@ Cases live in `cases/<area>/<topic>.json`, one folder per area of the spec:
 | `knowledge` | Who knows a part or a summary (Format 7.4, 12.4, 12.5) |
 | `roots` | Roots made from openings (Format 6.3, 12.1) |
 | `sessions` | Session lines, the head, players and the cast (Format 12) |
-| `chronicles` | Chronicles (Format 13) |
 | `checks` | Checks and unknown fields (Format 15, 17.2) |
 | `parsing` | Raw files (Format 2.2, 14, 16) |
 | `examples` | The spec's worked examples and the authoring guide's patterns |
@@ -34,7 +33,7 @@ The order of cases doesn't matter. A case file is one JSON object, described by 
 | `sessionFile` | string | Instead of `session`: a path to a `.jsonl` session file, relative to the case file. |
 | `tests` | array | The tests (section 3). |
 
-Bundles, session headers and chronicles given as objects leave out `troupe`: before anything else, `check` validation included, the runner sets it to the spec version. If no bundle is given, the bundle is `{"troupe": <the spec version>, "kind": "bundle"}`. Cases that test raw input instead use `parse` tests (section 3.7), which take their input inline.
+Bundles and session headers given as objects leave out `troupe`: before anything else, `check` validation included, the runner sets it to the spec version. If no bundle is given, the bundle is `{"troupe": <the spec version>, "kind": "bundle"}`. Cases that test raw input instead use `parse` tests (section 3.7), which take their input inline.
 
 ## 2. Setup for each test
 
@@ -127,26 +126,17 @@ A diagnostic about one value points at that value: a list item at its index (`/s
 
 `expect` is who knows it: the IDs of the characters who know it, and `narrator` when the narrator knows it, in code point order. The single voice knows everything but hidden messages' parts, and isn't listed.
 
-### 3.7 `parse`: raw input (Format 2.2, 12, 13, 14, 15, 16)
+### 3.7 `parse`: raw input (Format 2.2, 12, 14, 15, 16)
 
 | Input | Meaning |
 | --- | --- |
-| `kind` | What the input is: `bundle` (a `.troupe.json` file), `session`, `chronicle` or `package` (a `.troupe` ZIP archive). |
+| `kind` | What the input is: `bundle` (a `.troupe.json` file), `session` or `package` (a `.troupe` ZIP archive). |
 | `text` | The input as a string, encoded as UTF-8 to get its bytes. |
 | `base64` | Instead of `text`: the input's bytes, in base64. Used for bytes that aren't valid UTF-8 text and for binary formats. |
 
-The runner parses the bytes, checks the version and validates against the schema, with unknown properties and parts of unknown type as `UNKNOWN_FIELD` (Format 15). For a package it checks the archive and its `bundle.json` and every session and chronicle in it (Format 14.3). It runs no other checks; `check` tests cover them.
+The runner parses the bytes, checks the version and validates against the schema, with unknown properties and parts of unknown type as `UNKNOWN_FIELD` (Format 15). For a package it checks the archive and its `bundle.json` and every session in it (Format 14.3). It runs no other checks; `check` tests cover them.
 
 `expect.codes` is the sorted list of distinct codes reported, compared exactly. A conforming input has none.
-
-### 3.8 `chronicle`: chronicle checks (Format 13)
-
-| Input | Meaning |
-| --- | --- |
-| `chronicle` | A chronicle document. |
-| `chronicleFile` | Instead of `chronicle`: a path to a `.troupe-chronicle.json` file, relative to the case file. |
-
-`expect.codes` is the sorted distinct codes from validating the chronicle against `chronicle.schema.json` and checking it (Format 13). A value key of a keyed variable has exactly one key segment.
 
 ## 4. Floating point and text
 
@@ -158,7 +148,7 @@ The runner parses the bytes, checks the version and validates against the schema
 
 - Put a case in the folder for its area, named after its topic: `state/clamping.json`.
 - Prefer small inline bundles.
-- Test failed checks in separate cases, with `check`, `chronicle` and `parse` tests; other tests need conforming inputs (section 2).
+- Test failed checks in separate cases, with `check` and `parse` tests; other tests need conforming inputs (section 2).
 - Keep inputs to what the tests read.
 - When an expectation depends on ambiguous spec text, fix the spec text (see [CONTRIBUTING.md](../CONTRIBUTING.md#changing-the-spec)).
 - Cite current sections in `description`, as `Format 7.2`.

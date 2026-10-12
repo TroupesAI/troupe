@@ -25,17 +25,6 @@
     },
     {
       "type": "parse",
-      "name": "a chronicle with a byte order mark",
-      "kind": "chronicle",
-      "text": "﻿{\"troupe\":\"0.12\",\"kind\":\"chronicle\",\"id\":\"c1\",\"character\":{\"id\":\"mira\",\"name\":\"Mira\",\"description\":\"d\"}}\n",
-      "expect": {
-        "codes": [
-          "PARSE"
-        ]
-      }
-    },
-    {
-      "type": "parse",
       "name": "an empty line is PARSE",
       "kind": "session",
       "text": "{\"troupe\":\"0.12\",\"kind\":\"session\",\"scenario\":\"s\"}\n\n{\"id\":\"1\",\"from\":\"player\",\"content\":[{\"text\":\"Hi.\"}]}\n\n{\"id\":\"2\",\"parent\":\"1\",\"from\":\"model\",\"content\":[{\"text\":\"Hello.\"}]}\n\n",

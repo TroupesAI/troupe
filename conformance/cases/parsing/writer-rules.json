@@ -175,7 +175,7 @@
     },
     {
       "type": "parse",
-      "name": "a records-only root may hold entries, such as a chronicle's memories",
+      "name": "a records-only root may hold entries",
       "kind": "session",
       "text": "{\"troupe\": \"0.12\", \"kind\": \"session\", \"scenario\": \"s\"}\n{\"id\": \"1\", \"opening\": \"o\", \"from\": \"system\", \"content\": [], \"changes\": [{\"by\": \"rules\", \"set\": {\"scene.present\": []}}], \"entries\": [{\"id\": \"e\", \"text\": \"t\"}]}\n",
       "expect": {

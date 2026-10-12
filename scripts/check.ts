@@ -1,10 +1,10 @@
 // Checks the repository's documents and data:
-//   - the schemas compile, and the examples and every complete bundle, session header and chronicle in a Markdown document validate;
+//   - the schemas compile, and the examples and every complete bundle and session header in a Markdown document validate;
 //   - examples/ and the first example of the README and the beginner's guide match the examples in spec/format.md (--write-examples rewrites examples/);
 //   - every TypeScript interface in the spec lists exactly its schema's properties;
 //   - the spec version agrees across the spec, the README, schema URLs, examples, documents in Markdown and cases;
 //   - every conformance case is named <area>/<topic>.json, matches conformance/case.schema.json, and the files it names exist,
-//     and its check, chronicle and parse tests expect SCHEMA exactly when the schemas reject their input;
+//     and its check and parse tests expect SCHEMA exactly when the schemas reject their input;
 //   - cases with state, macro, cel, ended or knows tests have inputs that pass the schemas, unknown properties included, and a
 //     check test that expects no codes, so a runner confirms the inputs conform;
 //   - relative Markdown links and #anchors resolve, and every "Format N.N" names a section.
@@ -54,7 +54,6 @@ const examples: Record<string, string> = {
   "mira-card.troupe.json": block("### B.1 A card with lore", "json"),
   "lantern-heist.troupe.json": block("### B.2 A story", "json"),
   "lantern-heist.troupe-session.jsonl": block("### B.3 Session", "text"),
-  "mira.troupe-chronicle.json": block("### B.4 Chronicle", "json"),
 };
 const writeExamples = process.argv.includes("--write-examples");
 for (const [name, text] of Object.entries(examples)) {
@@ -62,7 +61,6 @@ for (const [name, text] of Object.entries(examples)) {
   if (writeExamples) writeFileSync(join(root, path), text);
   else if (!existsSync(join(root, path)) || read(path) !== text) fail(`${path} differs from spec/format.md (bun run examples)`);
   if (name.endsWith(".troupe.json")) validate("bundle.schema.json", JSON.parse(text), path);
-  else if (name.endsWith(".troupe-chronicle.json")) validate("chronicle.schema.json", JSON.parse(text), path);
   else {
     const lines = text.trimEnd().split("\n").map((l) => JSON.parse(l));
     lines.forEach((line, i) => validate(i === 0 ? "session-header.schema.json" : "message.schema.json", line, `${path}:${i + 1}`));
@@ -75,7 +73,7 @@ for (const doc of ["README.md", "guides/beginners.md"]) {
 const extra = readdirSync(join(root, "examples")).filter((f) => !(f in examples));
 if (extra.length) fail(`examples/ has files the spec doesn't define: ${extra.join(", ")}`);
 
-// Every complete bundle written as a json block in a Markdown document; sessions and chronicles there too, for their version
+// Every complete bundle written as a json block in a Markdown document; sessions there too, for their version
 const docBundles: { where: string; troupe?: string }[] = [];
 for (const doc of markdown) {
   const text = read(doc);
@@ -85,12 +83,12 @@ for (const doc of markdown) {
       value = JSON.parse(m[1]);
     } catch (e) {
       // fragments such as a single entry or event aren't JSON documents; a document that fails to parse is an error
-      if (/"kind":\s*"(bundle|session|chronicle)"/.test(m[1]))
+      if (/"kind":\s*"(bundle|session)"/.test(m[1]))
         fail(`${doc}:${text.slice(0, m.index).split("\n").length}: ${(e as Error).message}`);
       continue;
     }
     const kind = (value as { kind?: string })?.kind;
-    if (kind === "bundle" || kind === "session" || kind === "chronicle") {
+    if (kind === "bundle" || kind === "session") {
       const line = text.slice(0, m.index).split("\n").length;
       validate(`${kind === "session" ? "session-header" : kind}.schema.json`, value, `${doc}:${line}`);
       docBundles.push({ where: `${doc}:${line}`, troupe: (value as { troupe?: string }).troupe });
@@ -136,7 +134,6 @@ const interfaces: Record<string, ReturnType<typeof schemaOf>> = {
   Message: schemaOf("message.schema.json"),
   Change: schemaOf("message.schema.json", "$defs", "change"),
   Summary: schemaOf("message.schema.json", "properties", "summary"),
-  Chronicle: schemaOf("chronicle.schema.json"),
 };
 for (const [name, schema] of Object.entries(interfaces)) {
   const body = format.match(new RegExp(`^interface ${name} \\{\n([\\s\\S]*?)\n\\}`, "m"))?.[1];
@@ -177,19 +174,19 @@ for (const f of cases) {
     if (Array.isArray(o)) return o.forEach(walk);
     if (!o || typeof o !== "object") return;
     const d = o as Record<string, unknown>;
-    if (typeof d.kind === "string" && ["bundle", "session", "chronicle"].includes(d.kind) && "troupe" in d && d.troupe !== version)
+    if (typeof d.kind === "string" && ["bundle", "session"].includes(d.kind) && "troupe" in d && d.troupe !== version)
       fail(`${path}: a ${d.kind} has troupe ${d.troupe}, not ${version}`);
     Object.values(d).forEach(walk);
   };
   walk(value);
   if (!validCase(value)) fail(`${path}: ${ajv.errorsText(validCase.errors, { dataVar: "" })}`);
-  for (const m of JSON.stringify(value).matchAll(/"(?:bundle|session|chronicle)File":"([^"]+)"/g))
+  for (const m of JSON.stringify(value).matchAll(/"(?:bundle|session)File":"([^"]+)"/g))
     if (!existsSync(join(root, dirname(path), m[1]))) fail(`${path}: ${m[1]} doesn't exist`);
   schemaCodes(path, value);
 }
 
 // A case's expected codes agree with the schemas: SCHEMA is expected exactly when an input fails them, apart from
-// unknown properties (Format 15). Covers check tests, chronicle checks and parse tests of a single JSON document or session.
+// unknown properties (Format 15). Covers check tests and parse tests of a single JSON document or session.
 function schemaFails(name: string, value: unknown): boolean {
   const v = validator(name);
   return !v(value) && (v.errors ?? []).some((e) => e.keyword !== "additionalProperties" && e.keyword !== "if");
@@ -227,12 +224,9 @@ function schemaCodes(path: string, c: Record<string, any>) {
     let fails: boolean | undefined;
     if (t.type === "check" && codes && (session !== undefined || !c.sessionFile))
       fails = schemaFails("bundle.schema.json", bundle) || (session ? sessionFails(session) : false);
-    else if (t.type === "chronicle" && codes) {
-      const chronicle = t.chronicleFile ? JSON.parse(read(join(dirname(path), t.chronicleFile))) : withVersion(t.chronicle);
-      fails = schemaFails("chronicle.schema.json", chronicle);
-    } else if (t.type === "parse" && typeof t.text === "string" && t.kind !== "package") {
+    else if (t.type === "parse" && typeof t.text === "string" && t.kind !== "package") {
       if (!codes || codes.some((code) => code === "PARSE" || code === "UNSUPPORTED_VERSION")) return;
-      const schema = { bundle: "bundle.schema.json", chronicle: "chronicle.schema.json" }[t.kind as string];
+      const schema = t.kind === "bundle" ? "bundle.schema.json" : undefined;
       try {
         if (schema) fails = schemaFails(schema, JSON.parse(t.text));
       } catch {

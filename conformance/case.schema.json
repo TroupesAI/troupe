@@ -60,7 +60,6 @@
               "cel",
               "check",
               "parse",
-              "chronicle",
               "knows"
             ]
           }
@@ -403,7 +402,6 @@
                   "enum": [
                     "bundle",
                     "session",
-                    "chronicle",
                     "package"
                   ]
                 },
@@ -423,68 +421,6 @@
                 {
                   "required": [
                     "base64"
-                  ]
-                }
-              ]
-            }
-          },
-          {
-            "if": {
-              "properties": {
-                "type": {
-                  "const": "chronicle"
-                }
-              },
-              "required": [
-                "type"
-              ]
-            },
-            "then": {
-              "additionalProperties": false,
-              "required": [
-                "expect"
-              ],
-              "properties": {
-                "type": {
-                  "const": "chronicle"
-                },
-                "name": {
-                  "type": "string"
-                },
-                "note": {
-                  "type": "string"
-                },
-                "expect": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "properties": {
-                    "codes": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      }
-                    }
-                  },
-                  "required": [
-                    "codes"
-                  ]
-                },
-                "chronicle": {
-                  "type": "object"
-                },
-                "chronicleFile": {
-                  "type": "string"
-                }
-              },
-              "oneOf": [
-                {
-                  "required": [
-                    "chronicle"
-                  ]
-                },
-                {
-                  "required": [
-                    "chronicleFile"
                   ]
                 }
               ]
