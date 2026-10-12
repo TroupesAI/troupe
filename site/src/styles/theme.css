@@ -23,6 +23,8 @@
   --sl-text-h4: var(--sl-text-xl);
 
   scrollbar-color: var(--sl-color-gray-5) transparent;
+  /* Short pages and the open search keep the scrollbar's space, so the layout doesn't move between them. */
+  scrollbar-gutter: stable;
 }
 
 :root[data-theme="light"] {
