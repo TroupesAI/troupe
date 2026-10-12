@@ -134,12 +134,12 @@ interface ModelOutput {
 type Newcomer = Pick<Character, "id" | "name" | "aliases" | "description" | "summary">;
 ```
 
-- **Tracker.** A tracker run is a model call separate from the story reply. It runs on a message that is sent to models, while that message is the head and before the event pass after it. It reads the messages after the last extraction on the path, up to that one, as many of them as the app chooses, and returns everything but `parts`. Its input, at the message it runs on, is:
+- **Tracker.** A tracker run is a model call separate from the story reply. It runs on a message that isn't hidden and has content, while that message is the head and before the event pass after it. It reads the messages after the last extraction on the path, up to that one, as many of them as the app chooses, and returns everything but `parts`. Its input, at the message it runs on, is:
   - for each variable in use whose `by` includes `model`, in event order (section 3.3), its key, type, `values` or range, `description` and current value;
   - the scene's values, the ID and name of every location of the bundle and session in world order, and of every cast character in cast order;
   - the entries in use placed in `tracker`, not `disabled`, whose `when` holds: those of the worlds, the cast characters in cast order, the scenario and the session, in the order of section 5.1;
   - the session entries on the path placed in `context`, in the order of section 5.1: for a tracker run, all of them that aren't `disabled`, with their IDs and texts; for a structured reply, the IDs of those the Context slot carries;
-  - the messages it reads that are sent to models (Format 12.4), with full knowledge.
+  - the messages it reads that aren't hidden and have content, with full knowledge.
 - **Structured reply.** The story model returns the whole payload in its reply. For the narrator and the single voice, the System slot carries tracker input (section 6). A character's generation in `characters` mode gets none, and apps keep only the `parts` of its reply.
 - **Plain reply.** Without structure, the reply is one text part whose `speaker` is the message's `char`, or none for the narrator. Apps MUST NOT guess `knownBy` from plain text.
 
@@ -154,7 +154,7 @@ Output that isn't a JSON object is discarded, and nothing is recorded. Otherwise
 2. `characters` join the header.
 3. `parts` are stored. A speaker that names no cast character is dropped (a newcomer that joined is in the cast), and so is each `knownBy` ID other than `narrator` that names none. A `knownBy` whose IDs are all dropped becomes `["narrator"]`, or `[<speaker>, "narrator"]` on a part with a speaker.
 4. `changes` are recorded as one `{"by": "model", …}` change, prepared as in section 3.3, on the message the tracker runs on or on the reply itself. Every extraction records this change, with an empty `set` when it changes nothing, which marks where the next tracker run starts.
-5. `entries` become session entries on the same message, each replacing one there with its ID and stored with the fields it takes from it (Format 12.3), with their `knownBy` IDs dropped and emptied as in step 3; on a root they are dropped. An entry that would take the path's session entries past their limit (Format 16) is dropped.
+5. `entries` become session entries on the same message, each replacing one there with its ID and stored with each field it lacks taken from it, as Format 12.3 says of later replacements, with their `knownBy` IDs dropped and emptied as in step 3; on a root they are dropped. An entry that would take the path's session entries past their limit (Format 16) is dropped.
 
 The event pass after a message waits for any extraction the app runs on it.
 

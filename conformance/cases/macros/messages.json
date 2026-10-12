@@ -137,13 +137,13 @@
       "messageId": "4",
       "expect": {
         "lines": {
-          "message:1": [
+          "1": [
             "Ann: Ann grins at Pat."
           ],
-          "message:2": [
+          "2": [
             "Quin: Hi."
           ],
-          "message:3": [
+          "3": [
             "{{char}} flinches; {{own.nerve}} 2."
           ]
         }

@@ -47,7 +47,7 @@ Bundles, session headers and chronicles given as objects leave out `troupe`: bef
 
 Every test starts from a fresh copy of the case's inputs. Tests don't affect each other. Apart from `check`, `parse` and `read` tests, every test runs on the inputs as a reader keeps them after repairing and applying the consequences of failed checks (Format 17.2).
 
-1. **Absent values.** Apply Format 2.2 to the bundle, the session header and every message: `null`, `""`, `[]` and `{}` in optional fields read as missing, except that `knownBy: []` reads as `["narrator"]`. State values (`set`, `initial`) keep `""` and `[]`. `scenario.worlds` keeps `[]`. Required text fields (an entry's or part's `text`, a character's `description`) and message `content` keep `""` and `[]`; an opening's `content` is optional, so `[]` there reads as missing.
+1. **Absent values.** Apply Format 2.2 to the bundle, the session header and every message: `null`, `""`, `[]` and `{}` in optional fields read as missing, except that `knownBy: []` reads as `["narrator"]`. `ext` keeps its values. State values (`set`, `initial`) keep `""`, `[]` and `{}`. `scenario.worlds` keeps `[]`. Required text fields (an entry's or part's `text`, a character's `description`) and message `content` keep `""` and `[]`; an opening's `content` is optional, so `[]` there reads as missing.
 2. **Reading.** Read the session lines as a reader does (Format 12.1, 17.2): a line repeating an earlier message's ID is skipped, a message whose `parent` names no earlier message is skipped with its descendants, and the head is the header's `head` if it names a message, else the last message.
 3. **The story.** The session's `scenario` names the scenario. Without a session, a `start` test names it with `scenario`; otherwise use the bundle's first scenario, whose seats are then unfilled and left out of the cast (Format 6.1), so `players` holds only cast members marked `player`. A `check` test without a session checks the bundle once for each scenario (Format 11.2). Header characters replace bundle characters as Format 12.2 says.
 
@@ -181,7 +181,7 @@ Every field of `expect` is optional:
 | Input | Meaning |
 | --- | --- |
 | `text` | Author text. |
-| `at` | The message whose state the macros read. Omit it for the initial state. `{{user}}` follows the path to `at`. |
+| `at` | The message whose state the macros read. Omit it for the initial state, where `{{user}}` is the first player's character. `{{user}}` follows the path to `at`. |
 | `char` | What `{{char}}` and a `char` path segment mean. Omit it for none: `{{char}}` is then left as written, and a `char` segment names no key (Format 10). |
 | `owner` | What `own` means. Omit it for none. |
 | `narrator` | Optional boolean: a narrator generation, so `{{char}}` without `char` renders as the scenario's `narrator`. |
@@ -206,12 +206,12 @@ Every field of `expect` is optional:
 | --- | --- |
 | `scenario` | `start` only: a scenario ID. |
 | `opening` | An opening ID. Omit it when the player writes first. |
-| `characters`, `players` | `start` only: the header's characters and players. `players` defaults to the IDs of the `characters` that replace no cast member. |
+| `characters`, `players` | `start` only: the header's characters and players. `players` defaults to the IDs of the `characters` that replace no cast member. The chronicle's character and its persona aren't in that default. |
 | `answers` | Answers to `ask` questions, `key → value`. |
 | `seed` | `start` only. Defaults to `"conformance-seed-0001"`. |
 | `rootId` | The root's ID; `"1"` by default. |
 | `eventMessageId` | The ID for a system message the root's events may add. |
-| `firstMessage` | Without an opening: the player's first message, without `id` and `parent`. |
+| `firstMessage` | `start` only. Without an opening: the player's first message, without `id` and `parent`. |
 | `chronicle` | `start` only: the chronicle document the session continues (Format 13). |
 
 `start` ignores the case's session and starts a new one. `swipe` adds another root to the case's session, and the new root becomes the head. An opening without `content` makes a records-only root (Play 2.1 step 4); the runner doesn't generate the first model message.
@@ -279,7 +279,7 @@ An item appears only when it has text, so there is no `premise` without a premis
 Every field of `expect` is optional:
 
 - each slot name, compared as the full list of item strings in order
-- `lines`, a subset map from the ID of a `message:` item to its lines: each visible part as `<speaker name>: <text>`, or `<text>` without a speaker. Text is macro-resolved; player and model text is stored escaped (Format 10), so it comes out as written. Image parts render as `[image]` or `[image: <alt>]`, with `alt` macro-resolved; Hidden messages and records-only system messages are left out.
+- `lines`, a subset map from a message ID, without the `message:` prefix, to its lines: each visible part as `<speaker name>: <text>`, or `<text>` without a speaker. Text is macro-resolved; player and model text is stored escaped (Format 10), so it comes out as written. Image parts render as `[image]` or `[image: <alt>]`, with `alt` macro-resolved; Hidden messages and records-only system messages are left out.
 - `texts`, a subset map from item string to the item's resolved text, for `entry:`, `premise`, `world:`, `character:` and `offstage:` items
 - `directions`, the resolved direction texts
 
@@ -291,7 +291,7 @@ Every field of `expect` is optional:
 | `text` | The input as a string, encoded as UTF-8 to get its bytes. |
 | `base64` | Instead of `text`: the input's bytes, in base64. Used for bytes that aren't valid UTF-8 text and for binary formats. |
 
-The reader parses the bytes, checks the version, validates against the schema (unknown properties and parts of unknown type as `UNKNOWN_FIELD`, Format 15) and, for sessions, reads the messages (Format 12.1). For a package it reads `bundle.json` and every session and chronicle in it.
+The reader parses the bytes, checks the version, validates against the schema (unknown properties and parts of unknown type as `UNKNOWN_FIELD`, Format 15) and, for sessions, reads the messages (Format 12.1). For a package it reads `bundle.json` and every session and chronicle in it. It runs no reference checks; `check` tests cover them.
 
 Every field of `expect` is optional:
 
@@ -317,7 +317,7 @@ The test reads the case's raw session lines.
 | `message` | Instead of `reply`: an existing message, for a tracker extraction run while it was the head; the messages after it don't affect the result. |
 | `output` | A string for a plain reply, or a `ModelOutput` object. |
 
-The output is applied as Play 3.4 says: properties unknown to `model-output.schema.json` are dropped first (Format 15), model text is stored escaped (Format 10), and changes are recorded as `{"by": "model", "set"}`. No event pass follows; `events` tests cover it.
+The output is applied as Play 3.4 says: properties unknown to `model-output.schema.json` are dropped first (Format 15), model text is stored escaped (Format 10), and changes are recorded as `{"by": "model", "set"}`. No event pass follows, and no selection runs, so a reply records no `activated`; `events` and `select` tests cover them.
 
 Every field of `expect` is optional:
 
