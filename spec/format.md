@@ -421,7 +421,7 @@ interface Variable {
 - **`min` and `max`** may name another numeric variable of the same owner that is neither keyed nor derived and whose own bounds are numbers, such as `"max": "max_hp"`; its current value is the bound.
 - **`maxStep`** limits each change from the model; **`oneWay`** lets numbers only rise, a bool only turn true, a set only gain members, and an enum only move later in `values`. Both apply to each key of a keyed variable. Starting values are exempt.
 - **`derive`** makes a read-only variable computed from other state whenever it is read, such as `"derive": "state.clock / 24 + 1"` for the day. Derived variables have no `initial`, `by`, `ask`, `of`, `maxStep` or `oneWay`, can't be changed, and can't read other derived variables (`CEL_ERROR`).
-- **`ask`** puts a question to the player when the session starts and records the answer, whatever `by` says; `labels` name the choices. Questions are asked in the order scenario, worlds, characters, then declaration order. `ask` is not allowed with `of` or `derive`.
+- **`ask`** puts a question to the player when the session starts and records the answer, whatever `by` says; `labels` name the choices. `ask` is not allowed with `of` or `derive`.
 - **`spoiler`** marks the value and its changes as spoilers for players until the story ends.
 - **State reaches the story model** through text that shows it, such as an entry with `{{state.hp}}`, and as tracker input for structured replies (Play 3.4); nothing else sends it.
 

@@ -250,7 +250,7 @@ Troupe defines what goes into a prompt and in which slot; formatting, mapping to
 | **Context** | selected entries placed in `context`; pinned messages |
 | **History** | messages on the path with parts the generation can see, image parts reaching models without image input as their `alt`, with summaries it can see standing in for messages they cover where the app chooses, and entries with a numeric position inserted at their depth |
 
-Entries keep file order within a slot, and everything in a slot is filtered by section 7. Apps MUST apply the session's `limits` to every generation in the session and never drop them to save space. Conformance covers what each slot holds and its order, not the order of slots.
+Entries keep file order within a slot, and everything in a slot is filtered by section 7. Apps MUST apply the session's `limits` to every generation in the session and never drop them to save space.
 
 ---
 
@@ -296,6 +296,6 @@ A conforming **app** reads files as a conforming reader (Format 17.1), and also 
 | Prompt slots, not a fixed order | One mandated order | Apps keep prompt caches warm with long contexts. |
 | SHA-256 rolls over seed, message and subject | A sequential generator | Order-independent, exact in JavaScript, fresh on regeneration. |
 | Recorded activations; sticky not re-recorded | Recomputing history | Timers continue in any app, and run out. |
-| Entries in the order worlds, characters, scenario; events and questions scenario first | One owner order everywhere | Within a slot, entries read from the setting to the people to the scenario's own; the scenario runs the story, so its events and questions come first. |
+| Entries in the order worlds, characters, scenario; events scenario first | One owner order everywhere | Within a slot, entries read from the setting to the people to the scenario's own; the scenario runs the story, so its events come first. |
 | One selection step, no recursion | Entries whose text activates other entries | Selection stays simple and order-independent; shared keys and `pull` reach related lore. |
 | One conformance level | Core apps without mechanics | Every app plays every file the same way; a level for apps without mechanics only mattered for importing cards. |

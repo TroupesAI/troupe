@@ -1,5 +1,5 @@
 {
-  "description": "ask (Format 8.1; Play 2.1): questions are asked when a session starts, in the order scenario, worlds, characters, then declaration order; answers are player changes on the root, whatever by says",
+  "description": "Questions (Format 8.1; Play 2.1): every variable with ask in use is a question, the scenario's, the worlds' and the characters'; answers are recorded on the root in one player change, whatever by says",
   "bundle": {
     "kind": "bundle",
     "characters": [
@@ -79,7 +79,7 @@
   "tests": [
     {
       "type": "start",
-      "name": "unanswered questions, in order",
+      "name": "unanswered questions, by state name",
       "scenario": "s",
       "opening": "o",
       "characters": [
@@ -91,10 +91,10 @@
       ],
       "expect": {
         "questions": [
-          "plan",
+          "a.nick",
           "name",
-          "w.season",
-          "a.nick"
+          "plan",
+          "w.season"
         ]
       }
     },

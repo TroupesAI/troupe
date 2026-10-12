@@ -224,7 +224,7 @@ Every field of `expect` is optional:
 | `root` | The whole root message. |
 | `messages` | All messages after starting. |
 | `head` | The head. |
-| `questions` | The state names of variables with `ask` that weren't answered, in asking order. |
+| `questions` | The state names of variables with `ask` that weren't answered, in code point order. |
 | `state` | A subset of the flattened state at the root. |
 | `rendered` | The root's text parts, macro-resolved: `{{char}}` is each part's speaker, `{{user}}` follows the path. |
 | `entries` | The root's session `entries`. |
