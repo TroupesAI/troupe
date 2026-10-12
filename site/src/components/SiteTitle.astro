@@ -7,14 +7,13 @@ import { spec } from "../sources.ts";
 const { siteTitle, siteTitleHref } = Astro.locals.starlightRoute;
 ---
 
-<a class="title" href={siteTitleHref}>
+<a href={siteTitleHref}>
   <Image src={logo} alt="" width={32} densities={[1, 2]} loading="eager" />
-  <span translate="no">{siteTitle}</span>
+  <span><span translate="no">{siteTitle}</span> <small>{spec.version} {spec.status}</small></span>
 </a>
-<a class="version" href="/format/">{spec.version} {spec.status}</a>
 
 <style>
-  .title {
+  a {
     display: flex;
     align-items: center;
     gap: 0.75rem;
@@ -28,15 +27,11 @@ const { siteTitle, siteTitleHref } = Astro.locals.starlightRoute;
   img {
     border-radius: 50%;
   }
-  .version {
-    align-self: center;
-    margin-inline-start: 0.75rem;
-    padding: 0.125rem 0.5rem;
-    border-radius: var(--radius-pill);
-    background: var(--moon);
-    color: var(--moon-ink);
-    font-size: var(--sl-text-xs);
-    text-decoration: none;
-    white-space: nowrap;
+  small {
+    margin-inline-start: 0.25rem;
+    color: var(--sl-color-gray-3);
+    font-size: var(--sl-text-sm);
+    font-style: italic;
+    font-weight: 400;
   }
 </style>

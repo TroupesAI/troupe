@@ -1,5 +1,5 @@
-/* Colors from the logo: a night-violet field, a lavender accent and moon-cream. Starlight's own variables carry them,
-   so its components need no restyling. */
+/* Colors from the logo: a night-violet field and a lavender accent. Starlight's own variables carry them, so its
+   components need no restyling. */
 :root {
   --sl-color-white: oklch(0.99 0.004 290);
   --sl-color-gray-1: oklch(0.94 0.01 290);
@@ -12,8 +12,6 @@
   --sl-color-accent-low: oklch(0.31 0.09 295);
   --sl-color-accent: oklch(0.66 0.17 295);
   --sl-color-accent-high: oklch(0.86 0.08 295);
-  --moon: oklch(0.91 0.07 90);
-  --moon-ink: oklch(0.28 0.05 75);
   --radius-pill: 1rem;
 
   --sl-font: var(--font-sans);
