@@ -1,8 +1,27 @@
 import { defineRouteMiddleware } from "@astrojs/starlight/route-data";
+import { getImage } from "astro:assets";
 import { site, sources } from "./sources.ts";
 
-export const onRequest = defineRouteMiddleware(({ locals }) => {
+export const onRequest = defineRouteMiddleware(async ({ locals }) => {
   const { entry, head, toc } = locals.starlightRoute;
+  // Starlight's hero renders its image once at 400px, which high-density screens stretch. It gets a 2x copy, at a
+  // quality that keeps the logo's fine strands and stars.
+  const image = entry.data.hero?.image;
+  if (image && "file" in image) {
+    const { src, srcSet, attributes } = await getImage({
+      src: image.file,
+      width: 400,
+      densities: [1, 2],
+      quality: 90,
+      loading: "eager",
+      decoding: "async",
+    });
+    const attrs = Object.entries(attributes)
+      .filter(([, value]) => value !== undefined)
+      .map(([name, value]) => `${name}="${value}"`)
+      .join(" ");
+    entry.data.hero!.image = { html: `<img src="${src}" srcset="${srcSet.attribute}" ${attrs} alt="${image.alt ?? ""}">` };
+  }
   // "Troupe Format", not "Troupe Format | Troupe".
   const title = head.find((h) => h.tag === "title");
   if (title && entry.data.title.includes("Troupe")) title.content = entry.data.title;

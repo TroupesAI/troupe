@@ -161,8 +161,10 @@ h1#_top,
 
 /* Home */
 
-/* The hero's logo is the cut-out one, so the glow follows its outline. */
+/* The hero's logo fills Starlight's image box. It is the cut-out one, so the glow follows its outline. */
 .hero img {
+  width: 100%;
+  height: auto;
   filter: drop-shadow(0 0 3rem color-mix(in oklch, var(--sl-color-accent) 35%, transparent));
 }
 
