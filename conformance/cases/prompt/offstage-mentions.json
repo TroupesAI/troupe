@@ -1,0 +1,163 @@
+{
+  "description": "Offstage mentions (Play 6): an alias matches as a plain key; only the last 4 messages count, as the generation can see them",
+  "bundle": {
+    "kind": "bundle",
+    "characters": [
+      {
+        "id": "a",
+        "name": "Ann",
+        "description": "Ann."
+      },
+      {
+        "id": "b",
+        "name": "Bea",
+        "aliases": [
+          "the Dockmaster"
+        ],
+        "description": "Bea.",
+        "summary": "Bea runs the docks."
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s",
+        "cast": [
+          {},
+          {
+            "character": "a"
+          },
+          {
+            "character": "b"
+          }
+        ]
+      }
+    ]
+  },
+  "session": {
+    "header": {
+      "kind": "session",
+      "scenario": "s",
+      "seed": "conformanceSeed0001",
+      "characters": [
+        {
+          "id": "p",
+          "name": "Pat",
+          "description": "Pat."
+        }
+      ],
+      "players": [
+        "p"
+      ]
+    },
+    "messages": [
+      {
+        "id": "1",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "Hm."
+          }
+        ],
+        "changes": [
+          {
+            "by": "rules",
+            "set": {
+              "scene.present": [
+                "p",
+                "a"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "id": "2",
+        "parent": "1",
+        "from": "model",
+        "char": "a",
+        "content": [
+          {
+            "speaker": "a",
+            "text": "Out."
+          }
+        ]
+      },
+      {
+        "id": "3",
+        "parent": "2",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "p",
+            "knownBy": [
+              "p"
+            ],
+            "text": "*Thinks of the Dockmaster.*"
+          }
+        ]
+      },
+      {
+        "id": "4",
+        "parent": "3",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "Ask the dockmaster."
+          }
+        ]
+      }
+    ]
+  },
+  "extend": [
+    {
+      "from": "4",
+      "count": 4,
+      "prefix": "f",
+      "char": "a"
+    }
+  ],
+  "tests": [
+    {
+      "type": "prompt",
+      "name": "a mention Ann can't see doesn't count",
+      "for": "a",
+      "parent": "3",
+      "messageId": "x1",
+      "expect": {
+        "people": [
+          "character:a",
+          "player:p"
+        ]
+      }
+    },
+    {
+      "type": "prompt",
+      "name": "an alias matches, ignoring case",
+      "for": "a",
+      "parent": "4",
+      "messageId": "x2",
+      "expect": {
+        "people": [
+          "character:a",
+          "player:p",
+          "offstage:b"
+        ]
+      }
+    },
+    {
+      "type": "prompt",
+      "name": "a mention more than 4 messages back doesn't count",
+      "for": "a",
+      "parent": "f4",
+      "messageId": "x3",
+      "expect": {
+        "people": [
+          "character:a",
+          "player:p"
+        ]
+      }
+    }
+  ]
+}

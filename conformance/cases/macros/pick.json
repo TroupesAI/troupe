@@ -43,6 +43,12 @@
     },
     {
       "type": "macro",
+      "name": "options may hold spaces: roll mod 2 = 1",
+      "text": "{{pick::red fox::blue jay}}",
+      "expect": "blue jay"
+    },
+    {
+      "type": "macro",
       "name": "escaped picks are not picks; a comment ends at the first }}, so the pick inside it is not a pick",
       "text": "\\{{pick::x::y}} {{// {{pick::a::b}} }}{{pick::red::green::blue}}",
       "expect": "{{pick::x::y}}  }}blue"

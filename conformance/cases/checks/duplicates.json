@@ -1,0 +1,78 @@
+{
+  "description": "Duplicate IDs (Format 2.3, 17.2): characters, worlds and scenarios share one namespace, compared characters first; locations are unique across worlds; openings within a scenario. The first is kept",
+  "bundle": {
+    "kind": "bundle",
+    "characters": [
+      {
+        "id": "x",
+        "name": "X",
+        "description": "X."
+      }
+    ],
+    "worlds": [
+      {
+        "id": "x",
+        "name": "World X"
+      },
+      {
+        "id": "w1",
+        "name": "W1",
+        "locations": [
+          {
+            "id": "l",
+            "name": "L"
+          }
+        ]
+      },
+      {
+        "id": "w2",
+        "name": "W2",
+        "locations": [
+          {
+            "id": "l",
+            "name": "L again"
+          }
+        ]
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s",
+        "openings": [
+          {
+            "id": "o",
+            "title": "First"
+          },
+          {
+            "id": "o",
+            "title": "Again"
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "check",
+      "expect": {
+        "codes": [
+          "DUPLICATE_ID"
+        ],
+        "includes": [
+          {
+            "code": "DUPLICATE_ID",
+            "at": "/worlds/0/id"
+          },
+          {
+            "code": "DUPLICATE_ID",
+            "at": "/worlds/2/locations/0/id"
+          },
+          {
+            "code": "DUPLICATE_ID",
+            "at": "/scenarios/0/openings/1/id"
+          }
+        ]
+      }
+    }
+  ]
+}

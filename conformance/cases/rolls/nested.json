@@ -1,0 +1,64 @@
+{
+  "description": "Nested roll() calls are numbered by where they start (Play 4): in roll(roll(6)) the outer call is 0 and the inner 1",
+  "note": "Inner: roll('dice', 'conformanceSeed0001', '1', 'e/e/x/1') mod 6 + 1 = 4. Outer: roll('dice', 'conformanceSeed0001', '1', 'e/e/x/0') mod 4 + 1 = 4.",
+  "bundle": {
+    "kind": "bundle",
+    "scenarios": [
+      {
+        "id": "s",
+        "variables": [
+          {
+            "id": "x",
+            "type": "int",
+            "description": "d"
+          }
+        ],
+        "events": [
+          {
+            "id": "e",
+            "when": "true",
+            "compute": {
+              "x": "roll(roll(6))"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "session": {
+    "header": {
+      "kind": "session",
+      "scenario": "s",
+      "seed": "conformanceSeed0001"
+    },
+    "messages": [
+      {
+        "id": "1",
+        "from": "player",
+        "content": [
+          {
+            "text": "x"
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "events",
+      "at": "1",
+      "eventMessageId": "e1",
+      "expect": {
+        "changes": [
+          {
+            "by": "rules",
+            "event": "e",
+            "set": {
+              "x": 4
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

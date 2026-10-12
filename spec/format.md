@@ -139,11 +139,10 @@ MUST, MUST NOT, SHOULD, SHOULD NOT and MAY are used as described in RFC 2119 and
 
 | IDs | Unique among |
 | --- | --- |
-| Characters, worlds, scenarios | All of them, including those a session adds, except a session character replacing a bundle character (section 12.2) |
+| Characters, worlds, scenarios | All of them, compared in the order the bundle's characters, worlds and scenarios, then the session's characters and worlds; a session character replacing a bundle character is no duplicate (section 12.2) |
 | Scenario variables | Each other, the scenario's entries and events, and every character and world ID in the bundle or session; on a clash with a character or world the variable is ignored |
 | Entries, variables and events | Each other within the same owner, compared in that order: a variable or event that reuses an earlier ID is the duplicate |
-| Groups | The same owner |
-| Locations | The bundle and the session |
+| Locations | The bundle and the session, compared in world order, the session's worlds last |
 | Openings | The same scenario |
 | Messages | The session |
 | Memories | The chronicle |
