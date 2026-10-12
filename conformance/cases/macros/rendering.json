@@ -1,5 +1,5 @@
 {
-  "description": "Macro resolution and rendering (Format 10): {{char}} in a message part without a speaker or char is left as written; undeclared variables are left as written (UNKNOWN_MACRO), while absent keys, paths below non-maps and owners not in use render as nothing; map keys in declared order, and \"*\" keys in code point order; a non-macro {{ keeps only its first {",
+  "description": "Macro resolution and rendering (Format 10): undeclared variables are left as written, while absent keys, paths below non-maps and owners not in use render as nothing; map keys in declared order, and \"*\" keys in code point order; a non-macro {{ keeps only its first {",
   "bundle": {
     "kind": "bundle",
     "characters": [
@@ -68,12 +68,6 @@
             "initial": 5,
             "description": "d"
           }
-        ],
-        "entries": [
-          {
-            "id": "e",
-            "text": "{{char}} sees {{state.nothing_here}}."
-          }
         ]
       }
     ]
@@ -82,7 +76,6 @@
     "header": {
       "kind": "session",
       "scenario": "s",
-      "seed": "conformanceSeed0001",
       "characters": [
         {
           "id": "p",
@@ -119,22 +112,8 @@
         ]
       },
       {
-        "id": "2",
-        "parent": "1",
-        "from": "system",
-        "content": [
-          {
-            "text": "{{char}} waits."
-          },
-          {
-            "speaker": "b",
-            "text": "{{char}} nods."
-          }
-        ]
-      },
-      {
         "id": "3",
-        "parent": "2",
+        "parent": "1",
         "from": "player",
         "content": [
           {
@@ -155,23 +134,8 @@
   },
   "tests": [
     {
-      "type": "prompt",
-      "name": "a system part with no speaker keeps {{char}}; a part with a speaker uses it",
-      "for": "a",
-      "parent": "2",
-      "messageId": "x",
-      "expect": {
-        "lines": {
-          "2": [
-            "{{char}} waits.",
-            "Bea: Bea nods."
-          ]
-        }
-      }
-    },
-    {
       "type": "macro",
-      "name": "elsewhere {{char}} is the character generated for, or the narrator",
+      "name": "elsewhere {{char}} is the character the text is used for, or the narrator",
       "narrator": true,
       "text": "{{char}}",
       "expect": "the narrator"
@@ -216,15 +180,7 @@
     {
       "type": "check",
       "expect": {
-        "codes": [
-          "UNKNOWN_MACRO"
-        ],
-        "includes": [
-          {
-            "code": "UNKNOWN_MACRO",
-            "at": "/scenarios/0/entries/0/text"
-          }
-        ]
+        "codes": []
       }
     }
   ]

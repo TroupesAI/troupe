@@ -1,6 +1,6 @@
 # Troupe authoring guide
 
-This guide is informative. It shows how to build common stories from Troupe's primitives. The [authoring brief](authoring-brief.md) is a one-page summary for people and for LLMs asked to write Troupe files. [Troupe Format](../spec/format.md) and [Troupe Play](../spec/play.md) are the normative documents; "Format 7.2" means section 7.2 of Troupe Format.
+This guide is informative. It shows how to build common stories from Troupe's primitives. The [authoring brief](authoring-brief.md) is a one-page summary for people and for LLMs asked to write Troupe files. [Troupe Format](../spec/format.md) is the normative document; "Format 7.2" means its section 7.2.
 
 ## Patterns
 
@@ -8,7 +8,7 @@ Most needs compose from entries, variables, events and conditions.
 
 ### Author's notes and player limits
 
-Players' lines and veils go in the session's `limits`, which apps apply to every generation. An author's note is a session entry on the root, placed in `system`:
+Players' lines and veils go in the session's `limits`, which hold for the whole chat. An author's note is a session entry on the root, placed in `system`:
 
 ```json
 { "id": "note", "position": "system", "text": "Keep the pace slow; let silences land." }
@@ -47,7 +47,7 @@ An entry on the character shows its feelings toward the player's character: `{"i
 
 ### Phases and beats
 
-An `enum` `phase`, entries gated on it, and events that advance it when a beat is done. A beat written in plain words is a model-set one-way `bool` (Play 3.4).
+An `enum` `phase`, entries gated on it, and events that advance it when a beat is done. A beat written in plain words is a model-set one-way `bool`.
 
 ### Timed statuses
 
@@ -55,7 +55,7 @@ An `enum` `phase`, entries gated on it, and events that advance it when a beat i
 
 ### Checks and dice
 
-A check rolls when someone attempts something risky, and the reply narrates the result. The tracker records the attempt on the player's message, and an event `on: "player"` rolls for it before the reply. `attempt` is a scenario `enum` with `values` `["none", "lock"]` and `by: ["model"]`; `picked` is a scenario `bool` labeled "opens" and "holds":
+A check rolls when someone attempts something risky, and the reply narrates the result. A model records the attempt on the player's message, and an event `on: "player"` rolls for it. `attempt` is a scenario `enum` with `values` `["none", "lock"]` and `by: ["model"]`; `picked` is a scenario `bool` labeled "opens" and "holds":
 
 ```json
 { "id": "pick_lock", "on": "player", "when": "state.attempt == 'lock'",
@@ -64,7 +64,7 @@ A check rolls when someone attempts something risky, and the reply narrates the 
   "direct": "The lock {{state.picked}}. Narrate it." }
 ```
 
-The label makes the direction read "The lock opens." or "The lock holds.", and the app records the roll, so the model can't change it. This needs an app that runs the tracker after player messages (Play 3.4). Random encounters are an event with weighted `outcomes`.
+The label makes the direction read "The lock opens." or "The lock holds.", and the roll is recorded, so the model can't change it. Random encounters are an event with weighted `outcomes`.
 
 ### A hidden truth
 
@@ -76,7 +76,7 @@ A `set` without `values` holds free-form items: `["rope", "a silver chalice"]`. 
 
 ### Rosters and newcomers
 
-Make the people who matter characters, with a `summary` for when they are mentioned offstage, and the rest world entries keyed on their names. Openings decide who starts present. The tracker may introduce someone new, who joins the session's characters with a name, description and summary; a `tracker` entry tells it when.
+Make the people who matter characters, with a `summary` for when they are offstage, and the rest world entries keyed on their names. An opening's `set` can list who starts present. Someone new who appears during a chat joins the session's characters, with a name, description and summary.
 
 ### Whereabouts and hidden characters
 
@@ -92,11 +92,11 @@ A scenario variable records where each character waits, and one event brings who
   "compute": { "scene.present": "scene.present.filter(c, state.where[c] == '') + state.where.filter(c, state.where[c] == scene.location)" } }
 ```
 
-Mark the ghost's cast member `spoiler`, so apps can keep it out of the cast list until the players walk into the cellar. Until then it is offstage, so the model knows only its summary, and only when someone mentions it. Openings should set `scene.location`, so the event sorts presence at the root. Like any event, it fires at most once per round, so presence follows the first move in a round.
+Mark the ghost's cast member `spoiler`, a secret until the players walk into the cellar. Until then it is offstage. Openings should set `scene.location`, so the event can sort presence from the start. Like any event, it fires at most once per round, so presence follows the first move in a round.
 
 ### Companions that remember
 
-Give a companion `carry` variables for the relationship, such as `{"id": "closeness", "type": "int", "min": 0, "max": 100, "by": ["model"], "carry": true, "description": "How close {{char}} feels to {{user}}."}`, and let the tracker add memories as session entries with `carry`, and `pull` with a `title`. A chronicle (Format 13) then takes both into every later session, in any app.
+Give a companion `carry` variables for the relationship, such as `{"id": "closeness", "type": "int", "min": 0, "max": 100, "by": ["model"], "carry": true, "description": "How close {{char}} feels to {{user}}."}`, and let a model add memories as session entries with `carry`, and `pull` with a `title`. A chronicle (Format 13) then takes both into every later session, in any app.
 
 ### Time awareness
 

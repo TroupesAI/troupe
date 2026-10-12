@@ -39,10 +39,10 @@ Each card becomes a bundle with one character and a scenario `main` that holds i
 | `@@ignore_on_max_context` | `priority: 0` |
 | `{{char}}`, `{{user}}`, `{{// …}}` | the same |
 | `<bot>`, `<user>` | `{{char}}`, `{{user}}` |
-| `{{pick::…}}`, `{{random::…}}` | `{{pick::…}}`, fixed for the session |
-| Recursion, other macros, decorators, regex scripts | Reported; the source is kept in `ext`. To replace recursion, add to an entry the keys of the entries whose text mentions it. |
+| `{{pick::…}}`, `{{random::…}}` | `{{pick::…}}` |
+| Recursion, other macros, decorators, regex scripts | Not mapped; the source is kept in `ext`. To replace recursion, add to an entry the keys of the entries whose text mentions it. |
 | SillyTavern chat JSONL | A session: `is_user` lines become `player` messages, the character whose name matches `name` becomes `speaker`, swipes become siblings |
 
 ## Exporting to Character Card V3
 
-A bundle's first character exports with a lossy mapping: `name`, `description`, the openings with `content` of the first scenario whose cast includes it as `first_mes` and `alternate_greetings`, its `premise` as `scenario`, `authors` as `creator`, examples as `mes_example`, entries without `when` as a `character_book` (keys, constant, position and depth), and the whole bundle under `extensions.troupe`. Apps that read `extensions.troupe` restore the original exactly.
+A bundle's first character exports with a lossy mapping: `name`, `description`, the openings with `content` of the first scenario whose cast includes it as `first_mes` and `alternate_greetings`, its `premise` as `scenario`, `authors` as `creator`, examples as `mes_example`, entries without `when` as a `character_book` (keys, constant, position and depth), and the whole bundle under `extensions.troupe`. `extensions.troupe` holds the original bundle exactly.

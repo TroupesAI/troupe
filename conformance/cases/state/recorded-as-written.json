@@ -1,0 +1,229 @@
+{
+  "description": "Recorded changes apply as written (Format 8.1, 8.6): by, maxStep and oneWay aren't checked, so a step beyond maxStep, a oneWay variable moving back, and a change by someone by doesn't list all apply; values are then normalized: clamped, rounded and deduplicated",
+  "bundle": {
+    "kind": "bundle",
+    "characters": [
+      {
+        "id": "a",
+        "name": "Ann",
+        "description": "Ann."
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s",
+        "cast": [
+          {},
+          {
+            "character": "a"
+          }
+        ],
+        "variables": [
+          {
+            "id": "bell",
+            "type": "int",
+            "min": 6,
+            "max": 12,
+            "initial": 6,
+            "by": [
+              "model"
+            ],
+            "maxStep": 2,
+            "oneWay": true,
+            "description": "d"
+          },
+          {
+            "id": "trust",
+            "type": "number",
+            "min": 0,
+            "max": 1,
+            "initial": 0.5,
+            "by": [
+              "model"
+            ],
+            "maxStep": 0.2,
+            "description": "d"
+          },
+          {
+            "id": "phase",
+            "type": "enum",
+            "values": [
+              "one",
+              "two",
+              "three"
+            ],
+            "initial": "two",
+            "by": [
+              "model"
+            ],
+            "oneWay": true,
+            "description": "d"
+          },
+          {
+            "id": "tags",
+            "type": "set",
+            "values": [
+              "brave",
+              "shy",
+              "kind"
+            ],
+            "initial": [
+              "shy"
+            ],
+            "by": [
+              "model"
+            ],
+            "oneWay": true,
+            "description": "d"
+          },
+          {
+            "id": "secret",
+            "type": "int",
+            "description": "Nobody besides the rules is meant to change it."
+          }
+        ]
+      }
+    ]
+  },
+  "session": {
+    "header": {
+      "kind": "session",
+      "scenario": "s",
+      "characters": [
+        {
+          "id": "p",
+          "name": "Pat",
+          "description": "Pat."
+        }
+      ],
+      "players": [
+        "p"
+      ]
+    },
+    "messages": [
+      {
+        "id": "1",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "Go."
+          }
+        ]
+      },
+      {
+        "id": "2",
+        "parent": "1",
+        "from": "model",
+        "char": "a",
+        "content": [
+          {
+            "speaker": "a",
+            "text": "Hours pass."
+          }
+        ],
+        "changes": [
+          {
+            "by": "model",
+            "set": {
+              "bell": 20,
+              "trust": 0.91234567
+            }
+          }
+        ]
+      },
+      {
+        "id": "3",
+        "parent": "2",
+        "from": "model",
+        "char": "a",
+        "content": [
+          {
+            "speaker": "a",
+            "text": "Back again."
+          }
+        ],
+        "changes": [
+          {
+            "by": "model",
+            "set": {
+              "bell": 8,
+              "phase": "one",
+              "tags": [
+                "kind",
+                "brave",
+                "kind"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "id": "4",
+        "parent": "3",
+        "from": "model",
+        "char": "a",
+        "content": [
+          {
+            "speaker": "a",
+            "text": "Hm."
+          }
+        ],
+        "changes": [
+          {
+            "by": "model",
+            "set": {
+              "secret": 4
+            }
+          },
+          {
+            "by": "player",
+            "set": {
+              "bell": 9
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "check",
+      "name": "changes beyond maxStep, against oneWay or by someone by doesn't list aren't failed checks",
+      "expect": {
+        "codes": []
+      }
+    },
+    {
+      "type": "state",
+      "name": "a step beyond maxStep applies: 20 is clamped to max, 0.91234567 rounded",
+      "at": "2",
+      "expect": {
+        "bell": 12,
+        "trust": 0.912346
+      }
+    },
+    {
+      "type": "state",
+      "name": "oneWay variables moving back apply; the set loses shy and its duplicate",
+      "at": "3",
+      "expect": {
+        "bell": 8,
+        "phase": "one",
+        "tags": [
+          "brave",
+          "kind"
+        ]
+      }
+    },
+    {
+      "type": "state",
+      "name": "changes by someone by doesn't list apply",
+      "at": "4",
+      "expect": {
+        "secret": 4,
+        "bell": 9
+      }
+    }
+  ]
+}

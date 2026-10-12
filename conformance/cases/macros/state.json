@@ -104,7 +104,6 @@
     "header": {
       "kind": "session",
       "scenario": "s",
-      "seed": "conformanceSeed0001",
       "characters": [
         {
           "id": "p",
@@ -114,8 +113,7 @@
       ],
       "players": [
         "p"
-      ],
-      "head": "2"
+      ]
     },
     "messages": [
       {
@@ -201,6 +199,12 @@
       "text": "{{@state.approach}}",
       "expect": "Slip in unseen",
       "name": "{{@state}} renders a label like {{state}}: a value with a label renders as its label"
+    },
+    {
+      "type": "check",
+      "expect": {
+        "codes": []
+      }
     }
   ]
 }

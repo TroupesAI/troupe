@@ -1,11 +1,10 @@
 {
-  "description": "Format Appendix B.4 continued: the session started from Mira's chronicle is valid with the chronicle's Mira replacing the card's, replays without the chronicle file, offers the memories in the pull catalog rather than selecting them, and writes back closeness 61 and the new memory (Format 12.2, 13; Play 5.6)",
+  "description": "Format Appendix B.4 continued: a session that continues Mira's chronicle is valid with the chronicle's Mira replacing the card's, and its state replays without the chronicle file (Format 12.2, 13)",
   "bundleFile": "../../../examples/mira-card.troupe.json",
   "session": {
     "header": {
       "kind": "session",
       "scenario": "kestrel",
-      "seed": "conformanceSeed0001",
       "chronicle": "0d4f3a62-5b1e-4c8a-9f27-6a1c2e8b7d40",
       "characters": [
         {
@@ -89,49 +88,6 @@
       }
     ]
   },
-  "addMessages": [
-    {
-      "id": "2",
-      "parent": "1",
-      "from": "player",
-      "content": [
-        {
-          "speaker": "mara",
-          "text": "Brought you a part for the reactor."
-        }
-      ]
-    },
-    {
-      "id": "3",
-      "parent": "2",
-      "from": "model",
-      "char": "mira",
-      "content": [
-        {
-          "speaker": "mira",
-          "text": "You remembered."
-        }
-      ],
-      "changes": [
-        {
-          "by": "model",
-          "set": {
-            "mira.closeness": 61
-          }
-        }
-      ],
-      "entries": [
-        {
-          "id": "part",
-          "carry": true,
-          "knownBy": [
-            "mira"
-          ],
-          "text": "Mara brought Mira a reactor part."
-        }
-      ]
-    }
-  ],
   "tests": [
     {
       "type": "check",
@@ -148,62 +104,6 @@
           "mara",
           "mira"
         ]
-      }
-    },
-    {
-      "type": "select",
-      "for": "mira",
-      "parent": "1",
-      "messageId": "x2",
-      "expect": {
-        "catalog": [
-          "session/lake",
-          "session/juna"
-        ],
-        "activated": []
-      }
-    },
-    {
-      "type": "chronicle",
-      "name": "writing back at message 3",
-      "chronicleFile": "../../../examples/mira.troupe-chronicle.json",
-      "writeBack": {
-        "head": "3"
-      },
-      "expect": {
-        "memories": [
-          {
-            "id": "lake",
-            "title": "The promise about the lake",
-            "pull": true,
-            "carry": true,
-            "knownBy": [
-              "mira"
-            ],
-            "text": "Mira and Mara saw the frozen lake on Thessa together, as she had promised."
-          },
-          {
-            "id": "juna",
-            "title": "Juna's signal",
-            "pull": true,
-            "carry": true,
-            "knownBy": [
-              "mira"
-            ],
-            "text": "Mara helped Mira trace a signal that might be from her sister Juna."
-          },
-          {
-            "id": "part",
-            "carry": true,
-            "knownBy": [
-              "mira"
-            ],
-            "text": "Mara brought Mira a reactor part."
-          }
-        ],
-        "values": {
-          "closeness": 61
-        }
       }
     }
   ]

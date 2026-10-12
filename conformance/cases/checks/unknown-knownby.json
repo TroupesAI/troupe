@@ -1,0 +1,36 @@
+{
+  "description": "A knownBy ID that names no character is UNKNOWN_CHARACTER (Format 7.4, 17.2)",
+  "bundle": {
+    "kind": "bundle",
+    "scenarios": [
+      {
+        "id": "s",
+        "entries": [
+          {
+            "id": "secret",
+            "knownBy": [
+              "zed"
+            ],
+            "text": "A secret."
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "check",
+      "expect": {
+        "codes": [
+          "UNKNOWN_CHARACTER"
+        ],
+        "includes": [
+          {
+            "code": "UNKNOWN_CHARACTER",
+            "at": "/scenarios/0/entries/0/knownBy/0"
+          }
+        ]
+      }
+    }
+  ]
+}

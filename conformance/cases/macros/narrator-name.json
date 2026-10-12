@@ -3,42 +3,25 @@
   "bundle": {
     "kind": "bundle",
     "language": "es",
-    "characters": [
-      {
-        "id": "a",
-        "name": "Ana",
-        "description": "Ana."
-      }
-    ],
     "scenarios": [
       {
         "id": "s",
-        "narrator": "el narrador",
-        "entries": [
-          {
-            "id": "gen",
-            "text": "{{char}} describe la escena."
-          }
-        ]
+        "narrator": "el narrador"
       }
     ]
   },
   "tests": [
     {
       "type": "macro",
-      "name": "a narrator generation",
+      "name": "for the narrator",
       "text": "{{char}} describe la escena.",
       "narrator": true,
       "expect": "el narrador describe la escena."
     },
     {
-      "type": "select",
-      "name": "in an entry's text",
-      "messageId": "1",
+      "type": "check",
       "expect": {
-        "texts": {
-          "s/gen": "el narrador describe la escena."
-        }
+        "codes": []
       }
     }
   ]

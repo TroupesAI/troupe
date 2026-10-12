@@ -1,36 +1,16 @@
 {
-  "description": "min and max may name another variable of the same owner, whose current value is the bound, unless that variable's own bounds name variables (Format 8.1); rounding comes before clamping (Play 3.3 steps 4–5); a bound the same change sets applies with its prepared new value",
+  "description": "Named bounds in the state (Format 8.1, 8.6): the bound is the named variable's current value; a bound the same change sets applies with its new value, even when its key comes later; an initial value is clamped by the named variable's initial value; a stored value isn't clamped again when its bound changes later",
   "bundle": {
     "kind": "bundle",
-    "characters": [
-      {
-        "id": "a",
-        "name": "Ann",
-        "description": "Ann."
-      },
-      {
-        "id": "b",
-        "name": "Bea",
-        "description": "Bea."
-      }
-    ],
     "scenarios": [
       {
         "id": "s",
-        "cast": [
-          {},
-          {
-            "character": "a"
-          },
-          {
-            "character": "b"
-          }
-        ],
         "variables": [
           {
             "id": "max_hp",
             "type": "int",
-            "initial": 20,
+            "min": 1,
+            "initial": 30,
             "description": "d"
           },
           {
@@ -38,41 +18,8 @@
             "type": "int",
             "min": 0,
             "max": "max_hp",
-            "initial": 15,
-            "by": [
-              "model"
-            ],
+            "initial": 50,
             "description": "d"
-          },
-          {
-            "id": "ratio",
-            "type": "number",
-            "max": 1.0000004,
-            "description": "A max that isn't on the 6-place grid."
-          },
-          {
-            "id": "broken",
-            "type": "int",
-            "max": "nowhere",
-            "description": "d"
-          },
-          {
-            "id": "chained",
-            "type": "int",
-            "max": "hp",
-            "description": "Bounded by hp, whose own max names a variable."
-          },
-          {
-            "id": "frac",
-            "type": "number",
-            "initial": 2.5,
-            "description": "d"
-          },
-          {
-            "id": "stack",
-            "type": "int",
-            "max": "frac",
-            "description": "An int can't be bounded by a number variable."
           }
         ]
       }
@@ -82,7 +29,6 @@
     "header": {
       "kind": "session",
       "scenario": "s",
-      "seed": "conformanceSeed0001",
       "characters": [
         {
           "id": "p",
@@ -100,14 +46,79 @@
         "from": "player",
         "content": [
           {
-            "text": "x"
+            "speaker": "p",
+            "text": "Level up."
           }
         ],
         "changes": [
           {
             "by": "rules",
             "set": {
-              "max_hp": 30
+              "hp": 35,
+              "max_hp": 40
+            }
+          }
+        ]
+      },
+      {
+        "id": "2",
+        "parent": "1",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "Curse."
+          }
+        ],
+        "changes": [
+          {
+            "by": "rules",
+            "set": {
+              "max_hp": 20
+            }
+          }
+        ]
+      },
+      {
+        "id": "3",
+        "parent": "2",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "Heal."
+          }
+        ],
+        "changes": [
+          {
+            "by": "rules",
+            "set": {
+              "hp": 33
+            }
+          }
+        ]
+      },
+      {
+        "id": "2b",
+        "parent": "1",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "Two steps."
+          }
+        ],
+        "changes": [
+          {
+            "by": "rules",
+            "set": {
+              "max_hp": 32
+            }
+          },
+          {
+            "by": "rules",
+            "set": {
+              "hp": 38
             }
           }
         ]
@@ -116,81 +127,53 @@
   },
   "tests": [
     {
-      "type": "prepare",
-      "name": "the bound is max_hp's current value (20)",
-      "by": "rules",
-      "set": {
-        "hp": 25
-      },
-      "expect": {
-        "set": {
-          "hp": 20
-        }
-      }
-    },
-    {
-      "type": "prepare",
-      "name": "after max_hp rises to 30",
-      "at": "1",
-      "by": "rules",
-      "set": {
-        "hp": 25
-      },
-      "expect": {
-        "set": {
-          "hp": 25
-        }
-      }
-    },
-    {
-      "type": "prepare",
-      "name": "round to 6 places first (1.000001), then clamp to max",
-      "by": "rules",
-      "set": {
-        "ratio": 1.0000006
-      },
-      "expect": {
-        "set": {
-          "ratio": 1.0000004
-        }
-      }
-    },
-    {
       "type": "check",
       "expect": {
-        "codes": [
-          "UNKNOWN_VARIABLE"
-        ],
-        "includes": [
-          {
-            "code": "UNKNOWN_VARIABLE",
-            "at": "/scenarios/0/variables/3/max"
-          },
-          {
-            "code": "UNKNOWN_VARIABLE",
-            "at": "/scenarios/0/variables/4/max"
-          },
-          {
-            "code": "UNKNOWN_VARIABLE",
-            "at": "/scenarios/0/variables/6/max"
-          }
-        ]
+        "codes": []
       }
     },
     {
-      "type": "prepare",
-      "name": "a bound the same change sets is its new value: hp isn't clamped to the old max_hp",
+      "type": "state",
+      "name": "initial 50 is clamped to max_hp's initial 30",
+      "expect": {
+        "hp": 30,
+        "max_hp": 30
+      }
+    },
+    {
+      "type": "state",
+      "name": "max_hp set by the same change bounds hp, though its key sorts after hp",
       "at": "1",
-      "by": "rules",
-      "set": {
+      "expect": {
         "hp": 35,
         "max_hp": 40
-      },
+      }
+    },
+    {
+      "type": "state",
+      "name": "lowering max_hp doesn't clamp the stored hp again",
+      "at": "2",
       "expect": {
-        "set": {
-          "hp": 35,
-          "max_hp": 40
-        }
+        "hp": 35,
+        "max_hp": 20
+      }
+    },
+    {
+      "type": "state",
+      "name": "a later change to hp is clamped by max_hp's current value",
+      "at": "3",
+      "expect": {
+        "hp": 20,
+        "max_hp": 20
+      }
+    },
+    {
+      "type": "state",
+      "name": "a bound set by an earlier change of the same message is the current value",
+      "at": "2b",
+      "expect": {
+        "hp": 32,
+        "max_hp": 32
       }
     }
   ]

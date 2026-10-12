@@ -1,5 +1,5 @@
 {
-  "description": "Packages (Format 14.3, 16 item 7): bundle.json at the root, sessions under sessions/; absolute paths, .. segments, backslashes, a read entry outside the grammar, names equal when compared case-insensitively, encryption and symbolic links are PARSE, and the package isn't read; a directory entry (a name ending in /) is ignored; entries a reader doesn't read, such as unreferenced files, are ignored",
+  "description": "Packages (Format 14.3): bundle.json at the root, sessions under sessions/; absolute paths, .. segments, backslashes, names equal when compared case-insensitively, encryption and symbolic links are PARSE; a directory entry (a name ending in /) and an unreferenced file outside the path grammar aren't part of the package",
   "tests": [
     {
       "type": "parse",
@@ -7,7 +7,6 @@
       "kind": "package",
       "base64": "UEsDBBQAAAAIAAAAS11m3axbIQAAACEAAAALAAAAYnVuZGxlLmpzb26rViopyi8tSFWyUjLQMzRS0lHKzsxLAfKSSvNSclKVagFQSwECFAMUAAAACAAAAEtdZt2sWyEAAAAhAAAACwAAAAAAAAAAAAAAgAEAAAAAYnVuZGxlLmpzb25QSwUGAAAAAAEAAQA5AAAASgAAAAAA",
       "expect": {
-        "ok": true,
         "codes": []
       }
     },
@@ -15,19 +14,17 @@
       "type": "parse",
       "name": "a package with a session",
       "kind": "package",
-      "base64": "UEsDBBQAAAAIAAAAS11m3axbIQAAACEAAAALAAAAYnVuZGxlLmpzb26rViopyi8tSFWyUjLQMzRS0lHKzsxLAfKSSvNSclKVagFQSwMEFAAAAAgAAABLXWd3mIN6AAAAiAAAACMAAABzZXNzaW9ucy9maXJzdC50cm91cGUtc2Vzc2lvbi5qc29ubKtWKinKLy1IVbJSMtAzNFLSUcrOzEsB8opTi4sz8/OAAsXJqXmJRZn5IEEQNzUVJJ9tHphrVBGWZBlSFWRS4JNs4VcemeaoVMtVrZQJkjcEKk0rys8FMgtyEitTi4D85Py8ktS8EiWr6GqlktQKIEPJI1NPqTa2lgsAUEsBAhQDFAAAAAgAAABLXWbdrFshAAAAIQAAAAsAAAAAAAAAAAAAAIABAAAAAGJ1bmRsZS5qc29uUEsBAhQDFAAAAAgAAABLXWd3mIN6AAAAiAAAACMAAAAAAAAAAAAAAIABSgAAAHNlc3Npb25zL2ZpcnN0LnRyb3VwZS1zZXNzaW9uLmpzb25sUEsFBgAAAAACAAIAigAAAAUBAAAAAA==",
+      "base64": "UEsDBBQAAAAIAAAAS13aqb7tOgAAADoAAAALAAAAYnVuZGxlLmpzb26rViopyi8tSFWyUjLQMzRS0lHKzsxLUbJSSirNS8lJVdJRKk5OzUssyswvVrKKrlbKBMkVK9XG1gIAUEsDBBQAAAAIAAAAS11FkZf9WwAAAGgAAAAjAAAAc2Vzc2lvbnMvZmlyc3QudHJvdXBlLXNlc3Npb24uanNvbmwVyUEKwkAMQNF9j/HXQ7EucwLvIC5KjRDUpMxEUIa5u3T7XidrfHZFOM3LmcLT/I7QtDULp9A29bVaHMiYOnb8QuFR442wv9afVgpbeKoncu2kfhPhYjPjNqY/UEsBAhQDFAAAAAgAAABLXdqpvu06AAAAOgAAAAsAAAAAAAAAAAAAAIABAAAAAGJ1bmRsZS5qc29uUEsBAhQDFAAAAAgAAABLXUWRl/1bAAAAaAAAACMAAAAAAAAAAAAAAIABYwAAAHNlc3Npb25zL2ZpcnN0LnRyb3VwZS1zZXNzaW9uLmpzb25sUEsFBgAAAAACAAIAigAAAP8AAAAAAA==",
       "expect": {
-        "ok": true,
         "codes": []
       }
     },
     {
       "type": "parse",
-      "name": "a directory entry is ignored",
+      "name": "a directory entry isn't part of the package",
       "kind": "package",
       "base64": "UEsDBBQAAAAAAAAAIQAAAAAAAAAAAAAAAAAJAAAAc2Vzc2lvbnMvUEsDBBQAAAAIAAAAIVx/OZYCOgAAAEAAAAALAAAAYnVuZGxlLmpzb26rViopyi8tSFWyUlAy0DM0UtJRUMrOzEsB8ZNK81JyUkEixcmpeYlFmfnFSlYK0dVKmWDpYqXa2FoAUEsBAhQDFAAAAAAAAAAhAAAAAAAAAAAAAAAAAAkAAAAAAAAAAAAAAIABAAAAAHNlc3Npb25zL1BLAQIUAxQAAAAIAAAAIVx/OZYCOgAAAEAAAAALAAAAAAAAAAAAAACAAScAAABidW5kbGUuanNvblBLBQYAAAAAAgACAHAAAACKAAAAAAA=",
       "expect": {
-        "ok": true,
         "codes": []
       }
     },
@@ -35,9 +32,8 @@
       "type": "parse",
       "name": "no bundle.json",
       "kind": "package",
-      "base64": "UEsDBBQAAAAIAAAAS11nd5iDegAAAIgAAAAjAAAAc2Vzc2lvbnMvZmlyc3QudHJvdXBlLXNlc3Npb24uanNvbmyrViopyi8tSFWyUjLQMzRS0lHKzsxLAfKKU4uLM/PzgALFyal5iUWZ+SBBEDc1FSSfbR6Ya1QRlmQZUhVkUuCTbOFXHpnmqFTLVa2UCZI3BCpNK8rPBTILchIrU4uA/OT8vJLUvBIlq+hqpZLUCiBDySNTT6k2tpYLAFBLAQIUAxQAAAAIAAAAS11nd5iDegAAAIgAAAAjAAAAAAAAAAAAAACAAQAAAABzZXNzaW9ucy9maXJzdC50cm91cGUtc2Vzc2lvbi5qc29ubFBLBQYAAAAAAQABAFEAAAC7AAAAAAA=",
+      "base64": "UEsDBBQAAAAIAAAAS11FkZf9WwAAAGgAAAAjAAAAc2Vzc2lvbnMvZmlyc3QudHJvdXBlLXNlc3Npb24uanNvbmwVyUEKwkAMQNF9j/HXQ7EucwLvIC5KjRDUpMxEUIa5u3T7XidrfHZFOM3LmcLT/I7QtDULp9A29bVaHMiYOnb8QuFR442wv9afVgpbeKoncu2kfhPhYjPjNqY/UEsBAhQDFAAAAAgAAABLXUWRl/1bAAAAaAAAACMAAAAAAAAAAAAAAIABAAAAAHNlc3Npb25zL2ZpcnN0LnRyb3VwZS1zZXNzaW9uLmpzb25sUEsFBgAAAAABAAEAUQAAAJwAAAAAAA==",
       "expect": {
-        "ok": false,
         "codes": [
           "PARSE"
         ]
@@ -49,7 +45,6 @@
       "kind": "package",
       "base64": "UEsDBBQAAAAIAAAAS11m3axbIQAAACEAAAALAAAAYnVuZGxlLmpzb26rViopyi8tSFWyUjLQMzRS0lHKzsxLAfKSSvNSclKVagFQSwMEFAAAAAgAAABLXUO/pqMEAAAAAgAAAAwAAAAuLi9ldmlsLmpzb26rrgUAUEsBAhQDFAAAAAgAAABLXWbdrFshAAAAIQAAAAsAAAAAAAAAAAAAAIABAAAAAGJ1bmRsZS5qc29uUEsBAhQDFAAAAAgAAABLXUO/pqMEAAAAAgAAAAwAAAAAAAAAAAAAAIABSgAAAC4uL2V2aWwuanNvblBLBQYAAAAAAgACAHMAAAB4AAAAAAA=",
       "expect": {
-        "ok": false,
         "codes": [
           "PARSE"
         ]
@@ -61,7 +56,6 @@
       "kind": "package",
       "base64": "UEsDBBQAAAAIAAAAS11m3axbIQAAACEAAAALAAAAYnVuZGxlLmpzb26rViopyi8tSFWyUjLQMzRS0lHKzsxLAfKSSvNSclKVagFQSwMEFAAAAAgAAABLXUO/pqMEAAAAAgAAAAoAAAAvZXZpbC5qc29uq64FAFBLAQIUAxQAAAAIAAAAS11m3axbIQAAACEAAAALAAAAAAAAAAAAAACAAQAAAABidW5kbGUuanNvblBLAQIUAxQAAAAIAAAAS11Dv6ajBAAAAAIAAAAKAAAAAAAAAAAAAACAAUoAAAAvZXZpbC5qc29uUEsFBgAAAAACAAIAcQAAAHYAAAAAAA==",
       "expect": {
-        "ok": false,
         "codes": [
           "PARSE"
         ]
@@ -73,7 +67,6 @@
       "kind": "package",
       "base64": "UEsDBBQAAAAIAAAAS11m3axbIQAAACEAAAALAAAAYnVuZGxlLmpzb26rViopyi8tSFWyUjLQMzRS0lHKzsxLAfKSSvNSclKVagFQSwMEFAAAAAgAAABLXYMW3IwDAAAAAQAAAAsAAABtZWRpYVxhLnBuZ6sAAFBLAQIUAxQAAAAIAAAAS11m3axbIQAAACEAAAALAAAAAAAAAAAAAACAAQAAAABidW5kbGUuanNvblBLAQIUAxQAAAAIAAAAS12DFtyMAwAAAAEAAAALAAAAAAAAAAAAAACAAUoAAABtZWRpYVxhLnBuZ1BLBQYAAAAAAgACAHIAAAB2AAAAAAA=",
       "expect": {
-        "ok": false,
         "codes": [
           "PARSE"
         ]
@@ -81,11 +74,10 @@
     },
     {
       "type": "parse",
-      "name": "an unreferenced entry outside the path grammar is ignored",
+      "name": "an unreferenced entry outside the path grammar isn't part of the package",
       "kind": "package",
       "base64": "UEsDBBQAAAAIAAAAS11m3axbIQAAACEAAAALAAAAYnVuZGxlLmpzb26rViopyi8tSFWyUjLQMzRS0lHKzsxLAfKSSvNSclKVagFQSwMEFAAAAAgAAABLXYMW3IwDAAAAAQAAAA0AAABtZWRpYS8uaGlkZGVuqwAAUEsBAhQDFAAAAAgAAABLXWbdrFshAAAAIQAAAAsAAAAAAAAAAAAAAIABAAAAAGJ1bmRsZS5qc29uUEsBAhQDFAAAAAgAAABLXYMW3IwDAAAAAQAAAA0AAAAAAAAAAAAAAIABSgAAAG1lZGlhLy5oaWRkZW5QSwUGAAAAAAIAAgB0AAAAeAAAAAAA",
       "expect": {
-        "ok": true,
         "codes": []
       }
     },
@@ -95,7 +87,6 @@
       "kind": "package",
       "base64": "UEsDBBQAAAAIAAAAS11m3axbIQAAACEAAAALAAAAYnVuZGxlLmpzb26rViopyi8tSFWyUjLQMzRS0lHKzsxLAfKSSvNSclKVagFQSwMEFAAAAAgAAABLXWbdrFshAAAAIQAAAAsAAABCdW5kbGUuanNvbqtWKinKLy1IVbJSMtAzNFLSUcrOzEsB8pJK81JyUpVqAVBLAQIUAxQAAAAIAAAAS11m3axbIQAAACEAAAALAAAAAAAAAAAAAACAAQAAAABidW5kbGUuanNvblBLAQIUAxQAAAAIAAAAS11m3axbIQAAACEAAAALAAAAAAAAAAAAAACAAUoAAABCdW5kbGUuanNvblBLBQYAAAAAAgACAHIAAACUAAAAAAA=",
       "expect": {
-        "ok": false,
         "codes": [
           "PARSE"
         ]
@@ -107,7 +98,6 @@
       "kind": "package",
       "base64": "UEsDBBQAAQAIAAAAS11m3axbIQAAACEAAAALAAAAYnVuZGxlLmpzb26rViopyi8tSFWyUjLQMzRS0lHKzsxLAfKSSvNSclKVagFQSwECFAMUAAEACAAAAEtdZt2sWyEAAAAhAAAACwAAAAAAAAAAAAAAgAEAAAAAYnVuZGxlLmpzb25QSwUGAAAAAAEAAQA5AAAASgAAAAAA",
       "expect": {
-        "ok": false,
         "codes": [
           "PARSE"
         ]
@@ -119,7 +109,6 @@
       "kind": "package",
       "base64": "UEsDBBQAAAAIAAAAS11m3axbIQAAACEAAAALAAAAYnVuZGxlLmpzb26rViopyi8tSFWyUjLQMzRS0lHKzsxLAfKSSvNSclKVagFQSwMEFAAAAAgAAABLXQq5HykNAAAACwAAAAoAAABtZWRpYS9saW5r008tSdYvSCwuLk8BAFBLAQIUAxQAAAAIAAAAS11m3axbIQAAACEAAAALAAAAAAAAAAAAAACAAQAAAABidW5kbGUuanNvblBLAQIUAxQAAAAIAAAAS10KuR8pDQAAAAsAAAAKAAAAAAAAAAAAAAD/oUoAAABtZWRpYS9saW5rUEsFBgAAAAACAAIAcQAAAH8AAAAAAA==",
       "expect": {
-        "ok": false,
         "codes": [
           "PARSE"
         ]
@@ -131,7 +120,6 @@
       "kind": "package",
       "base64": "UEsDBCBub3QgcmVhbGx5",
       "expect": {
-        "ok": false,
         "codes": [
           "PARSE"
         ]

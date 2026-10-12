@@ -1,81 +1,10 @@
 {
-  "description": "A derived variable whose expression fails at runtime is absent: has() is false and its macro renders as nothing (Play 3.2; Format 10)",
+  "description": "A derived variable whose expression fails at runtime is absent: has() is false and its macro renders as nothing (Format 8.1, 10)",
   "bundle": {
     "kind": "bundle",
-    "characters": [
-      {
-        "id": "a",
-        "name": "Ann",
-        "description": "Ann.",
-        "examples": [
-          [
-            {
-              "speaker": "user",
-              "text": "Hi."
-            },
-            {
-              "speaker": "char",
-              "text": "Ann here."
-            }
-          ]
-        ],
-        "variables": [
-          {
-            "id": "hp",
-            "type": "int",
-            "max": 200,
-            "description": "d"
-          }
-        ],
-        "events": [
-          {
-            "id": "hit",
-            "when": "true",
-            "compute": {
-              "own.hp": "roll(100)"
-            }
-          }
-        ]
-      },
-      {
-        "id": "b",
-        "name": "Bea",
-        "description": "Bea.",
-        "summary": "Bea is out on the docks.",
-        "examples": [
-          [
-            {
-              "speaker": "user",
-              "text": "Hi."
-            },
-            {
-              "speaker": "char",
-              "text": "Bea here."
-            }
-          ]
-        ]
-      },
-      {
-        "id": "d",
-        "name": "Dov",
-        "description": "Dov."
-      }
-    ],
     "scenarios": [
       {
         "id": "s",
-        "cast": [
-          {},
-          {
-            "character": "a"
-          },
-          {
-            "character": "b"
-          },
-          {
-            "character": "d"
-          }
-        ],
         "variables": [
           {
             "id": "zero",
@@ -88,21 +17,6 @@
             "derive": "100 / state.zero",
             "description": "fails at runtime"
           }
-        ],
-        "entries": [
-          {
-            "id": "glow",
-            "text": "The lantern glows."
-          },
-          {
-            "id": "x",
-            "keys": [
-              "lantern"
-            ],
-            "when": "hit('lantern')",
-            "sticky": 5,
-            "text": "X."
-          }
         ]
       }
     ]
@@ -110,80 +24,15 @@
   "session": {
     "header": {
       "kind": "session",
-      "scenario": "s",
-      "seed": "conformanceSeed0001",
-      "characters": [
-        {
-          "id": "p",
-          "name": "Pat",
-          "description": "Pat.",
-          "examples": [
-            [
-              {
-                "speaker": "user",
-                "text": "Hi."
-              },
-              {
-                "speaker": "char",
-                "text": "Pat here."
-              }
-            ]
-          ]
-        }
-      ],
-      "players": [
-        "p"
-      ]
+      "scenario": "s"
     },
     "messages": [
       {
         "id": "1",
         "from": "player",
-        "at": "2026-10-09T10:00:00.900Z",
         "content": [
           {
-            "speaker": "p",
-            "text": "Where are Bea and Dov?"
-          }
-        ],
-        "changes": [
-          {
-            "by": "rules",
-            "set": {
-              "scene.present": [
-                "p",
-                "a"
-              ]
-            }
-          }
-        ]
-      },
-      {
-        "id": "2",
-        "parent": "1",
-        "from": "model",
-        "char": "a",
-        "at": "2026-10-09T10:00:02.100Z",
-        "activated": [
-          "s/glow",
-          "s/x"
-        ],
-        "content": [
-          {
-            "speaker": "a",
-            "text": "Out."
-          }
-        ]
-      },
-      {
-        "id": "3",
-        "parent": "2",
-        "from": "player",
-        "at": "2026-10-09T09:59:00Z",
-        "content": [
-          {
-            "speaker": "p",
-            "text": "Hm."
+            "text": "x"
           }
         ]
       }
@@ -193,7 +42,7 @@
     {
       "type": "state",
       "name": "ratio divides by zero, so it is absent",
-      "at": "2",
+      "at": "1",
       "expect": {
         "zero": 0
       },
@@ -203,15 +52,21 @@
     },
     {
       "type": "cel",
-      "at": "2",
+      "at": "1",
       "expr": "!has(state.ratio)",
       "expect": true
     },
     {
       "type": "macro",
-      "at": "2",
+      "at": "1",
       "text": "[{{state.ratio}}]",
       "expect": "[]"
+    },
+    {
+      "type": "check",
+      "expect": {
+        "codes": []
+      }
     }
   ]
 }

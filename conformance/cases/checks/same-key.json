@@ -1,0 +1,61 @@
+{
+  "description": "Two keys of one set naming the same full key, own.nerve and kai.nerve, are UNKNOWN_VARIABLE (Format 9, 17.2)",
+  "bundle": {
+    "kind": "bundle",
+    "characters": [
+      {
+        "id": "kai",
+        "name": "Kai",
+        "description": "Kai.",
+        "variables": [
+          {
+            "id": "nerve",
+            "type": "int",
+            "description": "d"
+          }
+        ],
+        "events": [
+          {
+            "id": "twice",
+            "when": "true",
+            "set": {
+              "own.nerve": 1,
+              "kai.nerve": 2
+            }
+          }
+        ]
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s",
+        "cast": [
+          {},
+          {
+            "character": "kai"
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "check",
+      "expect": {
+        "codes": [
+          "UNKNOWN_VARIABLE"
+        ],
+        "includes": [
+          {
+            "code": "UNKNOWN_VARIABLE",
+            "at": "/characters/0/events/0/set/own.nerve"
+          },
+          {
+            "code": "UNKNOWN_VARIABLE",
+            "at": "/characters/0/events/0/set/kai.nerve"
+          }
+        ]
+      }
+    }
+  ]
+}

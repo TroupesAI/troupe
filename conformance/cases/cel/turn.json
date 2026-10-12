@@ -1,0 +1,159 @@
+{
+  "description": "turn counts player messages on the path, inclusive; count() and ago() read an event's firings, ago() from its latest (Format 11.1, 12.1)",
+  "bundle": {
+    "kind": "bundle",
+    "characters": [
+      {
+        "id": "a",
+        "name": "Ann",
+        "description": "Ann."
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s",
+        "cast": [
+          {},
+          {
+            "character": "a"
+          }
+        ],
+        "variables": [
+          {
+            "id": "n",
+            "type": "int",
+            "description": "d"
+          }
+        ],
+        "events": [
+          {
+            "id": "any",
+            "when": "true",
+            "compute": {
+              "n": "state.n + 1"
+            }
+          }
+        ],
+        "openings": [
+          {
+            "id": "o",
+            "content": [
+              {
+                "text": "Begin."
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "session": {
+    "header": {
+      "kind": "session",
+      "scenario": "s",
+      "characters": [
+        {
+          "id": "p",
+          "name": "Pat",
+          "description": "Pat."
+        }
+      ],
+      "players": [
+        "p"
+      ]
+    },
+    "messages": [
+      {
+        "id": "r",
+        "opening": "o",
+        "from": "system",
+        "content": [
+          {
+            "text": "Begin."
+          }
+        ],
+        "changes": [
+          {
+            "by": "rules",
+            "set": {
+              "scene.present": [
+                "p"
+              ]
+            }
+          },
+          {
+            "by": "rules",
+            "event": "any",
+            "set": {
+              "n": 1
+            }
+          }
+        ]
+      },
+      {
+        "id": "2",
+        "parent": "r",
+        "from": "player",
+        "content": [
+          {
+            "text": "x"
+          }
+        ],
+        "changes": [
+          {
+            "by": "rules",
+            "event": "any",
+            "set": {
+              "n": 2
+            }
+          }
+        ]
+      },
+      {
+        "id": "3",
+        "parent": "2",
+        "from": "model",
+        "char": "a",
+        "content": [
+          {
+            "text": "y"
+          }
+        ]
+      },
+      {
+        "id": "4",
+        "parent": "3",
+        "from": "system",
+        "content": [],
+        "changes": [
+          {
+            "by": "player",
+            "set": {}
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "cel",
+      "name": "an opening root is round 0, and the event fired there",
+      "at": "r",
+      "expr": "turn == 0 && count('any') == 1 && ago('any') == 0",
+      "expect": true
+    },
+    {
+      "type": "cel",
+      "name": "turn: player messages on the path, inclusive; ago() from the latest firing",
+      "at": "4",
+      "expr": "turn == 1 && count('any') == 2 && ago('any') == 0",
+      "expect": true
+    },
+    {
+      "type": "check",
+      "expect": {
+        "codes": []
+      }
+    }
+  ]
+}

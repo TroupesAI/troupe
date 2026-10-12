@@ -1,0 +1,47 @@
+{
+  "description": "A derived variable can't read another derived variable (Format 8.1): CEL_ERROR",
+  "bundle": {
+    "kind": "bundle",
+    "scenarios": [
+      {
+        "id": "s",
+        "variables": [
+          {
+            "id": "clock",
+            "type": "int",
+            "initial": 30,
+            "description": "Hours since the start."
+          },
+          {
+            "id": "day",
+            "type": "int",
+            "derive": "state.clock / 24 + 1",
+            "description": "The day."
+          },
+          {
+            "id": "bad",
+            "type": "int",
+            "derive": "state.day + 1",
+            "description": "Reads another derived variable."
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "check",
+      "expect": {
+        "codes": [
+          "CEL_ERROR"
+        ],
+        "includes": [
+          {
+            "code": "CEL_ERROR",
+            "at": "/scenarios/0/variables/2/derive"
+          }
+        ]
+      }
+    }
+  ]
+}

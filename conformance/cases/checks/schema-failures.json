@@ -1,0 +1,149 @@
+{
+  "description": "Schema failures (Format 17.2): an out-of-range chance or priority, oneWay on a string variable, an entry without text, an empty key, a knownBy item that isn't an ID, a duplicate in a uniqueItems list and a failing anyOf are each SCHEMA; every check runs on the document as written, so the knownBy item is also UNKNOWN_CHARACTER (Format 17.1)",
+  "bundle": {
+    "kind": "bundle",
+    "scenarios": [
+      {
+        "id": "s",
+        "entries": [
+          {
+            "id": "lucky",
+            "chance": 1.5,
+            "text": "Lucky."
+          },
+          {
+            "id": "blank",
+            "when": "true"
+          },
+          {
+            "id": "plain",
+            "priority": 150,
+            "text": "Plain."
+          },
+          {
+            "id": "secret",
+            "knownBy": [
+              "Ann"
+            ],
+            "text": "A secret."
+          },
+          {
+            "id": "badkey",
+            "keys": [
+              ""
+            ],
+            "text": "An empty key."
+          }
+        ],
+        "cast": [
+          {},
+          {
+            "character": "a"
+          }
+        ],
+        "variables": [
+          {
+            "id": "label",
+            "type": "string",
+            "oneWay": true,
+            "initial": "b",
+            "by": [
+              "player"
+            ],
+            "description": "d"
+          },
+          {
+            "id": "rep",
+            "type": "int",
+            "of": [
+              "Watch",
+              "guild"
+            ],
+            "description": "d"
+          }
+        ]
+      }
+    ],
+    "characters": [
+      {
+        "id": "a",
+        "name": "Ann",
+        "description": "Ann."
+      }
+    ]
+  },
+  "session": {
+    "header": {
+      "kind": "session",
+      "scenario": "s",
+      "characters": [
+        {
+          "id": "p",
+          "name": "Pat",
+          "description": "Pat."
+        }
+      ],
+      "players": [
+        "p",
+        "p"
+      ]
+    },
+    "messages": [
+      {
+        "id": "1",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "x"
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "check",
+      "expect": {
+        "codes": [
+          "SCHEMA",
+          "UNKNOWN_CHARACTER"
+        ],
+        "includes": [
+          {
+            "code": "SCHEMA",
+            "at": "/scenarios/0/entries/0/chance"
+          },
+          {
+            "code": "SCHEMA",
+            "at": "/scenarios/0/entries/1"
+          },
+          {
+            "code": "SCHEMA",
+            "at": "/scenarios/0/entries/2/priority"
+          },
+          {
+            "code": "SCHEMA",
+            "at": "/scenarios/0/entries/3/knownBy/0"
+          },
+          {
+            "code": "UNKNOWN_CHARACTER",
+            "at": "/scenarios/0/entries/3/knownBy/0"
+          },
+          {
+            "code": "SCHEMA",
+            "at": "/scenarios/0/entries/4/keys/0"
+          },
+          {
+            "code": "SCHEMA",
+            "at": "/scenarios/0/variables/0/oneWay"
+          },
+          {
+            "code": "SCHEMA",
+            "at": "header/players"
+          }
+        ]
+      }
+    }
+  ]
+}

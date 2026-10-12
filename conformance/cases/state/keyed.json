@@ -93,7 +93,6 @@
     "header": {
       "kind": "session",
       "scenario": "s",
-      "seed": "conformanceSeed0001",
       "characters": [
         {
           "id": "p",
@@ -210,44 +209,18 @@
       }
     },
     {
-      "type": "prepare",
-      "name": "keys must exist (open keys must be author IDs); a player has no `characters` key; aliases are for reading",
-      "at": "1",
-      "by": "rules",
-      "set": {
-        "inv.lamp": 1,
-        "rep.army": 1,
-        "trust": 0.2,
-        "trust.zed": 0.1,
-        "trust.p": 0.3,
-        "trust.char": 0.4,
-        "inv.Torch": 1,
-        "a.feelings": 1,
-        "feelings.p": 1
-      },
-      "expect": {
-        "set": {
-          "inv.lamp": 1
-        },
-        "dropped": [
-          "a.feelings",
-          "feelings.p",
-          "inv.Torch",
-          "rep.army",
-          "trust",
-          "trust.char",
-          "trust.p",
-          "trust.zed"
-        ]
-      }
-    },
-    {
       "type": "macro",
       "name": "own and owner paths in macros; maps render with names",
       "at": "1",
       "char": "a",
       "text": "{{state.a.feelings.b}} {{state.trust.char}} {{state.hp.user}} | {{state.trust}} | {{state.inv}}",
       "expect": "3 0.7 7 | Ann: 0.7, Bea: 0.9 | torch: 2"
+    },
+    {
+      "type": "check",
+      "expect": {
+        "codes": []
+      }
     }
   ]
 }

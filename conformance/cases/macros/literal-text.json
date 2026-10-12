@@ -1,5 +1,5 @@
 {
-  "description": "Player and model text never resolves macros, and stores {{ as \\{{ (Format 10); {{user}} is the speaker of the latest player message (multiplayer)",
+  "description": "Player and model text is stored escaped, so its macros never take effect (Format 10); {{user}} is the speaker of the first speaking part of the latest player message on the path that has one (multiplayer)",
   "bundle": {
     "kind": "bundle",
     "characters": [
@@ -26,12 +26,6 @@
           {
             "character": "b"
           }
-        ],
-        "entries": [
-          {
-            "id": "greet",
-            "text": "{{char}} answers {{user}}."
-          }
         ]
       }
     ]
@@ -40,7 +34,6 @@
     "header": {
       "kind": "session",
       "scenario": "s",
-      "seed": "conformanceSeed0001",
       "characters": [
         {
           "id": "p",
@@ -79,60 +72,67 @@
             "text": "Me too!"
           }
         ]
+      },
+      {
+        "id": "3",
+        "parent": "2",
+        "from": "player",
+        "content": [
+          {
+            "text": "*A long pause.*"
+          }
+        ]
       }
     ]
   },
   "tests": [
     {
-      "type": "select",
-      "name": "{{user}} is Quin, who spoke last",
-      "for": "a",
-      "parent": "2",
-      "messageId": "3",
-      "expect": {
-        "texts": {
-          "s/greet": "Ann answers Quin."
-        }
-      }
+      "type": "macro",
+      "name": "an escaped {{ in a player's part renders as written",
+      "part": {
+        "message": "1",
+        "index": 0
+      },
+      "expect": "I type {{char}} on purpose."
     },
     {
-      "type": "select",
-      "name": "{{user}} is Pat at message 1",
-      "for": "a",
-      "parent": "1",
-      "messageId": "2x",
-      "expect": {
-        "texts": {
-          "s/greet": "Ann answers Pat."
-        }
-      }
+      "type": "macro",
+      "name": "before any player message: the first player",
+      "char": "a",
+      "text": "{{char}} answers {{user}}.",
+      "expect": "Ann answers Pat."
     },
     {
-      "type": "scanned",
-      "for": "a",
-      "parent": "2",
-      "expect": "Quin: Me too!\nPat: I type {{char}} on purpose."
+      "type": "macro",
+      "name": "at Pat's message",
+      "at": "1",
+      "char": "a",
+      "text": "{{char}} answers {{user}}.",
+      "expect": "Ann answers Pat."
     },
     {
-      "type": "prompt",
-      "for": "a",
-      "parent": "2",
-      "messageId": "3",
-      "expect": {
-        "lines": {
-          "1": [
-            "Pat: I type {{char}} on purpose."
-          ]
-        }
-      }
+      "type": "macro",
+      "name": "at Quin's message, the latest player message",
+      "at": "2",
+      "char": "a",
+      "text": "{{char}} answers {{user}}.",
+      "expect": "Ann answers Quin."
+    },
+    {
+      "type": "macro",
+      "name": "a player message without a speaking part doesn't change {{user}}",
+      "at": "3",
+      "char": "a",
+      "text": "{{char}} answers {{user}}.",
+      "expect": "Ann answers Quin."
     },
     {
       "type": "cel",
-      "name": "the user alias follows the same rule",
-      "at": "2",
+      "name": "players lists both, in seat order; user follows the latest player message",
+      "at": "3",
       "char": "a",
       "kind": "entry",
-      "expr": "players == ['p', 'q']",
+      "expr": "players == ['p', 'q'] && user == 'q'",
       "expect": true
     },
     {

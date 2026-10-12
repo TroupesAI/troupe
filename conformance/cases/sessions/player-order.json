@@ -1,5 +1,5 @@
 {
-  "description": "Session lines and seats (Format 12, 12.2): the header's head is the head; unlisted player cast members come after the listed players in cast order; scene.location takes any location of the bundle",
+  "description": "Seats (Format 12.2): unlisted player cast members come after the listed players in cast order; scene.location takes a location of any bundle world, even one the scenario doesn't use (Format 8.5)",
   "bundle": {
     "kind": "bundle",
     "worlds": [
@@ -68,7 +68,6 @@
     "header": {
       "kind": "session",
       "scenario": "s",
-      "seed": "conformanceSeed0001",
       "characters": [
         {
           "id": "p",
@@ -79,8 +78,7 @@
       "players": [
         "p",
         "b"
-      ],
-      "head": "2"
+      ]
     },
     "messages": [
       {
@@ -96,24 +94,19 @@
       {
         "id": "2",
         "parent": "1",
-        "from": "model",
-        "char": "b",
+        "from": "player",
         "content": [
           {
             "speaker": "b",
-            "text": "b"
+            "text": "To the moon."
           }
-        ]
-      },
-      {
-        "id": "3",
-        "parent": "1",
-        "from": "model",
-        "char": "b",
-        "content": [
+        ],
+        "changes": [
           {
-            "speaker": "b",
-            "text": "c"
+            "by": "player",
+            "set": {
+              "scene.location": "moon"
+            }
           }
         ]
       }
@@ -121,47 +114,23 @@
   },
   "tests": [
     {
-      "type": "read",
-      "name": "the header's head",
-      "expect": {
-        "ids": [
-          "1",
-          "2",
-          "3"
-        ],
-        "head": "2"
-      }
-    },
-    {
       "type": "cel",
       "name": "players: listed p and b, then the unlisted player members a and c in cast order",
       "expr": "players == ['p', 'b', 'a', 'c']",
       "expect": true
     },
     {
-      "type": "prepare",
-      "name": "a location of a bundle world the scenario doesn't use is still a location",
-      "by": "rules",
-      "set": {
-        "scene.location": "moon"
-      },
+      "type": "state",
+      "name": "a location of a world the scenario doesn't use",
+      "at": "2",
       "expect": {
-        "set": {
-          "scene.location": "moon"
-        }
+        "scene.location": "moon"
       }
     },
     {
-      "type": "prepare",
-      "by": "rules",
-      "set": {
-        "scene.location": "mars"
-      },
+      "type": "check",
       "expect": {
-        "set": {},
-        "dropped": [
-          "scene.location"
-        ]
+        "codes": []
       }
     }
   ]

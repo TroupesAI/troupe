@@ -33,44 +33,15 @@
           "type": "object"
         },
         "messages": {
-          "type": "array"
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
         }
       }
     },
     "sessionFile": {
       "type": "string"
-    },
-    "addMessages": {
-      "type": "array"
-    },
-    "extend": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "from",
-          "count",
-          "prefix"
-        ],
-        "properties": {
-          "from": {
-            "type": "string",
-            "minLength": 1
-          },
-          "count": {
-            "type": "integer",
-            "minimum": 1
-          },
-          "prefix": {
-            "type": "string"
-          },
-          "char": {
-            "type": "string",
-            "minLength": 1
-          }
-        }
-      }
     },
     "tests": {
       "type": "array",
@@ -83,128 +54,18 @@
         "properties": {
           "type": {
             "enum": [
-              "roll",
-              "match",
               "state",
-              "prepare",
-              "select",
-              "scanned",
-              "events",
-              "directions",
               "ended",
               "macro",
               "cel",
-              "start",
-              "swipe",
               "check",
-              "prompt",
               "parse",
-              "read",
-              "output",
               "chronicle",
-              "edit",
-              "tracker"
+              "knows"
             ]
           }
         },
         "allOf": [
-          {
-            "if": {
-              "properties": {
-                "type": {
-                  "const": "roll"
-                }
-              },
-              "required": [
-                "type"
-              ]
-            },
-            "then": {
-              "additionalProperties": false,
-              "required": [
-                "expect",
-                "purpose",
-                "seed",
-                "message",
-                "subject"
-              ],
-              "properties": {
-                "type": {
-                  "const": "roll"
-                },
-                "name": {
-                  "type": "string"
-                },
-                "note": {
-                  "type": "string"
-                },
-                "expect": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "properties": {
-                    "hex": {
-                      "type": "string"
-                    },
-                    "roll": {
-                      "type": "integer"
-                    }
-                  }
-                },
-                "purpose": {
-                  "type": "string"
-                },
-                "seed": {
-                  "type": "string"
-                },
-                "message": {
-                  "type": "string"
-                },
-                "subject": {
-                  "type": "string"
-                }
-              }
-            }
-          },
-          {
-            "if": {
-              "properties": {
-                "type": {
-                  "const": "match"
-                }
-              },
-              "required": [
-                "type"
-              ]
-            },
-            "then": {
-              "additionalProperties": false,
-              "required": [
-                "expect",
-                "key",
-                "text"
-              ],
-              "properties": {
-                "type": {
-                  "const": "match"
-                },
-                "name": {
-                  "type": "string"
-                },
-                "note": {
-                  "type": "string"
-                },
-                "expect": {
-                  "type": "boolean"
-                },
-                "key": {
-                  "type": "string"
-                },
-                "text": {
-                  "type": "string"
-                }
-              }
-            }
-          },
           {
             "if": {
               "properties": {
@@ -251,326 +112,6 @@
             "if": {
               "properties": {
                 "type": {
-                  "const": "prepare"
-                }
-              },
-              "required": [
-                "type"
-              ]
-            },
-            "then": {
-              "additionalProperties": false,
-              "required": [
-                "expect",
-                "by",
-                "set"
-              ],
-              "properties": {
-                "type": {
-                  "const": "prepare"
-                },
-                "name": {
-                  "type": "string"
-                },
-                "note": {
-                  "type": "string"
-                },
-                "expect": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "properties": {
-                    "set": {
-                      "type": "object"
-                    },
-                    "dropped": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                },
-                "at": {
-                  "type": "string",
-                  "minLength": 1
-                },
-                "by": {
-                  "enum": [
-                    "rules",
-                    "player",
-                    "model"
-                  ]
-                },
-                "set": {
-                  "type": "object"
-                },
-                "owner": {
-                  "type": "string",
-                  "minLength": 1
-                }
-              }
-            }
-          },
-          {
-            "if": {
-              "properties": {
-                "type": {
-                  "const": "select"
-                }
-              },
-              "required": [
-                "type"
-              ]
-            },
-            "then": {
-              "additionalProperties": false,
-              "required": [
-                "expect",
-                "messageId"
-              ],
-              "properties": {
-                "type": {
-                  "const": "select"
-                },
-                "name": {
-                  "type": "string"
-                },
-                "note": {
-                  "type": "string"
-                },
-                "expect": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "properties": {
-                    "activated": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      }
-                    },
-                    "selected": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      }
-                    },
-                    "system": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      }
-                    },
-                    "context": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      }
-                    },
-                    "depth": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      }
-                    },
-                    "catalog": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      }
-                    },
-                    "dropped": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      }
-                    },
-                    "failed": {
-                      "type": "boolean"
-                    },
-                    "texts": {
-                      "type": "object"
-                    }
-                  }
-                },
-                "for": {
-                  "type": "string",
-                  "minLength": 1
-                },
-                "parent": {
-                  "type": "string",
-                  "minLength": 1
-                },
-                "messageId": {
-                  "type": "string",
-                  "minLength": 1
-                },
-                "maxEntries": {
-                  "type": "integer",
-                  "minimum": 0
-                },
-                "pulled": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          },
-          {
-            "if": {
-              "properties": {
-                "type": {
-                  "const": "scanned"
-                }
-              },
-              "required": [
-                "type"
-              ]
-            },
-            "then": {
-              "additionalProperties": false,
-              "required": [
-                "expect",
-                "parent"
-              ],
-              "properties": {
-                "type": {
-                  "const": "scanned"
-                },
-                "name": {
-                  "type": "string"
-                },
-                "note": {
-                  "type": "string"
-                },
-                "expect": {
-                  "type": "string"
-                },
-                "for": {
-                  "type": "string",
-                  "minLength": 1
-                },
-                "parent": {
-                  "type": "string",
-                  "minLength": 1
-                },
-                "depth": {
-                  "type": "integer",
-                  "minimum": 0
-                }
-              }
-            }
-          },
-          {
-            "if": {
-              "properties": {
-                "type": {
-                  "const": "events"
-                }
-              },
-              "required": [
-                "type"
-              ]
-            },
-            "then": {
-              "additionalProperties": false,
-              "required": [
-                "expect",
-                "at"
-              ],
-              "properties": {
-                "type": {
-                  "const": "events"
-                },
-                "name": {
-                  "type": "string"
-                },
-                "note": {
-                  "type": "string"
-                },
-                "expect": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "properties": {
-                    "changes": {
-                      "type": "array"
-                    },
-                    "message": {
-                      "type": [
-                        "object",
-                        "null"
-                      ]
-                    },
-                    "directions": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      }
-                    },
-                    "ended": {
-                      "type": "boolean"
-                    },
-                    "state": {
-                      "type": "object"
-                    }
-                  }
-                },
-                "at": {
-                  "type": "string",
-                  "minLength": 1
-                },
-                "eventMessageId": {
-                  "type": "string",
-                  "minLength": 1
-                }
-              }
-            }
-          },
-          {
-            "if": {
-              "properties": {
-                "type": {
-                  "const": "directions"
-                }
-              },
-              "required": [
-                "type"
-              ]
-            },
-            "then": {
-              "additionalProperties": false,
-              "required": [
-                "expect",
-                "at"
-              ],
-              "properties": {
-                "type": {
-                  "const": "directions"
-                },
-                "name": {
-                  "type": "string"
-                },
-                "note": {
-                  "type": "string"
-                },
-                "expect": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                },
-                "at": {
-                  "type": "string",
-                  "minLength": 1
-                }
-              }
-            }
-          },
-          {
-            "if": {
-              "properties": {
-                "type": {
                   "const": "ended"
                 }
               },
@@ -618,8 +159,7 @@
             "then": {
               "additionalProperties": false,
               "required": [
-                "expect",
-                "text"
+                "expect"
               ],
               "properties": {
                 "type": {
@@ -651,8 +191,38 @@
                 },
                 "narrator": {
                   "type": "boolean"
+                },
+                "part": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "message",
+                    "index"
+                  ],
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "index": {
+                      "type": "integer",
+                      "minimum": 0
+                    }
+                  }
                 }
-              }
+              },
+              "oneOf": [
+                {
+                  "required": [
+                    "text"
+                  ]
+                },
+                {
+                  "required": [
+                    "part"
+                  ]
+                }
+              ]
             }
           },
           {
@@ -728,199 +298,6 @@
             "if": {
               "properties": {
                 "type": {
-                  "const": "start"
-                }
-              },
-              "required": [
-                "type"
-              ]
-            },
-            "then": {
-              "additionalProperties": false,
-              "required": [
-                "expect"
-              ],
-              "properties": {
-                "type": {
-                  "const": "start"
-                },
-                "name": {
-                  "type": "string"
-                },
-                "note": {
-                  "type": "string"
-                },
-                "expect": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "properties": {
-                    "changes": {
-                      "type": "array"
-                    },
-                    "root": {
-                      "type": "object"
-                    },
-                    "messages": {
-                      "type": "array"
-                    },
-                    "head": {
-                      "type": "string",
-                      "minLength": 1
-                    },
-                    "questions": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      }
-                    },
-                    "state": {
-                      "type": "object"
-                    },
-                    "rendered": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      }
-                    },
-                    "entries": {
-                      "type": "array"
-                    },
-                    "characters": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      }
-                    },
-                    "header": {
-                      "type": "object"
-                    }
-                  }
-                },
-                "scenario": {
-                  "type": "string",
-                  "minLength": 1
-                },
-                "opening": {
-                  "type": "string",
-                  "minLength": 1
-                },
-                "characters": {
-                  "type": "array"
-                },
-                "players": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                },
-                "answers": {
-                  "type": "object"
-                },
-                "seed": {
-                  "type": "string"
-                },
-                "rootId": {
-                  "type": "string",
-                  "minLength": 1
-                },
-                "eventMessageId": {
-                  "type": "string",
-                  "minLength": 1
-                },
-                "firstMessage": {
-                  "type": "object"
-                },
-                "chronicle": {
-                  "type": "object"
-                }
-              }
-            }
-          },
-          {
-            "if": {
-              "properties": {
-                "type": {
-                  "const": "swipe"
-                }
-              },
-              "required": [
-                "type"
-              ]
-            },
-            "then": {
-              "additionalProperties": false,
-              "required": [
-                "expect"
-              ],
-              "properties": {
-                "type": {
-                  "const": "swipe"
-                },
-                "name": {
-                  "type": "string"
-                },
-                "note": {
-                  "type": "string"
-                },
-                "expect": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "properties": {
-                    "changes": {
-                      "type": "array"
-                    },
-                    "root": {
-                      "type": "object"
-                    },
-                    "messages": {
-                      "type": "array"
-                    },
-                    "head": {
-                      "type": "string",
-                      "minLength": 1
-                    },
-                    "questions": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      }
-                    },
-                    "state": {
-                      "type": "object"
-                    },
-                    "rendered": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      }
-                    },
-                    "entries": {
-                      "type": "array"
-                    }
-                  }
-                },
-                "opening": {
-                  "type": "string",
-                  "minLength": 1
-                },
-                "answers": {
-                  "type": "object"
-                },
-                "rootId": {
-                  "type": "string",
-                  "minLength": 1
-                },
-                "eventMessageId": {
-                  "type": "string",
-                  "minLength": 1
-                }
-              }
-            }
-          },
-          {
-            "if": {
-              "properties": {
-                "type": {
                   "const": "check"
                 }
               },
@@ -984,112 +361,6 @@
             "if": {
               "properties": {
                 "type": {
-                  "const": "prompt"
-                }
-              },
-              "required": [
-                "type"
-              ]
-            },
-            "then": {
-              "additionalProperties": false,
-              "required": [
-                "expect",
-                "messageId"
-              ],
-              "properties": {
-                "type": {
-                  "const": "prompt"
-                },
-                "name": {
-                  "type": "string"
-                },
-                "note": {
-                  "type": "string"
-                },
-                "expect": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "properties": {
-                    "system": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      }
-                    },
-                    "setting": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      }
-                    },
-                    "people": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      }
-                    },
-                    "context": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      }
-                    },
-                    "history": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      }
-                    },
-                    "directions": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      }
-                    },
-                    "lines": {
-                      "type": "object"
-                    },
-                    "texts": {
-                      "type": "object"
-                    }
-                  }
-                },
-                "for": {
-                  "type": "string",
-                  "minLength": 1
-                },
-                "parent": {
-                  "type": "string",
-                  "minLength": 1
-                },
-                "messageId": {
-                  "type": "string",
-                  "minLength": 1
-                },
-                "summaries": {
-                  "type": "boolean"
-                },
-                "maxEntries": {
-                  "type": "integer",
-                  "minimum": 0
-                },
-                "pulled": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                },
-                "structured": {
-                  "type": "boolean"
-                }
-              }
-            }
-          },
-          {
-            "if": {
-              "properties": {
-                "type": {
                   "const": "parse"
                 }
               },
@@ -1117,33 +388,23 @@
                   "type": "object",
                   "additionalProperties": false,
                   "properties": {
-                    "ok": {
-                      "type": "boolean"
-                    },
                     "codes": {
                       "type": "array",
                       "items": {
                         "type": "string"
                       }
-                    },
-                    "equals": {
-                      "type": "object"
-                    },
-                    "ids": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      }
                     }
-                  }
+                  },
+                  "required": [
+                    "codes"
+                  ]
                 },
                 "kind": {
                   "enum": [
                     "bundle",
                     "session",
                     "chronicle",
-                    "package",
-                    "modelOutput"
+                    "package"
                   ]
                 },
                 "text": {
@@ -1171,144 +432,6 @@
             "if": {
               "properties": {
                 "type": {
-                  "const": "read"
-                }
-              },
-              "required": [
-                "type"
-              ]
-            },
-            "then": {
-              "additionalProperties": false,
-              "required": [
-                "expect"
-              ],
-              "properties": {
-                "type": {
-                  "const": "read"
-                },
-                "name": {
-                  "type": "string"
-                },
-                "note": {
-                  "type": "string"
-                },
-                "expect": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "properties": {
-                    "ids": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      }
-                    },
-                    "head": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "codes": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      }
-                    },
-                    "message": {
-                      "type": "object"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          {
-            "if": {
-              "properties": {
-                "type": {
-                  "const": "output"
-                }
-              },
-              "required": [
-                "type"
-              ]
-            },
-            "then": {
-              "additionalProperties": false,
-              "required": [
-                "expect",
-                "output"
-              ],
-              "properties": {
-                "type": {
-                  "const": "output"
-                },
-                "name": {
-                  "type": "string"
-                },
-                "note": {
-                  "type": "string"
-                },
-                "expect": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "properties": {
-                    "message": {
-                      "type": [
-                        "object",
-                        "null"
-                      ]
-                    },
-                    "dropped": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      }
-                    },
-                    "characters": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      }
-                    },
-                    "newcomers": {
-                      "type": "array"
-                    }
-                  }
-                },
-                "reply": {
-                  "type": "object"
-                },
-                "message": {
-                  "type": "string",
-                  "minLength": 1
-                },
-                "output": {
-                  "type": [
-                    "string",
-                    "object"
-                  ]
-                }
-              },
-              "oneOf": [
-                {
-                  "required": [
-                    "reply"
-                  ]
-                },
-                {
-                  "required": [
-                    "message"
-                  ]
-                }
-              ]
-            }
-          },
-          {
-            "if": {
-              "properties": {
-                "type": {
                   "const": "chronicle"
                 }
               },
@@ -1340,42 +463,38 @@
                       "items": {
                         "type": "string"
                       }
-                    },
-                    "memories": {
-                      "type": "array"
-                    },
-                    "values": {
-                      "type": "object"
                     }
-                  }
+                  },
+                  "required": [
+                    "codes"
+                  ]
                 },
                 "chronicle": {
                   "type": "object"
                 },
                 "chronicleFile": {
                   "type": "string"
-                },
-                "writeBack": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "required": [
-                    "head"
-                  ],
-                  "properties": {
-                    "head": {
-                      "type": "string",
-                      "minLength": 1
-                    }
-                  }
                 }
-              }
+              },
+              "oneOf": [
+                {
+                  "required": [
+                    "chronicle"
+                  ]
+                },
+                {
+                  "required": [
+                    "chronicleFile"
+                  ]
+                }
+              ]
             }
           },
           {
             "if": {
               "properties": {
                 "type": {
-                  "const": "edit"
+                  "const": "knows"
                 }
               },
               "required": [
@@ -1386,12 +505,11 @@
               "additionalProperties": false,
               "required": [
                 "expect",
-                "newId",
-                "set"
+                "message"
               ],
               "properties": {
                 "type": {
-                  "const": "edit"
+                  "const": "knows"
                 },
                 "name": {
                   "type": "string"
@@ -1400,98 +518,35 @@
                   "type": "string"
                 },
                 "expect": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "properties": {
-                    "message": {
-                      "type": [
-                        "object",
-                        "null"
-                      ]
-                    },
-                    "events": {
-                      "type": "array"
-                    },
-                    "head": {
-                      "type": "string",
-                      "minLength": 1
-                    }
+                  "type": "array",
+                  "items": {
+                    "type": "string"
                   }
                 },
-                "set": {
-                  "type": "object"
-                },
-                "newId": {
+                "message": {
                   "type": "string",
                   "minLength": 1
                 },
-                "eventMessageId": {
-                  "type": "string"
-                }
-              }
-            }
-          },
-          {
-            "if": {
-              "properties": {
-                "type": {
-                  "const": "tracker"
+                "part": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "summary": {
+                  "const": true
                 }
               },
-              "required": [
-                "type"
-              ]
-            },
-            "then": {
-              "additionalProperties": false,
-              "required": [
-                "expect",
-                "at"
-              ],
-              "properties": {
-                "type": {
-                  "const": "tracker"
+              "oneOf": [
+                {
+                  "required": [
+                    "part"
+                  ]
                 },
-                "name": {
-                  "type": "string"
-                },
-                "note": {
-                  "type": "string"
-                },
-                "at": {
-                  "type": "string"
-                },
-                "expect": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "properties": {
-                    "variables": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      }
-                    },
-                    "entries": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      }
-                    },
-                    "messages": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      }
-                    },
-                    "contextEntries": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      }
-                    }
-                  }
+                {
+                  "required": [
+                    "summary"
+                  ]
                 }
-              }
+              ]
             }
           }
         ]

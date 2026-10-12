@@ -1,47 +1,32 @@
 {
-  "description": "Reading sessions and chronicles (Format 12, 12.1, 13, 17.2): session lines end with LF or CRLF and the last newline is optional; an unreadable line other than the header is PARSE and skipped; an unreadable header means the file isn't read; a chronicle is one JSON document. ids lists the message IDs read",
+  "description": "Sessions and chronicles (Format 12, 13, 17.2): session lines end with LF or CRLF and the last newline is optional; an unreadable line is PARSE; a chronicle is one JSON document",
   "tests": [
     {
       "type": "parse",
       "name": "a session",
       "kind": "session",
-      "text": "{\"troupe\":\"0.12\",\"kind\":\"session\",\"scenario\":\"s\",\"seed\":\"k7Qm2xVb9TzR4pLc8NwYfA\"}\n{\"id\":\"1\",\"from\":\"player\",\"content\":[{\"text\":\"Hi.\"}]}\n{\"id\":\"2\",\"parent\":\"1\",\"from\":\"model\",\"content\":[{\"text\":\"Hello.\"}]}\n",
+      "text": "{\"troupe\":\"0.12\",\"kind\":\"session\",\"scenario\":\"s\"}\n{\"id\":\"1\",\"from\":\"player\",\"content\":[{\"text\":\"Hi.\"}]}\n{\"id\":\"2\",\"parent\":\"1\",\"from\":\"model\",\"content\":[{\"text\":\"Hello.\"}]}\n",
       "expect": {
-        "ok": true,
-        "codes": [],
-        "ids": [
-          "1",
-          "2"
-        ]
+        "codes": []
       }
     },
     {
       "type": "parse",
       "name": "CRLF and no final newline",
       "kind": "session",
-      "text": "{\"troupe\":\"0.12\",\"kind\":\"session\",\"scenario\":\"s\",\"seed\":\"k7Qm2xVb9TzR4pLc8NwYfA\"}\r\n{\"id\":\"1\",\"from\":\"player\",\"content\":[{\"text\":\"Hi.\"}]}\r\n{\"id\":\"2\",\"parent\":\"1\",\"from\":\"model\",\"content\":[{\"text\":\"Hello.\"}]}",
+      "text": "{\"troupe\":\"0.12\",\"kind\":\"session\",\"scenario\":\"s\"}\r\n{\"id\":\"1\",\"from\":\"player\",\"content\":[{\"text\":\"Hi.\"}]}\r\n{\"id\":\"2\",\"parent\":\"1\",\"from\":\"model\",\"content\":[{\"text\":\"Hello.\"}]}",
       "expect": {
-        "ok": true,
-        "codes": [],
-        "ids": [
-          "1",
-          "2"
-        ]
+        "codes": []
       }
     },
     {
       "type": "parse",
-      "name": "an unreadable line is skipped",
+      "name": "an unreadable line is PARSE",
       "kind": "session",
-      "text": "{\"troupe\":\"0.12\",\"kind\":\"session\",\"scenario\":\"s\",\"seed\":\"k7Qm2xVb9TzR4pLc8NwYfA\"}\n{\"id\":\"1\",\"from\":\"player\",\"content\":[{\"text\":\"Hi.\"}]}\n{\"id\":\n{\"id\":\"2\",\"parent\":\"1\",\"from\":\"model\",\"content\":[{\"text\":\"Hello.\"}]}\n",
+      "text": "{\"troupe\":\"0.12\",\"kind\":\"session\",\"scenario\":\"s\"}\n{\"id\":\"1\",\"from\":\"player\",\"content\":[{\"text\":\"Hi.\"}]}\n{\"id\":\n{\"id\":\"2\",\"parent\":\"1\",\"from\":\"model\",\"content\":[{\"text\":\"Hello.\"}]}\n",
       "expect": {
-        "ok": false,
         "codes": [
           "PARSE"
-        ],
-        "ids": [
-          "1",
-          "2"
         ]
       }
     },
@@ -51,7 +36,6 @@
       "kind": "session",
       "text": "{\"troupe\":\"0.12\",\n{\"id\":\"1\",\"from\":\"player\",\"content\":[{\"text\":\"Hi.\"}]}\n",
       "expect": {
-        "ok": false,
         "codes": [
           "PARSE"
         ]
@@ -63,7 +47,6 @@
       "kind": "session",
       "text": "",
       "expect": {
-        "ok": false,
         "codes": [
           "PARSE"
         ]
@@ -75,7 +58,6 @@
       "kind": "session",
       "text": "{\"troupe\":\"0.12\",\"kind\":\"bundle\"}\n",
       "expect": {
-        "ok": false,
         "codes": [
           "PARSE"
         ]
@@ -87,7 +69,6 @@
       "kind": "chronicle",
       "text": "{\"troupe\":\"0.12\",\"kind\":\"chronicle\",\"id\":\"c1\",\"character\":{\"id\":\"mira\",\"name\":\"Mira\",\"description\":\"d\"},\"memories\":[{\"id\":\"met\",\"text\":\"Mira met Mara.\"}]}\n",
       "expect": {
-        "ok": true,
         "codes": []
       }
     },
@@ -97,7 +78,6 @@
       "kind": "chronicle",
       "text": "{\"troupe\":\"0.12\",\"kind\":\"chronicle\",\"id\":\"c1\",\"character\":{\"id\":\"mira\",\"name\":\"Mira\",\"description\":\"d\"}}\n{\"id\":\"r1\"}\n",
       "expect": {
-        "ok": false,
         "codes": [
           "PARSE"
         ]
@@ -105,48 +85,13 @@
     },
     {
       "type": "parse",
-      "name": "a message failing the schema at one value keeps the rest: the bad at is removed",
+      "name": "a message failing the schema at one value",
       "kind": "session",
-      "text": "{\"troupe\":\"0.12\",\"kind\":\"session\",\"scenario\":\"s\",\"seed\":\"conformanceSeed0001\"}\n{\"id\":\"1\",\"from\":\"player\",\"at\":\"yesterday\",\"content\":[{\"text\":\"x\"}]}\n{\"id\":\"2\",\"parent\":\"1\",\"from\":\"model\",\"content\":[{\"text\":\"y\"}]}\n",
+      "text": "{\"troupe\":\"0.12\",\"kind\":\"session\",\"scenario\":\"s\"}\n{\"id\":\"1\",\"from\":\"player\",\"at\":\"yesterday\",\"content\":[{\"text\":\"x\"}]}\n{\"id\":\"2\",\"parent\":\"1\",\"from\":\"model\",\"content\":[{\"text\":\"y\"}]}\n",
       "expect": {
-        "ok": false,
         "codes": [
           "SCHEMA"
-        ],
-        "ids": [
-          "1",
-          "2"
         ]
-      }
-    },
-    {
-      "type": "parse",
-      "name": "a message failing as a whole is skipped, with its descendants",
-      "kind": "session",
-      "text": "{\"troupe\":\"0.12\",\"kind\":\"session\",\"scenario\":\"s\",\"seed\":\"conformanceSeed0001\"}\n{\"id\":\"1\",\"from\":\"player\",\"content\":[{\"text\":\"x\"}]}\n{\"id\":\"2\",\"parent\":\"1\",\"from\":\"narrator\",\"content\":[{\"text\":\"y\"}]}\n{\"id\":\"3\",\"parent\":\"2\",\"from\":\"player\",\"content\":[{\"text\":\"z\"}]}\n",
-      "expect": {
-        "ok": false,
-        "codes": [
-          "SCHEMA",
-          "UNKNOWN_MESSAGE"
-        ],
-        "ids": [
-          "1"
-        ]
-      }
-    },
-    {
-      "type": "parse",
-      "name": "a message left without parts is removed, and its replies are skipped",
-      "kind": "session",
-      "text": "{\"troupe\":\"0.12\",\"kind\":\"session\",\"scenario\":\"s\",\"seed\":\"conformanceSeed0001\"}\n{\"id\":\"1\",\"from\":\"player\",\"content\":[{\"type\":\"image\",\"src\":\"data:image/jpg;base64,AAAA\"}]}\n{\"id\":\"2\",\"parent\":\"1\",\"from\":\"model\",\"content\":[{\"text\":\"Nice photo.\"}]}\n",
-      "expect": {
-        "ok": false,
-        "codes": [
-          "SCHEMA",
-          "UNKNOWN_MESSAGE"
-        ],
-        "ids": []
       }
     }
   ]

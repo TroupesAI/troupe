@@ -32,8 +32,7 @@ The [beginner's guide](guides/beginners.md) grows this card into a full story, w
 
 | | |
 | --- | --- |
-| [Troupe Format](spec/format.md) | The files and what every field means: bundles, characters, worlds, scenarios, entries, variables, events, sessions and chronicles. |
-| [Troupe Play](spec/play.md) | How apps play the files, so that every app gives the model the same content: starting sessions, state and events, rolls, entry activation, prompt contents and knowledge. |
+| [Troupe Format](spec/format.md) | The files and what every field means: bundles, characters, worlds, scenarios, entries, variables, events, sessions and chronicles. How apps play them is their own. |
 | [Schemas](schemas/) | JSON Schemas, normative for structure (Format Appendix A). |
 | [Conformance suite](conformance/) | Language-neutral test cases and the [protocol](conformance/README.md) a test runner follows. |
 | [Examples](examples/) | The spec's worked examples as files. |
@@ -45,7 +44,6 @@ These are informative.
 - [Beginner's guide](guides/beginners.md): learn Troupe by building one story, step by step.
 - [Authoring guide](guides/authoring.md): patterns for common stories.
 - [Authoring brief](guides/authoring-brief.md): one page for people and LLMs writing Troupe files.
-- [Implementer's guide](guides/implementers.md): advice for apps on presentation and the choices the spec leaves to them.
 - [Character Card V2/V3 and Troupe](guides/character-cards.md): importing and exporting cards.
 
 ## Contributing

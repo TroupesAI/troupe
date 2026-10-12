@@ -2,22 +2,9 @@
   "description": "Validators assert format, so a malformed timestamp is SCHEMA (Format 17.2); an unknown message field is UNKNOWN_FIELD; named bounds must name non-keyed numeric variables of the same owner (Format 8.1); a timestamp with an offset instead of Z is SCHEMA (Format 2.5)",
   "bundle": {
     "kind": "bundle",
-    "characters": [
-      {
-        "id": "a",
-        "name": "Ann",
-        "description": "Ann."
-      }
-    ],
     "scenarios": [
       {
         "id": "s",
-        "cast": [
-          {},
-          {
-            "character": "a"
-          }
-        ],
         "variables": [
           {
             "id": "rep",
@@ -52,7 +39,6 @@
     "header": {
       "kind": "session",
       "scenario": "s",
-      "seed": "conformanceSeed0001",
       "characters": [
         {
           "id": "p",
@@ -111,22 +97,17 @@
       "type": "parse",
       "name": "a timestamp in UTC",
       "kind": "session",
-      "text": "{\"troupe\":\"0.12\",\"kind\":\"session\",\"scenario\":\"s\",\"seed\":\"k7Qm2xVb9TzR4pLc8NwYfA\"}\n{\"id\":\"1\",\"from\":\"player\",\"at\":\"2026-10-11T09:00:00Z\",\"content\":[{\"text\":\"Hi.\"}]}\n",
+      "text": "{\"troupe\":\"0.12\",\"kind\":\"session\",\"scenario\":\"s\"}\n{\"id\":\"1\",\"from\":\"player\",\"at\":\"2026-10-11T09:00:00Z\",\"content\":[{\"text\":\"Hi.\"}]}\n",
       "expect": {
-        "ok": true,
-        "codes": [],
-        "ids": [
-          "1"
-        ]
+        "codes": []
       }
     },
     {
       "type": "parse",
       "name": "a timestamp with an offset",
       "kind": "session",
-      "text": "{\"troupe\":\"0.12\",\"kind\":\"session\",\"scenario\":\"s\",\"seed\":\"k7Qm2xVb9TzR4pLc8NwYfA\"}\n{\"id\":\"1\",\"from\":\"player\",\"at\":\"2026-10-11T12:00:00+03:00\",\"content\":[{\"text\":\"Hi.\"}]}\n",
+      "text": "{\"troupe\":\"0.12\",\"kind\":\"session\",\"scenario\":\"s\"}\n{\"id\":\"1\",\"from\":\"player\",\"at\":\"2026-10-11T12:00:00+03:00\",\"content\":[{\"text\":\"Hi.\"}]}\n",
       "expect": {
-        "ok": false,
         "codes": [
           "SCHEMA"
         ]

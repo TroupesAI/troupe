@@ -28,18 +28,18 @@ One page for people and for LLMs asked to write Troupe files. Give it to a model
 
 **Macros.** `{{char}}` is the character the text belongs to and `{{user}}` the player's character. `{{state.bell}}` and `{{own.nerve}}` show values; `{{@kai}}` shows a name. Name other characters with `{{@kai}}` rather than writing "Kai", so renames and recasts keep working.
 
-**Entries:** `{"id", "text"}` is always on. Add `keys` to activate on words, `position: "system"` for rules, `knownBy: ["id"]` for secrets or one character's instructions, `when` for conditions, `priority` (0–100, 100 never dropped).
+**Entries:** `{"id", "text"}` is always on. Add `keys` to activate on words, `position: "system"` for rules, `knownBy: ["id"]` for secrets or one character's instructions, `when` for conditions, `priority` (0–100, 100 never left out).
 
 **Scenarios** hold `openings` and, for stories, `cast` (an object without `character` is a player seat; the default is one seat and every character), `premise`, `entries`, `variables` and `events`.
 
 **Variables** need `id`, `type` (`bool`, `int`, `number`, `string`, `enum` with `values`, or `set`) and `description`. Give `by: ["model"]` for values the story should update, and `of: "characters"` for one value per character. Read a scenario's variable as `state.bell`, a character's own as `own.nerve`, and another character's as `state.kai.nerve`.
 
-**Events** need `id` and `when`. `set` takes plain values; `compute` takes CEL strings. Durations count rounds: one player message and the replies to it. An event `on: "player"` runs before the reply, so it can roll for what the player attempted and `direct` the reply.
+**Events** need `id` and `when`. `set` takes plain values; `compute` takes CEL strings. Durations count rounds: one player message and the replies to it. An event `on: "player"` fires only after a player's message, so it can roll for what the player attempted and `direct` the next reply.
 
 **Traps:**
 
 1. `set` takes plain values: `"set": {"hp": 10}`. Expressions go in `compute`: `"compute": {"hp": "state.hp - 1"}`.
-2. A character's entries reach every character present unless `knownBy` is set. Put secrets in `knownBy` entries.
+2. Everyone knows a character's entries unless `knownBy` is set. Put secrets in `knownBy` entries.
 3. Inside CEL, strings use single quotes: `"when": "state.phase == 'escape'"`. Look up a computed key with brackets: `state.trust[char]`.
 4. Numbers in CEL arithmetic match the variable's type: `state.trust.kai - 0.1` for a `number`, `state.hp - 1` for an `int`.
 5. `chance` is 0–1, not a percentage. `weight` and `priority` are integers.

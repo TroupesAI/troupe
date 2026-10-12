@@ -1,53 +1,17 @@
 {
-  "description": "self and scenario (Format 11.1): conditions that work for whoever owns them, and a character's text for one scenario",
+  "description": "self, char and scenario (Format 11.1): self is the expression's owner and char the character a message is written for, so char == self holds on the owner's own turns; scenario is the session's scenario",
   "bundle": {
     "kind": "bundle",
     "characters": [
       {
         "id": "a",
         "name": "Ann",
-        "description": "Ann.",
-        "entries": [
-          {
-            "id": "own_turn",
-            "when": "char == self",
-            "text": "Only on Ann's own turns."
-          },
-          {
-            "id": "duo_only",
-            "when": "scenario == 'duo'",
-            "text": "Only when Ann plays in the duo scenario."
-          }
-        ],
-        "variables": [
-          {
-            "id": "ann_mood",
-            "type": "string",
-            "initial": "calm",
-            "description": "d"
-          }
-        ],
-        "events": [
-          {
-            "id": "ann_tick",
-            "when": "self == 'a' && scenario == 's'",
-            "set": {
-              "a.ann_mood": "busy"
-            }
-          }
-        ]
+        "description": "Ann."
       },
       {
         "id": "b",
         "name": "Bea",
-        "description": "Bea.",
-        "entries": [
-          {
-            "id": "own_turn",
-            "when": "char == self",
-            "text": "Only on Bea's own turns."
-          }
-        ]
+        "description": "Bea."
       }
     ],
     "scenarios": [
@@ -61,33 +25,6 @@
           {
             "character": "b"
           }
-        ],
-        "entries": [
-          {
-            "id": "mine",
-            "when": "self == 's'",
-            "text": "self is the scenario here."
-          }
-        ]
-      },
-      {
-        "id": "duo",
-        "cast": [
-          {},
-          {
-            "character": "a"
-          }
-        ],
-        "openings": [
-          {
-            "id": "just_us",
-            "content": [
-              {
-                "speaker": "a",
-                "text": "Just us."
-              }
-            ]
-          }
         ]
       }
     ]
@@ -96,7 +33,6 @@
     "header": {
       "kind": "session",
       "scenario": "s",
-      "seed": "conformanceSeed0001",
       "characters": [
         {
           "id": "p",
@@ -106,8 +42,7 @@
       ],
       "players": [
         "p"
-      ],
-      "head": "1"
+      ]
     },
     "messages": [
       {
@@ -123,75 +58,36 @@
   },
   "tests": [
     {
-      "type": "select",
-      "for": "a",
-      "parent": "1",
-      "messageId": "2",
-      "expect": {
-        "activated": [
-          "a/own_turn",
-          "s/mine"
-        ]
-      }
-    },
-    {
-      "type": "select",
-      "for": "b",
-      "parent": "1",
-      "messageId": "2",
-      "expect": {
-        "activated": [
-          "b/own_turn",
-          "s/mine"
-        ]
-      }
-    },
-    {
-      "type": "events",
-      "at": "1",
-      "expect": {
-        "changes": [
-          {
-            "by": "rules",
-            "event": "a/ann_tick",
-            "set": {
-              "a.ann_mood": "busy"
-            }
-          }
-        ]
-      }
-    },
-    {
-      "type": "start",
-      "name": "another scenario: scenario names it, so Ann's event checking scenario == 's' doesn't fire at the root",
-      "scenario": "duo",
-      "opening": "just_us",
-      "characters": [
-        {
-          "id": "p",
-          "name": "Pat",
-          "description": "Pat."
-        }
-      ],
-      "expect": {
-        "changes": [
-          {
-            "by": "rules",
-            "set": {
-              "scene.present": [
-                "p",
-                "a"
-              ]
-            }
-          }
-        ]
-      }
+      "type": "cel",
+      "name": "the scenario's own expression",
+      "expr": "scenario == 's' && self == 's'",
+      "expect": true
     },
     {
       "type": "cel",
-      "name": "scenario is the session's scenario ID",
-      "expr": "scenario == 's' && self == 's'",
+      "name": "Ann's entry on her own turn",
+      "kind": "entry",
+      "self": "a",
+      "char": "a",
+      "at": "1",
+      "expr": "char == self && self == 'a' && scenario == 's'",
       "expect": true
+    },
+    {
+      "type": "cel",
+      "name": "Ann's entry on Bea's turn",
+      "kind": "entry",
+      "self": "a",
+      "char": "b",
+      "at": "1",
+      "expr": "char == self",
+      "expect": false
+    },
+    {
+      "type": "check",
+      "expect": {
+        "codes": []
+      }
     }
   ]
 }

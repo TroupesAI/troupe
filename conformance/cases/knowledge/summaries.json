@@ -1,5 +1,5 @@
 {
-  "description": "Summary knowledge (Format 12.4; Play 6, 7): a summary without knownBy is known by the characters who know every part it covers, and reaches the narrator only if the narrator can see every part; where it is known it stands in for the messages it covers",
+  "description": "Who knows a summary (Format 12.4, 12.5): without knownBy, the characters who know every part it covers, hidden messages' parts aside, and the narrator only if it knows every such part; with knownBy, exactly those listed",
   "bundle": {
     "kind": "bundle",
     "characters": [
@@ -12,6 +12,11 @@
         "id": "b",
         "name": "Bea",
         "description": "Bea."
+      },
+      {
+        "id": "c",
+        "name": "Cy",
+        "description": "Cy."
       }
     ],
     "scenarios": [
@@ -24,6 +29,9 @@
           },
           {
             "character": "b"
+          },
+          {
+            "character": "c"
           }
         ]
       }
@@ -33,7 +41,6 @@
     "header": {
       "kind": "session",
       "scenario": "s",
-      "seed": "conformanceSeed0001",
       "characters": [
         {
           "id": "p",
@@ -52,7 +59,18 @@
         "content": [
           {
             "speaker": "p",
-            "text": "Hello, both of you."
+            "text": "Hello, Ann."
+          }
+        ],
+        "changes": [
+          {
+            "by": "rules",
+            "set": {
+              "scene.present": [
+                "p",
+                "a"
+              ]
+            }
           }
         ]
       },
@@ -64,90 +82,179 @@
         "content": [
           {
             "speaker": "a",
-            "text": "Hi."
-          },
+            "text": "Bea, come in."
+          }
+        ],
+        "changes": [
           {
-            "speaker": "a",
-            "knownBy": [
-              "a"
-            ],
-            "text": "*She hides the key.*"
+            "by": "model",
+            "set": {
+              "scene.present": [
+                "p",
+                "a",
+                "b"
+              ]
+            }
           }
         ]
       },
       {
         "id": "3",
         "parent": "2",
+        "from": "model",
+        "char": "a",
+        "content": [
+          {
+            "speaker": "a",
+            "text": "I'll be back."
+          }
+        ],
+        "changes": [
+          {
+            "by": "model",
+            "set": {
+              "scene.present": [
+                "p",
+                "b"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "id": "4",
+        "parent": "3",
+        "from": "model",
+        "char": "c",
+        "content": [
+          {
+            "speaker": "c",
+            "text": "(from the next room) I heard that."
+          }
+        ]
+      },
+      {
+        "id": "h",
+        "parent": "4",
+        "from": "model",
+        "char": "c",
+        "hidden": true,
+        "content": [
+          {
+            "speaker": "c",
+            "knownBy": [
+              "c"
+            ],
+            "text": "*Cy takes notes.*"
+          }
+        ]
+      },
+      {
+        "id": "7",
+        "parent": "h",
         "from": "player",
         "content": [
           {
             "speaker": "p",
-            "text": "Let's go."
+            "text": "So Ann left, and Cy listens next door."
           }
         ],
         "summary": {
-          "text": "Pat greeted Ann and Bea.",
-          "from": "1"
+          "text": "Ann welcomed Pat, called Bea in and left; Cy listened from the next room.",
+          "from": "2"
+        }
+      },
+      {
+        "id": "5",
+        "parent": "4",
+        "from": "model",
+        "char": "b",
+        "content": [
+          {
+            "speaker": "b",
+            "knownBy": [
+              "p"
+            ],
+            "text": "Psst. The key is under the mat."
+          },
+          {
+            "text": "*Bea taps the mat with her foot.*"
+          }
+        ]
+      },
+      {
+        "id": "8",
+        "parent": "5",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "Got it."
+          }
+        ],
+        "summary": {
+          "text": "Bea told Pat where the key is.",
+          "from": "5"
+        }
+      },
+      {
+        "id": "9",
+        "parent": "8",
+        "from": "model",
+        "char": "b",
+        "content": [
+          {
+            "speaker": "b",
+            "text": "Good."
+          }
+        ],
+        "summary": {
+          "text": "Bea told Pat where the key is.",
+          "from": "5",
+          "knownBy": [
+            "a",
+            "narrator"
+          ]
         }
       }
     ]
   },
   "tests": [
     {
-      "type": "prompt",
-      "name": "Ann knows every covered part, so the summary stands in for them",
-      "for": "a",
-      "parent": "3",
-      "messageId": "4",
-      "summaries": true,
+      "type": "check",
       "expect": {
-        "history": [
-          "summary:3"
-        ]
+        "codes": []
       }
     },
     {
-      "type": "prompt",
-      "name": "Bea doesn't know Ann's thought, so she gets the messages she can see",
-      "for": "b",
-      "parent": "3",
-      "messageId": "4",
-      "summaries": true,
-      "expect": {
-        "history": [
-          "message:1",
-          "message:2",
-          "message:3"
-        ]
-      }
+      "type": "knows",
+      "name": "those who know every covered part; the hidden message's part is aside",
+      "message": "7",
+      "summary": true,
+      "expect": [
+        "b",
+        "narrator",
+        "p"
+      ]
     },
     {
-      "type": "prompt",
-      "name": "the narrator can't see Ann's thought either",
-      "parent": "3",
-      "messageId": "4",
-      "summaries": true,
-      "expect": {
-        "history": [
-          "message:1",
-          "message:2",
-          "message:3"
-        ]
-      }
+      "type": "knows",
+      "name": "a covered part the narrator doesn't know leaves the narrator out",
+      "message": "8",
+      "summary": true,
+      "expect": [
+        "p"
+      ]
     },
     {
-      "type": "prompt",
-      "name": "without summaries, Ann gets the messages",
-      "for": "a",
-      "parent": "3",
-      "messageId": "4",
-      "expect": {
-        "history": [
-          "message:1",
-          "message:2",
-          "message:3"
-        ]
-      }
+      "type": "knows",
+      "name": "an explicit knownBy, whoever knows the parts",
+      "message": "9",
+      "summary": true,
+      "expect": [
+        "a",
+        "narrator"
+      ]
     }
   ]
 }

@@ -48,7 +48,6 @@
     "header": {
       "kind": "session",
       "scenario": "s",
-      "seed": "conformanceSeed0001",
       "players": [
         "hero"
       ]
@@ -82,17 +81,6 @@
       "expr": "players == ['hero'] && !has(state.trust.hero)",
       "at": "1",
       "expect": true
-    },
-    {
-      "type": "select",
-      "for": "a",
-      "parent": "1",
-      "messageId": "2",
-      "expect": {
-        "texts": {
-          "s/e": "Hero meets Ann."
-        }
-      }
     },
     {
       "type": "check",

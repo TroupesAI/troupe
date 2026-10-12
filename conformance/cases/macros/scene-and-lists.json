@@ -63,7 +63,6 @@
     "header": {
       "kind": "session",
       "scenario": "s",
-      "seed": "conformanceSeed0001",
       "characters": [
         {
           "id": "p",
@@ -73,8 +72,7 @@
       ],
       "players": [
         "p"
-      ],
-      "head": "2"
+      ]
     },
     "messages": [
       {

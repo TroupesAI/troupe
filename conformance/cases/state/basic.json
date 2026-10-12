@@ -1,5 +1,5 @@
 {
-  "description": "State (Play 3.2): defaults, initial, changes in path order and array order, branches, the scene",
+  "description": "State (Format 8.6): defaults, initial, changes in path order and array order, branches, the scene",
   "bundle": {
     "kind": "bundle",
     "characters": [
@@ -80,6 +80,15 @@
             ],
             "description": "d"
           }
+        ],
+        "events": [
+          {
+            "id": "go",
+            "when": "true",
+            "set": {
+              "phase": "heist"
+            }
+          }
         ]
       }
     ]
@@ -88,7 +97,6 @@
     "header": {
       "kind": "session",
       "scenario": "s",
-      "seed": "conformanceSeed0001",
       "characters": [
         {
           "id": "p",
@@ -98,8 +106,7 @@
       ],
       "players": [
         "p"
-      ],
-      "head": "3"
+      ]
     },
     "messages": [
       {
@@ -148,7 +155,7 @@
           },
           {
             "by": "rules",
-            "event": "unknown_but_values_apply",
+            "event": "go",
             "set": {
               "phase": "heist"
             }
@@ -259,6 +266,12 @@
         "scene.present": [
           "a"
         ]
+      }
+    },
+    {
+      "type": "check",
+      "expect": {
+        "codes": []
       }
     }
   ]

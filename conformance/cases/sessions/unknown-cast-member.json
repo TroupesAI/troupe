@@ -1,0 +1,60 @@
+{
+  "description": "A cast member that names no bundle character is UNKNOWN_CHARACTER (Format 6.1, 17.2)",
+  "bundle": {
+    "kind": "bundle",
+    "scenarios": [
+      {
+        "id": "s",
+        "cast": [
+          {
+            "character": "zed"
+          }
+        ]
+      }
+    ]
+  },
+  "session": {
+    "header": {
+      "kind": "session",
+      "scenario": "s",
+      "characters": [
+        {
+          "id": "p",
+          "name": "Pat",
+          "description": "Pat."
+        }
+      ],
+      "players": [
+        "p"
+      ]
+    },
+    "messages": [
+      {
+        "id": "1",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "Alone?"
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "check",
+      "expect": {
+        "codes": [
+          "UNKNOWN_CHARACTER"
+        ],
+        "includes": [
+          {
+            "code": "UNKNOWN_CHARACTER",
+            "at": "/scenarios/0/cast/0/character"
+          }
+        ]
+      }
+    }
+  ]
+}

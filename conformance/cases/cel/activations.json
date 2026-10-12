@@ -1,0 +1,119 @@
+{
+  "description": "count() and ago() read the entries a message records in activated, pulled entries included (Format 11.1, 12.4)",
+  "bundle": {
+    "kind": "bundle",
+    "characters": [
+      {
+        "id": "a",
+        "name": "Ann",
+        "description": "Ann."
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s",
+        "cast": [
+          {},
+          {
+            "character": "a"
+          }
+        ]
+      }
+    ],
+    "worlds": [
+      {
+        "id": "w",
+        "name": "W",
+        "entries": [
+          {
+            "id": "dragons",
+            "title": "Dragons of the North",
+            "pull": true,
+            "text": "Northern dragons hoard silver."
+          },
+          {
+            "id": "always",
+            "text": "Always on."
+          }
+        ]
+      }
+    ]
+  },
+  "session": {
+    "header": {
+      "kind": "session",
+      "scenario": "s",
+      "characters": [
+        {
+          "id": "p",
+          "name": "Pat",
+          "description": "Pat."
+        }
+      ],
+      "players": [
+        "p"
+      ]
+    },
+    "messages": [
+      {
+        "id": "1",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "Tell me about the land."
+          }
+        ]
+      },
+      {
+        "id": "2",
+        "parent": "1",
+        "from": "model",
+        "char": "a",
+        "activated": [
+          "w/dragons",
+          "w/always"
+        ],
+        "content": [
+          {
+            "speaker": "a",
+            "text": "Silver..."
+          }
+        ]
+      },
+      {
+        "id": "3",
+        "parent": "2",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "An elf!"
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "cel",
+      "name": "pulled entries count as activations",
+      "at": "3",
+      "expr": "count('w/dragons') == 1 && ago('w/dragons') == 1",
+      "expect": true
+    },
+    {
+      "type": "cel",
+      "name": "entries without pull count too",
+      "at": "3",
+      "expr": "count('w/always') == 1 && ago('w/always') == 1",
+      "expect": true
+    },
+    {
+      "type": "check",
+      "expect": {
+        "codes": []
+      }
+    }
+  ]
+}

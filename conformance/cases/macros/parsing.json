@@ -55,7 +55,6 @@
     "header": {
       "kind": "session",
       "scenario": "s",
-      "seed": "conformanceSeed0001",
       "characters": [
         {
           "id": "p",
@@ -178,6 +177,12 @@
       "name": "a location ID by name",
       "text": "{{state.hideout}} = {{@state.hideout}}",
       "expect": "old_mill = The Old Mill"
+    },
+    {
+      "type": "check",
+      "expect": {
+        "codes": []
+      }
     }
   ]
 }

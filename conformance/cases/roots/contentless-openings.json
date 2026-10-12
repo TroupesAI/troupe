@@ -1,0 +1,160 @@
+{
+  "description": "Openings without content (Format 6.3, 12.1, 12.4): the root is a records-only system message with the opening's change, valid, and conditions there see its opening",
+  "bundle": {
+    "kind": "bundle",
+    "characters": [
+      {
+        "id": "ann",
+        "name": "Ann",
+        "description": "An innkeeper."
+      },
+      {
+        "id": "bea",
+        "name": "Bea",
+        "description": "A bard."
+      }
+    ],
+    "worlds": [
+      {
+        "id": "w",
+        "name": "W",
+        "locations": [
+          {
+            "id": "tavern",
+            "name": "The Tavern"
+          }
+        ]
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s",
+        "cast": [
+          {},
+          {
+            "character": "ann"
+          },
+          {
+            "character": "bea"
+          }
+        ],
+        "variables": [
+          {
+            "id": "mood",
+            "type": "string",
+            "initial": "calm",
+            "description": "The room's mood."
+          }
+        ],
+        "events": [
+          {
+            "id": "arrive",
+            "when": "turn == 0 && opening == 'tavern'",
+            "set": {
+              "mood": "festive"
+            },
+            "message": [
+              {
+                "speaker": "ann",
+                "text": "Welcome, {{user}}!"
+              }
+            ]
+          }
+        ],
+        "openings": [
+          {
+            "id": "tavern",
+            "title": "At the tavern",
+            "set": {
+              "scene.location": "tavern"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "session": {
+    "header": {
+      "kind": "session",
+      "scenario": "s",
+      "characters": [
+        {
+          "id": "p",
+          "name": "Pat",
+          "description": "Pat."
+        }
+      ],
+      "players": [
+        "p"
+      ]
+    },
+    "messages": [
+      {
+        "id": "1",
+        "opening": "tavern",
+        "from": "system",
+        "content": [],
+        "changes": [
+          {
+            "by": "rules",
+            "set": {
+              "scene.location": "tavern",
+              "scene.present": [
+                "p",
+                "ann",
+                "bea"
+              ]
+            }
+          },
+          {
+            "by": "rules",
+            "event": "arrive",
+            "set": {
+              "mood": "festive"
+            }
+          }
+        ]
+      },
+      {
+        "id": "1-events",
+        "parent": "1",
+        "from": "system",
+        "content": [
+          {
+            "speaker": "ann",
+            "text": "Welcome, {{user}}!"
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "check",
+      "expect": {
+        "codes": []
+      }
+    },
+    {
+      "type": "state",
+      "name": "the root records the opening's set and who is present",
+      "at": "1",
+      "expect": {
+        "scene.location": "tavern",
+        "scene.present": [
+          "p",
+          "ann",
+          "bea"
+        ],
+        "mood": "festive"
+      }
+    },
+    {
+      "type": "cel",
+      "name": "opening is the root's opening, also at the event message",
+      "expr": "opening == 'tavern' && turn == 0",
+      "at": "1-events",
+      "expect": true
+    }
+  ]
+}

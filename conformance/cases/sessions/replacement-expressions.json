@@ -1,0 +1,157 @@
+{
+  "description": "Expressions type-check against a session's replacement of a bundle character, not the original (Format 11.2, 12.2): a variable only the original declares is a CEL_ERROR",
+  "bundle": {
+    "kind": "bundle",
+    "characters": [
+      {
+        "id": "kai",
+        "name": "Kai",
+        "description": "Kai, a thief.",
+        "variables": [
+          {
+            "id": "nerve",
+            "type": "int",
+            "initial": 1,
+            "description": "d"
+          },
+          {
+            "id": "old_only",
+            "type": "int",
+            "initial": 7,
+            "description": "d"
+          }
+        ],
+        "events": [
+          {
+            "id": "k_old_ev",
+            "when": "true",
+            "set": {
+              "own.old_only": 0
+            }
+          }
+        ]
+      },
+      {
+        "id": "elena",
+        "name": "Elena",
+        "description": "Elena, a mapmaker.",
+        "entries": [
+          {
+            "id": "e_kai",
+            "text": "Elena distrusts {{@kai}}."
+          },
+          {
+            "id": "e_old",
+            "when": "state.kai.old_only > 0",
+            "text": "Only the old Kai had this."
+          }
+        ]
+      },
+      {
+        "id": "ghost",
+        "name": "Ghost",
+        "description": "Not in the cast."
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s",
+        "cast": [
+          {},
+          {
+            "character": "elena"
+          },
+          {
+            "character": "kai"
+          }
+        ],
+        "variables": [
+          {
+            "id": "trust",
+            "type": "number",
+            "of": "characters",
+            "initial": 0.5,
+            "min": 0,
+            "max": 1,
+            "description": "Trust in {{user}}."
+          }
+        ]
+      }
+    ]
+  },
+  "session": {
+    "header": {
+      "kind": "session",
+      "scenario": "s",
+      "characters": [
+        {
+          "id": "p",
+          "name": "Pat",
+          "description": "Pat."
+        },
+        {
+          "id": "kai",
+          "name": "Kai Mercer",
+          "description": "Recast Kai.",
+          "variables": [
+            {
+              "id": "nerve",
+              "type": "int",
+              "initial": 3,
+              "description": "How steady {{char}} is."
+            },
+            {
+              "id": "grit",
+              "type": "int",
+              "initial": 2,
+              "description": "New in the recast."
+            }
+          ],
+          "entries": [
+            {
+              "id": "k_new",
+              "text": "{{char}} is the new Kai."
+            }
+          ]
+        },
+        {
+          "id": "ghost",
+          "name": "Edited Ghost",
+          "description": "An edited copy of a character outside the cast."
+        }
+      ],
+      "players": [
+        "p"
+      ]
+    },
+    "messages": [
+      {
+        "id": "1",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "Hello, Kai."
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "check",
+      "name": "a replacement isn't a DUPLICATE_ID; expressions type-check against the replacement, not the original",
+      "expect": {
+        "codes": [
+          "CEL_ERROR"
+        ],
+        "includes": [
+          {
+            "code": "CEL_ERROR",
+            "at": "/characters/1/entries/1/when"
+          }
+        ]
+      }
+    }
+  ]
+}

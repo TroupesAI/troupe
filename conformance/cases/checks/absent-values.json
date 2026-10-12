@@ -1,5 +1,5 @@
 {
-  "description": "null, \"\" and [] read like missing fields, except inside state values and knownBy, where [] reads as [\"narrator\"] (Format 2.2); an opening's content is optional, so [] there reads as missing",
+  "description": "Empty values: null, \"\" and [] in optional fields fail the schema (Format 2.2); state/empty-values.json covers the fields where they are values",
   "bundle": {
     "kind": "bundle",
     "tagline": "",
@@ -16,24 +16,12 @@
             "keys": [],
             "when": null,
             "knownBy": [],
-            "text": "only the narrator knows this"
+            "text": "x"
           },
           {
             "id": "f",
             "keys": null,
-            "text": "always on"
-          }
-        ]
-      }
-    ],
-    "worlds": [
-      {
-        "id": "w",
-        "name": "W",
-        "locations": [
-          {
-            "id": "hall",
-            "name": "Hall"
+            "text": "y"
           }
         ]
       }
@@ -41,35 +29,9 @@
     "scenarios": [
       {
         "id": "s",
-        "cast": [
-          {},
-          {
-            "character": "a"
-          }
-        ],
-        "worlds": [],
-        "variables": [
-          {
-            "id": "inv",
-            "type": "set",
-            "initial": [],
-            "description": "d"
-          }
-        ],
         "openings": [
           {
             "id": "o",
-            "set": {
-              "scene.location": ""
-            },
-            "content": [
-              {
-                "text": "Hi."
-              }
-            ]
-          },
-          {
-            "id": "o2",
             "title": "Anywhere",
             "content": []
           }
@@ -83,61 +45,41 @@
       "expect": {
         "codes": [
           "SCHEMA"
+        ],
+        "includes": [
+          {
+            "code": "SCHEMA",
+            "at": "/tagline"
+          },
+          {
+            "code": "SCHEMA",
+            "at": "/characters/0/aliases"
+          },
+          {
+            "code": "SCHEMA",
+            "at": "/characters/0/summary"
+          },
+          {
+            "code": "SCHEMA",
+            "at": "/characters/0/entries/0/keys"
+          },
+          {
+            "code": "SCHEMA",
+            "at": "/characters/0/entries/0/when"
+          },
+          {
+            "code": "SCHEMA",
+            "at": "/characters/0/entries/0/knownBy"
+          },
+          {
+            "code": "SCHEMA",
+            "at": "/characters/0/entries/1/keys"
+          },
+          {
+            "code": "SCHEMA",
+            "at": "/scenarios/0/openings/0/content"
+          }
         ]
-      }
-    },
-    {
-      "type": "select",
-      "name": "knownBy [] reads as narrator-only, so Ann doesn't get e; keys null and keys [] are always-on",
-      "for": "a",
-      "messageId": "1",
-      "expect": {
-        "activated": [
-          "a/f"
-        ]
-      }
-    },
-    {
-      "type": "select",
-      "name": "the narrator gets e: knownBy [] names it, and keys [] is always-on",
-      "messageId": "1",
-      "expect": {
-        "activated": [
-          "a/e",
-          "a/f"
-        ]
-      }
-    },
-    {
-      "type": "start",
-      "name": "an opening with content [] has no content: a records-only root with the whole cast present",
-      "scenario": "s",
-      "opening": "o2",
-      "characters": [
-        {
-          "id": "p",
-          "name": "Pat",
-          "description": "Pat."
-        }
-      ],
-      "expect": {
-        "root": {
-          "id": "1",
-          "opening": "o2",
-          "from": "system",
-          "content": [],
-          "changes": [
-            {
-              "by": "rules",
-              "set": {
-                "scene.present": [
-                  "p",
-                  "a"
-                ]
-              }
-            }
-          ]
-        }
       }
     }
   ]

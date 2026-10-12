@@ -1,5 +1,5 @@
 {
-  "description": "A message ID appears once (Format 2.3, 17.2): a later line with it is DUPLICATE_ID and skipped",
+  "description": "A message ID appears once (Format 2.3, 17.2): a later line with it is DUPLICATE_ID",
   "bundle": {
     "kind": "bundle",
     "characters": [
@@ -19,7 +19,6 @@
     "header": {
       "kind": "session",
       "scenario": "s",
-      "seed": "k7Qm2xVb9TzR4pLc8NwYfA",
       "characters": [
         {
           "id": "p",
@@ -68,19 +67,6 @@
     ]
   },
   "tests": [
-    {
-      "type": "read",
-      "expect": {
-        "ids": [
-          "1",
-          "2"
-        ],
-        "head": "2",
-        "codes": [
-          "DUPLICATE_ID"
-        ]
-      }
-    },
     {
       "type": "check",
       "expect": {

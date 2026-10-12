@@ -1,5 +1,5 @@
 {
-  "description": "The authoring guide's whereabouts pattern: a scenario variable of cast records where each character waits, and an event brings whoever waits at the new location into the scene, keeping those who go along (\"\"); it type-checks, prepares a valid scene.present in cast order, fires at most once per round, and a spoiler cast member stays offstage until the players walk in",
+  "description": "The authoring guide's whereabouts pattern: a scenario variable of cast records where each character waits, and the event that brings whoever waits at the new location into the scene type-checks; a map's filter yields its keys",
   "bundle": {
     "kind": "bundle",
     "characters": [
@@ -83,13 +83,6 @@
                 "text": "This way."
               }
             ]
-          },
-          {
-            "id": "street_start",
-            "title": "On the street",
-            "set": {
-              "scene.location": "street"
-            }
           }
         ]
       }
@@ -99,7 +92,6 @@
     "header": {
       "kind": "session",
       "scenario": "s",
-      "seed": "conformanceSeed0001",
       "characters": [
         {
           "id": "p",
@@ -109,8 +101,7 @@
       ],
       "players": [
         "p"
-      ],
-      "head": "6"
+      ]
     },
     "messages": [
       {
@@ -281,187 +272,6 @@
         "where.p": "",
         "where.ann": "",
         "where.ghost": "cellar"
-      }
-    },
-    {
-      "type": "start",
-      "name": "at the opening root the location is new: whoever goes along stays, nobody waits on the street",
-      "scenario": "s",
-      "opening": "o",
-      "characters": [
-        {
-          "id": "p",
-          "name": "Pat",
-          "description": "Pat."
-        }
-      ],
-      "expect": {
-        "changes": [
-          {
-            "by": "rules",
-            "set": {
-              "scene.location": "street",
-              "scene.present": [
-                "p",
-                "ann"
-              ]
-            }
-          },
-          {
-            "by": "rules",
-            "event": "arrive",
-            "set": {
-              "scene.present": [
-                "p",
-                "ann"
-              ]
-            }
-          }
-        ]
-      }
-    },
-    {
-      "type": "start",
-      "name": "an opening without content starts with the whole cast, and the event at the root sends the ghost back to its cellar",
-      "scenario": "s",
-      "opening": "street_start",
-      "characters": [
-        {
-          "id": "p",
-          "name": "Pat",
-          "description": "Pat."
-        }
-      ],
-      "expect": {
-        "changes": [
-          {
-            "by": "rules",
-            "set": {
-              "scene.location": "street",
-              "scene.present": [
-                "p",
-                "ann",
-                "ghost"
-              ]
-            }
-          },
-          {
-            "by": "rules",
-            "event": "arrive",
-            "set": {
-              "scene.present": [
-                "p",
-                "ann"
-              ]
-            }
-          }
-        ]
-      }
-    },
-    {
-      "type": "events",
-      "name": "walking into the cellar brings in the ghost, in cast order",
-      "at": "2",
-      "expect": {
-        "changes": [
-          {
-            "by": "rules",
-            "event": "arrive",
-            "set": {
-              "scene.present": [
-                "p",
-                "ann",
-                "ghost"
-              ]
-            }
-          }
-        ]
-      }
-    },
-    {
-      "type": "events",
-      "name": "the location changed in this round, but the event already fired in it",
-      "at": "3",
-      "expect": {
-        "changes": []
-      }
-    },
-    {
-      "type": "events",
-      "name": "leaving for the hall: Ann and the ghost stay in the cellar",
-      "at": "4",
-      "expect": {
-        "changes": [
-          {
-            "by": "rules",
-            "event": "arrive",
-            "set": {
-              "scene.present": [
-                "p"
-              ]
-            }
-          }
-        ],
-        "state": {
-          "scene.present": [
-            "p"
-          ]
-        }
-      }
-    },
-    {
-      "type": "events",
-      "name": "no location change, no firing",
-      "at": "5",
-      "expect": {
-        "changes": []
-      }
-    },
-    {
-      "type": "events",
-      "name": "back in the cellar, both are there again",
-      "at": "6",
-      "expect": {
-        "changes": [
-          {
-            "by": "rules",
-            "event": "arrive",
-            "set": {
-              "scene.present": [
-                "p",
-                "ann",
-                "ghost"
-              ]
-            }
-          }
-        ]
-      }
-    },
-    {
-      "type": "prompt",
-      "name": "before the cellar, the spoiler ghost is offstage",
-      "for": "ann",
-      "parent": "1",
-      "messageId": "x",
-      "expect": {
-        "people": [
-          "character:ann",
-          "player:p"
-        ]
-      }
-    },
-    {
-      "type": "prompt",
-      "name": "in the cellar, the ghost is present",
-      "for": "ann",
-      "parent": "2",
-      "messageId": "x",
-      "expect": {
-        "people": [
-          "character:ann",
-          "character:ghost",
-          "player:p"
-        ]
       }
     },
     {

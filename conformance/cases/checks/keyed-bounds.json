@@ -1,0 +1,108 @@
+{
+  "description": "Derived and keyed variables as keys and bounds (Format 8.1, 8.5): a recorded value for a derived variable is UNKNOWN_VARIABLE, and min and max can't name a derived or keyed variable",
+  "bundle": {
+    "kind": "bundle",
+    "scenarios": [
+      {
+        "id": "s",
+        "variables": [
+          {
+            "id": "bond",
+            "type": "int",
+            "of": [
+              "north",
+              "south"
+            ],
+            "initial": 3,
+            "description": "d"
+          },
+          {
+            "id": "clock",
+            "type": "int",
+            "initial": 30,
+            "description": "Hours."
+          },
+          {
+            "id": "day",
+            "type": "int",
+            "derive": "state.clock / 24 + 1",
+            "description": "d"
+          },
+          {
+            "id": "by_day",
+            "type": "int",
+            "max": "day",
+            "description": "A bound that names a derived variable."
+          },
+          {
+            "id": "by_bond",
+            "type": "int",
+            "max": "bond",
+            "description": "A bound that names a keyed variable."
+          }
+        ]
+      }
+    ]
+  },
+  "session": {
+    "header": {
+      "kind": "session",
+      "scenario": "s",
+      "characters": [
+        {
+          "id": "p",
+          "name": "Pat",
+          "description": "Pat."
+        }
+      ],
+      "players": [
+        "p"
+      ]
+    },
+    "messages": [
+      {
+        "id": "1",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "Hi."
+          }
+        ],
+        "changes": [
+          {
+            "by": "rules",
+            "set": {
+              "clock": 50,
+              "day": 7
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "check",
+      "expect": {
+        "codes": [
+          "UNKNOWN_VARIABLE"
+        ],
+        "includes": [
+          {
+            "code": "UNKNOWN_VARIABLE",
+            "at": "/scenarios/0/variables/3/max"
+          },
+          {
+            "code": "UNKNOWN_VARIABLE",
+            "at": "/scenarios/0/variables/4/max"
+          },
+          {
+            "code": "UNKNOWN_VARIABLE",
+            "at": "message:1/changes/0/set/day"
+          }
+        ]
+      }
+    }
+  ]
+}

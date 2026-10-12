@@ -1,5 +1,5 @@
 {
-  "description": "of: \"others\" (every cast character except the owner, players included) and open \"*\" maps: no initial, absent keys read as the default, setting the default removes a key (Format 8.3)",
+  "description": "of: \"others\" (every cast character except the owner, players included) and open \"*\" maps: no initial, keys start absent and appear when a change sets them, and setting a key to the default removes it (Format 8.3)",
   "bundle": {
     "kind": "bundle",
     "characters": [
@@ -46,16 +46,6 @@
             "min": 0,
             "description": "d"
           }
-        ],
-        "events": [
-          {
-            "id": "loot",
-            "when": "!('torch' in state.inv)",
-            "set": {
-              "inv.torch": 2,
-              "inv.rope": 0
-            }
-          }
         ]
       }
     ]
@@ -64,7 +54,6 @@
     "header": {
       "kind": "session",
       "scenario": "s",
-      "seed": "conformanceSeed0001",
       "characters": [
         {
           "id": "p",
@@ -121,26 +110,6 @@
       ]
     },
     {
-      "type": "events",
-      "name": "setting an open key to the default records it, and the key reads as absent",
-      "at": "1",
-      "expect": {
-        "changes": [
-          {
-            "by": "rules",
-            "event": "loot",
-            "set": {
-              "inv.torch": 2,
-              "inv.rope": 0
-            }
-          }
-        ],
-        "state": {
-          "inv.torch": 2
-        }
-      }
-    },
-    {
       "type": "state",
       "name": "setting inv.torch to 0 removed it",
       "at": "2",
@@ -163,20 +132,6 @@
       "at": "2",
       "text": "{{state.inv}}",
       "expect": "rope coil: 1"
-    },
-    {
-      "type": "prepare",
-      "name": "an absent open key's current value is the default",
-      "at": "2",
-      "by": "rules",
-      "set": {
-        "inv.lamp": 3
-      },
-      "expect": {
-        "set": {
-          "inv.lamp": 3
-        }
-      }
     },
     {
       "type": "check",

@@ -58,7 +58,6 @@
     "header": {
       "kind": "session",
       "scenario": "s",
-      "seed": "conformanceSeed0001",
       "characters": [
         {
           "id": "p",
@@ -171,9 +170,10 @@
       },
       {
         "id": "r2",
-        "from": "system",
+        "from": "player",
         "content": [
           {
+            "speaker": "q",
             "text": "A second root is fine."
           }
         ]

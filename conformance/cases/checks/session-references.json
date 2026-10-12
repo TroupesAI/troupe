@@ -1,0 +1,211 @@
+{
+  "description": "Reference checks on a session: an unknown cast member, player, location parent, opening, variable, event name or activated reference each report their code; a location cycle is UNKNOWN_LOCATION (Format 17.2)",
+  "bundle": {
+    "kind": "bundle",
+    "characters": [
+      {
+        "id": "a",
+        "name": "Ann",
+        "description": "Ann."
+      }
+    ],
+    "worlds": [
+      {
+        "id": "w",
+        "name": "W",
+        "locations": [
+          {
+            "id": "l1",
+            "name": "L1",
+            "parent": "l2"
+          },
+          {
+            "id": "l2",
+            "name": "L2",
+            "parent": "l1"
+          },
+          {
+            "id": "l3",
+            "name": "L3",
+            "parent": "nowhere"
+          }
+        ]
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s",
+        "cast": [
+          {},
+          {
+            "character": "a"
+          },
+          {
+            "character": "ghost"
+          }
+        ],
+        "variables": [
+          {
+            "id": "g",
+            "type": "int",
+            "description": "d"
+          }
+        ],
+        "events": [
+          {
+            "id": "ev1",
+            "on": "player",
+            "when": "true",
+            "set": {
+              "nope": 1,
+              "g": 1
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "session": {
+    "header": {
+      "kind": "session",
+      "scenario": "s",
+      "characters": [
+        {
+          "id": "p",
+          "name": "Pat",
+          "description": "Pat."
+        }
+      ],
+      "players": [
+        "p",
+        "zed"
+      ]
+    },
+    "messages": [
+      {
+        "id": "1",
+        "opening": "gone",
+        "from": "system",
+        "content": [],
+        "changes": [
+          {
+            "by": "rules",
+            "set": {
+              "scene.present": [
+                "p",
+                "a"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "id": "2",
+        "parent": "1",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "Up."
+          }
+        ],
+        "changes": [
+          {
+            "by": "player",
+            "set": {
+              "scene.location": "l2"
+            }
+          }
+        ]
+      },
+      {
+        "id": "3",
+        "parent": "2",
+        "from": "model",
+        "char": "a",
+        "activated": [
+          "s/nothing"
+        ],
+        "content": [
+          {
+            "speaker": "a",
+            "text": "Up."
+          }
+        ],
+        "changes": [
+          {
+            "by": "rules",
+            "event": "nowhere",
+            "set": {
+              "g": 2
+            }
+          }
+        ]
+      },
+      {
+        "id": "4",
+        "parent": "3",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "Down."
+          }
+        ],
+        "changes": [
+          {
+            "by": "player",
+            "set": {
+              "scene.location": "l3"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "check",
+      "expect": {
+        "codes": [
+          "INVALID_PLAYER",
+          "UNKNOWN_CHARACTER",
+          "UNKNOWN_LOCATION",
+          "UNKNOWN_NAME",
+          "UNKNOWN_OPENING",
+          "UNKNOWN_VARIABLE"
+        ],
+        "includes": [
+          {
+            "code": "UNKNOWN_CHARACTER",
+            "at": "/scenarios/0/cast/2/character"
+          },
+          {
+            "code": "INVALID_PLAYER",
+            "at": "header/players/1"
+          },
+          {
+            "code": "UNKNOWN_LOCATION",
+            "at": "/worlds/0/locations/2/parent"
+          },
+          {
+            "code": "UNKNOWN_OPENING",
+            "at": "message:1/opening"
+          },
+          {
+            "code": "UNKNOWN_VARIABLE",
+            "at": "/scenarios/0/events/0/set/nope"
+          },
+          {
+            "code": "UNKNOWN_NAME",
+            "at": "message:3/changes/0/event"
+          },
+          {
+            "code": "UNKNOWN_NAME",
+            "at": "message:3/activated/0"
+          }
+        ]
+      }
+    }
+  ]
+}

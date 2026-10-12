@@ -1,0 +1,78 @@
+{
+  "description": "A derived value is normalized like a recorded value, and one that is still invalid, such as one that isn't finite, is absent (Format 8.1, 8.6)",
+  "bundle": {
+    "kind": "bundle",
+    "scenarios": [
+      {
+        "id": "s",
+        "variables": [
+          {
+            "id": "clock",
+            "type": "int",
+            "initial": 400,
+            "description": "d"
+          },
+          {
+            "id": "day",
+            "type": "int",
+            "derive": "state.clock / 24 + 1",
+            "max": 7,
+            "description": "clamped to 7"
+          },
+          {
+            "id": "ratio",
+            "type": "number",
+            "derive": "double(state.clock) / 3.0",
+            "description": "rounded"
+          },
+          {
+            "id": "phase",
+            "type": "enum",
+            "values": [
+              "a",
+              "b"
+            ],
+            "derive": "'c'",
+            "description": "an unlisted value"
+          },
+          {
+            "id": "tags",
+            "type": "set",
+            "derive": "['y', 'y', 'x']",
+            "description": "deduplicated"
+          },
+          {
+            "id": "inf",
+            "type": "number",
+            "derive": "1.0 / 0.0",
+            "description": "not finite"
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "state",
+      "expect": {
+        "clock": 400,
+        "day": 7,
+        "ratio": 133.333333,
+        "tags": [
+          "y",
+          "x"
+        ]
+      },
+      "absent": [
+        "phase",
+        "inf"
+      ]
+    },
+    {
+      "type": "check",
+      "expect": {
+        "codes": []
+      }
+    }
+  ]
+}
