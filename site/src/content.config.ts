@@ -3,7 +3,7 @@ import type { LoaderContext } from "astro/loaders";
 import { docsSchema } from "@astrojs/starlight/schema";
 import { join, relative } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
-import { read, root, sources, spec } from "./sources.ts";
+import { read, root, sources, spec, tagline } from "./sources.ts";
 
 // Reads the documents in place. Each one's first line, "# Title", becomes the page title; the spec's version line
 // moves to the page title area, and its contents list gives way to the table of contents.
@@ -17,9 +17,9 @@ const load = async ({ config, store, parseData, renderMarkdown, generateDigest, 
     let data: Record<string, unknown> = { title };
     if (route === "index") {
       // The README is the home page: its first paragraph is the tagline, and it ends with sections for the repository.
-      const [, tagline, main] = body.match(/^\n*(.+)\n([\s\S]*?)\n## Contributing\n/) ?? [];
-      if (!main) throw new Error("README.md has no first paragraph and Contributing section");
-      body = main;
+      const end = body.indexOf("\n## Contributing\n");
+      if (!tagline || end < 0) throw new Error("README.md has no first paragraph or no Contributing section");
+      body = body.slice(body.indexOf(tagline) + tagline.length, end);
       data = {
         title,
         template: "splash",

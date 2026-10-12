@@ -1,9 +1,14 @@
 import { defineRouteMiddleware } from "@astrojs/starlight/route-data";
+import { site, sources } from "./sources.ts";
 
-// In the spec's table of contents, sections nest under their parts up to the appendices, and "1. Overview" replaces
-// Starlight's own link to the top.
 export const onRequest = defineRouteMiddleware(({ locals }) => {
-  const { entry, toc } = locals.starlightRoute;
+  const { entry, head, toc } = locals.starlightRoute;
+  // Pages without a document of their own, such as /schema/, share the home page's social card.
+  const card = sources.find((s) => s.route === entry.id)?.route ?? "index";
+  head.push({ tag: "meta", attrs: { property: "og:image", content: `${site}/og/${card}.png` } });
+
+  // In the spec's table of contents, sections nest under their parts up to the appendices, and "1. Overview" replaces
+  // Starlight's own link to the top.
   if (entry.id !== "format" || !toc) return;
   const items: typeof toc.items = [];
   let part: (typeof items)[number] | undefined;

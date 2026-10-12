@@ -3,7 +3,7 @@ import starlight from "@astrojs/starlight";
 import { defineConfig, fontProviders } from "astro/config";
 import { dirname } from "node:path";
 import { troupeMarkdown } from "./src/markdown.ts";
-import { repo, sources } from "./src/sources.ts";
+import { repo, site, sources } from "./src/sources.ts";
 
 const page = (route: string) => {
   const { label } = sources.find((s) => s.route === route)!;
@@ -11,7 +11,7 @@ const page = (route: string) => {
 };
 
 export default defineConfig({
-  site: "https://docs.troupes.ai",
+  site,
   trailingSlash: "always",
   markdown: { processor: satteri({ hastPlugins: [troupeMarkdown] }) },
   fonts: [

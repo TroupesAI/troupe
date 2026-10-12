@@ -3,6 +3,7 @@ import { existsSync, readFileSync, statSync } from "node:fs";
 import { dirname, join, normalize, resolve as resolvePath } from "node:path";
 import { sectionNumber, slug } from "../../scripts/sections.ts";
 
+export const site = "https://docs.troupes.ai";
 export const repo = "https://github.com/TroupesAI/troupe";
 // The repository: Astro runs in site/, and bundling moves this module, so import.meta.url won't do.
 export const root = resolvePath("..");
@@ -19,6 +20,9 @@ export const sources = [
 ];
 
 export const url = (route: string) => (route === "index" ? "/" : `/${route}/`);
+
+// The README's first paragraph, which says what Troupe is.
+export const tagline = read("README.md").match(/^# .+\n+(.+)\n/)?.[1];
 
 // "**Version 0.12 (draft)** · October 12, 2026", the spec's version line.
 const [versionLine, version, status, date] = read("spec/format.md").match(/^\*\*Version (\S+) \((\w+)\)\*\* · (.+)\n/m) ?? [];
@@ -47,3 +51,12 @@ export const resolve = (href: string, from: string): string => {
   }
   throw new Error(`${from}: link to missing ${href}`);
 };
+
+// A document as Markdown with every link absolute, to read away from the site.
+export const markdown = ({ file, route }: (typeof sources)[number]) =>
+  read(file)
+    .split(/(^```[\s\S]*?^```$)/m)
+    .map((part, i) =>
+      i % 2 ? part : part.replace(/\]\(([^)\s]+)\)/g, (_, href) => `](${new URL(resolve(href, file), site + url(route))})`),
+    )
+    .join("");
