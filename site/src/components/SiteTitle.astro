@@ -1,6 +1,6 @@
 ---
 import { Image } from "astro:assets";
-import logo from "../assets/logo.webp";
+import logo from "../assets/logo-transparent.webp";
 import { spec } from "../sources.ts";
 
 // Starlight's own site title would load the full-size logo for a 2rem image.
@@ -24,9 +24,6 @@ const { version, status } = spec();
     font-weight: 600;
     text-decoration: none;
     white-space: nowrap;
-  }
-  img {
-    border-radius: 50%;
   }
   small {
     margin-inline-start: 0.25rem;
