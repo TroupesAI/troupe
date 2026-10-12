@@ -2,14 +2,16 @@
 import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
 import { versions } from "../../schemas.ts";
 import { spec } from "../../sources.ts";
+
+const current = spec();
 ---
 
 <StarlightPage frontmatter={{ title: "Schemas", tableOfContents: false }}>
   <p>The JSON Schemas of every version, described in <a href="/format/#A">Format Appendix A</a>.</p>
   {
-    versions.map(({ version, files }) => (
+    versions().map(({ version, files }) => (
       <>
-        <h2 id={version}>{version === spec.version ? `${version} (${spec.status})` : version}</h2>
+        <h2 id={version}>{version === current.version ? `${version} (${current.status})` : version}</h2>
         <ul>
           {Object.keys(files).map((file) => (
             <li>

@@ -5,11 +5,12 @@ import { spec } from "../sources.ts";
 
 // Starlight's own site title would load the full-size logo for a 2rem image.
 const { siteTitle, siteTitleHref } = Astro.locals.starlightRoute;
+const { version, status } = spec();
 ---
 
 <a href={siteTitleHref}>
   <Image src={logo} alt="" width={32} densities={[1, 2]} loading="eager" />
-  <span><span translate="no">{siteTitle}</span> <small>{spec.version} {spec.status}</small></span>
+  <span><span translate="no">{siteTitle}</span> <small>{version} {status}</small></span>
 </a>
 
 <style>

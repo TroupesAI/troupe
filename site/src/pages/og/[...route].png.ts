@@ -1,6 +1,6 @@
 import { getCollection } from "astro:content";
 import { OGImageRoute } from "astro-og-canvas";
-import { site, tagline } from "../../sources.ts";
+import { readme, site } from "../../sources.ts";
 
 const fonts = "https://cdn.jsdelivr.net/fontsource/fonts";
 
@@ -10,7 +10,7 @@ export const { getStaticPaths, GET } = await OGImageRoute({
   getSlug: (route) => route,
   getImageOptions: (route, { title }) => ({
     title,
-    description: route === "index" ? tagline : new URL(site).host,
+    description: route === "index" ? readme().tagline : new URL(site).host,
     logo: { path: "./src/assets/logo.webp", size: [160] },
     bgGradient: [[9, 4, 17]],
     fonts: [`${fonts}/newsreader@5.3.0/latin-600-normal.ttf`, `${fonts}/atkinson-hyperlegible-next@5.3.0/latin-400-normal.ttf`],

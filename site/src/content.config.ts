@@ -3,15 +3,16 @@ import type { LoaderContext } from "astro/loaders";
 import { docsSchema } from "@astrojs/starlight/schema";
 import { join, relative } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
-import { read, root, sources, tagline } from "./sources.ts";
+import { read, readme, root, sources } from "./sources.ts";
 
 // Markdown text as plain text: links become their text, and emphasis and code marks go.
 const plain = (markdown: string) => markdown.replace(/\[([^\]]*)\]\([^)]*\)/g, "$1").replace(/[*`]/g, "");
 
 // Reads the documents in place. Each one's first line, "# Title", becomes the page title, and the spec's contents list
-// gives way to the table of contents.
-const load = async ({ config, store, parseData, renderMarkdown, generateDigest, watcher }: LoaderContext) => {
-  store.clear();
+// gives way to the table of contents. The store changes only once every document has rendered, so a document with an
+// error leaves the last good pages in place.
+const load = async ({ config, store, parseData, renderMarkdown, generateDigest }: LoaderContext) => {
+  const entries = [];
   for (const { file, route } of sources) {
     const text = read(file);
     const [, title, rest] = text.match(/^# (.+)\n([\s\S]*)$/) ?? [];
@@ -19,10 +20,8 @@ const load = async ({ config, store, parseData, renderMarkdown, generateDigest, 
     let body = rest.replace(/^## Contents\n[\s\S]*?\n---\n/m, "");
     let data: Record<string, unknown> = { title, description: plain(body.match(/^\w.*$/m)![0]) };
     if (route === "index") {
-      // The README is the home page: its first paragraph is the tagline, and it ends with sections for the repository.
-      const end = body.indexOf("\n## Contributing\n");
-      if (!tagline || end < 0) throw new Error("README.md has no first paragraph or no Contributing section");
-      body = body.slice(body.indexOf(tagline) + tagline.length, end);
+      const { tagline, main } = readme(text);
+      body = main;
       data = {
         title,
         description: tagline,
@@ -37,7 +36,7 @@ const load = async ({ config, store, parseData, renderMarkdown, generateDigest, 
         },
       };
     }
-    store.set({
+    entries.push({
       id: route,
       filePath: relative(fileURLToPath(config.root), join(root, file)),
       digest: generateDigest(text),
@@ -45,8 +44,11 @@ const load = async ({ config, store, parseData, renderMarkdown, generateDigest, 
       rendered: await renderMarkdown(body, { fileURL: pathToFileURL(join(root, file)) }),
     });
   }
-  watcher?.add(sources.map((s) => join(root, s.file)));
+  store.clear();
+  for (const entry of entries) store.set(entry);
 };
+
+let watching = false;
 
 export const collections = {
   docs: defineCollection({
@@ -54,8 +56,12 @@ export const collections = {
       name: "troupe",
       load: async (context) => {
         await load(context);
-        context.watcher?.on("change", (path) => {
-          if (sources.some((s) => join(root, s.file) === path)) load(context);
+        if (watching || !context.watcher) return;
+        watching = true;
+        const files = sources.map((s) => join(root, s.file));
+        context.watcher.add(files);
+        context.watcher.on("change", (path) => {
+          if (files.includes(path)) load(context).catch((e: Error) => context.logger.error(e.message));
         });
       },
     },
