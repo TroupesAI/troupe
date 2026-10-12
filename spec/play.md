@@ -134,7 +134,7 @@ interface ModelOutput {
 type Newcomer = Pick<Character, "id" | "name" | "aliases" | "description" | "summary">;
 ```
 
-- **Tracker.** A tracker run is a model call separate from the story reply. It runs on a message that isn't hidden and has content, while that message is the head and before the event pass after it. It reads the messages after the last extraction on the path, up to that one, as many of them as the app chooses, and returns everything but `parts`. Its input, at the message it runs on, is:
+- **Tracker.** A tracker run is a model call separate from the story reply. It runs on a message that isn't hidden and has content, while that message is the head and before the event pass after it. It reads the messages after the last extraction on the path before that message, up to that message, as many of them as the app chooses, and returns everything but `parts`. Its input, at the message it runs on, is:
   - for each variable in use whose `by` includes `model`, in event order (section 3.3), its key, type, `values` or range, `description` and current value;
   - the scene's values, the ID and name of every location of the bundle and session in world order, and of every cast character in cast order;
   - the entries in use placed in `tracker`, not `disabled`, whose `when` holds: those of the worlds, the cast characters in cast order, the scenario and the session, in the order of section 5.1;
@@ -146,13 +146,13 @@ type Newcomer = Pick<Character, "id" | "name" | "aliases" | "description" | "sum
 Nothing in the payload takes `ext`, and:
 
 - A newcomer whose ID names a character, world, scenario or scenario variable of the bundle or session, an earlier newcomer of the payload included, or who would take the cast past its limit (Format 16), is dropped.
-- An entry whose ID names a session entry on the path, disabled or not, that isn't placed in `context` is dropped; a model may update or disable a context entry, such as a memory.
+- An entry is dropped when the latest version of the session entry with its ID on the path, merged as Format 12.3 says and disabled or not, isn't placed in `context`; a model may update or disable a context entry, such as a memory.
 
 Output that isn't a JSON object is discarded, and nothing is recorded. Otherwise apps apply a payload in this order:
 
-1. Read its empty values as Format 2.2 says and drop its unknown properties (Format 15), and a tracker run's `parts`. Drop each top-level property, part, entry or newcomer that still fails the schema, and each entry or newcomer whose ID an earlier one in the payload has. A structured reply left with no parts is discarded, and nothing is recorded.
+1. Read its empty values as Format 2.2 says, an empty `knownBy` aside (step 3), and drop its unknown properties (Format 15), and a tracker run's `parts`. Drop each top-level property, part, entry or newcomer that still fails the schema, and each entry or newcomer whose ID an earlier one in the payload has. A structured reply left with no parts is discarded, and nothing is recorded.
 2. `characters` join the header.
-3. `parts` are stored. A speaker that names no cast character is dropped (a newcomer that joined is in the cast), and so is each `knownBy` ID other than `narrator` that names none. A `knownBy` whose IDs are all dropped becomes `["narrator"]`, or `[<speaker>, "narrator"]` on a part with a speaker.
+3. `parts` are stored. A speaker that names no cast character is dropped (a newcomer that joined is in the cast), and so is each `knownBy` ID other than `narrator` that names none. A `knownBy` that is empty, or whose IDs are all dropped, becomes `["narrator"]`, or `[<speaker>, "narrator"]` on a part with a speaker.
 4. `changes` are recorded as one `{"by": "model", …}` change, prepared as in section 3.3, on the message the tracker runs on or on the reply itself. Every extraction records this change, with an empty `set` when it changes nothing, which marks where the next tracker run starts.
 5. `entries` become session entries on the same message, each replacing one there with its ID and stored with each field it lacks taken from it, as Format 12.3 says of later replacements, with their `knownBy` IDs dropped and emptied as in step 3; on a root they are dropped. An entry that would take the path's session entries past their limit (Format 16) is dropped.
 

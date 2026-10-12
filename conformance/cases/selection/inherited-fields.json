@@ -1,0 +1,129 @@
+{
+  "description": "A session entry's replacement takes the fields it lacks (Format 12.3): a text-only update of a secret keeps its knownBy, so selection still hides it from other characters",
+  "bundle": {
+    "kind": "bundle",
+    "characters": [
+      {
+        "id": "a",
+        "name": "Ann",
+        "description": "Ann."
+      },
+      {
+        "id": "b",
+        "name": "Bea",
+        "description": "Bea."
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s",
+        "cast": [
+          {},
+          {
+            "character": "a"
+          },
+          {
+            "character": "b"
+          }
+        ]
+      }
+    ]
+  },
+  "session": {
+    "header": {
+      "kind": "session",
+      "scenario": "s",
+      "seed": "conformanceSeed0001",
+      "characters": [
+        {
+          "id": "p",
+          "name": "Pat",
+          "description": "Pat."
+        }
+      ],
+      "players": [
+        "p"
+      ]
+    },
+    "messages": [
+      {
+        "id": "1",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "x"
+          }
+        ],
+        "entries": [
+          {
+            "id": "x",
+            "knownBy": [
+              "a"
+            ],
+            "position": "system",
+            "text": "Ann's secret."
+          }
+        ]
+      },
+      {
+        "id": "2",
+        "parent": "1",
+        "from": "model",
+        "char": "a",
+        "content": [
+          {
+            "speaker": "a",
+            "text": "y"
+          }
+        ]
+      },
+      {
+        "id": "3",
+        "parent": "2",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "z"
+          }
+        ],
+        "entries": [
+          {
+            "id": "x",
+            "text": "Ann's secret, updated."
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "select",
+      "for": "a",
+      "parent": "3",
+      "messageId": "4",
+      "expect": {
+        "activated": [
+          "session/x"
+        ],
+        "system": [
+          "session/x"
+        ],
+        "texts": {
+          "session/x": "Ann's secret, updated."
+        }
+      }
+    },
+    {
+      "type": "select",
+      "name": "Bea still can't see it",
+      "for": "b",
+      "parent": "3",
+      "messageId": "5",
+      "expect": {
+        "activated": []
+      }
+    }
+  ]
+}
