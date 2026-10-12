@@ -2,7 +2,7 @@
 //   - the schemas compile, and the examples and every complete bundle in a Markdown document validate;
 //   - examples/ and the README's first example match the examples in spec/format.md (--write-examples rewrites examples/);
 //   - the spec version agrees across the documents, schema URLs, examples, bundles in Markdown and cases;
-//   - every conformance case is valid JSON, named <area>/<topic>.json, and the files it names exist;
+//   - every conformance case is named <area>/<topic>.json, matches conformance/case.schema.json, and the files it names exist;
 //   - relative Markdown links and #anchors resolve, and every "Format N.N" or "Play N.N" names a section.
 import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
@@ -106,8 +106,14 @@ for (const doc of [...markdown, ...Object.keys(examples).map((n) => `examples/${
   for (const m of read(doc).matchAll(/troupes\.ai\/schema\/(\d+\.\d+)\//g))
     if (m[1] !== version) fail(`${doc}: schema URL for version ${m[1]}, not ${version}`);
 
-// Conformance cases: cases/<area>/<topic>.json, valid JSON, and files they name exist
-const cases = (readdirSync(join(root, "conformance/cases"), { recursive: true }) as string[]).filter((f) => f.endsWith(".json")).sort();
+// Conformance cases: cases/<area>/<topic>.json, matching the case schema, and files they name exist
+const caseFiles = (readdirSync(join(root, "conformance/cases"), { recursive: true }) as string[]).sort();
+const cases = caseFiles.filter((f) => f.endsWith(".json"));
+const validCase = ajv.compile(JSON.parse(read("conformance/case.schema.json")));
+for (const f of caseFiles.filter((f) => f.endsWith(".jsonl"))) {
+  const header = JSON.parse(read(`conformance/cases/${f}`).split("\n")[0]);
+  if (header.troupe !== version) fail(`conformance/cases/${f}: troupe is ${header.troupe}, not ${version}`);
+}
 for (const f of cases) {
   const path = `conformance/cases/${f}`;
   if (!/^[a-z0-9-]+\/[a-z0-9-]+\.json$/.test(f)) fail(`${path}: isn't <area>/<topic>.json`);
@@ -127,6 +133,7 @@ for (const f of cases) {
     Object.values(d).forEach(walk);
   };
   walk(value);
+  if (!validCase(value)) fail(`${path}: ${ajv.errorsText(validCase.errors, { dataVar: "" })}`);
   for (const m of JSON.stringify(value).matchAll(/"(?:bundle|session|chronicle)File":"([^"]+)"/g))
     if (!existsSync(join(root, dirname(path), m[1]))) fail(`${path}: ${m[1]} doesn't exist`);
 }

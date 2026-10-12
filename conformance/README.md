@@ -27,7 +27,7 @@ Cases live in `cases/<area>/<topic>.json`, one folder per area of the spec:
 | `parsing` | Reading raw files (Format 2.2, 14, 16) |
 | `examples` | The spec's worked examples and the authoring guide's patterns |
 
-The order of cases doesn't matter. A case file is one JSON object:
+The order of cases doesn't matter. A case file is one JSON object, described by [`case.schema.json`](case.schema.json), which `bun run check` applies:
 
 | Field | Type | Meaning |
 | --- | --- | --- |

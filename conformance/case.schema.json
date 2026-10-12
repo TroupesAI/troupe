@@ -1,0 +1,1420 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Troupe conformance case",
+  "description": "The shape of a case file (conformance/README.md). Checked by bun run check.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "description",
+    "tests"
+  ],
+  "properties": {
+    "description": {
+      "type": "string"
+    },
+    "note": {
+      "type": "string"
+    },
+    "bundle": {
+      "type": "object"
+    },
+    "bundleFile": {
+      "type": "string"
+    },
+    "session": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "header",
+        "messages"
+      ],
+      "properties": {
+        "header": {
+          "type": "object"
+        },
+        "messages": {
+          "type": "array"
+        }
+      }
+    },
+    "sessionFile": {
+      "type": "string"
+    },
+    "addMessages": {
+      "type": "array"
+    },
+    "extend": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "from",
+          "count",
+          "prefix"
+        ],
+        "properties": {
+          "from": {
+            "type": "string",
+            "minLength": 1
+          },
+          "count": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "prefix": {
+            "type": "string"
+          },
+          "char": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "tests": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "enum": [
+              "roll",
+              "match",
+              "state",
+              "prepare",
+              "select",
+              "scanned",
+              "events",
+              "directions",
+              "ended",
+              "macro",
+              "cel",
+              "start",
+              "swipe",
+              "check",
+              "prompt",
+              "parse",
+              "read",
+              "output",
+              "chronicle",
+              "edit"
+            ]
+          }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "roll"
+                }
+              },
+              "required": [
+                "type"
+              ]
+            },
+            "then": {
+              "additionalProperties": false,
+              "required": [
+                "expect",
+                "purpose",
+                "seed",
+                "message",
+                "subject"
+              ],
+              "properties": {
+                "type": {
+                  "const": "roll"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "note": {
+                  "type": "string"
+                },
+                "expect": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "hex": {
+                      "type": "string"
+                    },
+                    "roll": {
+                      "type": "integer"
+                    }
+                  }
+                },
+                "purpose": {
+                  "type": "string"
+                },
+                "seed": {
+                  "type": "string"
+                },
+                "message": {
+                  "type": "string"
+                },
+                "subject": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "match"
+                }
+              },
+              "required": [
+                "type"
+              ]
+            },
+            "then": {
+              "additionalProperties": false,
+              "required": [
+                "expect",
+                "key",
+                "text"
+              ],
+              "properties": {
+                "type": {
+                  "const": "match"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "note": {
+                  "type": "string"
+                },
+                "expect": {
+                  "type": "boolean"
+                },
+                "key": {
+                  "type": "string"
+                },
+                "text": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "state"
+                }
+              },
+              "required": [
+                "type"
+              ]
+            },
+            "then": {
+              "additionalProperties": false,
+              "required": [
+                "expect"
+              ],
+              "properties": {
+                "type": {
+                  "const": "state"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "note": {
+                  "type": "string"
+                },
+                "expect": {
+                  "type": "object"
+                },
+                "at": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "absent": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "prepare"
+                }
+              },
+              "required": [
+                "type"
+              ]
+            },
+            "then": {
+              "additionalProperties": false,
+              "required": [
+                "expect",
+                "by",
+                "set"
+              ],
+              "properties": {
+                "type": {
+                  "const": "prepare"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "note": {
+                  "type": "string"
+                },
+                "expect": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "set": {
+                      "type": "object"
+                    },
+                    "dropped": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "at": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "by": {
+                  "enum": [
+                    "rules",
+                    "player",
+                    "model"
+                  ]
+                },
+                "set": {
+                  "type": "object"
+                },
+                "owner": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "select"
+                }
+              },
+              "required": [
+                "type"
+              ]
+            },
+            "then": {
+              "additionalProperties": false,
+              "required": [
+                "expect",
+                "messageId"
+              ],
+              "properties": {
+                "type": {
+                  "const": "select"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "note": {
+                  "type": "string"
+                },
+                "expect": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "activated": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "selected": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "system": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "context": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "depth": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "catalog": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "dropped": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "failed": {
+                      "type": "boolean"
+                    },
+                    "texts": {
+                      "type": "object"
+                    }
+                  }
+                },
+                "for": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "parent": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "messageId": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "maxEntries": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "pulled": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "scanned"
+                }
+              },
+              "required": [
+                "type"
+              ]
+            },
+            "then": {
+              "additionalProperties": false,
+              "required": [
+                "expect",
+                "parent"
+              ],
+              "properties": {
+                "type": {
+                  "const": "scanned"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "note": {
+                  "type": "string"
+                },
+                "expect": {
+                  "type": "string"
+                },
+                "for": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "parent": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "depth": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "events"
+                }
+              },
+              "required": [
+                "type"
+              ]
+            },
+            "then": {
+              "additionalProperties": false,
+              "required": [
+                "expect",
+                "at"
+              ],
+              "properties": {
+                "type": {
+                  "const": "events"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "note": {
+                  "type": "string"
+                },
+                "expect": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "changes": {
+                      "type": "array"
+                    },
+                    "message": {
+                      "type": [
+                        "object",
+                        "null"
+                      ]
+                    },
+                    "directions": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "ended": {
+                      "type": "boolean"
+                    },
+                    "state": {
+                      "type": "object"
+                    }
+                  }
+                },
+                "at": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "eventMessageId": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "directions"
+                }
+              },
+              "required": [
+                "type"
+              ]
+            },
+            "then": {
+              "additionalProperties": false,
+              "required": [
+                "expect",
+                "at"
+              ],
+              "properties": {
+                "type": {
+                  "const": "directions"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "note": {
+                  "type": "string"
+                },
+                "expect": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "at": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "ended"
+                }
+              },
+              "required": [
+                "type"
+              ]
+            },
+            "then": {
+              "additionalProperties": false,
+              "required": [
+                "expect",
+                "at"
+              ],
+              "properties": {
+                "type": {
+                  "const": "ended"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "note": {
+                  "type": "string"
+                },
+                "expect": {
+                  "type": "boolean"
+                },
+                "at": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "macro"
+                }
+              },
+              "required": [
+                "type"
+              ]
+            },
+            "then": {
+              "additionalProperties": false,
+              "required": [
+                "expect",
+                "text"
+              ],
+              "properties": {
+                "type": {
+                  "const": "macro"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "note": {
+                  "type": "string"
+                },
+                "expect": {
+                  "type": "string"
+                },
+                "text": {
+                  "type": "string"
+                },
+                "at": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "char": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "owner": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "narrator": {
+                  "type": "boolean"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "cel"
+                }
+              },
+              "required": [
+                "type"
+              ]
+            },
+            "then": {
+              "additionalProperties": false,
+              "required": [
+                "expect",
+                "expr"
+              ],
+              "properties": {
+                "type": {
+                  "const": "cel"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "note": {
+                  "type": "string"
+                },
+                "expect": {
+                  "oneOf": [
+                    {
+                      "type": "boolean"
+                    },
+                    {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": [
+                        "checkError"
+                      ],
+                      "properties": {
+                        "checkError": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                },
+                "expr": {
+                  "type": "string"
+                },
+                "kind": {
+                  "enum": [
+                    "entry",
+                    "event"
+                  ]
+                },
+                "at": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "char": {
+                  "type": "string"
+                },
+                "self": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "start"
+                }
+              },
+              "required": [
+                "type"
+              ]
+            },
+            "then": {
+              "additionalProperties": false,
+              "required": [
+                "expect"
+              ],
+              "properties": {
+                "type": {
+                  "const": "start"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "note": {
+                  "type": "string"
+                },
+                "expect": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "changes": {
+                      "type": "array"
+                    },
+                    "root": {
+                      "type": "object"
+                    },
+                    "messages": {
+                      "type": "array"
+                    },
+                    "head": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "questions": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "state": {
+                      "type": "object"
+                    },
+                    "rendered": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "entries": {
+                      "type": "array"
+                    },
+                    "characters": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "header": {
+                      "type": "object"
+                    }
+                  }
+                },
+                "scenario": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "opening": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "characters": {
+                  "type": "array"
+                },
+                "players": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "answers": {
+                  "type": "object"
+                },
+                "seed": {
+                  "type": "string"
+                },
+                "rootId": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "eventMessageId": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "firstMessage": {
+                  "type": "object"
+                },
+                "chronicle": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "swipe"
+                }
+              },
+              "required": [
+                "type"
+              ]
+            },
+            "then": {
+              "additionalProperties": false,
+              "required": [
+                "expect"
+              ],
+              "properties": {
+                "type": {
+                  "const": "swipe"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "note": {
+                  "type": "string"
+                },
+                "expect": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "changes": {
+                      "type": "array"
+                    },
+                    "root": {
+                      "type": "object"
+                    },
+                    "messages": {
+                      "type": "array"
+                    },
+                    "head": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "questions": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "state": {
+                      "type": "object"
+                    },
+                    "rendered": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "entries": {
+                      "type": "array"
+                    }
+                  }
+                },
+                "opening": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "answers": {
+                  "type": "object"
+                },
+                "rootId": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "eventMessageId": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "check"
+                }
+              },
+              "required": [
+                "type"
+              ]
+            },
+            "then": {
+              "additionalProperties": false,
+              "required": [
+                "expect"
+              ],
+              "properties": {
+                "type": {
+                  "const": "check"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "note": {
+                  "type": "string"
+                },
+                "expect": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "codes"
+                  ],
+                  "properties": {
+                    "codes": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "includes": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "code",
+                          "at"
+                        ],
+                        "properties": {
+                          "code": {
+                            "type": "string"
+                          },
+                          "at": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "chronicle": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "prompt"
+                }
+              },
+              "required": [
+                "type"
+              ]
+            },
+            "then": {
+              "additionalProperties": false,
+              "required": [
+                "expect",
+                "messageId"
+              ],
+              "properties": {
+                "type": {
+                  "const": "prompt"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "note": {
+                  "type": "string"
+                },
+                "expect": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "system": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "setting": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "people": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "context": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "history": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "directions": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "lines": {
+                      "type": "object"
+                    },
+                    "texts": {
+                      "type": "object"
+                    }
+                  }
+                },
+                "for": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "parent": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "messageId": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "summaries": {
+                  "type": "boolean"
+                },
+                "maxEntries": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "pulled": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "parse"
+                }
+              },
+              "required": [
+                "type"
+              ]
+            },
+            "then": {
+              "additionalProperties": false,
+              "required": [
+                "expect",
+                "kind"
+              ],
+              "properties": {
+                "type": {
+                  "const": "parse"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "note": {
+                  "type": "string"
+                },
+                "expect": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "ok": {
+                      "type": "boolean"
+                    },
+                    "codes": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "equals": {
+                      "type": "object"
+                    },
+                    "ids": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "kind": {
+                  "enum": [
+                    "bundle",
+                    "session",
+                    "chronicle",
+                    "package",
+                    "png",
+                    "modelOutput"
+                  ]
+                },
+                "text": {
+                  "type": "string"
+                },
+                "base64": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "read"
+                }
+              },
+              "required": [
+                "type"
+              ]
+            },
+            "then": {
+              "additionalProperties": false,
+              "required": [
+                "expect"
+              ],
+              "properties": {
+                "type": {
+                  "const": "read"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "note": {
+                  "type": "string"
+                },
+                "expect": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "ids": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "head": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "codes": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "message": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "output"
+                }
+              },
+              "required": [
+                "type"
+              ]
+            },
+            "then": {
+              "additionalProperties": false,
+              "required": [
+                "expect",
+                "output"
+              ],
+              "properties": {
+                "type": {
+                  "const": "output"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "note": {
+                  "type": "string"
+                },
+                "expect": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "message": {
+                      "type": "object"
+                    },
+                    "dropped": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "characters": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "newcomers": {
+                      "type": "array"
+                    }
+                  }
+                },
+                "reply": {
+                  "type": "object"
+                },
+                "message": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "output": {
+                  "type": [
+                    "string",
+                    "object"
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "chronicle"
+                }
+              },
+              "required": [
+                "type"
+              ]
+            },
+            "then": {
+              "additionalProperties": false,
+              "required": [
+                "expect"
+              ],
+              "properties": {
+                "type": {
+                  "const": "chronicle"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "note": {
+                  "type": "string"
+                },
+                "expect": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "codes": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "memories": {
+                      "type": "array"
+                    },
+                    "values": {
+                      "type": "object"
+                    }
+                  }
+                },
+                "chronicle": {
+                  "type": "object"
+                },
+                "chronicleFile": {
+                  "type": "string"
+                },
+                "writeBack": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "head"
+                  ],
+                  "properties": {
+                    "head": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "edit"
+                }
+              },
+              "required": [
+                "type"
+              ]
+            },
+            "then": {
+              "additionalProperties": false,
+              "required": [
+                "expect",
+                "set"
+              ],
+              "properties": {
+                "type": {
+                  "const": "edit"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "note": {
+                  "type": "string"
+                },
+                "expect": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "message": {
+                      "type": "object"
+                    },
+                    "events": {
+                      "type": "array"
+                    },
+                    "head": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  }
+                },
+                "set": {
+                  "type": "object"
+                },
+                "newId": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  },
+  "not": {
+    "anyOf": [
+      {
+        "required": [
+          "bundle",
+          "bundleFile"
+        ]
+      },
+      {
+        "required": [
+          "session",
+          "sessionFile"
+        ]
+      }
+    ]
+  }
+}
