@@ -23,7 +23,7 @@ Each card becomes a bundle with one character and a scenario `main` that holds i
 | `assets` icon / background | `avatar` / a location `image`; other assets in `ext` |
 | Lorebook entries | Character entries, or a world named after the book |
 | `keys`, `constant`, `enabled` | `keys`, no keys, `disabled` |
-| SillyTavern regex keys `/p/flags` | `/(?flags)p/` |
+| SillyTavern regex keys `/p/flags` | `/(?flags)p/`, keeping only the flags `i`, `m` and `s`, and with `(?-i)` when `i` is absent |
 | `case_sensitive`, `match_whole_words: false` | Regex keys `/(?-i)…/`, `/…/` |
 | `secondary_keys` AND ANY / NOT ANY / AND ALL / NOT ALL, `@@additional_keys`, `@@exclude_keys` | `when` with `hit()`: `hit('a') \|\| hit('b')`, `!hit('a') && !hit('b')`, `hit('a') && hit('b')`, `!(hit('a') && hit('b'))` |
 | `insertion_order` | the entry's place in `entries` |
@@ -41,7 +41,7 @@ Each card becomes a bundle with one character and a scenario `main` that holds i
 | `<bot>`, `<user>` | `{{char}}`, `{{user}}` |
 | `{{pick::…}}`, `{{random::…}}` | `{{pick::…}}`, fixed for the session |
 | Recursion, other macros, decorators, regex scripts | Reported; the source is kept in `ext`. To replace recursion, add to an entry the keys of the entries whose text mentions it. |
-| SillyTavern chat JSONL | A session: `is_user` lines become `player` messages, `name` becomes `speaker`, swipes become siblings |
+| SillyTavern chat JSONL | A session: `is_user` lines become `player` messages, the character whose name matches `name` becomes `speaker`, swipes become siblings |
 
 ## Exporting to Character Card V3
 

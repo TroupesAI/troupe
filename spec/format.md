@@ -137,7 +137,7 @@ MUST, MUST NOT, SHOULD, SHOULD NOT and MAY are used as described in RFC 2119 and
 
 | IDs | Unique among |
 | --- | --- |
-| Characters, worlds, scenarios | All of them, compared in the order the bundle's characters, worlds and scenarios, then the session's characters and worlds; a session character replacing a bundle character is no duplicate (section 12.2) |
+| Characters, worlds, scenarios | All of them, compared in this order: the bundle's characters, worlds and scenarios, then the session's characters and worlds; a session character replacing a bundle character is no duplicate (section 12.2) |
 | Scenario variables | Also every character and world ID in the bundle or session |
 | Entries, variables and events | Each other within the same owner, compared in that order: a variable or event that reuses an earlier ID is the duplicate. Session entries are unique within each message (section 12.3) |
 | Locations | The bundle and the session, compared in world order, the session's worlds last |
@@ -189,7 +189,6 @@ interface Bundle {
   ext?: Ext;
 }
 ```
-
 
 ---
 
@@ -412,9 +411,9 @@ interface Variable {
 - **`description`** reaches the model that updates state (Play 3.4).
 - **`by`.** Openings, events and chronicle values may always change a variable. `player` lets players change it; `model` lets the model that updates state change it (Play 3.4). A variable with `ask` may always be changed by players.
 - **`min` and `max`** are numbers, or name another numeric variable of the same owner that is neither keyed nor derived and whose own bounds are numbers, such as `"max": "max_hp"`; its current value is the bound.
-- **`maxStep`** is the largest step one change from the model may take; **`oneWay`** lets numbers only rise, a bool only turn true, a set only gain members, and an enum only move later in `values`. Both apply to each key of a keyed variable. Starting values (Play 2.1) are exempt.
+- **`maxStep`** is the largest step one change from the model may take; **`oneWay`** lets numbers only rise, a bool only turn true, a set only gain members, and an enum only move later in `values`. Both apply to each key of a keyed variable. Starting values are exempt from `oneWay` (Play 3.3).
 - **`derive`** makes a read-only variable computed from other state whenever it is read, such as `"derive": "state.clock / 24 + 1"` for the day. Derived variables have no `initial`, `by`, `ask`, `of`, `maxStep` or `oneWay`, can't be changed, and can't read other derived variables (`CEL_ERROR`). A `derive` is evaluated at the evaluation point of whatever reads it, with `self` its owner, `char` `""`, and no `hit()`.
-- **`ask`** puts a question to the player when the session starts and records the answer; `labels` name the choices. `ask` is not allowed with `of`.
+- **`ask`** puts a question to the player when the session starts and records the answer. `ask` is not allowed with `of`.
 - **State reaches the story model** through text that shows it, such as an entry with `{{state.hp}}`, and as tracker input for structured replies (Play 3.4); nothing else sends it.
 
 ### 8.2 Ownership
@@ -454,7 +453,7 @@ Opening and event `set`, `compute` and recorded changes write state by key:
 
 - **Keys** are a scenario variable's ID, or an owner and a variable ID, followed by a key for keyed variables: `bell`, `trust.kai`, `kai.nerve`, `kai.feelings.elena`, `scene.location`, `scene.present`.
 - **Values** are absolute.
-- **Validity.** A value is valid if its key names a variable in use that isn't derived, and an allowed key, and the value has the variable's type, uses only listed members, is finite, is an integer within ±(2^53 − 1) for `int`, and is within the value limits of section 16. A numeric value outside `min` and `max` is still valid; it is clamped (Play 3.2, 3.3). A set with duplicate members is valid too; preparation removes the duplicates. `scene.location` is a location ID of the bundle or session, or `""`; `scene.present` is a list of strings (Play 3.3).
+- **Validity.** A value is valid when its key names a variable in use that isn't derived, and a key the variable allows; and the value has the variable's type, uses only listed members, is finite, is an integer within ±(2^53 − 1) for `int`, and is within the value limits of section 16. A numeric value outside `min` and `max` is still valid; it is clamped (Play 3.2, 3.3). A set with duplicate members is valid too; preparation removes the duplicates. `scene.location` is a location ID of the bundle or session, or `""`; `scene.present` is a list of strings (Play 3.3).
 
 ---
 
@@ -491,7 +490,7 @@ interface Outcome {
 ```
 
 - **`set` takes plain values; `compute` takes CEL.** `"set": {"scene.location": "vault"}`, `"compute": {"trust.elena": "state.trust.elena - 0.1"}`. Two keys of one `set` or `compute` that name the same full key, such as `own.nerve` and `kai.nerve`, are both dropped (`UNKNOWN_VARIABLE`).
-- **Firing.** Play 3.3 says when events run and fire. An event `on: "player"` runs before the reply; one `on: "model"` runs after the reply and its tracking.
+- **Firing.** Play 3.3 says when events run and fire. An event `on: "player"` runs before the reply; one `on: "model"` runs after the reply and any extraction on it (Play 3.4).
 - **`end`** marks the story finished on that path. It changes nothing else: if play goes on, events and directions work as before, and a `direct` on the same firing still reaches the next model reply.
 
 ---
@@ -513,9 +512,9 @@ Macros are the only substitution in text. `@` turns IDs into names.
 | `{{// <comment>}}` | Nothing; a note for authors |
 
 - **`{{char}}`** in a message part, an event's `message` included, is the part's `speaker`, else the message's `char`, else it is left as written; in a character's other text, that character; in a cast member's `notes`, its character; in other text, the character being generated for, or the scenario's `narrator` for the narrator and the tracker. In a state path, `char` means the same character.
-- **`{{user}}`** is the speaker of the first part with a speaker in the latest player message on the path that has one, else the first player's character, else it is left as written. In a state path, `user` means the same character.
+- **`{{user}}`** is the speaker of the first speaking part of the latest player message on the path that has a speaking part, else the first player's character, else it is left as written. In a state path, `user` means the same character.
 - A `char` or `user` path segment that means no character names no key, so the macro renders as nothing.
-- **Rendering.** A value with a label renders as its label, resolved first; a substituted value is never scanned for macros again. Numbers render as ECMAScript `Number.prototype.toString`, booleans as `true` or `false`, lists as items joined by `, ` (an empty list as nothing), and maps as `Name: value` pairs joined by `, `, with character keys shown by name and other keys with underscores as spaces. Map keys render in declared order (cast order for characters), and `"*"` keys in code point order.
+- **Rendering.** A value with a label renders as its label, with the label's own macros resolved; a substituted value is never scanned for macros again. Numbers render as ECMAScript `Number.prototype.toString`, booleans as `true` or `false`, lists as items joined by `, ` (an empty list as nothing), and maps as `Name: value` pairs joined by `, `, with character keys shown by name and other keys with underscores as spaces. Map keys render in declared order (cast order for characters), and `"*"` keys in code point order.
 - **Unresolved.** Text between `{{` and `}}` that is no macro, such as `{{unknown}}`, and a macro naming a variable that isn't declared, as section 11.2 counts declarations, are left as written (`UNKNOWN_MACRO`); an absent key of a declared variable, a path below a value that isn't a map, or a variable whose owner isn't in use renders as nothing.
 - **Which state.** Macros in a message resolve at that message: against its state, with `{{user}}` from the path to it. Elsewhere they resolve at the evaluation point (section 11.1). In message parts and in a scenario's text, `own` means `state`.
 - **Where.** Authors write macros in descriptions, summaries, dialogue examples, premises, briefings, notes, entry texts, openings, event messages and directions, variable descriptions, questions, labels, and image `alt`. Entry titles and keys are never resolved.
@@ -601,7 +600,7 @@ interface SessionHeader {
   characters?: Character[];        // players', joiners' and replacements (section 12.2)
   players?: string[];              // distinct characters people control, in seat order
   worlds?: World[];                // worlds added to the session
-  head?: string;                   // the last message on the current path; the last message
+  head?: string;                   // the last message on the current path; the last message line
   ext?: Ext;
 }
 
@@ -655,7 +654,10 @@ interface Summary {
 ### 12.2 Players and cast
 
 - **Replacements.** A header character with the ID of a bundle character replaces it for the whole session: it keeps that character's place in the cast and every reference to it. One that replaces a character outside the scenario cast otherwise counts as a new header character. Two header characters that replace the same bundle character make the session unplayable (`DUPLICATE_ID`).
-- `players` lists the characters people control, in seat order. An ID defined in the header's `characters`, other than a replacement of a cast member, fills the next empty seat, or adds a seat after the scenario cast when every seat is filled; a cast member marked `player` fills its own seat and is a player whether or not it is listed, and those `players` doesn't list follow the listed players, in cast order; the ID of another cast member means a person took that character over.
+- `players` lists the characters people control, in seat order:
+  - An ID defined in the header's `characters`, other than a replacement of a cast member, fills the next empty seat; when every seat is filled, it adds a seat after the scenario cast.
+  - A cast member marked `player` fills its own seat and is a player whether listed or not; those `players` doesn't list follow the listed ones, in cast order.
+  - Listing any other cast member means a person took that character over.
 - The session's **cast** is the scenario cast with seats filled, then the added seats, then the **joiners**: header `characters` that aren't players or replacements of cast members, which joined or appeared during the session.
 - Header characters and `players` hold for the whole session, on every branch; presence is recorded on each path (section 8.4).
 

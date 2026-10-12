@@ -61,7 +61,7 @@ Every later root, from another opening or a player's message, is made the same w
 ### 2.2 Continuing a chronicle
 
 - **Starting.** A session continues at most one chronicle, named by `chronicle`.
-  - The chronicle's `character` is copied into the header's `characters`, after the others, where it replaces the bundle character with the same ID (Format 12.2). The character keeps that ID for life, so bundle references to it still work. When the character isn't in the scenario's cast, it joins the cast and is present at the start (section 2.1).
+  - The chronicle's `character` is copied into the header's `characters`, after the others, where it replaces the bundle character with the same ID (Format 12.2). When the character isn't in the scenario's cast, it joins the cast and is present at the start (section 2.1).
   - `persona` fills the first seat without a `character`, or adds a seat (Format 12.2), and is listed first in the header's `characters`, unless the people playing bring another character.
   - The chronicle's `limits` are added to the session's `lines` and `veils`, in order, without duplicates.
   - Its `memories` are copied onto each root as carried session entries, a memory without `carry` getting `carry: true` and one without `knownBy` getting the character's ID as its `knownBy`, and its `values` are recorded on each root in one `{"by": "rules"}` change, keyed with the character's ID (`mira.closeness`), before any other change (section 2.1).
@@ -92,7 +92,7 @@ The state at a message is computed by applying, in order:
 1. every variable's initial value, a set normalized and a number clamped as in section 3.3; no location; the whole cast present except the joiners (Format 12.2);
 2. the `changes` of every message on the path from the root to that message, in path order, and within a message in array order.
 
-Playing never modifies a bundle: state is the bundle's starting values plus the changes recorded in the session. Derived variables are computed from that state when read and prepared by steps 1, 4 and 5 of section 3.3; one whose expression fails at runtime, or whose value then fails Format 8.5's rules for values (type, members, finiteness, `int` range and size), is absent. Readers apply recorded changes and never re-run events or trackers on load. Keys, values and validity are defined in Format 8.5.
+Playing never modifies a bundle. Derived variables are computed from that state when read and prepared by steps 1, 4 and 5 of section 3.3; one whose expression fails at runtime, or whose value then fails Format 8.5's rules for values (type, members, finiteness, `int` range and size), is absent. Readers apply recorded changes and never re-run events or trackers on load. Keys, values and validity are defined in Format 8.5.
 
 ### 3.3 Recording changes
 
@@ -134,16 +134,16 @@ interface ModelOutput {
 type Newcomer = Pick<Character, "id" | "name" | "aliases" | "description" | "summary">;
 ```
 
-- **Tracker.** A tracker run is a model call, separate from the story reply, that runs on a message that is sent to models, while it is the head and before the event pass after it. It reads the messages after the last extraction on the path, up to that one, as many of them as the app chooses, and returns everything but `parts`. Its input, at the message it runs on, is:
+- **Tracker.** A tracker run is a model call separate from the story reply. It runs on a message that is sent to models, while that message is the head and before the event pass after it. It reads the messages after the last extraction on the path, up to that one, as many of them as the app chooses, and returns everything but `parts`. Its input, at the message it runs on, is:
   - for each variable in use whose `by` includes `model`, in event order (section 3.3), its key, type, `values` or range, `description` and current value;
   - the scene's values, the ID and name of every location of the bundle and session in world order, and of every cast character in cast order;
   - the entries in use placed in `tracker`, not `disabled`, whose `when` holds: those of the worlds, the cast characters in cast order, the scenario and the session, in the order of section 5.1;
   - the session entries on the path placed in `context`, with their IDs and texts: those the generation can see, and all of them for a tracker run;
   - the messages it reads that are sent to models (Format 12.4), with full knowledge.
-- **Structured reply.** The story model returns the whole payload in its reply. For the narrator and the single voice, the System slot also carries the tracker's input (section 6). Variables have no `knownBy`, so a character's generation in `characters` mode gets no tracker input, and apps keep only the `parts` of its reply.
+- **Structured reply.** The story model returns the whole payload in its reply. For the narrator and the single voice, the System slot carries tracker input (section 6). A character's generation in `characters` mode gets none, and apps keep only the `parts` of its reply.
 - **Plain reply.** Without structure, the reply is one text part whose `speaker` is the message's `char`, or none for the narrator. Apps MUST NOT guess `knownBy` from plain text.
 
-Nothing in the payload takes `ext`. A model adds story content, never mechanics or standing direction:
+Nothing in the payload takes `ext`, and:
 
 - A newcomer whose ID names a character, world, scenario or scenario variable of the bundle or session, an earlier newcomer of the payload included, or who would take the cast past its limit (Format 16), is dropped.
 - An entry whose ID names a session entry on the path that isn't placed in `context` is dropped; a model may update or disable a context entry, such as a memory.
