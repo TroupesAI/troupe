@@ -182,11 +182,11 @@ A heist needs a city, a target and a crew. A **world** is a setting that scenari
 }
 ```
 
-- **The cast** lists who takes part. `{}` is a **seat** for a person; `notes` add context for this story only. A cast with two seats is a two-player story.
+- **The cast** lists who takes part. `{}` is a **seat** for a person; `notes` add context for this story only. A cast with two seats has room for two players.
 - **`premise`** is the situation, sent to the model. **`briefing`** is for the players and is never sent to the model.
 - **`set`** in an opening gives starting values, here the location. The model learns where the scene is, and conditions can test it (chapter 6).
 - **An opening without `content`**, like `harbor`, lets the model write the first message. A list of these works as a menu of starting points.
-- **Presence.** The players' characters and the characters who speak in an opening start present, or the whole cast for an opening without `content`, unless the opening's `set` lists `scene.present`. Everyone else is offstage. An offstage character's description stays out of the prompt, and when someone mentions them, the model gets only their `summary`.
+- **Presence.** The characters who speak in an opening start present, or the whole cast for an opening without `content`, unless the opening's `set` lists `scene.present`. The players' characters are always present at the start. Everyone else is offstage. An offstage character's description stays out of the prompt, and when someone mentions them, the model gets only their `summary`.
 
 The weather entries show the timing and competition options:
 
@@ -245,13 +245,13 @@ The heist runs on a clock: the harbor bells. A **variable** holds state like thi
 
 - **`type`** is `bool`, `int`, `number`, `string`, `enum` (one of `values`) or `set` (a list of distinct strings, such as an inventory).
 - **`description`** is written for authors and the model alike. The model reads it as its instructions when it updates the value.
-- **`by: ["model"]`** lets the **tracker** change the value. The tracker is a model call, often cheaper than the story model, that reads the latest messages and reports what changed. Without `by`, only openings, events (chapter 7) and answers to `ask` change a variable.
+- **`by: ["model"]`** lets the **tracker** change the value. The tracker is a model call, often cheaper than the story model, that reads the latest messages and reports what changed. Without `by`, only openings, events (chapter 7), chronicle values and answers to `ask` change a variable.
 - **`min`, `max`, `maxStep` and `oneWay`** are guardrails: the bell stays between 6 and 12, moves at most 2 at a time, and never goes back.
 - **`of: "characters"`** keeps one value per character, read as `state.trust.kai`.
 - **`ask`** puts a question to the player when the chat starts; `labels` name the choices.
 - **`spoiler`** hides the value from players' screens until the story ends.
 
-The model doesn't see variables on its own. You choose the wording, and who knows it, with an entry:
+The model playing a character never sees variables on its own. You choose the wording, and who knows it, with an entry:
 
 ```json
 { "id": "clock", "text": "The last bell to ring was the {{state.bell}}th. The plan: {{state.approach}}." }

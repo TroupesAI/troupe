@@ -61,7 +61,6 @@ Another opening tried in the same session gets its own root, made by steps 3 to 
   - `persona` fills the first seat without a `character`, or adds a seat (Format 12.2), first in the header's `characters`, unless the people playing bring another character, and the chronicle's `limits` are added to the session's `lines` and `veils`, without duplicates, in order.
   - Its `memories` are copied onto each root as session entries, a memory without `knownBy` getting the character's ID as its `knownBy`, and its `values` are recorded on each root in one `{"by": "rules"}` change, keyed with the character's ID (`mira.closeness`), before any other change (section 2.1).
   - Value keys and memory `knownBy` IDs that name the persona take effect only when the persona plays with its own ID (section 2.1 step 2).
-  - The session never needs the chronicle file to replay.
 - **Writing back** from a path rewrites the chronicle with only what the session changed:
   - `values` keeps only carried keys, keyed without the owner, and takes the latest value of each carried key that a change on the path set, except the root's `by: "rules"` changes without an `event`, which hold the starting values.
   - The memories written back are the carried session entries on the path, the latest version of each ID, whose `knownBy` is absent or names the character. A memory the start copied onto the root is skipped unless a later message on the path holds a newer version.
@@ -92,7 +91,7 @@ Playing never modifies a bundle: state is the bundle's starting values plus the 
 
 ### 3.3 Recording changes
 
-Before recording a change, apps drop each key whose value isn't valid (Format 8.5) or whose channel isn't allowed: `player` needs `by` to include `player` or the variable to have `ask`; `model` needs `by` to include `model`; scene keys accept every channel. They then prepare each remaining value, using the state just before the change:
+Before recording a change, apps drop each key whose value isn't valid (Format 8.5) or whose channel Format 8.1 and 8.4 don't allow. They then prepare each remaining value, using the state just before the change:
 
 1. normalize a set: remove duplicates, then order listed members as declared; normalize `scene.present`: remove duplicates and IDs that name no cast character, then order it by cast order;
 2. for `by: "model"`, limit the difference from the current value to `maxStep`;
@@ -100,7 +99,7 @@ Before recording a change, apps drop each key whose value isn't valid (Format 8.
 4. round `number` values to the nearest double to the decimal that ECMAScript `Number.prototype.toFixed(6)` produces;
 5. clamp: raise the value to `min`, then lower it to `max`.
 
-A key whose prepared value is no longer valid, such as a set grown past its limit (Format 16), is dropped too. The rest are kept. Within a message, changes are recorded in the order they happen: on a root, in the order of section 2.1; on any message, player and model changes before the changes of the events they trigger.
+A key whose prepared value is no longer valid, such as a set grown past its limit (Format 16), is dropped too. Within a message, changes are recorded in the order they happen: on a root, in the order of section 2.1; on any message, player and model changes before the changes of the events they trigger.
 
 **Readers** re-apply steps 1, 4 and 5 when loading and drop invalid keys, but don't re-check channels, `maxStep` or `oneWay`, so history survives later edits to the bundle.
 
@@ -117,7 +116,7 @@ A key whose prepared value is no longer valid, such as a set grown past its limi
 
 ### 3.4 Model output
 
-Models may produce state as well as story. One payload carries it, through either of two transports. Its schema is `model-output.schema.json` (Format Appendix A):
+Models may produce state as well as story. One payload carries it, through either of two transports. An **extraction** is a tracker run, or a structured reply from the narrator or the single voice. Its schema is `model-output.schema.json` (Format Appendix A):
 
 ```ts
 interface ModelOutput {
@@ -135,7 +134,7 @@ type Newcomer = Pick<Character, "id" | "name" | "aliases" | "description" | "sum
   - the scene's values, the ID and name of every location, and the ID and name of every cast character;
   - the entries in use placed in `tracker`, not `disabled`, whose `when` holds: those of the worlds, the cast characters in cast order, the scenario and the session, in the order of section 5.1;
   - the messages it reads that are sent to models (Format 12.4), with full knowledge.
-- **Structured reply.** The story model returns the whole payload in its reply. For the narrator and the single voice, the System slot also carries the tracker's input other than the messages, taken at the prompt's evaluation point, so it knows which values it may change. Variables have no `knownBy`, so a character's generation in `characters` mode gets no tracker input, and apps keep only the `parts` of its reply.
+- **Structured reply.** The story model returns the whole payload in its reply. For the narrator and the single voice, the System slot also carries the tracker's input (section 6). Variables have no `knownBy`, so a character's generation in `characters` mode gets no tracker input, and apps keep only the `parts` of its reply.
 - **Plain reply.** Without structure, the reply is one text part whose `speaker` is the message's `char`, or none for the narrator. Apps MUST NOT guess `knownBy` from plain text.
 
 Nothing in the payload takes `ext`. A model adds story content, never mechanics or standing direction:
@@ -143,7 +142,7 @@ Nothing in the payload takes `ext`. A model adds story content, never mechanics 
 - A newcomer whose ID names a character, world, scenario or scenario variable of the bundle or session, an earlier newcomer of the payload included, or who would take the cast past its limit (Format 16), is dropped.
 - An entry whose ID names a session entry on the path that isn't placed in `context` is dropped; a model may update or disable a context entry, such as a memory.
 
-Apps apply a payload in this order: `characters` join the header; `parts` are stored; `changes` are recorded as `{"by": "model", …}`, prepared as in section 3.3, on the message the tracker runs on, or the reply itself; and `entries` become session entries on the same message. Speakers that name no cast character are dropped (a newcomer that joined is in the cast), and so are `knownBy` IDs other than `narrator` that name none; a `knownBy` whose IDs are all dropped becomes `["narrator"]`, or `[<speaker>, "narrator"]` on a part with a speaker. Before applying a payload, apps read its empty values as Format 2.2 says and drop its unknown properties (Format 15); a part, entry or newcomer that still fails the schema is dropped, and so is an entry or newcomer whose ID an earlier one in the payload has; change keys and values that aren't valid are dropped by preparation. Output that isn't a JSON object, and a structured reply left with no parts, is discarded, and nothing is recorded. An **extraction** is a tracker run, or a structured reply from the narrator or the single voice. Each records one `{"by": "model", …}` change, with an empty `set` when it changes nothing, which marks where the next tracker run starts. The event pass after a message waits for any extraction the app runs on it.
+Apps apply a payload in this order: `characters` join the header; `parts` are stored; `changes` are recorded as `{"by": "model", …}`, prepared as in section 3.3, on the message the tracker runs on, or the reply itself; and `entries` become session entries on the same message. Speakers that name no cast character are dropped (a newcomer that joined is in the cast), and so are `knownBy` IDs other than `narrator` that name none; a `knownBy` whose IDs are all dropped becomes `["narrator"]`, or `[<speaker>, "narrator"]` on a part with a speaker. Before applying a payload, apps read its empty values as Format 2.2 says and drop its unknown properties (Format 15); a part, entry or newcomer that still fails the schema is dropped, and so is an entry or newcomer whose ID an earlier one in the payload has; change keys and values that aren't valid are dropped by preparation. Output that isn't a JSON object, and a structured reply left with no parts, is discarded, and nothing is recorded. Each extraction records one `{"by": "model", …}` change, with an empty `set` when it changes nothing, which marks where the next tracker run starts. The event pass after a message waits for any extraction the app runs on it.
 
 ---
 
@@ -245,7 +244,7 @@ Troupe defines what goes into a prompt and in which slot; formatting, mapping to
 
 | Slot | Contents, in order |
 | --- | --- |
-| **System** | the app's own prompt; the session's `limits` (Format 12); selected entries placed in `system`; event directions (section 3.3); for a structured reply from the narrator or the single voice, the tracker's input other than the messages (section 3.4) |
+| **System** | the app's own prompt; the session's `limits` (Format 12); selected entries placed in `system`; event directions (section 3.3); for a structured reply from the narrator or the single voice, the tracker's input other than the messages, taken at the prompt's evaluation point (section 3.4) |
 | **Setting** | the premise; world descriptions; the current location and its parents, innermost first |
 | **People** | present model-played characters, then the character being generated for if absent: description and cast `notes`; the players' characters, with their cast `notes`; offstage model-played cast characters other than the one being generated for, whose name or alias, as a plain key, matches the scanned text (section 5.2) of the last 4 messages, as the generation can see it: their `summary`, a character without one contributing nothing; dialogue examples of the present model-played characters and the character being generated for |
 | **Context** | selected entries placed in `context`; pinned messages |
@@ -277,7 +276,7 @@ Knowledge limits what models see, never what people see; secrets between human p
 
 ## 8. Conformance
 
-A conforming **app** reads files as a conforming reader (Format 17.1), follows Format 16, and does everything this document requires. Pulling is optional.
+A conforming **app** reads files as a conforming reader (Format 17.1), follows Format 16, and does everything this document requires.
 
 ---
 
@@ -286,7 +285,7 @@ A conforming **app** reads files as a conforming reader (Format 17.1), follows F
 | Decision | Instead of | Why |
 | --- | --- | --- |
 | Write-back carries only what a session changed | Rewriting every carried value from the path | Two sessions that continue one chronicle keep each other's progress; a key both changed takes the later write. |
-| App actions unspecified: editing, deleting, continuing, previews, turn order | Procedures for each | A reader only ever sees the snapshot those actions leave, so the spec constrains the snapshot (summaries that match their messages) and leaves the actions to apps. |
+| App actions unspecified: editing or deleting messages, continuing, previews, turn order | Procedures for each | A reader only ever sees the snapshot those actions leave, so the spec constrains the snapshot (summaries that match their messages) and leaves the actions to apps. |
 | Story fixed, fitting a recorded baseline | Specifying only content, or only procedures | Outcomes replay exactly, and better fitting can come later. |
 | Identical entry selection is a MUST | Leaving selection to each app | Every app gives the model the same lore for the same file and session, and the conformance suite can test selection. |
 | Events in a single pass, once per round, one message per pass | Cascading rules | Deterministic, terminating, no accidental branches. |

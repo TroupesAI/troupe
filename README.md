@@ -2,7 +2,7 @@
 
 An open file format for AI roleplay: characters, the worlds they live in, the scenarios that bring them together, the mechanics that drive a story, and sessions: the chats people play, exported so any app can continue them.
 
-**Status:** v0.12 draft. Breaking changes are allowed until 1.0, which is tagged once none is pending and the conformance suite covers the spec ([future work](spec/format.md#appendix-d-future-work)).
+**Status:** v0.12 draft. Breaking changes are allowed until 1.0, which is tagged once none is pending and the conformance suite covers the spec.
 
 ## A first look
 
