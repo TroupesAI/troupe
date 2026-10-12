@@ -1,53 +1,136 @@
 {
   "description": "Openings are roots (Format 6.3, 12.1): each opening played is a root; opening, turn and state belong to the path's root",
   "bundleFile": "../../../examples/lantern-heist.troupe.json",
-  "sessionFile": "../../../examples/lantern-heist.troupe-session.jsonl",
-  "addMessages": [
-    {
-      "id": "c1",
-      "opening": "caught",
-      "from": "system",
-      "content": [
+  "session": {
+    "header": {
+      "kind": "session",
+      "scenario": "heist",
+      "characters": [
         {
-          "text": "Water laps at your knees. The vault door has slammed shut behind you, and Kai is nowhere to be seen."
-        },
-        {
-          "speaker": "elena",
-          "text": "He was supposed to hold that door. *She doesn't look surprised.*"
+          "id": "mara",
+          "name": "Mara",
+          "description": "A retired smuggler with a debt to settle."
         }
       ],
-      "changes": [
-        {
-          "by": "rules",
-          "set": {
-            "scene.location": "vault",
-            "bell": 11,
-            "scene.present": [
-              "mara",
-              "elena"
-            ]
-          }
-        },
-        {
-          "by": "player",
-          "set": {
-            "approach": "loud"
-          }
-        }
+      "players": [
+        "mara"
       ]
     },
-    {
-      "id": "c2",
-      "parent": "c1",
-      "from": "player",
-      "content": [
-        {
-          "speaker": "mara",
-          "text": "Where is he?"
-        }
-      ]
-    }
-  ],
+    "messages": [
+      {
+        "id": "1",
+        "opening": "rooftop_briefing",
+        "from": "system",
+        "content": [
+          {
+            "text": "Rain hammers the slate roofs above the Duke's manor."
+          },
+          {
+            "speaker": "elena",
+            "text": "*Elena unrolls a soaked map.* Two guards on the east stair. We go at the eighth bell."
+          },
+          {
+            "speaker": "kai",
+            "text": "Or we go now, while they're drunk. *He grins at {{user}}.* Your call, boss."
+          }
+        ],
+        "changes": [
+          {
+            "by": "rules",
+            "set": {
+              "scene.location": "rooftops",
+              "scene.present": [
+                "mara",
+                "elena",
+                "kai"
+              ]
+            }
+          },
+          {
+            "by": "player",
+            "set": {
+              "approach": "quiet"
+            }
+          }
+        ]
+      },
+      {
+        "id": "2",
+        "parent": "1",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "mara",
+            "text": "We wait for the eighth bell. Kai, you take the east stair."
+          }
+        ]
+      },
+      {
+        "id": "4",
+        "parent": "2",
+        "from": "model",
+        "char": "kai",
+        "content": [
+          {
+            "text": "The seventh bell rolls across the harbor."
+          }
+        ],
+        "changes": [
+          {
+            "by": "model",
+            "set": {
+              "bell": 7,
+              "trust.kai": 0.5
+            }
+          }
+        ]
+      },
+      {
+        "id": "c1",
+        "opening": "caught",
+        "from": "system",
+        "content": [
+          {
+            "text": "Water laps at your knees. The vault door has slammed shut behind you, and Kai is nowhere to be seen."
+          },
+          {
+            "speaker": "elena",
+            "text": "He was supposed to hold that door. *She doesn't look surprised.*"
+          }
+        ],
+        "changes": [
+          {
+            "by": "rules",
+            "set": {
+              "scene.location": "vault",
+              "bell": 11,
+              "scene.present": [
+                "mara",
+                "elena"
+              ]
+            }
+          },
+          {
+            "by": "player",
+            "set": {
+              "approach": "loud"
+            }
+          }
+        ]
+      },
+      {
+        "id": "c2",
+        "parent": "c1",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "mara",
+            "text": "Where is he?"
+          }
+        ]
+      }
+    ]
+  },
   "tests": [
     {
       "type": "state",

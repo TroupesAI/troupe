@@ -1,5 +1,5 @@
 {
-  "description": "of: \"others\" (every cast character except the owner, players included) and open \"*\" maps: no initial, absent keys read as the default, setting the default removes a key (Format 8.3)",
+  "description": "of: \"others\" (every cast character except the owner, players included) and open \"*\" maps: no initial, keys start absent and appear when a change sets them, and setting a key to the default removes it (Format 8.3)",
   "bundle": {
     "kind": "bundle",
     "characters": [
@@ -45,16 +45,6 @@
             "of": "*",
             "min": 0,
             "description": "d"
-          }
-        ],
-        "events": [
-          {
-            "id": "loot",
-            "when": "!('torch' in state.inv)",
-            "set": {
-              "inv.torch": 2,
-              "inv.rope": 0
-            }
           }
         ]
       }

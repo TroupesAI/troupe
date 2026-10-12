@@ -1,5 +1,5 @@
 {
-  "description": "Macro parsing (Format 10): {{char}}, {{user}}, {{@id}}, comments, escapes, unknown forms left as written and rescanned from the next character",
+  "description": "Macro parsing (Format 10): {{char}}, {{user}}, {{@id}}, comments, escapes, picks, unknown forms left as written and rescanned from the next character",
   "bundle": {
     "kind": "bundle",
     "characters": [
@@ -33,8 +33,7 @@
       ],
       "players": [
         "p"
-      ],
-      "head": "1"
+      ]
     },
     "messages": [
       {
@@ -106,6 +105,30 @@
       "text": "{{Char}} {{@A}}",
       "char": "a",
       "expect": "{{Char}} {{@A}}"
+    },
+    {
+      "type": "macro",
+      "name": "a pick whose options are all the same resolves to it",
+      "text": "{{pick::x::x}}",
+      "expect": "x"
+    },
+    {
+      "type": "macro",
+      "name": "spaces inside options are kept",
+      "text": "[{{pick::a b::a b}}]",
+      "expect": "[a b]"
+    },
+    {
+      "type": "macro",
+      "name": "a pick needs at least two options, none empty; otherwise it is left as written",
+      "text": "{{pick::a}} {{pick::a::}} {{pick::::a}}",
+      "expect": "{{pick::a}} {{pick::a::}} {{pick::::a}}"
+    },
+    {
+      "type": "check",
+      "expect": {
+        "codes": []
+      }
     }
   ]
 }

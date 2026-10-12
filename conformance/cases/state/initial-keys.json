@@ -33,6 +33,12 @@
       "absent": [
         "rep.pirates"
       ]
+    },
+    {
+      "type": "check",
+      "expect": {
+        "codes": []
+      }
     }
   ]
 }

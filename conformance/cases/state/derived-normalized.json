@@ -38,7 +38,7 @@
           {
             "id": "tags",
             "type": "set",
-            "derive": "['y', 'x', 'y']",
+            "derive": "['y', 'y', 'x']",
             "description": "deduplicated"
           },
           {
@@ -67,6 +67,12 @@
         "phase",
         "inf"
       ]
+    },
+    {
+      "type": "check",
+      "expect": {
+        "codes": []
+      }
     }
   ]
 }

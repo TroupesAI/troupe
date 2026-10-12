@@ -34,62 +34,6 @@
           {
             "character": "kai"
           }
-        ],
-        "variables": [
-          {
-            "id": "x",
-            "type": "int",
-            "description": "d"
-          },
-          {
-            "id": "zero",
-            "type": "int",
-            "description": "d"
-          }
-        ],
-        "events": [
-          {
-            "id": "e",
-            "when": "true",
-            "compute": {
-              "x": "state.x + 1"
-            },
-            "outcomes": [
-              {
-                "compute": {
-                  "x": "1 / state.zero"
-                }
-              }
-            ]
-          }
-        ]
-      }
-    ]
-  },
-  "session": {
-    "header": {
-      "kind": "session",
-      "scenario": "s",
-      "characters": [
-        {
-          "id": "p",
-          "name": "Pat",
-          "description": "Pat."
-        }
-      ],
-      "players": [
-        "p"
-      ]
-    },
-    "messages": [
-      {
-        "id": "1",
-        "from": "player",
-        "content": [
-          {
-            "speaker": "p",
-            "text": "x"
-          }
         ]
       }
     ]

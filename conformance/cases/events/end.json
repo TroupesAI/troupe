@@ -1,5 +1,5 @@
 {
-  "description": "end marks the story finished on the path of the message where it fired, from an event or from an outcome (Format 9)",
+  "description": "end marks the story finished at the message where the event fired and at every message after it on its path, from an event or from the chosen outcome; other branches and earlier messages aren't finished (Format 9)",
   "bundle": {
     "kind": "bundle",
     "characters": [
@@ -18,19 +18,10 @@
             "character": "a"
           }
         ],
-        "variables": [
-          {
-            "id": "stakes",
-            "type": "int",
-            "initial": 2,
-            "description": "d"
-          }
-        ],
         "events": [
           {
-            "id": "d1",
-            "when": "turn == 2",
-            "direct": "Raise the stakes to {{state.stakes}}.",
+            "id": "bell",
+            "when": "true",
             "message": [
               {
                 "text": "A bell rings."
@@ -38,23 +29,22 @@
             ]
           },
           {
-            "id": "d2",
-            "when": "turn == 2",
-            "direct": "After a model message.",
+            "id": "fate",
+            "on": "model",
+            "when": "true",
             "outcomes": [
               {
-                "direct": "Outcome direction.",
                 "end": true
+              },
+              {
+                "direct": "The night goes on."
               }
-            ],
-            "on": "model"
+            ]
           },
           {
-            "id": "later",
-            "when": "turn == 3",
-            "set": {
-              "stakes": 5
-            }
+            "id": "dawn",
+            "when": "true",
+            "end": true
           }
         ]
       }
@@ -73,8 +63,7 @@
       ],
       "players": [
         "p"
-      ],
-      "head": "5"
+      ]
     },
     "messages": [
       {
@@ -82,6 +71,7 @@
         "from": "player",
         "content": [
           {
+            "speaker": "p",
             "text": "Start."
           }
         ]
@@ -92,13 +82,14 @@
         "from": "player",
         "content": [
           {
+            "speaker": "p",
             "text": "Go."
           }
         ],
         "changes": [
           {
             "by": "rules",
-            "event": "d1",
+            "event": "bell",
             "set": {}
           }
         ]
@@ -120,13 +111,14 @@
         "char": "a",
         "content": [
           {
-            "text": "Reply."
+            "speaker": "a",
+            "text": "That's the last bell."
           }
         ],
         "changes": [
           {
             "by": "rules",
-            "event": "d2",
+            "event": "fate",
             "outcome": 0,
             "set": {}
           }
@@ -138,19 +130,68 @@
         "from": "player",
         "content": [
           {
+            "speaker": "p",
             "text": "Next."
           }
         ]
       },
       {
-        "id": "3h",
+        "id": "4b",
         "parent": "3",
         "from": "model",
         "char": "a",
-        "hidden": true,
         "content": [
           {
-            "text": "A hidden reply."
+            "speaker": "a",
+            "text": "Not yet."
+          }
+        ],
+        "changes": [
+          {
+            "by": "rules",
+            "event": "fate",
+            "outcome": 1,
+            "set": {}
+          }
+        ]
+      },
+      {
+        "id": "6",
+        "parent": "1",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "Wait for dawn."
+          }
+        ],
+        "changes": [
+          {
+            "by": "rules",
+            "event": "dawn",
+            "set": {}
+          }
+        ]
+      },
+      {
+        "id": "7",
+        "parent": "6",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "And after?"
+          }
+        ]
+      },
+      {
+        "id": "6b",
+        "parent": "1",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "Leave before dawn."
           }
         ]
       }
@@ -158,15 +199,59 @@
   },
   "tests": [
     {
+      "type": "check",
+      "name": "outcome is recorded exactly for the event with outcomes",
+      "expect": {
+        "codes": []
+      }
+    },
+    {
       "type": "ended",
+      "name": "before any end",
+      "at": "1",
+      "expect": false
+    },
+    {
+      "type": "ended",
+      "name": "a firing without end",
       "at": "3",
       "expect": false
     },
     {
       "type": "ended",
-      "name": "an outcome's end finishes the path",
+      "name": "an outcome's end finishes the path at its message",
       "at": "4",
       "expect": true
+    },
+    {
+      "type": "ended",
+      "name": "and at every later message",
+      "at": "5",
+      "expect": true
+    },
+    {
+      "type": "ended",
+      "name": "an outcome without end doesn't",
+      "at": "4b",
+      "expect": false
+    },
+    {
+      "type": "ended",
+      "name": "an event's end",
+      "at": "6",
+      "expect": true
+    },
+    {
+      "type": "ended",
+      "name": "a descendant of the end",
+      "at": "7",
+      "expect": true
+    },
+    {
+      "type": "ended",
+      "name": "a sibling branch isn't finished",
+      "at": "6b",
+      "expect": false
     }
   ]
 }

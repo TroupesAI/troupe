@@ -3,23 +3,10 @@
   "bundle": {
     "kind": "bundle",
     "language": "es",
-    "characters": [
-      {
-        "id": "a",
-        "name": "Ana",
-        "description": "Ana."
-      }
-    ],
     "scenarios": [
       {
         "id": "s",
-        "narrator": "el narrador",
-        "entries": [
-          {
-            "id": "gen",
-            "text": "{{char}} describe la escena."
-          }
-        ]
+        "narrator": "el narrador"
       }
     ]
   },
@@ -30,6 +17,12 @@
       "text": "{{char}} describe la escena.",
       "narrator": true,
       "expect": "el narrador describe la escena."
+    },
+    {
+      "type": "check",
+      "expect": {
+        "codes": []
+      }
     }
   ]
 }

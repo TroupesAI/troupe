@@ -46,7 +46,7 @@
           {
             "id": "tiny",
             "type": "number",
-            "initial": 1e-7,
+            "initial": 1e-07,
             "description": "d"
           },
           {
@@ -113,8 +113,7 @@
       ],
       "players": [
         "p"
-      ],
-      "head": "2"
+      ]
     },
     "messages": [
       {
@@ -200,6 +199,12 @@
       "text": "{{@state.approach}}",
       "expect": "Slip in unseen",
       "name": "{{@state}} renders a label like {{state}}: a value with a label renders as its label"
+    },
+    {
+      "type": "check",
+      "expect": {
+        "codes": []
+      }
     }
   ]
 }

@@ -177,6 +177,12 @@
       "name": "a location ID by name",
       "text": "{{state.hideout}} = {{@state.hideout}}",
       "expect": "old_mill = The Old Mill"
+    },
+    {
+      "type": "check",
+      "expect": {
+        "codes": []
+      }
     }
   ]
 }

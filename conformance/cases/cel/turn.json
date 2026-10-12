@@ -1,5 +1,5 @@
 {
-  "description": "turn counts player messages on the path, inclusive, and ago() a key's latest change (Format 11.1, 12.1)",
+  "description": "turn counts player messages on the path, inclusive; count() and ago() read an event's firings, ago() from its latest (Format 11.1, 12.1)",
   "bundle": {
     "kind": "bundle",
     "characters": [
@@ -7,11 +7,6 @@
         "id": "a",
         "name": "Ann",
         "description": "Ann."
-      },
-      {
-        "id": "b",
-        "name": "Bea",
-        "description": "Bea."
       }
     ],
     "scenarios": [
@@ -21,9 +16,6 @@
           {},
           {
             "character": "a"
-          },
-          {
-            "character": "b"
           }
         ],
         "variables": [
@@ -40,16 +32,6 @@
             "compute": {
               "n": "state.n + 1"
             }
-          },
-          {
-            "id": "after_player",
-            "on": "player",
-            "when": "true"
-          },
-          {
-            "id": "after_model",
-            "on": "model",
-            "when": "true"
           }
         ],
         "openings": [
@@ -124,11 +106,6 @@
             "set": {
               "n": 2
             }
-          },
-          {
-            "by": "rules",
-            "event": "after_player",
-            "set": {}
           }
         ]
       },
@@ -154,25 +131,29 @@
             "set": {}
           }
         ]
-      },
-      {
-        "id": "p1",
-        "from": "player",
-        "content": [
-          {
-            "text": "I start."
-          }
-        ]
       }
     ]
   },
   "tests": [
     {
       "type": "cel",
-      "name": "turn: player messages on the path, inclusive",
-      "at": "4",
-      "expr": "turn == 1 && ago('any') == 0",
+      "name": "an opening root is round 0, and the event fired there",
+      "at": "r",
+      "expr": "turn == 0 && count('any') == 1 && ago('any') == 0",
       "expect": true
+    },
+    {
+      "type": "cel",
+      "name": "turn: player messages on the path, inclusive; ago() from the latest firing",
+      "at": "4",
+      "expr": "turn == 1 && count('any') == 2 && ago('any') == 0",
+      "expect": true
+    },
+    {
+      "type": "check",
+      "expect": {
+        "codes": []
+      }
     }
   ]
 }

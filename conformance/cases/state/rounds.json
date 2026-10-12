@@ -163,6 +163,12 @@
       "at": "1",
       "expr": "elapsed == 0",
       "expect": true
+    },
+    {
+      "type": "check",
+      "expect": {
+        "codes": []
+      }
     }
   ]
 }

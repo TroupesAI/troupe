@@ -22,20 +22,9 @@
           {
             "id": "trust",
             "type": "number",
-            "of": "others",
+            "of": "cast",
             "initial": 0.5,
             "description": "d"
-          }
-        ],
-        "openings": [
-          {
-            "id": "o",
-            "content": [
-              {
-                "speaker": "a",
-                "text": "Welcome, both of you."
-              }
-            ]
           }
         ]
       }
@@ -78,13 +67,17 @@
     },
     {
       "type": "state",
-      "name": "the whole cast but the joiner is present at first, in cast order: p's seat, a, q's added seat",
+      "name": "the whole cast but the joiner is present at first, in cast order: p's seat, a, q's added seat; every cast character, the joiner too, is a key of a cast map",
       "expect": {
         "scene.present": [
           "p",
           "a",
           "q"
-        ]
+        ],
+        "trust.p": 0.5,
+        "trust.a": 0.5,
+        "trust.q": 0.5,
+        "trust.j": 0.5
       }
     },
     {

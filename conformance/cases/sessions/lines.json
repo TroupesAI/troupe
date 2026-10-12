@@ -1,5 +1,5 @@
 {
-  "description": "Session lines (Format 12): each line after the header is a message, in file order; the header's head is the head",
+  "description": "Session lines (Format 12, 12.1): each line after the header is a message, in file order, and each parent names a message on an earlier line",
   "bundle": {
     "kind": "bundle",
     "characters": [
@@ -7,11 +7,6 @@
         "id": "a",
         "name": "Ann",
         "description": "Ann."
-      },
-      {
-        "id": "b",
-        "name": "Bea",
-        "description": "Bea."
       }
     ],
     "scenarios": [
@@ -21,9 +16,6 @@
           {},
           {
             "character": "a"
-          },
-          {
-            "character": "b"
           }
         ]
       }
@@ -42,8 +34,7 @@
       ],
       "players": [
         "p"
-      ],
-      "head": "3"
+      ]
     },
     "messages": [
       {
@@ -84,6 +75,13 @@
       "expect": {
         "codes": []
       }
+    },
+    {
+      "type": "cel",
+      "name": "the lines form one path: two player messages",
+      "at": "3",
+      "expr": "turn == 2 && last.from == 'player'",
+      "expect": true
     }
   ]
 }

@@ -83,13 +83,6 @@
                 "text": "This way."
               }
             ]
-          },
-          {
-            "id": "street_start",
-            "title": "On the street",
-            "set": {
-              "scene.location": "street"
-            }
           }
         ]
       }
@@ -108,8 +101,7 @@
       ],
       "players": [
         "p"
-      ],
-      "head": "6"
+      ]
     },
     "messages": [
       {

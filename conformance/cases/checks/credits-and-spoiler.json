@@ -16,13 +16,7 @@
       {
         "id": "ghost",
         "name": "The Ghost",
-        "description": "A ghost in the cellar.",
-        "entries": [
-          {
-            "id": "cold",
-            "text": "The air turns cold around {{char}}."
-          }
-        ]
+        "description": "A ghost in the cellar."
       }
     ],
     "scenarios": [
@@ -42,12 +36,6 @@
         "openings": [
           {
             "id": "o",
-            "set": {
-              "scene.present": [
-                "ann",
-                "ghost"
-              ]
-            },
             "content": [
               {
                 "speaker": "ann",
@@ -72,8 +60,7 @@
       ],
       "players": [
         "p"
-      ],
-      "head": "1"
+      ]
     },
     "messages": [
       {

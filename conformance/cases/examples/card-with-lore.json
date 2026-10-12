@@ -38,62 +38,26 @@
             }
           }
         ]
+      },
+      {
+        "id": "4",
+        "opening": "shore_leave",
+        "from": "system",
+        "content": [],
+        "changes": [
+          {
+            "by": "rules",
+            "set": {
+              "scene.present": [
+                "you",
+                "mira"
+              ]
+            }
+          }
+        ]
       }
     ]
   },
-  "addMessages": [
-    {
-      "id": "3",
-      "parent": "1",
-      "from": "player",
-      "content": [
-        {
-          "speaker": "you",
-          "text": "Is the Kestrel safe? Any word on your sister?"
-        }
-      ]
-    },
-    {
-      "id": "4",
-      "opening": "shore_leave",
-      "from": "system",
-      "content": [],
-      "changes": [
-        {
-          "by": "rules",
-          "set": {
-            "scene.present": [
-              "you",
-              "mira"
-            ]
-          }
-        }
-      ]
-    },
-    {
-      "id": "5",
-      "parent": "4",
-      "from": "model",
-      "char": "mira",
-      "content": [
-        {
-          "speaker": "mira",
-          "text": "Another round?"
-        }
-      ]
-    },
-    {
-      "id": "6",
-      "parent": "5",
-      "from": "player",
-      "content": [
-        {
-          "speaker": "you",
-          "text": "Sure."
-        }
-      ]
-    }
-  ],
   "tests": [
     {
       "type": "check",

@@ -2,22 +2,9 @@
   "description": "A knownBy ID that names no character is UNKNOWN_CHARACTER (Format 7.4, 17.2)",
   "bundle": {
     "kind": "bundle",
-    "characters": [
-      {
-        "id": "a",
-        "name": "Ann",
-        "description": "Ann."
-      }
-    ],
     "scenarios": [
       {
         "id": "s",
-        "cast": [
-          {},
-          {
-            "character": "a"
-          }
-        ],
         "entries": [
           {
             "id": "secret",
@@ -25,38 +12,6 @@
               "zed"
             ],
             "text": "A secret."
-          },
-          {
-            "id": "open",
-            "text": "Known to all."
-          }
-        ]
-      }
-    ]
-  },
-  "session": {
-    "header": {
-      "kind": "session",
-      "scenario": "s",
-      "characters": [
-        {
-          "id": "p",
-          "name": "Pat",
-          "description": "Pat."
-        }
-      ],
-      "players": [
-        "p"
-      ]
-    },
-    "messages": [
-      {
-        "id": "1",
-        "from": "player",
-        "content": [
-          {
-            "speaker": "p",
-            "text": "x"
           }
         ]
       }

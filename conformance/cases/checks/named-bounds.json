@@ -1,0 +1,78 @@
+{
+  "description": "min and max may name another numeric variable of the same owner, an int for an int, whose own bounds are numbers (Format 8.1, 17.2): a bound naming no variable, a variable bounded by a variable, or a number variable for an int is UNKNOWN_VARIABLE",
+  "bundle": {
+    "kind": "bundle",
+    "scenarios": [
+      {
+        "id": "s",
+        "variables": [
+          {
+            "id": "max_hp",
+            "type": "int",
+            "initial": 20,
+            "description": "d"
+          },
+          {
+            "id": "hp",
+            "type": "int",
+            "min": 0,
+            "max": "max_hp",
+            "initial": 15,
+            "by": [
+              "model"
+            ],
+            "description": "d"
+          },
+          {
+            "id": "broken",
+            "type": "int",
+            "max": "nowhere",
+            "description": "d"
+          },
+          {
+            "id": "chained",
+            "type": "int",
+            "max": "hp",
+            "description": "Bounded by hp, whose own max names a variable."
+          },
+          {
+            "id": "frac",
+            "type": "number",
+            "initial": 2.5,
+            "description": "d"
+          },
+          {
+            "id": "stack",
+            "type": "int",
+            "max": "frac",
+            "description": "An int can't be bounded by a number variable."
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "check",
+      "expect": {
+        "codes": [
+          "UNKNOWN_VARIABLE"
+        ],
+        "includes": [
+          {
+            "code": "UNKNOWN_VARIABLE",
+            "at": "/scenarios/0/variables/2/max"
+          },
+          {
+            "code": "UNKNOWN_VARIABLE",
+            "at": "/scenarios/0/variables/3/max"
+          },
+          {
+            "code": "UNKNOWN_VARIABLE",
+            "at": "/scenarios/0/variables/5/max"
+          }
+        ]
+      }
+    }
+  ]
+}

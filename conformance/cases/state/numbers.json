@@ -501,6 +501,12 @@
       "name": "initial values aren't rounded, so they render unrounded",
       "text": "{{state.big}} {{state.small}} {{state.noisy}}",
       "expect": "1e+21 1.5e-10 0.30000000000000004"
+    },
+    {
+      "type": "check",
+      "expect": {
+        "codes": []
+      }
     }
   ]
 }

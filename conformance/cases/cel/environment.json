@@ -145,10 +145,10 @@
     },
     {
       "type": "cel",
-      "expr": "count('nowhere/x') == 0 && ago('nowhere/x') == 1000000000",
+      "expr": "count('nowhere' + '/x') == 0 && ago('nowhere' + '/x') == 1000000000",
       "at": "4",
       "expect": true,
-      "name": "unknown names: 0 and 1000000000, no error"
+      "name": "a name that is no event, entry or key: 0 and 1000000000, no error"
     },
     {
       "type": "cel",
@@ -317,6 +317,13 @@
       "expr": "'kai'.matches(string(1))",
       "expect": {
         "checkError": true
+      }
+    },
+    {
+      "type": "check",
+      "name": "B.2 and B.3 conform",
+      "expect": {
+        "codes": []
       }
     }
   ]

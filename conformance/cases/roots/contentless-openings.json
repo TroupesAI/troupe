@@ -46,14 +46,6 @@
             "description": "The room's mood."
           }
         ],
-        "entries": [
-          {
-            "id": "first_tavern",
-            "position": "system",
-            "when": "opening == 'tavern' && turn == 0",
-            "text": "Open at {{@scene.location}}: {{@ann}} greets {{user}}."
-          }
-        ],
         "events": [
           {
             "id": "arrive",
@@ -67,14 +59,6 @@
                 "text": "Welcome, {{user}}!"
               }
             ]
-          },
-          {
-            "id": "after_player",
-            "on": "player",
-            "when": "true",
-            "set": {
-              "mood": "chatty"
-            }
           }
         ],
         "openings": [
@@ -83,15 +67,6 @@
             "title": "At the tavern",
             "set": {
               "scene.location": "tavern"
-            }
-          },
-          {
-            "id": "road",
-            "title": "On the road",
-            "set": {
-              "scene.present": [
-                "bea"
-              ]
             }
           }
         ]
@@ -150,54 +125,36 @@
             "text": "Welcome, {{user}}!"
           }
         ]
-      },
-      {
-        "id": "2",
-        "parent": "1-events",
-        "from": "model",
-        "char": "ann",
-        "content": [
-          {
-            "speaker": "ann",
-            "text": "Sit anywhere."
-          }
-        ]
-      },
-      {
-        "id": "3",
-        "parent": "2",
-        "from": "player",
-        "content": [
-          {
-            "speaker": "p",
-            "text": "Thanks."
-          }
-        ],
-        "changes": [
-          {
-            "by": "rules",
-            "event": "after_player",
-            "set": {
-              "mood": "chatty"
-            }
-          }
-        ]
       }
     ]
   },
   "tests": [
+    {
+      "type": "check",
+      "expect": {
+        "codes": []
+      }
+    },
+    {
+      "type": "state",
+      "name": "the root records the opening's set and who is present",
+      "at": "1",
+      "expect": {
+        "scene.location": "tavern",
+        "scene.present": [
+          "p",
+          "ann",
+          "bea"
+        ],
+        "mood": "festive"
+      }
+    },
     {
       "type": "cel",
       "name": "opening is the root's opening, also at the event message",
       "expr": "opening == 'tavern' && turn == 0",
       "at": "1-events",
       "expect": true
-    },
-    {
-      "type": "check",
-      "expect": {
-        "codes": []
-      }
     }
   ]
 }

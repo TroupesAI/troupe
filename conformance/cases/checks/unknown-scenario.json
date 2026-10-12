@@ -11,21 +11,14 @@
     ],
     "scenarios": [
       {
-        "id": "s",
-        "openings": [
-          {
-            "id": "o",
-            "title": "Start"
-          }
-        ]
+        "id": "s"
       }
     ]
   },
   "session": {
     "header": {
       "kind": "session",
-      "scenario": "a",
-      "head": "1"
+      "scenario": "a"
     },
     "messages": [
       {
@@ -45,6 +38,12 @@
       "expect": {
         "codes": [
           "UNKNOWN_SCENARIO"
+        ],
+        "includes": [
+          {
+            "code": "UNKNOWN_SCENARIO",
+            "at": "header/scenario"
+          }
         ]
       }
     }

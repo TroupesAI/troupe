@@ -27,27 +27,6 @@
               "lamp"
             ],
             "text": "one good key"
-          },
-          {
-            "id": "plain",
-            "text": "always on"
-          }
-        ]
-      }
-    ]
-  },
-  "session": {
-    "header": {
-      "kind": "session",
-      "scenario": "s"
-    },
-    "messages": [
-      {
-        "id": "1",
-        "from": "player",
-        "content": [
-          {
-            "text": "The lamp [ aaaaaaaaaa"
           }
         ]
       }

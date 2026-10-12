@@ -1,203 +1,15 @@
 {
-  "description": "Format Appendix B.2 and B.3, the claims examples/lantern-heist.json doesn't cover: trust is per character; {{user}} in the opening",
+  "description": "Format Appendix B.2 and B.3, beyond the claims of the lantern-heist case: trust is per character; {{user}} in the opening",
   "bundleFile": "../../../examples/lantern-heist.troupe.json",
   "sessionFile": "../../../examples/lantern-heist.troupe-session.jsonl",
-  "addMessages": [
-    {
-      "id": "n5",
-      "parent": "4",
-      "from": "player",
-      "content": [
-        {
-          "speaker": "mara",
-          "text": "Steady."
-        }
-      ],
-      "changes": [
-        {
-          "by": "model",
-          "set": {
-            "kai.nerve": 2
-          }
-        }
-      ]
-    },
-    {
-      "id": "5",
-      "parent": "4",
-      "from": "player",
-      "content": [
-        {
-          "speaker": "mara",
-          "text": "Wait."
-        }
-      ]
-    },
-    {
-      "id": "6",
-      "parent": "5",
-      "from": "model",
-      "char": "kai",
-      "content": [
-        {
-          "speaker": "kai",
-          "text": "Waiting."
-        }
-      ]
-    },
-    {
-      "id": "7",
-      "parent": "6",
-      "from": "player",
-      "content": [
-        {
-          "speaker": "mara",
-          "text": "Now."
-        }
-      ]
-    },
-    {
-      "id": "12",
-      "parent": "6",
-      "from": "player",
-      "content": [
-        {
-          "speaker": "mara",
-          "text": "Now?"
-        }
-      ]
-    },
-    {
-      "id": "c",
-      "parent": "4",
-      "from": "model",
-      "char": "kai",
-      "content": [
-        {
-          "speaker": "kai",
-          "text": "Boss, I have to tell you something."
-        }
-      ],
-      "changes": [
-        {
-          "by": "model",
-          "set": {
-            "kai_confessed": true
-          }
-        }
-      ]
-    },
-    {
-      "id": "t",
-      "parent": "4",
-      "from": "model",
-      "char": "kai",
-      "content": [
-        {
-          "text": "Bells."
-        }
-      ],
-      "changes": [
-        {
-          "by": "model",
-          "set": {
-            "bell": 12
-          }
-        }
-      ]
-    },
-    {
-      "id": "w5",
-      "parent": "3",
-      "from": "player",
-      "content": [
-        {
-          "speaker": "mara",
-          "text": "Elena, what aren't you telling me?"
-        }
-      ]
-    },
-    {
-      "id": "p5",
-      "parent": "4",
-      "from": "player",
-      "content": [
-        {
-          "speaker": "mara",
-          "text": "Go."
-        }
-      ]
-    },
-    {
-      "id": "p6",
-      "parent": "p5",
-      "from": "model",
-      "char": "kai",
-      "content": [
-        {
-          "speaker": "kai",
-          "text": "Going."
-        }
-      ]
-    },
-    {
-      "id": "p7",
-      "parent": "p6",
-      "from": "player",
-      "content": [
-        {
-          "speaker": "mara",
-          "text": "Now."
-        }
-      ]
-    },
-    {
-      "id": "m2",
-      "parent": "p7",
-      "from": "model",
-      "char": "kai",
-      "content": [
-        {
-          "speaker": "kai",
-          "text": "Moving."
-        }
-      ]
-    },
-    {
-      "id": "c1",
-      "opening": "caught",
-      "from": "system",
-      "content": [
-        {
-          "text": "Water laps at your knees. The vault door has slammed shut behind you, and Kai is nowhere to be seen."
-        },
-        {
-          "speaker": "elena",
-          "text": "He was supposed to hold that door. *She doesn't look surprised.*"
-        }
-      ],
-      "changes": [
-        {
-          "by": "rules",
-          "set": {
-            "scene.location": "vault",
-            "bell": 11,
-            "scene.present": [
-              "mara",
-              "elena"
-            ]
-          }
-        },
-        {
-          "by": "player",
-          "set": {
-            "approach": "loud"
-          }
-        }
-      ]
-    }
-  ],
   "tests": [
+    {
+      "type": "check",
+      "name": "B.2 and B.3 conform",
+      "expect": {
+        "codes": []
+      }
+    },
     {
       "type": "state",
       "name": "trust is per character, not for the player's mara",
@@ -212,10 +24,11 @@
     },
     {
       "type": "macro",
-      "name": "{{user}} in the opening is the first player's character",
-      "at": "1",
-      "char": "kai",
-      "text": "Or we go now, while they're drunk. *He grins at {{user}}.* Your call, boss.",
+      "name": "{{user}} in the opening's part is the first player's character, and {{char}} the speaker",
+      "part": {
+        "message": "1",
+        "index": 2
+      },
       "expect": "Or we go now, while they're drunk. *He grins at Mara.* Your call, boss."
     }
   ]

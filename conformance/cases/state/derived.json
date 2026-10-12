@@ -2,30 +2,9 @@
   "description": "Derived variables (Format 8.1, 8.6): computed from stored state when read, never recorded",
   "bundle": {
     "kind": "bundle",
-    "characters": [
-      {
-        "id": "a",
-        "name": "Ann",
-        "description": "Ann."
-      },
-      {
-        "id": "b",
-        "name": "Bea",
-        "description": "Bea."
-      }
-    ],
     "scenarios": [
       {
         "id": "s",
-        "cast": [
-          {},
-          {
-            "character": "a"
-          },
-          {
-            "character": "b"
-          }
-        ],
         "variables": [
           {
             "id": "clock",
@@ -45,13 +24,6 @@
             "type": "bool",
             "derive": "state.clock % 24 >= 20 || state.clock % 24 < 6",
             "description": "Night time."
-          }
-        ],
-        "entries": [
-          {
-            "id": "when_night",
-            "when": "state.night",
-            "text": "It is night on day {{state.day}}."
           }
         ]
       }

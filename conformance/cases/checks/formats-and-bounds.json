@@ -2,22 +2,9 @@
   "description": "Validators assert format, so a malformed timestamp is SCHEMA (Format 17.2); an unknown message field is UNKNOWN_FIELD; named bounds must name non-keyed numeric variables of the same owner (Format 8.1); a timestamp with an offset instead of Z is SCHEMA (Format 2.5)",
   "bundle": {
     "kind": "bundle",
-    "characters": [
-      {
-        "id": "a",
-        "name": "Ann",
-        "description": "Ann."
-      }
-    ],
     "scenarios": [
       {
         "id": "s",
-        "cast": [
-          {},
-          {
-            "character": "a"
-          }
-        ],
         "variables": [
           {
             "id": "rep",

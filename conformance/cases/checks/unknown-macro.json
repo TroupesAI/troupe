@@ -1,0 +1,53 @@
+{
+  "description": "Text between {{ and }} that is no macro, and a macro naming an undeclared variable, are UNKNOWN_MACRO (Format 10, 17.2); a pick needs at least two options, none empty",
+  "bundle": {
+    "kind": "bundle",
+    "scenarios": [
+      {
+        "id": "s",
+        "entries": [
+          {
+            "id": "e",
+            "text": "{{char}} sees {{state.nothing_here}}."
+          },
+          {
+            "id": "one",
+            "text": "Either {{pick::a}}."
+          },
+          {
+            "id": "empty",
+            "text": "Or {{pick::a::}}."
+          },
+          {
+            "id": "fine",
+            "text": "{{pick::a::b}} and {{pick::x::x}}."
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "check",
+      "expect": {
+        "codes": [
+          "UNKNOWN_MACRO"
+        ],
+        "includes": [
+          {
+            "code": "UNKNOWN_MACRO",
+            "at": "/scenarios/0/entries/0/text"
+          },
+          {
+            "code": "UNKNOWN_MACRO",
+            "at": "/scenarios/0/entries/1/text"
+          },
+          {
+            "code": "UNKNOWN_MACRO",
+            "at": "/scenarios/0/entries/2/text"
+          }
+        ]
+      }
+    }
+  ]
+}

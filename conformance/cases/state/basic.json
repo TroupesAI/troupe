@@ -80,6 +80,15 @@
             ],
             "description": "d"
           }
+        ],
+        "events": [
+          {
+            "id": "go",
+            "when": "true",
+            "set": {
+              "phase": "heist"
+            }
+          }
         ]
       }
     ]
@@ -97,8 +106,7 @@
       ],
       "players": [
         "p"
-      ],
-      "head": "3"
+      ]
     },
     "messages": [
       {
@@ -147,7 +155,7 @@
           },
           {
             "by": "rules",
-            "event": "unknown_but_values_apply",
+            "event": "go",
             "set": {
               "phase": "heist"
             }
@@ -258,6 +266,12 @@
         "scene.present": [
           "a"
         ]
+      }
+    },
+    {
+      "type": "check",
+      "expect": {
+        "codes": []
       }
     }
   ]

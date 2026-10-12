@@ -1,14 +1,7 @@
 {
-  "description": "Cast members that name no bundle character are UNKNOWN_CHARACTER (Format 6.1, 17.2)",
+  "description": "A cast member that names no bundle character is UNKNOWN_CHARACTER (Format 6.1, 17.2)",
   "bundle": {
     "kind": "bundle",
-    "characters": [
-      {
-        "id": "a",
-        "name": "Ann",
-        "description": "Ann."
-      }
-    ],
     "scenarios": [
       {
         "id": "s",
@@ -54,6 +47,12 @@
       "expect": {
         "codes": [
           "UNKNOWN_CHARACTER"
+        ],
+        "includes": [
+          {
+            "code": "UNKNOWN_CHARACTER",
+            "at": "/scenarios/0/cast/0/character"
+          }
         ]
       }
     }

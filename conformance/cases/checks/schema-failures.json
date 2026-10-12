@@ -1,5 +1,5 @@
 {
-  "description": "Schema failures (Format 17.2): an out-of-range chance or priority, oneWay on a string variable, an entry without text, a duplicate in a uniqueItems list and a failing anyOf are each SCHEMA",
+  "description": "Schema failures (Format 17.2): an out-of-range chance or priority, oneWay on a string variable, an entry without text, an empty key, a knownBy item that isn't an ID, a duplicate in a uniqueItems list and a failing anyOf are each SCHEMA; every check runs on the document as written, so the knownBy item is also UNKNOWN_CHARACTER (Format 17.1)",
   "bundle": {
     "kind": "bundle",
     "scenarios": [
@@ -9,7 +9,7 @@
           {
             "id": "lucky",
             "chance": 1.5,
-            "text": "Chance reads as absent, so 1."
+            "text": "Lucky."
           },
           {
             "id": "blank",
@@ -18,7 +18,7 @@
           {
             "id": "plain",
             "priority": 150,
-            "text": "Priority reads as absent, so 50."
+            "text": "Plain."
           },
           {
             "id": "secret",
@@ -106,7 +106,42 @@
       "type": "check",
       "expect": {
         "codes": [
-          "SCHEMA"
+          "SCHEMA",
+          "UNKNOWN_CHARACTER"
+        ],
+        "includes": [
+          {
+            "code": "SCHEMA",
+            "at": "/scenarios/0/entries/0/chance"
+          },
+          {
+            "code": "SCHEMA",
+            "at": "/scenarios/0/entries/1"
+          },
+          {
+            "code": "SCHEMA",
+            "at": "/scenarios/0/entries/2/priority"
+          },
+          {
+            "code": "SCHEMA",
+            "at": "/scenarios/0/entries/3/knownBy/0"
+          },
+          {
+            "code": "UNKNOWN_CHARACTER",
+            "at": "/scenarios/0/entries/3/knownBy/0"
+          },
+          {
+            "code": "SCHEMA",
+            "at": "/scenarios/0/entries/4/keys/0"
+          },
+          {
+            "code": "SCHEMA",
+            "at": "/scenarios/0/variables/0/oneWay"
+          },
+          {
+            "code": "SCHEMA",
+            "at": "header/players"
+          }
         ]
       }
     }

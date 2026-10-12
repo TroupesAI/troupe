@@ -1,68 +1,19 @@
 {
-  "description": "Keyed variables (Format 8.1, 8.3, 8.5): recorded values for derived variables are UNKNOWN_VARIABLE, and min and max can't name a derived or keyed variable",
+  "description": "Derived and keyed variables as keys and bounds (Format 8.1, 8.5): a recorded value for a derived variable is UNKNOWN_VARIABLE, and min and max can't name a derived or keyed variable",
   "bundle": {
     "kind": "bundle",
-    "characters": [
-      {
-        "id": "a",
-        "name": "Ann",
-        "description": "Ann."
-      },
-      {
-        "id": "b",
-        "name": "Bea",
-        "description": "Bea."
-      }
-    ],
     "scenarios": [
       {
         "id": "s",
-        "cast": [
-          {},
-          {
-            "character": "a"
-          },
-          {
-            "character": "b"
-          }
-        ],
         "variables": [
-          {
-            "id": "trust",
-            "type": "number",
-            "of": "characters",
-            "min": 0,
-            "max": 1,
-            "initial": 0.5,
-            "by": [
-              "model"
-            ],
-            "maxStep": 0.2,
-            "description": "d"
-          },
           {
             "id": "bond",
             "type": "int",
-            "of": "characters",
+            "of": [
+              "north",
+              "south"
+            ],
             "initial": 3,
-            "by": [
-              "model"
-            ],
-            "oneWay": true,
-            "description": "d"
-          },
-          {
-            "id": "tags",
-            "type": "set",
-            "of": "characters",
-            "values": [
-              "brave",
-              "shy",
-              "kind"
-            ],
-            "by": [
-              "model"
-            ],
             "description": "d"
           },
           {
@@ -76,11 +27,6 @@
             "type": "int",
             "derive": "state.clock / 24 + 1",
             "description": "d"
-          },
-          {
-            "id": "secret",
-            "type": "int",
-            "description": "Nobody may change it."
           },
           {
             "id": "by_day",
@@ -125,18 +71,10 @@
         ],
         "changes": [
           {
-            "by": "model",
+            "by": "rules",
             "set": {
-              "trust.a": 1.4,
-              "trust.b": 0.9123456,
-              "bond.a": 1,
-              "tags.a": [
-                "shy",
-                "brave",
-                "shy"
-              ],
-              "day": 7,
-              "secret": 4
+              "clock": 50,
+              "day": 7
             }
           }
         ]
@@ -153,11 +91,11 @@
         "includes": [
           {
             "code": "UNKNOWN_VARIABLE",
-            "at": "/scenarios/0/variables/6/max"
+            "at": "/scenarios/0/variables/3/max"
           },
           {
             "code": "UNKNOWN_VARIABLE",
-            "at": "/scenarios/0/variables/7/max"
+            "at": "/scenarios/0/variables/4/max"
           },
           {
             "code": "UNKNOWN_VARIABLE",

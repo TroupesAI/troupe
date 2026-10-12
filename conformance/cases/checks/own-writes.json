@@ -1,5 +1,5 @@
 {
-  "description": "Owners write their own variables as own.<id> in their events (Format 8.2); an opening's set uses full keys only (Format 6.3); entries, variables and events share one ID space per owner, compared in that order, and a variable or event reusing an earlier ID is the duplicate (Format 2.3)",
+  "description": "Owners write their own variables as own.<id> in their events (Format 8.2), while an opening's set uses full keys only (Format 6.3); entries, variables and events share one ID space per owner, compared in that order, and a variable or event reusing an earlier ID is the DUPLICATE_ID (Format 2.3)",
   "bundle": {
     "kind": "bundle",
     "characters": [
@@ -100,48 +100,12 @@
       }
     ]
   },
-  "session": {
-    "header": {
-      "kind": "session",
-      "scenario": "s",
-      "characters": [
-        {
-          "id": "p",
-          "name": "Pat",
-          "description": "Pat."
-        }
-      ],
-      "players": [
-        "p"
-      ]
-    },
-    "messages": [
-      {
-        "id": "1",
-        "from": "player",
-        "content": [
-          {
-            "text": "x"
-          }
-        ],
-        "changes": [
-          {
-            "by": "rules",
-            "set": {
-              "kai.nerve": 2
-            }
-          }
-        ]
-      }
-    ]
-  },
   "tests": [
     {
       "type": "check",
       "expect": {
         "codes": [
           "DUPLICATE_ID",
-          "UNKNOWN_MACRO",
           "UNKNOWN_VARIABLE"
         ],
         "includes": [
@@ -160,14 +124,10 @@
           {
             "code": "UNKNOWN_VARIABLE",
             "at": "/scenarios/0/openings/0/set/own.alarm"
-          },
-          {
-            "code": "UNKNOWN_MACRO",
-            "at": "/characters/1/description"
           }
         ]
       },
-      "name": "a variable after an entry with its ID is the DUPLICATE_ID"
+      "name": "a variable after an entry with its ID is the DUPLICATE_ID; the variable is still declared, so {{own.mood}} is no UNKNOWN_MACRO"
     }
   ]
 }

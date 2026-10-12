@@ -1,5 +1,5 @@
 {
-  "description": "Session characters replace bundle characters by ID (Format 12.2): the replacement takes the bundle character's cast position and every reference to it for the whole session; it isn't a DUPLICATE_ID and fills no seat; its own variables, entries and events replace the original's; players listing it means a person took that cast member over. A replacement of a character outside the cast counts as a new header character, here a joiner; expressions type-check against the replacement",
+  "description": "Session characters replace bundle characters by ID (Format 12.2): the replacement takes the bundle character's cast position and every reference to it for the whole session; it isn't a DUPLICATE_ID and fills no seat; its own variables replace the original's. A replacement of a character outside the cast counts as a new header character, here a joiner",
   "bundle": {
     "kind": "bundle",
     "characters": [
@@ -20,33 +20,12 @@
             "initial": 7,
             "description": "d"
           }
-        ],
-        "entries": [
-          {
-            "id": "k_old",
-            "text": "{{char}} is the old Kai."
-          }
-        ],
-        "events": [
-          {
-            "id": "k_old_ev",
-            "when": "true",
-            "set": {
-              "own.old_only": 0
-            }
-          }
         ]
       },
       {
         "id": "elena",
         "name": "Elena",
-        "description": "Elena, a mapmaker.",
-        "entries": [
-          {
-            "id": "e_kai",
-            "text": "Elena distrusts {{@kai}}."
-          }
-        ]
+        "description": "Elena, a mapmaker."
       },
       {
         "id": "ghost",
@@ -75,17 +54,6 @@
             "min": 0,
             "max": 1,
             "description": "Trust in {{user}}."
-          }
-        ],
-        "openings": [
-          {
-            "id": "o",
-            "content": [
-              {
-                "speaker": "elena",
-                "text": "Evening."
-              }
-            ]
           }
         ]
       }
@@ -118,12 +86,6 @@
               "initial": 2,
               "description": "New in the recast."
             }
-          ],
-          "entries": [
-            {
-              "id": "k_new",
-              "text": "{{char}} is the new Kai."
-            }
           ]
         },
         {
@@ -134,8 +96,7 @@
       ],
       "players": [
         "p"
-      ],
-      "head": "1"
+      ]
     },
     "messages": [
       {

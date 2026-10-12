@@ -44,12 +44,6 @@
           "id": "j",
           "name": "Jo",
           "description": "A stranger.",
-          "entries": [
-            {
-              "id": "jn",
-              "text": "Jo's note."
-            }
-          ],
           "variables": [
             {
               "id": "jo_mood",
@@ -62,8 +56,7 @@
       ],
       "players": [
         "p"
-      ],
-      "head": "2"
+      ]
     },
     "messages": [
       {

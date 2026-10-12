@@ -215,6 +215,12 @@
       "char": "a",
       "text": "{{state.a.feelings.b}} {{state.trust.char}} {{state.hp.user}} | {{state.trust}} | {{state.inv}}",
       "expect": "3 0.7 7 | Ann: 0.7, Bea: 0.9 | torch: 2"
+    },
+    {
+      "type": "check",
+      "expect": {
+        "codes": []
+      }
     }
   ]
 }

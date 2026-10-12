@@ -27,6 +27,16 @@
             ],
             "description": "d"
           }
+        ],
+        "events": [
+          {
+            "id": "patrol",
+            "when": "true",
+            "outcomes": [
+              {},
+              {}
+            ]
+          }
         ]
       }
     ]
@@ -87,6 +97,12 @@
       "expect": {
         "codes": [
           "SCHEMA"
+        ],
+        "includes": [
+          {
+            "code": "SCHEMA",
+            "at": "message:2/changes/0/event"
+          }
         ]
       }
     }

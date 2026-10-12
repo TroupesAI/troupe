@@ -170,9 +170,10 @@
       },
       {
         "id": "r2",
-        "from": "system",
+        "from": "player",
         "content": [
           {
+            "speaker": "q",
             "text": "A second root is fine."
           }
         ]

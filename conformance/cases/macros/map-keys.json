@@ -38,6 +38,12 @@
       "type": "macro",
       "text": "{{state.met}}",
       "expect": "watch post: 1, Bea: 1"
+    },
+    {
+      "type": "check",
+      "expect": {
+        "codes": []
+      }
     }
   ]
 }

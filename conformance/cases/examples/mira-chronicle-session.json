@@ -88,49 +88,6 @@
       }
     ]
   },
-  "addMessages": [
-    {
-      "id": "2",
-      "parent": "1",
-      "from": "player",
-      "content": [
-        {
-          "speaker": "mara",
-          "text": "Brought you a part for the reactor."
-        }
-      ]
-    },
-    {
-      "id": "3",
-      "parent": "2",
-      "from": "model",
-      "char": "mira",
-      "content": [
-        {
-          "speaker": "mira",
-          "text": "You remembered."
-        }
-      ],
-      "changes": [
-        {
-          "by": "model",
-          "set": {
-            "mira.closeness": 61
-          }
-        }
-      ],
-      "entries": [
-        {
-          "id": "part",
-          "carry": true,
-          "knownBy": [
-            "mira"
-          ],
-          "text": "Mara brought Mira a reactor part."
-        }
-      ]
-    }
-  ],
   "tests": [
     {
       "type": "check",

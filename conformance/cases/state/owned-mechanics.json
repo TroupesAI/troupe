@@ -1,5 +1,5 @@
 {
-  "description": "Owned mechanics (Format 2.3, 6.4, 8.2): each variable and event keeps its owner, so two owners can share an ID; a scenario variable can't take a character's or world's ID",
+  "description": "Owned mechanics (Format 2.3, 6.4, 8.2): each variable and event keeps its owner, so a character, a world and a scenario can each declare a variable and an event with the same ID",
   "bundle": {
     "kind": "bundle",
     "characters": [
@@ -74,19 +74,6 @@
               "time": "state.time + state.w.time"
             }
           }
-        ],
-        "openings": [
-          {
-            "id": "o",
-            "set": {
-              "a.time": 20
-            },
-            "content": [
-              {
-                "text": "Go."
-              }
-            ]
-          }
         ]
       }
     ]
@@ -112,6 +99,7 @@
         "from": "player",
         "content": [
           {
+            "speaker": "p",
             "text": "x"
           }
         ]

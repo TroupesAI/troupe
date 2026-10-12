@@ -1,5 +1,5 @@
 {
-  "description": "Empty values: null, \"\" and [] in optional fields fail the schema, while state values keep them (Format 2.2)",
+  "description": "Empty values: null, \"\" and [] in optional fields fail the schema (Format 2.2); state/empty-values.json covers the fields where they are values",
   "bundle": {
     "kind": "bundle",
     "tagline": "",
@@ -16,24 +16,12 @@
             "keys": [],
             "when": null,
             "knownBy": [],
-            "text": "only the narrator knows this"
+            "text": "x"
           },
           {
             "id": "f",
             "keys": null,
-            "text": "always on"
-          }
-        ]
-      }
-    ],
-    "worlds": [
-      {
-        "id": "w",
-        "name": "W",
-        "locations": [
-          {
-            "id": "hall",
-            "name": "Hall"
+            "text": "y"
           }
         ]
       }
@@ -41,35 +29,9 @@
     "scenarios": [
       {
         "id": "s",
-        "cast": [
-          {},
-          {
-            "character": "a"
-          }
-        ],
-        "worlds": [],
-        "variables": [
-          {
-            "id": "inv",
-            "type": "set",
-            "initial": [],
-            "description": "d"
-          }
-        ],
         "openings": [
           {
             "id": "o",
-            "set": {
-              "scene.location": ""
-            },
-            "content": [
-              {
-                "text": "Hi."
-              }
-            ]
-          },
-          {
-            "id": "o2",
             "title": "Anywhere",
             "content": []
           }
@@ -83,6 +45,40 @@
       "expect": {
         "codes": [
           "SCHEMA"
+        ],
+        "includes": [
+          {
+            "code": "SCHEMA",
+            "at": "/tagline"
+          },
+          {
+            "code": "SCHEMA",
+            "at": "/characters/0/aliases"
+          },
+          {
+            "code": "SCHEMA",
+            "at": "/characters/0/summary"
+          },
+          {
+            "code": "SCHEMA",
+            "at": "/characters/0/entries/0/keys"
+          },
+          {
+            "code": "SCHEMA",
+            "at": "/characters/0/entries/0/when"
+          },
+          {
+            "code": "SCHEMA",
+            "at": "/characters/0/entries/0/knownBy"
+          },
+          {
+            "code": "SCHEMA",
+            "at": "/characters/0/entries/1/keys"
+          },
+          {
+            "code": "SCHEMA",
+            "at": "/scenarios/0/openings/0/content"
+          }
         ]
       }
     }
