@@ -63,7 +63,7 @@ Another opening tried in the same session gets its own root, made by steps 4 and
   - Its `memories` are copied onto the root as session entries, a memory without `knownBy` getting the character's, and its `values` are recorded on the root in one `{"by": "rules"}` change, keyed with the character's ID (`mira.closeness`), before any other change (section 2.1).
   - Value keys and memory `knownBy` IDs that name the persona take effect only when the persona plays with its own ID (section 2.1 step 2).
   - The session never needs the chronicle file to replay.
-- **Writing back** from a path rewrites the chronicle with only what the session changed, so sessions that continue one chronicle side by side keep each other's progress:
+- **Writing back** from a path rewrites the chronicle with only what the session changed:
   - `values` keeps only carried keys, keyed without the owner, and takes the latest value of each carried key that a change on the path set, except the chronicle's own change on the root.
   - The memories written back are the carried session entries on the path, the latest version of each ID, whose `knownBy` is absent or names the character. Root entries unchanged from how the start copied them are skipped.
   - Each keeps in `knownBy` only the character, the persona and `narrator`.
@@ -138,10 +138,10 @@ type Newcomer = Pick<Character, "id" | "name" | "aliases" | "description" | "sum
 
 Nothing in the payload takes `ext`. A model adds story content, never mechanics or standing direction:
 
-- A newcomer has only `id`, `name`, `aliases`, `description` and `summary`; any other field is unknown (Format 15). A newcomer whose ID names a character of the bundle or session is dropped, so a model never replaces or redefines a character.
-- An entry takes no `position` or `priority`, which are unknown there, so it is placed in `context` with priority 50. An entry whose ID names a session entry placed in `system` or `tracker` on the path is dropped, so a model never replaces or disables a direction.
+- A newcomer has only `id`, `name`, `aliases`, `description` and `summary`; any other field is unknown (Format 15). A newcomer whose ID names a character of the bundle or session is dropped.
+- An entry takes no `position` or `priority`, which are unknown there, so it is placed in `context` with priority 50. An entry whose ID names a session entry placed in `system` or `tracker` on the path is dropped.
 
-Apps apply a payload in this order: `characters` join the header; `parts` are stored; `changes` are recorded as `{"by": "model", …}`, prepared as in section 3.3, on the newest message covered; and `entries` become session entries on the same message. Speakers and `knownBy` IDs other than `narrator` that name no character in the session, newcomers included, are dropped; a `knownBy` whose IDs are all dropped becomes `["narrator"]`, so a misnamed secret is never told to everyone. Every extraction records one `{"by": "model", …}` change, with an empty `set` when it changes nothing, which marks where the next one starts. The event pass after a message waits for any extraction the app runs on it.
+Apps apply a payload in this order: `characters` join the header; `parts` are stored; `changes` are recorded as `{"by": "model", …}`, prepared as in section 3.3, on the newest message covered; and `entries` become session entries on the same message. Speakers and `knownBy` IDs other than `narrator` that name no character in the session, newcomers included, are dropped; a `knownBy` whose IDs are all dropped becomes `["narrator"]`. Every extraction records one `{"by": "model", …}` change, with an empty `set` when it changes nothing, which marks where the next one starts. The event pass after a message waits for any extraction the app runs on it.
 
 ---
 
@@ -154,8 +154,6 @@ roll(purpose, seed, messageId, subject):
   d = SHA-256(UTF-8("troupe-roll-1\n" + purpose + "\n" + seed + "\n" + messageId + "\n" + subject))
   return d[0]·2^40 + d[1]·2^32 + d[2]·2^24 + d[3]·2^16 + d[4]·2^8 + d[5]
 ```
-
-The result is below 2^53, so JavaScript computes it exactly without BigInt.
 
 | Use | Purpose | Message | Subject | Result |
 | --- | --- | --- | --- | --- |
@@ -208,7 +206,7 @@ An entry's scanned text is built from the last `scanDepth` messages on the path 
 
 Matching works on Unicode scalar values, with scanned text and plain keys normalized to NFC. Apps SHOULD use Unicode 15.1 or later; the conformance suite tests only characters whose properties have been stable since 15.1.
 
-- **Case:** comparison uses simple case folding (statuses C and S of `CaseFolding.txt`), as JavaScript regular expressions with the `iu` flags and Go's `unicode.SimpleFold` do.
+- **Case:** comparison uses simple case folding (statuses C and S of `CaseFolding.txt`).
 - **Plain keys** match where no letter, digit or mark (General Categories L, N and M) directly touches either end of an occurrence. Keys containing Han, Hiragana, Katakana, Hangul, Thai, Lao, Khmer, Myanmar or Tibetan characters match anywhere.
 - **Regex keys** are compiled unchanged as RE2 patterns, case-insensitive unless the pattern clears the flag, and match anywhere.
 - An empty key, as in `hit('')`, matches nothing.

@@ -152,7 +152,7 @@ MUST, MUST NOT, SHOULD, SHOULD NOT and MAY are used as described in RFC 2119 and
 - Objects refer to each other by plain ID.
 - Things owned by a character, world or scenario are named `<owner>/<id>`: entries (`veyra/late_bells`), and the events of characters and worlds (`kai/bolts`). Entries added by messages have the owner `session`. A scenario's own events are named by their plain ID.
 - State uses dots instead (section 8): `bell`, `trust.kai`, `kai.nerve`.
-- References resolve to whatever copy the app has. There are no version ranges or content hashes.
+- References resolve to whatever copy the app has.
 
 ### 2.5 Text
 
@@ -226,7 +226,6 @@ interface Line {
 
 - **`description`** is everything the model needs to play the character, appearance included. Its structure is up to the author; heading names carry no meaning.
 - **`examples`** show how the character talks. `char` is this character and `user` the player's. Examples are never part of history.
-- **The player's character** is usually an ordinary character stored in the session, or a cast member marked `player` (section 6.1).
 
 ---
 
@@ -308,15 +307,13 @@ interface Opening {
 - **`characters`** generates each model-played character's turns separately. A narrator may also take turns describing the scene.
 - **`narrator`** has one voice write the whole scene, including every character's lines.
 
-The narrator's style is set with scenario entries placed in `system` with `knownBy: ["narrator"]`.
-
 ### 6.3 Openings
 
 - Each opening becomes a separate root message. Its `id` survives reordering and edits; conditions see the chosen one as `opening`.
 - `set` gives starting values, written like a change (section 8.5), with full keys: `{"scene.location": "vault", "bell": 11, "kai.nerve": 2}`. `own.` isn't resolved there.
-- **Without `content`**, the model writes the first message from the opening's setup, so an opening can be just a starting point: `{"id": "tavern", "title": "At the tavern", "set": {"scene.location": "tavern"}}`. A list of these works as a menu of starting points. Direction for the first reply is an entry with `"when": "opening == 'tavern' && turn == 0"`.
-- The characters present at the start are those who speak in the opening, or those `set` lists in `scene.present`, with the players' characters; Play 2.1 has the exact rule.
-- A character's actions belong in their own part, usually in italics. Parts without a speaker are scene narration.
+- **Without `content`**, the model writes the first message from the opening's setup: `{"id": "tavern", "title": "At the tavern", "set": {"scene.location": "tavern"}}`.
+- Play 2.1 says who is present at the start.
+- Parts without a speaker are scene narration.
 
 ### 6.4 What a session uses
 
@@ -370,7 +367,7 @@ interface Entry {
 
 ### 7.2 Activation
 
-- An entry **without `keys` or `pull`** is always on, subject to `when`. Standing instructions, secrets and goals are written this way.
+- An entry **without `keys` or `pull`** is always on, subject to `when`.
 - An entry **with `keys`** activates when one appears in recent messages, including speakers' names. Keys match whole words, ignoring case. A key of at least three characters that starts and ends with `/` is an RE2 pattern for anything else: `/dragons?/`, `/(?-i)Kai/`.
 - An entry **with `pull`**, which needs a `title`, is retrieved when it is relevant: requested by the model, or found by the app's similarity search (Play 5.6).
 - **`when`** narrows any kind. `hit("word")` checks recent text with the same rules as keys, so `"when": "hit('glass') && !hit('guard')"` expresses AND and NOT.
@@ -385,7 +382,7 @@ interface Entry {
 
 ### 7.4 Knowledge
 
-`knownBy` lists the characters who know an entry. A character's entries without `knownBy` reach every character present, so a secret needs `knownBy` set to its owner. A goal is a secret with a `when` for its phase; an instruction for one character's turns is an entry with `knownBy` set to that character. `["narrator"]` makes an entry narrator-only; an entry with explicit `knownBy` reaches the narrator only if it lists `narrator`. Play 7 says who sees what.
+`knownBy` lists the characters who know an entry. A character's entries without `knownBy` reach every character present, so a secret needs `knownBy` set to its owner. `["narrator"]` makes an entry narrator-only; an entry with explicit `knownBy` reaches the narrator only if it lists `narrator`. Play 7 says who sees what.
 
 ---
 
@@ -419,14 +416,14 @@ interface Variable {
 
 - **Types.** `bool`, `int`, `number` and `string` hold one JSON value. `enum` holds one of `values`. `set` holds distinct strings: members of `values` when given, otherwise any strings. For `int`, numeric `min`, `max` and `maxStep` are integers. `string` variables can't be `oneWay`.
 - **Defaults.** Without `initial`: `false`; `0` raised to `min` or lowered to `max`; `""`; the first of `values`; `[]`.
-- **`description`** is written for authors and models alike. A model that updates state receives it as its instructions: "How much this character trusts {{user}}. Rises when promises are kept; falls on lies."
+- **`description`** says what the variable means and what moves it; the model that updates state receives it (Play 3.4).
 - **`by`.** Openings and events may always change a variable. `player` lets players change it; `model` lets the model that updates state change it (Play 3.4).
 - **`min` and `max`** may name another numeric variable of the same owner that is neither keyed nor derived and whose own bounds are numbers, such as `"max": "max_hp"`; its current value is the bound.
 - **`maxStep`** limits each change from the model; **`oneWay`** lets numbers only rise, a bool only turn true, a set only gain members, and an enum only move later in `values`. Both apply to each key of a keyed variable. Starting values are exempt.
 - **`derive`** makes a read-only variable computed from other state whenever it is read, such as `"derive": "state.clock / 24 + 1"` for the day. Derived variables have no `initial`, `by`, `ask`, `of`, `maxStep` or `oneWay`, can't be changed, and can't read other derived variables (`CEL_ERROR`).
 - **`ask`** puts a question to the player when the session starts and records the answer, whatever `by` says; `labels` name the choices. Questions are asked in the order scenario, worlds, characters, then declaration order. `ask` is not allowed with `of` or `derive`.
 - **`spoiler`** marks the value and its changes as spoilers for players until the story ends.
-- **Showing state to the model** is done with an entry, so authors choose the wording and who knows it: `{"id": "hp", "text": "{{user}} has {{state.hp}} of {{state.max_hp}} HP."}`.
+- **State reaches the story model** through text that shows it, such as an entry with `{{state.hp}}`, and as tracker input for structured replies (Play 3.4); nothing else sends it.
 
 ### 8.2 Ownership
 
@@ -453,8 +450,7 @@ A character's mood or a world's clock travels with it into every scenario, and t
 
 - Read a key as `state.trust.kai` or `own.feelings.elena`; change it as `trust.kai` or `own.feelings.elena`. In CEL, look up a computed key with brackets: `state.trust[char]`, `own.feelings[user]`. In macros, the path segments `char` and `user` mean those characters: `{{own.feelings.user}}`. Change keys always name keys literally, so `trust.char` names a key `char`.
 - `initial` is one value for every key, or an object of values by key with `*` as an optional default. For preparation, an absent key's current value is its initial value.
-- Keys of `"*"` maps start absent, and `"*"` takes no `initial`: an absent key counts as the type's default, and setting a key to the default removes it. Their keys are in code point order. Test with `'torch' in state.inventory`.
-- Use `of` for one value per character, rather than a separate variable for each. A character's feelings toward everyone else are its own `of: "others"` variable.
+- Keys of `"*"` maps start absent, and `"*"` takes no `initial`: an absent key counts as the type's default, and setting a key to the default removes it. Their keys are in code point order.
 
 ### 8.4 The scene
 
@@ -503,9 +499,8 @@ interface Outcome {
 ```
 
 - **`set` takes plain values; `compute` takes CEL.** `"set": {"scene.location": "vault"}`, `"compute": {"trust.elena": "state.trust.elena - 0.1"}`. An owner's own events write its variables as `own.<id>`.
-- **Firing.** An event fires when its `when` holds, unless `once`, `cooldown` or a failed `chance` roll stops it; `on` limits it to after one kind of message. Play 3.3 says when events run.
-- **Timing.** An event `on: "player"` runs before the reply, so it can roll for the action the player just attempted and direct the reply to narrate the result. An event `on: "model"` runs after the reply and its tracking.
-- **Outcomes** pick one weighted alternative per firing, so a random culprit or encounter is one declaration with correct odds. `roll(n)` in an event's or outcome's `compute` rolls a die; each call is a separate roll.
+- **Firing.** Play 3.3 says when events run and fire. An event `on: "player"` runs before the reply; one `on: "model"` runs after the reply and its tracking.
+- **Outcomes** pick one weighted alternative per firing. `roll(n)` in an event's or outcome's `compute` rolls a die; each call is a separate roll.
 - **Messages** from all events in one pass form a single narration message after the trigger.
 - **`direct`** reaches the System slot of the next model reply and its regenerations, then expires.
 - **`end`** marks the story finished on that path; a `direct` on the same firing still reaches any later reply.
@@ -586,8 +581,8 @@ state.trust[char] >= 0.8 && hour < 6
 - Cross-type numeric comparison, including `==` and `!=`, MUST work: `state.trust.kai >= 1`. Arithmetic doesn't mix types: write `state.trust.kai - 0.1`.
 - Runtime errors make a condition false.
 - `state` and `own` are not indexed by computed strings; keyed variables are.
-- Expressions use only `bool`, `int`, `double`, `string`, list and map values; `bytes`, `uint` and `null` literals and the `timestamp()` and `duration()` functions are a `CEL_ERROR`, and so is `string()` of a double, whose text CEL implementations write differently. Available functions are only `size`, `has`, `all`, `exists`, `exists_one`, `map`, `filter`, `in`, `contains`, `startsWith`, `endsWith`, `matches`, `int`, `double`, `string`, `bool`, and the functions above. `matches()` MUST use RE2 semantics.
-- Comprehensions (`all`, `exists`, `exists_one`, `map`, `filter`) nest at most two deep, and `roll()` isn't called inside one; an expression that breaks either is a `CEL_ERROR`. With the value limits of section 16, this bounds the cost of every expression, so apps evaluate each one in full and agree on its result.
+- Expressions use only `bool`, `int`, `double`, `string`, list and map values; `bytes`, `uint` and `null` literals and the `timestamp()` and `duration()` functions are a `CEL_ERROR`, and so is `string()` of a double. Available functions are only `size`, `has`, `all`, `exists`, `exists_one`, `map`, `filter`, `in`, `contains`, `startsWith`, `endsWith`, `matches`, `int`, `double`, `string`, `bool`, and the functions above. `matches()` MUST use RE2 semantics.
+- Comprehensions (`all`, `exists`, `exists_one`, `map`, `filter`) nest at most two deep, and `roll()` isn't called inside one; an expression that breaks either is a `CEL_ERROR`. Apps evaluate every expression in full.
 
 ---
 
@@ -675,13 +670,13 @@ interface Summary {
 ### 12.2 Players and cast
 
 - **Replacements.** A header character with the ID of a bundle character replaces it for the whole session: it keeps that character's place in the cast and every reference to it. Two header characters that replace the same bundle character make the session unplayable (`DUPLICATE_ID`).
-- `players` lists the characters people control, in seat order. An ID defined in the header's `characters`, other than a replacement, fills the next empty seat, or adds a seat after the scenario cast when every seat is filled, so more people can play than the author planned for; a cast member marked `player` fills its own seat and is a player whether or not it is listed, after the listed players in cast order; the ID of another cast member means a person took that character over.
+- `players` lists the characters people control, in seat order. An ID defined in the header's `characters`, other than a replacement, fills the next empty seat, or adds a seat after the scenario cast when every seat is filled; a cast member marked `player` fills its own seat and is a player whether or not it is listed, after the listed players in cast order; the ID of another cast member means a person took that character over.
 - The session's **cast** is the scenario cast with seats filled, then the added seats, then the **joiners**: header `characters` that aren't players or replacements, which joined or appeared during the session.
 - Header characters and `players` hold for the whole session, on every branch; presence is recorded on each path (section 8.4).
 
 ### 12.3 Session entries
 
-A message may add entries, owned by `session`. They are candidates from that message onward on its path, so they belong to their branch. A later message's entry with the same ID replaces it from there on, and `disabled: true` removes it. Session entries carry what a session learns or decides: an author's note, a fact a tracker noticed, a memory one character keeps. Entries on a root apply to the whole path.
+A message may add entries, owned by `session`. They are candidates from that message onward on its path, so they belong to their branch. A later message's entry with the same ID replaces it from there on, and `disabled: true` removes it. Entries on a root apply to the whole path.
 
 ### 12.4 Other message fields
 
@@ -714,7 +709,7 @@ interface Chronicle {
 ```
 
 - **File.** A chronicle is one JSON document, `.troupe-chronicle.json`, holding the current state; writing back replaces it whole (Play 2.2). A memory's `knownBy` names only the character, the persona or `narrator`.
-- **Carrying.** A chronicle keeps the character's non-derived variables marked `carry` and the session entries marked `carry`; `carry` is ignored elsewhere. Chronicle values are validated like recorded changes when a session starts, and keys that aren't carried are dropped; in the file, a key of a carried keyed variable may be any author ID, such as the persona's. Memories keep their stored text exactly; since macros never resolve in model-written text, memories name people literally.
+- **Carrying.** A chronicle keeps the character's non-derived variables marked `carry` and the session entries marked `carry`; `carry` is ignored elsewhere. Chronicle values are validated like recorded changes when a session starts, and keys that aren't carried are dropped; in the file, a key of a carried keyed variable may be any author ID, such as the persona's.
 
 Play 2.2 says how a session continues a chronicle and writes back to it.
 
