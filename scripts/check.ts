@@ -3,7 +3,8 @@
 //   - examples/ and the README's first example match the examples in spec/format.md (--write-examples rewrites examples/);
 //   - every TypeScript interface in the spec lists exactly its schema's properties;
 //   - the spec version agrees across the documents, schema URLs, examples, bundles in Markdown and cases;
-//   - every conformance case is named <area>/<topic>.json, matches conformance/case.schema.json, and the files it names exist;
+//   - every conformance case is named <area>/<topic>.json, matches conformance/case.schema.json, and the files it names exist,
+//     and its check, chronicle and parse tests expect SCHEMA exactly when the schemas reject their input;
 //   - relative Markdown links and #anchors resolve, and every "Format N.N" or "Play N.N" names a section.
 import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
@@ -179,6 +180,59 @@ for (const f of cases) {
   if (!validCase(value)) fail(`${path}: ${ajv.errorsText(validCase.errors, { dataVar: "" })}`);
   for (const m of JSON.stringify(value).matchAll(/"(?:bundle|session|chronicle)File":"([^"]+)"/g))
     if (!existsSync(join(root, dirname(path), m[1]))) fail(`${path}: ${m[1]} doesn't exist`);
+  schemaCodes(path, value);
+}
+
+// A case's expected codes agree with the schemas: SCHEMA is expected exactly when an input fails them, apart from
+// unknown properties (Format 15). Covers check tests, chronicle checks and parse tests of a single JSON document or session.
+function schemaFails(name: string, value: unknown): boolean {
+  const v = validator(name);
+  return !v(value) && (v.errors ?? []).some((e) => e.keyword !== "additionalProperties" && e.keyword !== "if");
+}
+function schemaCodes(path: string, c: Record<string, any>) {
+  const withVersion = (o: Record<string, unknown>) => ({ troupe: version, ...o });
+  const bundle = c.bundleFile ? JSON.parse(read(join(dirname(path), c.bundleFile))) : withVersion(c.bundle ?? { kind: "bundle" });
+  const lines = (text: string): unknown[] | undefined => {
+    try {
+      return text.split(/\r?\n/).filter((l) => l.trim()).map((l) => JSON.parse(l));
+    } catch {
+      return undefined; // a raw file with unreadable lines; parse tests cover it
+    }
+  };
+  const session = c.sessionFile ? lines(read(join(dirname(path), c.sessionFile))) : c.session && [withVersion(c.session.header), ...c.session.messages];
+  const sessionFails = (lines: unknown[]) =>
+    schemaFails("session-header.schema.json", lines[0]) || lines.slice(1).some((m) => schemaFails("message.schema.json", m));
+  (c.tests as Record<string, any>[]).forEach((t, i) => {
+    const where = `${path}: test ${i + 1}${t.name ? ` (${t.name})` : ""}`;
+    const codes: string[] | undefined = t.expect?.codes;
+    let fails: boolean | undefined;
+    if (t.type === "check" && codes && (session !== undefined || !c.sessionFile))
+      fails = schemaFails("bundle.schema.json", bundle) || (session ? sessionFails(session) : false);
+    else if (t.type === "chronicle" && codes) {
+      const chronicle = t.chronicleFile ? JSON.parse(read(join(dirname(path), t.chronicleFile))) : withVersion(t.chronicle);
+      fails = schemaFails("chronicle.schema.json", chronicle);
+    } else if (t.type === "parse" && typeof t.text === "string" && t.kind !== "package") {
+      const expected = codes ?? (t.expect?.ok === true ? [] : undefined);
+      if (!expected || expected.some((code) => code === "PARSE" || code === "UNSUPPORTED_VERSION")) return;
+      const schema = { bundle: "bundle.schema.json", chronicle: "chronicle.schema.json", modelOutput: "model-output.schema.json" }[
+        t.kind as string
+      ];
+      try {
+        if (schema) fails = schemaFails(schema, JSON.parse(t.text));
+      } catch {
+        return;
+      }
+      if (!schema) {
+        const read = lines(t.text);
+        if (!read) return;
+        fails = sessionFails(read);
+      }
+      if (fails !== expected.includes("SCHEMA")) fail(`${where}: the schemas ${fails ? "reject" : "accept"} the input, but SCHEMA is ${fails ? "not " : ""}expected`);
+      return;
+    }
+    if (fails !== undefined && codes && fails !== codes.includes("SCHEMA"))
+      fail(`${where}: the schemas ${fails ? "reject" : "accept"} the input, but SCHEMA is ${fails ? "not " : ""}expected`);
+  });
 }
 
 // Markdown links
