@@ -1,6 +1,6 @@
 # Troupe Play
 
-**Version 0.11 (draft)** · October 11, 2026
+**Version 0.12 (draft)** · October 12, 2026
 
 This document defines how an app plays Troupe files: how it starts and continues a session, computes state, runs events, rolls dice, activates entries, fills a prompt and applies knowledge. Apps that follow it give the model the same content and record the same outcomes for the same files, seed and message IDs; formatting and the order of prompt slots stay the app's. [Troupe Format](format.md) defines the files and comes first.
 

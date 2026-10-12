@@ -1,6 +1,6 @@
 # Troupe Format
 
-**Version 0.11 (draft)** · October 11, 2026
+**Version 0.12 (draft)** · October 12, 2026
 
 Troupe is an open file format for AI roleplay: characters, the worlds they live in, the scenarios that bring them together, the mechanics that drive a story, and sessions: the chats people play, exported so any app can continue them. One file can hold a single character or a full multi-character story.
 
@@ -91,7 +91,7 @@ This is a complete card: a character, and a scenario that starts a chat with the
 
 ```json
 {
-  "troupe": "0.11",
+  "troupe": "0.12",
   "kind": "bundle",
   "characters": [
     { "id": "elena", "name": "Elena Voss", "description": "A meticulous thief and mapmaker. Calm, exacting, dry humor." }
@@ -173,7 +173,7 @@ A bundle states the spec version and publishing metadata once, then lists its co
 ```ts
 interface Bundle {
   $schema?: string;
-  troupe: string;                  // spec version, e.g. "0.11"
+  troupe: string;                  // spec version, e.g. "0.12"
   kind: "bundle";
   id?: string;                     // a random ID, such as a UUID; lets sessions and chronicles find the bundle
   name?: string;                   // the title; the first scenario's own name, else the first character's
@@ -825,7 +825,7 @@ Messages are never dropped for a failed check, except the lines that `PARSE` and
 
 ## Appendix A: JSON Schemas
 
-The JSON Schema 2020-12 files are normative for structure. Each `$id` names the schema and its minor version, such as `https://troupes.ai/schema/0.11/bundle.schema.json`.
+The JSON Schema 2020-12 files are normative for structure. Each `$id` names the schema and its minor version, such as `https://troupes.ai/schema/0.12/bundle.schema.json`.
 
 | File | Validates |
 | --- | --- |
@@ -845,7 +845,7 @@ A companion with keyed lore, a style rule, a secret, two swipeable openings, and
 
 ```json
 {
-  "troupe": "0.11",
+  "troupe": "0.12",
   "kind": "bundle",
   "characters": [
     {
@@ -882,8 +882,8 @@ Two thieves hired by the player to steal a duke's storm lantern before the twelf
 
 ```json
 {
-  "$schema": "https://troupes.ai/schema/0.11/bundle.schema.json",
-  "troupe": "0.11",
+  "$schema": "https://troupes.ai/schema/0.12/bundle.schema.json",
+  "troupe": "0.12",
   "kind": "bundle",
   "id": "4b7d2c1e-9a3f-4e8b-b6d0-2f5a8c9e1d37",
   "name": "The Lantern Heist",
@@ -1043,7 +1043,7 @@ Two thieves hired by the player to steal a duke's storm lantern before the twelf
 ### B.3 Session
 
 ```text
-{"troupe":"0.11","kind":"session","scenario":"heist","seed":"k7Qm2xVb9TzR4pLc8NwYfA","characters":[{"id":"mara","name":"Mara","description":"A retired smuggler with a debt to settle."}],"players":["mara"],"head":"4"}
+{"troupe":"0.12","kind":"session","scenario":"heist","seed":"k7Qm2xVb9TzR4pLc8NwYfA","characters":[{"id":"mara","name":"Mara","description":"A retired smuggler with a debt to settle."}],"players":["mara"],"head":"4"}
 {"id":"1","opening":"rooftop_briefing","from":"system","content":[{"text":"Rain hammers the slate roofs above the Duke's manor."},{"speaker":"elena","text":"*Elena unrolls a soaked map.* Two guards on the east stair. We go at the eighth bell."},{"speaker":"kai","text":"Or we go now, while they're drunk. *He grins at {{user}}.* Your call, boss."}],"changes":[{"by":"rules","set":{"scene.location":"rooftops","scene.present":["mara","elena","kai"]}},{"by":"player","set":{"approach":"quiet"}}]}
 {"id":"2","parent":"1","from":"player","content":[{"speaker":"mara","text":"We wait for the eighth bell. Kai, you take the east stair."}]}
 {"id":"3","parent":"2","from":"model","char":"kai","activated":["veyra/weather_fog","kai/voice","kai/deal","heist/style","heist/clock"],"content":[{"speaker":"kai","text":"East stair. Sure. *He's gone before anyone can stop him.*"}],"changes":[{"by":"model","set":{"scene.present":["mara","elena"],"kai.nerve":1},"reason":"Kai left for the east stair, uneasy."}]}
@@ -1065,7 +1065,7 @@ Mira's chronicle after some weeks with Mara: her current definition, a carried v
 
 ```json
 {
-  "troupe": "0.11",
+  "troupe": "0.12",
   "kind": "chronicle",
   "id": "0d4f3a62-5b1e-4c8a-9f27-6a1c2e8b7d40",
   "character": {

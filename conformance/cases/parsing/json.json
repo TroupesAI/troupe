@@ -5,12 +5,12 @@
       "type": "parse",
       "name": "the smallest bundle",
       "kind": "bundle",
-      "text": "{\"troupe\":\"0.11\",\"kind\":\"bundle\"}",
+      "text": "{\"troupe\":\"0.12\",\"kind\":\"bundle\"}",
       "expect": {
         "ok": true,
         "codes": [],
         "equals": {
-          "troupe": "0.11",
+          "troupe": "0.12",
           "kind": "bundle"
         }
       }
@@ -31,7 +31,7 @@
       "type": "parse",
       "name": "invalid UTF-8",
       "kind": "bundle",
-      "base64": "eyJ0cm91cGUiOiIwLjExIiwia2luZCI6ImJ1bmRsZSIsInRhZ3MiOlsi/yJdfQ==",
+      "base64": "eyJ0cm91cGUiOiIwLjEyIiwia2luZCI6ImJ1bmRsZSIsInRhZ3MiOlsi/yJdfQ==",
       "expect": {
         "ok": false,
         "codes": [
@@ -43,7 +43,7 @@
       "type": "parse",
       "name": "an escaped surrogate pair is a character",
       "kind": "bundle",
-      "text": "{\"troupe\":\"0.11\",\"kind\":\"bundle\",\"tags\":[\"\\ud83d\\ude00\"]}",
+      "text": "{\"troupe\":\"0.12\",\"kind\":\"bundle\",\"tags\":[\"\\ud83d\\ude00\"]}",
       "expect": {
         "ok": true,
         "codes": []
@@ -53,7 +53,7 @@
       "type": "parse",
       "name": "depth 64",
       "kind": "bundle",
-      "text": "{\"troupe\":\"0.11\",\"kind\":\"bundle\",\"ext\":{\"a.b\":[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]}}",
+      "text": "{\"troupe\":\"0.12\",\"kind\":\"bundle\",\"ext\":{\"a.b\":[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]}}",
       "expect": {
         "ok": true,
         "codes": []
@@ -75,7 +75,7 @@
       "type": "parse",
       "name": "an unknown kind",
       "kind": "bundle",
-      "text": "{\"troupe\":\"0.11\",\"kind\":\"deck\"}",
+      "text": "{\"troupe\":\"0.12\",\"kind\":\"deck\"}",
       "expect": {
         "ok": false,
         "codes": [
@@ -87,7 +87,7 @@
       "type": "parse",
       "name": "a session header where a bundle is expected",
       "kind": "bundle",
-      "text": "{\"troupe\":\"0.11\",\"kind\":\"session\",\"scenario\":\"s\",\"seed\":\"k7Qm2xVb9TzR4pLc8NwYfA\"}",
+      "text": "{\"troupe\":\"0.12\",\"kind\":\"session\",\"scenario\":\"s\",\"seed\":\"k7Qm2xVb9TzR4pLc8NwYfA\"}",
       "expect": {
         "ok": false,
         "codes": [

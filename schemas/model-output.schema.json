@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://troupes.ai/schema/0.11/model-output.schema.json",
+  "$id": "https://troupes.ai/schema/0.12/model-output.schema.json",
   "title": "Troupe model output",
   "description": "What a model returns (Play 3.4): a structured reply, or a tracker's result without parts. Speakers and knownBy IDs are plain strings, because apps drop the ones that name no character.",
   "type": "object",

@@ -2,7 +2,7 @@
 
 An open file format for AI roleplay: characters, the worlds they live in, the scenarios that bring them together, the mechanics that drive a story, and sessions: the chats people play, exported so any app can continue them.
 
-**Status:** v0.11 draft. Breaking changes are allowed until 1.0 ([future work](spec/format.md#appendix-d-future-work)).
+**Status:** v0.12 draft. Breaking changes are allowed until 1.0 ([future work](spec/format.md#appendix-d-future-work)).
 
 ## A first look
 
@@ -10,7 +10,7 @@ A complete Troupe file: one character, and a scenario that starts a chat with he
 
 ```json
 {
-  "troupe": "0.11",
+  "troupe": "0.12",
   "kind": "bundle",
   "characters": [
     { "id": "elena", "name": "Elena Voss", "description": "A meticulous thief and mapmaker. Calm, exacting, dry humor." }

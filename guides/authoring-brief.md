@@ -6,7 +6,7 @@ One page for people and for LLMs asked to write Troupe files. Give it to a model
 
 ```json
 {
-  "troupe": "0.11",
+  "troupe": "0.12",
   "kind": "bundle",
   "characters": [{
     "id": "mira",

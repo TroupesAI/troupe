@@ -5,12 +5,12 @@
       "type": "parse",
       "name": "a PNG with a troupe chunk",
       "kind": "png",
-      "base64": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAAAAAA6fptVAAAAcmlUWHR0cm91cGUAAQAAAHicJcsxCoAwDEbhq8g/F9G1mwfwBOIQ22CDGktaJ/HuIo6Pj3ej2nllhkfX9j0cNtEIj+XSuDMcQiKjUNkK/HRDPjzECA5KxzeOf0UuwSRXORUeQ1MqWUmSG9ZVlNlaPPPzAu2dJO5h7VOeAAAACklEQVR4nGNgAAAAAgABSK+kcQAAAABJRU5ErkJggg==",
+      "base64": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAAAAAA6fptVAAAAcmlUWHR0cm91cGUAAQAAAHicJcsxCoAwDEbhq8g/F1HHbh7AE4hDbIMGNZa0TuLdRRwfH+9GsfNKDI+mbjs4bKIRHvOlcWc4hJWMQmHL8OMN+fAQIzgoHd84/BU5B5NU5FR49FUuZHmVVLEuosxW45meF+4AJO+TYh/iAAAACklEQVR4nGNgAAAAAgABSK+kcQAAAABJRU5ErkJggg==",
       "expect": {
         "ok": true,
         "codes": [],
         "equals": {
-          "troupe": "0.11",
+          "troupe": "0.12",
           "kind": "bundle",
           "characters": [
             {
@@ -26,12 +26,12 @@
       "type": "parse",
       "name": "a ccv3 chunk beside the troupe chunk is ignored",
       "kind": "png",
-      "base64": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAAAAAA6fptVAAAAYXRFWHRjY3YzAGV5SnpjR1ZqSWpvaVkyaGhjbUZmWTJGeVpGOTJNeUlzSW5Od1pXTmZkbVZ5YzJsdmJpSTZJak11TUNJc0ltUmhkR0VpT25zaWJtRnRaU0k2SWsxcGNtRWlmWDA91QvdsQAAAHJpVFh0dHJvdXBlAAEAAAB4nCXLMQqAMAxG4avIPxfRtZsH8ATiENtggxpLWifx7iKOj493o9p5ZYZH1/Y9HDbRCI/l0rgzHEIio1DZCvx0Qz48xAgOSsc3jn9FLsEkVzkVHkNTKllJkhvWVZTZWjzz8wLtnSTuYe1TngAAAApJREFUeJxjYAAAAAIAAUivpHEAAAAASUVORK5CYII=",
+      "base64": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAAAAAA6fptVAAAAYXRFWHRjY3YzAGV5SnpjR1ZqSWpvaVkyaGhjbUZmWTJGeVpGOTJNeUlzSW5Od1pXTmZkbVZ5YzJsdmJpSTZJak11TUNJc0ltUmhkR0VpT25zaWJtRnRaU0k2SWsxcGNtRWlmWDA91QvdsQAAAHJpVFh0dHJvdXBlAAEAAAB4nCXLMQqAMAxG4avIPxdRx24ewBOIQ2yDBjWWtE7i3UUcHx/vRrHzSgyPpm47OGyiER7zpXFnOISVjEJhy/DjDfnwECM4KB3fOPwVOQeTVORUePRVLmR5lVSxLqLMVuOZnhfuACTvk2If4gAAAApJREFUeJxjYAAAAAIAAUivpHEAAAAASUVORK5CYII=",
       "expect": {
         "ok": true,
         "codes": [],
         "equals": {
-          "troupe": "0.11",
+          "troupe": "0.12",
           "kind": "bundle",
           "characters": [
             {
@@ -47,7 +47,7 @@
       "type": "parse",
       "name": "two troupe chunks",
       "kind": "png",
-      "base64": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAAAAAA6fptVAAAAcmlUWHR0cm91cGUAAQAAAHicJcsxCoAwDEbhq8g/F9G1mwfwBOIQ22CDGktaJ/HuIo6Pj3ej2nllhkfX9j0cNtEIj+XSuDMcQiKjUNkK/HRDPjzECA5KxzeOf0UuwSRXORUeQ1MqWUmSG9ZVlNlaPPPzAu2dJO5h7VOeAAAAcmlUWHR0cm91cGUAAQAAAHicJcsxCoAwDEbhq8g/F9G1mwfwBOIQ22CDGktaJ/HuIo6Pj3ej2nllhkfX9j0cNtEIj+XSuDMcQiKjUNkK/HRDPjzECA5KxzeOf0UuwSRXORUeQ1MqWUmSG9ZVlNlaPPPzAu2dJO5h7VOeAAAACklEQVR4nGNgAAAAAgABSK+kcQAAAABJRU5ErkJggg==",
+      "base64": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAAAAAA6fptVAAAAcmlUWHR0cm91cGUAAQAAAHicJcsxCoAwDEbhq8g/F1HHbh7AE4hDbIMGNZa0TuLdRRwfH+9GsfNKDI+mbjs4bKIRHvOlcWc4hJWMQmHL8OMN+fAQIzgoHd84/BU5B5NU5FR49FUuZHmVVLEuosxW45meF+4AJO+TYh/iAAAAcmlUWHR0cm91cGUAAQAAAHicJcsxCoAwDEbhq8g/F1HHbh7AE4hDbIMGNZa0TuLdRRwfH+9GsfNKDI+mbjs4bKIRHvOlcWc4hJWMQmHL8OMN+fAQIzgoHd84/BU5B5NU5FR49FUuZHmVVLEuosxW45meF+4AJO+TYh/iAAAACklEQVR4nGNgAAAAAgABSK+kcQAAAABJRU5ErkJggg==",
       "expect": {
         "ok": false,
         "codes": [
@@ -83,7 +83,7 @@
       "type": "parse",
       "name": "the chunk's text is read like a file: malformed JSON",
       "kind": "png",
-      "base64": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAAAAAA6fptVAAAAM2lUWHR0cm91cGUAAQAAAHicq1YqKcovLUhVslIy0DM0VNJRys7MS1GyUkoqzUvJSVUCAKEqCavxEJrEAAAACklEQVR4nGNgAAAAAgABSK+kcQAAAABJRU5ErkJggg==",
+      "base64": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAAAAAA6fptVAAAAM2lUWHR0cm91cGUAAQAAAHicq1YqKcovLUhVslIy0DM0UtJRys7MS1GyUkoqzUvJSVUCAKE8CayaFaLfAAAACklEQVR4nGNgAAAAAgABSK+kcQAAAABJRU5ErkJggg==",
       "expect": {
         "ok": false,
         "codes": [
