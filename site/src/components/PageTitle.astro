@@ -1,9 +1,12 @@
 ---
 import Default from "@astrojs/starlight/components/PageTitle.astro";
+import { sources } from "../sources.ts";
+
+const { id } = Astro.locals.starlightRoute.entry;
 ---
 
 <Default />
-<button data-markdown={`/${Astro.locals.starlightRoute.entry.id}.md`}>Copy Markdown</button>
+{sources.some((s) => s.route === id) && <button data-markdown={`/${id}.md`}>Copy Markdown</button>}
 
 <script>
   // The fetch goes inside the clipboard item, so Safari still counts the write as part of the click.

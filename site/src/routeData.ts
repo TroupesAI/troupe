@@ -3,6 +3,10 @@ import { site, sources } from "./sources.ts";
 
 export const onRequest = defineRouteMiddleware(({ locals }) => {
   const { entry, head, toc } = locals.starlightRoute;
+  // "Troupe Format", not "Troupe Format | Troupe".
+  const title = head.find((h) => h.tag === "title");
+  if (title && entry.data.title.includes("Troupe")) title.content = entry.data.title;
+
   // Pages without a document of their own, such as /schema/, share the home page's social card.
   const card = sources.some((s) => s.route === entry.id) ? entry.id : "index";
   head.push({ tag: "meta", attrs: { property: "og:image", content: `${site}/og/${card}.png` } });

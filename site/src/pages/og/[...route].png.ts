@@ -7,6 +7,7 @@ const fonts = "https://cdn.jsdelivr.net/fontsource/fonts";
 // The social card of each page: the logo on its own night background, the page title, and the site.
 export const { getStaticPaths, GET } = await OGImageRoute({
   pages: Object.fromEntries((await getCollection("docs")).map(({ id, data }) => [id, data])),
+  getSlug: (route) => route,
   getImageOptions: (route, { title }) => ({
     title,
     description: route === "index" ? tagline : new URL(site).host,
