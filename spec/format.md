@@ -453,7 +453,7 @@ Opening and event `set`, `compute` and recorded changes write state by key:
 
 - **Keys** are a scenario variable's ID, or an owner and a variable ID, followed by a key for keyed variables: `bell`, `trust.kai`, `kai.nerve`, `kai.feelings.elena`, `scene.location`, `scene.present`.
 - **Values** are absolute.
-- **Validity.** A key is valid when it is `scene.location` or `scene.present`, or names a variable in use that isn't derived and, for a keyed variable, a key the variable allows. A value is valid when it has the variable's type, uses only listed members, is finite, is an integer within ±(2^53 − 1) for `int`, and is within the value limits of section 16. A numeric value outside `min` and `max` is still valid; it is clamped (Play 3.2, 3.3). A set with duplicate members is valid too; preparation removes the duplicates. `scene.location` is a location ID of the bundle or session, or `""`; `scene.present` is a list of strings (Play 3.3).
+- **Validity.** A key is valid when it is `scene.location` or `scene.present`, or names a variable in use that isn't derived and, for a keyed variable, a key the variable allows. A value is valid when it has the variable's type, uses only listed members, is finite, is an integer within ±(2^53 − 1) for `int` (compared by value, so `8.0` is the integer 8), and is within the value limits of section 16. A numeric value outside `min` and `max` is still valid; it is clamped (Play 3.2, 3.3). A set with duplicate members is valid too; preparation removes the duplicates. `scene.location` is a location ID of the bundle or session, or `""`; `scene.present` is a list of strings (Play 3.3).
 
 ---
 
@@ -803,7 +803,7 @@ Messages are never dropped for a failed check, except the lines that `PARSE`, `S
 2. It removes the value at the instance location of each keyword whose failure makes the document fail and that asserts something itself, not one that only reports failures beneath it (`allOf`, `if`, `then`, `else`, `properties`, `additionalProperties`, `items`, `propertyNames`, `$ref`). A failing `anyOf` removes the value it applies to, whatever its branches report; a `false` subschema fails at the value it applies to; a failure beneath `propertyNames` removes the property whose name fails; a failing `uniqueItems` removes the later duplicates; a failing `dependentRequired` removes the dependent property.
 3. It validates again, until nothing fails.
 
-So an invalid `weight` reads as absent, and an entry without `text` is ignored. A list it empties or removes reads as section 2.2 says; a cast member whose `character` it removes, or a `player` member without one, is skipped; a message line it removes as a whole is skipped, and a message that loses its `parent` is skipped like one whose `parent` names no message; a document it removes as a whole isn't read. The other checks then run on the repaired document.
+So an invalid `weight` reads as absent, and an entry without `text` is ignored. A list it empties or removes reads as section 2.2 says; a cast member whose `character` it removes, or a `player` member without one, is skipped; a message whose `content` it would remove keeps `content: []` instead, so the session's tree survives; a message line it removes as a whole is skipped, and a message that loses its `parent` is skipped like one whose `parent` names no message; a document it removes as a whole isn't read. The other checks then run on the repaired document.
 
 ---
 

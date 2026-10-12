@@ -146,7 +146,7 @@ type Newcomer = Pick<Character, "id" | "name" | "aliases" | "description" | "sum
 Nothing in the payload takes `ext`, and:
 
 - A newcomer whose ID names a character, world, scenario or scenario variable of the bundle or session, an earlier newcomer of the payload included, or who would take the cast past its limit (Format 16), is dropped.
-- An entry is dropped when the latest version of the session entry with its ID on the path, merged as Format 12.3 says and disabled or not, isn't placed in `context`; a model may update or disable a context entry, such as a memory.
+- An entry is dropped when a session entry with its ID is on the path and its latest version there, merged as Format 12.3 says and disabled or not, isn't placed in `context`; a model may update or disable a context entry, such as a memory.
 
 How an app takes the payload out of a reply is up to it. Output that isn't a JSON object is discarded, and nothing is recorded. Otherwise apps apply a payload in this order:
 

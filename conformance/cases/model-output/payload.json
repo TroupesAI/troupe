@@ -51,6 +51,14 @@
             "id": "edits",
             "type": "int",
             "description": "d"
+          },
+          {
+            "id": "score",
+            "type": "int",
+            "by": [
+              "model"
+            ],
+            "description": "d"
           }
         ],
         "events": [
@@ -944,6 +952,38 @@
             {
               "id": "memo",
               "text": "Real."
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "output",
+      "name": "8.0 is a valid int, recorded as 8",
+      "message": "2",
+      "output": {
+        "changes": {
+          "score": 8.0
+        }
+      },
+      "expect": {
+        "message": {
+          "id": "2",
+          "parent": "1",
+          "from": "model",
+          "char": "a",
+          "content": [
+            {
+              "speaker": "a",
+              "text": "Hello."
+            }
+          ],
+          "changes": [
+            {
+              "by": "model",
+              "set": {
+                "score": 8
+              }
             }
           ]
         }
