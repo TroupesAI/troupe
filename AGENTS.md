@@ -8,5 +8,5 @@ Guidance for coding agents. Follow [CONTRIBUTING.md](CONTRIBUTING.md): it says w
 ## Writing the spec
 
 - Plain, direct sentences. Define a term once, where it first matters, and use it consistently.
-- Keep section numbers stable; cases and the guides cite them as `Format 7.2`.
+- Sections may be renumbered. Cases, the guides, the schemas and the scripts cite them as `Format 7.2`, and the spec as `section 7.2`, so a renumbering updates every citation and `#anchor` with it. `bun run check` only catches citations of sections that no longer exist, not ones that now point at the wrong section.
 - Record design decisions in Format Appendix C, not in separate notes.
