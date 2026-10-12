@@ -27,7 +27,9 @@ The site has its own packages: in `site/`, `bun install`, then `bun run dev` to 
 
 ## Versions
 
-The spec has one version, `major.minor`. A minor version bump changes, together:
+The spec has one version, `major.minor`. Before a minor version bump, tag the last commit of the version it replaces, such as `v0.12`: the site serves that version's schemas from the tag from then on, and fails to build if `schemas/` differs from the tag of its own version.
+
+A minor version bump changes, together:
 
 - the version line of `spec/format.md`, with its date, and the README's status line;
 - every schema URL (`https://docs.troupes.ai/schema/<minor>/…`): the schemas' `$id`s and the `$schema` and `$id` examples in the spec;

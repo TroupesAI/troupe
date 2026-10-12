@@ -1,11 +1,11 @@
 // The repository's documents and how the site addresses them. Everything that reads them goes through this file.
 import { existsSync, readFileSync, statSync } from "node:fs";
-import { dirname, join, normalize } from "node:path";
-import { fileURLToPath } from "node:url";
+import { dirname, join, normalize, resolve as resolvePath } from "node:path";
 import { sectionNumber, slug } from "../../scripts/sections.ts";
 
 export const repo = "https://github.com/TroupesAI/troupe";
-export const root = fileURLToPath(new URL("../../", import.meta.url));
+// The repository: Astro runs in site/, and bundling moves this module, so import.meta.url won't do.
+export const root = resolvePath("..");
 export const read = (file: string) => readFileSync(join(root, file), "utf8");
 
 export const sources = [

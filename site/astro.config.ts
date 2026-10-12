@@ -26,7 +26,7 @@ export default defineConfig({
           label: "Guides",
           items: ["guides/beginners", "guides/authoring", "guides/authoring-brief", "guides/character-cards"].map(page),
         },
-        { label: "Reference", items: ["format", "conformance"].map(page) },
+        { label: "Reference", items: [page("format"), { label: "Schemas", link: "/schema/" }, page("conformance")] },
       ],
     }),
   ],
