@@ -513,7 +513,7 @@ Macros are the only substitution in text. `@` turns IDs into names.
 | `{{pick::<a>::<b>…}}` | One option, fixed for the session (Play 4) |
 | `{{// <comment>}}` | Nothing; a note for authors |
 
-- **`{{char}}`** in a message part, an event's `message` included, is the part's `speaker`, else the message's `char`, else it is left as written; in a character's other text, that character; in other text, the character being generated for, or the scenario's `narrator` for the narrator and the tracker. In a state path, `char` means the same character.
+- **`{{char}}`** in a message part, an event's `message` included, is the part's `speaker`, else the message's `char`, else it is left as written; in a character's other text, that character; in a cast member's `notes`, its character; in other text, the character being generated for, or the scenario's `narrator` for the narrator and the tracker. In a state path, `char` means the same character.
 - **`{{user}}`** is the speaker of the first part with a speaker in the latest player message on the path that has one, else the first player's character, else it is left as written. In a state path, `user` means the same character.
 - A `char` or `user` path segment that means no character names no key, so the macro renders as nothing.
 - **Rendering.** A value with a label renders as its label, resolved first; a substituted value is never scanned for macros again. Numbers render as ECMAScript `Number.prototype.toString`, booleans as `true` or `false`, lists as items joined by `, ` (an empty list as nothing), and maps as `Name: value` pairs joined by `, `, with character keys shown by name and other keys with underscores as spaces. Map keys render in declared order (cast order for characters), and `"*"` keys in code point order. Text between `{{` and `}}` that is no macro, such as `{{unknown}}`, and a macro naming a variable that isn't declared are left as written (`UNKNOWN_MACRO`); an absent key of a declared variable, a path below a value that isn't a map, or a variable whose owner isn't in use renders as nothing.
@@ -652,14 +652,14 @@ interface Summary {
 
 ### 12.2 Players and cast
 
-- **Replacements.** A header character with the ID of a bundle character replaces it for the whole session: it keeps that character's place in the cast and every reference to it. Two header characters that replace the same bundle character make the session unplayable (`DUPLICATE_ID`).
-- `players` lists the characters people control, in seat order. An ID defined in the header's `characters`, other than a replacement, fills the next empty seat, or adds a seat after the scenario cast when every seat is filled; a cast member marked `player` fills its own seat and is a player whether or not it is listed, after the listed players in cast order; the ID of another cast member means a person took that character over.
+- **Replacements.** A header character with the ID of a bundle character replaces it for the whole session: it keeps that character's place in the cast and every reference to it. One that replaces a character outside the scenario cast otherwise counts as a new header character. Two header characters that replace the same bundle character make the session unplayable (`DUPLICATE_ID`).
+- `players` lists the characters people control, in seat order. An ID defined in the header's `characters`, other than a replacement of a cast member, fills the next empty seat, or adds a seat after the scenario cast when every seat is filled; a cast member marked `player` fills its own seat and is a player whether or not it is listed, after the listed players in cast order; the ID of another cast member means a person took that character over.
 - The session's **cast** is the scenario cast with seats filled, then the added seats, then the **joiners**: header `characters` that aren't players or replacements of cast members, which joined or appeared during the session.
 - Header characters and `players` hold for the whole session, on every branch; presence is recorded on each path (section 8.4).
 
 ### 12.3 Session entries
 
-A message may add entries, owned by `session`. They are candidates from that message onward on its path, so they belong to their branch. A later message's entry with the same ID replaces it from there on, and `disabled: true` removes it.
+A message may add entries, owned by `session`. They are candidates from that message onward on its path, so they belong to their branch. A later message's entry with the same ID replaces it from there on, carried if the entry it replaces is (section 13), and `disabled: true` removes it.
 
 ### 12.4 Other message fields
 
@@ -691,7 +691,7 @@ interface Chronicle {
 ```
 
 - **File.** A chronicle is one JSON document holding the current state; writing back replaces it whole (Play 2.2). A memory's `knownBy` names only the character, the persona or `narrator`.
-- **Carrying.** A chronicle keeps the character's non-derived variables marked `carry` and the session entries marked `carry`; `carry` is ignored elsewhere. Chronicle values are validated like recorded changes when a session starts, and keys that aren't carried are dropped; in the file, a key of a carried keyed variable may be any author ID, such as the persona's.
+- **Carrying.** A chronicle keeps the character's non-derived variables marked `carry` and the session entries marked `carry`; `carry` is ignored elsewhere. A chronicle read alone is checked as if its character played a scenario without variables. Chronicle values are validated like recorded changes when a session starts, and keys that aren't carried are dropped; in the file, a key of a carried keyed variable may be any author ID, such as the persona's.
 
 Play 2.2 says how a session continues a chronicle and writes back to it.
 
@@ -793,7 +793,7 @@ Messages are never dropped for a failed check, except the lines that `PARSE`, `S
 | `REGEX_ERROR` | Every regex key is valid (section 16 item 5) | The key matches nothing |
 | `UNKNOWN_MACRO` | Macros are valid and name existing characters and variables | Left as written |
 
-**Repairing.** A reader that keeps a document failing its schema first reads empty values as section 2.2 says. It then removes the value at the instance location of each failing keyword other than the applicators (`allOf`, `anyOf`, `if`, `then`, `else`, `properties`, `items`, `$ref`), and validates again, until nothing fails. So an invalid `weight` reads as absent, and an entry without `text` is ignored. A `knownBy` emptied this way reads as `["narrator"]`; a message line removed as a whole is skipped; a document removed as a whole isn't read. The other checks then run on the repaired document.
+**Repairing.** A reader that keeps a document failing its schema first reads empty values as section 2.2 says. It then removes the value at the instance location of each failing keyword that asserts something itself, not one that only reports failures beneath it (`allOf`, `anyOf`, `if`, `then`, `else`, `properties`, `additionalProperties`, `items`, `$ref`); a failing `propertyNames` removes the property whose name fails. It validates again until nothing fails. So an invalid `weight` reads as absent, and an entry without `text` is ignored. A `knownBy` emptied this way reads as `["narrator"]`; a message line removed as a whole is skipped; a document removed as a whole isn't read. The other checks then run on the repaired document.
 
 ---
 

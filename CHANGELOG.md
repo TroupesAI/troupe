@@ -15,12 +15,14 @@ Hardening for implementation. Breaking changes from 0.11:
 - **Model output** is read item by item, with empty values as missing; the tracker's input is defined exactly (Play 3.4).
 - **Write-back** skips the root's starting changes, and chronicle memories go on every root (Play 2.2).
 - **History** length is the app's (Play 6).
-- **Readers** that keep a file failing its schema remove each failing value; a `knownBy` emptied by unknown IDs is narrator-only; unfilled seats are left out of the cast (Format 6.1, 17.2).
+- **Readers** that keep a file failing its schema repair it exactly, removing the value at each failing assertion; the schemas forbid properties at the property, so repair removes only the property; a `knownBy` emptied by unknown IDs is narrator-only; unfilled seats are left out of the cast (Format 6.1, 17.2).
 - **Scene presence** drops IDs outside the cast instead of the whole change, and is reordered by cast order on load (Play 3.3).
 - **Macros** in a message resolve on the path to it, `own` means `state` in messages, labels resolve before substitution, and dialogue examples take macros (Format 10).
 - **Derived values** are prepared like recorded ones, and an invalid one is absent (Play 3.2).
 - **Records-only roots** may hold entries, so chronicle memories survive an opening without content (Format 12.4).
 - **`end`** changes nothing else; `scanDepth` is at most 100; `hit()` takes a literal; `roll(n)` below 1 is a runtime error (Format 7, 9, 11).
+- **Chronicles:** every root of a chronicle session records the chronicle's change, even empty, and later roots copy it; a replacement of a carried entry is carried; a replacement of a character outside the cast counts as a new character (Play 2.1, 2.2; Format 12.2, 12.3).
+- **Trackers** run on a message sent to models and record there; their input lists every location and cast character (Play 3.4).
 - **Removed:** display defaults for bundle and scenario names, and rules restated between Format and Play.
 - **Chronicles** take back only what a session changed (Play 2.2).
 - **Players** beyond a scenario's seats add seats, and a takeover keeps a character's keys (Format 8.3, 12.2).

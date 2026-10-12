@@ -1,5 +1,5 @@
 {
-  "description": "Session characters replace bundle characters by ID (Format 12.2): the replacement takes the bundle character's cast position and every reference to it for the whole session; it isn't a DUPLICATE_ID, fills no seat and doesn't join the cast as a newcomer; its own variables, entries and events replace the original's; players listing it means a person took that cast member over",
+  "description": "Session characters replace bundle characters by ID (Format 12.2): the replacement takes the bundle character's cast position and every reference to it for the whole session; it isn't a DUPLICATE_ID and fills no seat; its own variables, entries and events replace the original's; players listing it means a person took that cast member over. A replacement of a character outside the cast counts as a new header character, here a joiner",
   "bundle": {
     "kind": "bundle",
     "characters": [
@@ -154,7 +154,7 @@
   "tests": [
     {
       "type": "state",
-      "name": "cast order unchanged; Kai's state is the replacement's; the ghost replacement doesn't join",
+      "name": "cast order unchanged; Kai's state is the replacement's; the ghost replacement joins, absent",
       "expect": {
         "scene.present": [
           "p",
@@ -164,11 +164,11 @@
         "kai.nerve": 3,
         "kai.grit": 2,
         "trust.elena": 0.5,
-        "trust.kai": 0.5
+        "trust.kai": 0.5,
+        "trust.ghost": 0.5
       },
       "absent": [
         "kai.old_only",
-        "trust.ghost",
         "trust.p"
       ]
     },

@@ -233,7 +233,7 @@ Every field of `expect` is optional:
 
 ### 4.12 `check`: reference checks (Format 17.2)
 
-The runner validates the bundle and the session's raw lines against the schemas, then runs every reference check.
+The runner validates the bundle and the session's raw lines against the schemas, then runs every reference check on the documents as a reader keeps them after repairing (Format 17.2).
 
 - `expect.codes` is the sorted list of distinct diagnostic codes reported. It is compared exactly.
 - Each session line after the header is validated against `message.schema.json`. Validators assert `format`, so a malformed timestamp is `SCHEMA`.
@@ -280,7 +280,7 @@ Every field of `expect` is optional:
 
 - each slot name, compared as the full list of item strings in order
 - `lines`, a subset map from the ID of a `message:` item to its lines: each visible part as `<speaker name>: <text>`, or `<text>` without a speaker. Text is macro-resolved; player and model text is stored escaped (Format 10), so it comes out as written. Image parts render as `[image]` or `[image: <alt>]`, with `alt` macro-resolved; Hidden messages and records-only system messages are left out.
-- `texts`, a subset map from item string to the item's resolved text
+- `texts`, a subset map from item string to the item's resolved text, for `entry:`, `premise`, `world:`, `character:` and `offstage:` items
 - `directions`, the resolved direction texts
 
 ### 4.14 `parse`: reading raw input (Format 2.2, 12, 13, 14, 15, 16)
@@ -297,7 +297,7 @@ Every field of `expect` is optional:
 
 - `ok` is whether no error is reported. Every code is an error except `UNKNOWN_FIELD` and `UNSUPPORTED_VERSION` for another minor version, which are warnings; a skipped session line (`PARSE`) is an error.
 - `codes` is the sorted list of distinct codes reported, compared exactly.
-- `equals` is the bundle read, for `bundle`, after absent values read as missing (Format 2.2).
+- `equals` is the bundle read, for `bundle`, after absent values read as missing and repairing (Format 2.2, 17.2).
 - `ids` is, for `session`, the IDs of the messages read, in line order.
 
 ### 4.15 `read`: session lines (Format 12.1)
@@ -306,7 +306,7 @@ The test reads the case's raw session lines.
 
 - `expect.ids` is the IDs of the messages read, in line order.
 - `expect.head` is the head, or `null` when there are no messages: the header's `head` if it names a message, else the last message.
-- `expect.codes` is the sorted distinct codes reported.
+- `expect.codes` is the sorted distinct codes that reading lines reports: `PARSE`, `SCHEMA`, `DUPLICATE_ID` and `UNKNOWN_MESSAGE`.
 - `expect.message` is the message read with that `id`.
 
 ### 4.16 `output`: model output (Play 3.4)
