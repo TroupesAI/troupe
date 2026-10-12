@@ -1,5 +1,5 @@
 {
-  "description": "Without a header head, the head is the last message (Format 12.1)",
+  "description": "Without a header head, the head is the last message (Format 12)",
   "bundle": {
     "kind": "bundle",
     "characters": [

@@ -1,5 +1,5 @@
 {
-  "description": "Change preparation (Play 3.3): invalid keys dropped first, then maxStep for the model, oneWay for numbers, bools and enums, clamp, rounding as toFixed(6)",
+  "description": "Change preparation (Play 3.3): invalid keys dropped first, then maxStep for the model, oneWay for numbers, bools and enums, rounding as toFixed(6), clamp",
   "bundle": {
     "kind": "bundle",
     "characters": [

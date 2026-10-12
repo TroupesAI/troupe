@@ -1,5 +1,5 @@
 {
-  "description": "A message ID appears once (Format 12.1): a later line with it is DUPLICATE_ID and skipped",
+  "description": "A message ID appears once (Format 2.3, 17.2): a later line with it is DUPLICATE_ID and skipped",
   "bundle": {
     "kind": "bundle",
     "characters": [

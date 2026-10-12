@@ -61,6 +61,18 @@
             "type": "int",
             "max": "hp",
             "description": "Bounded by hp, whose own max names a variable."
+          },
+          {
+            "id": "frac",
+            "type": "number",
+            "initial": 2.5,
+            "description": "d"
+          },
+          {
+            "id": "stack",
+            "type": "int",
+            "max": "frac",
+            "description": "An int can't be bounded by a number variable."
           }
         ]
       }
@@ -157,6 +169,10 @@
           {
             "code": "UNKNOWN_VARIABLE",
             "at": "/scenarios/0/variables/4/max"
+          },
+          {
+            "code": "UNKNOWN_VARIABLE",
+            "at": "/scenarios/0/variables/6/max"
           }
         ]
       }

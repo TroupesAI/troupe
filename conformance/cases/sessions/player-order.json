@@ -1,5 +1,5 @@
 {
-  "description": "Session lines and seats (Format 12.1, 12.2): the header's head is the head; unlisted player cast members come after the listed players in cast order; scene.location takes any location of the bundle",
+  "description": "Session lines and seats (Format 12, 12.2): the header's head is the head; unlisted player cast members come after the listed players in cast order; scene.location takes any location of the bundle",
   "bundle": {
     "kind": "bundle",
     "worlds": [

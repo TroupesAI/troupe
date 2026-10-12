@@ -78,13 +78,16 @@ for (const doc of markdown) {
     let value: unknown;
     try {
       value = JSON.parse(m[1]);
-    } catch {
-      continue; // fragments such as a single entry or event
+    } catch (e) {
+      // fragments such as a single entry or event aren't JSON documents; a document that fails to parse is an error
+      if (/"kind":\s*"(bundle|session|chronicle)"/.test(m[1]))
+        fail(`${doc}:${text.slice(0, m.index).split("\n").length}: ${(e as Error).message}`);
+      continue;
     }
     const kind = (value as { kind?: string })?.kind;
     if (kind === "bundle" || kind === "session" || kind === "chronicle") {
       const line = text.slice(0, m.index).split("\n").length;
-      if (kind === "bundle") validate("bundle.schema.json", value, `${doc}:${line}`);
+      validate(`${kind === "session" ? "session-header" : kind}.schema.json`, value, `${doc}:${line}`);
       docBundles.push({ where: `${doc}:${line}`, troupe: (value as { troupe?: string }).troupe });
     }
   }
@@ -261,7 +264,7 @@ for (const doc of markdown) {
 const sections = (path: string) =>
   new Set([...read(path).matchAll(/^#{2,3} (?:Appendix )?(\d+(?:\.\d+)?|[A-Z](?:\.\d+)?)[.: ]/gm)].map((m) => m[1]));
 const specSections: Record<string, Set<string>> = { Format: sections("spec/format.md"), Play: sections("spec/play.md") };
-const num = String.raw`(?:\d+(?:\.\d+)*|[A-E](?:\.\d+)*)(?![\w.]*\d)`;
+const num = String.raw`(?:\d+(?:\.\d+)*|[A-Z](?![a-z])(?:\.\d+)*)(?![\w.]*\d)`;
 const list = String.raw`${num}(?:(?:,| and) ${num})*`;
 const cite = (where: string, text: string, own?: string) => {
   const check = (doc: string, items: string) => {

@@ -410,7 +410,7 @@ interface Variable {
 - **Defaults.** Without `initial`: `false`; `0` raised to `min` or lowered to `max`; `""`; the first of `values`; `[]`.
 - **`description`** reaches the model that updates state (Play 3.4).
 - **`by`.** Openings, events and chronicle values may always change a variable. `player` lets players change it; `model` lets the model that updates state change it (Play 3.4). A variable with `ask` may always be changed by players.
-- **`min` and `max`** are numbers, or name another numeric variable of the same owner that is neither keyed nor derived and whose own bounds are numbers, such as `"max": "max_hp"`; its current value, or its new value when the same change sets it (Play 3.3), is the bound.
+- **`min` and `max`** are numbers, or name another numeric variable of the same owner, an `int` for an `int`, that is neither keyed nor derived and whose own bounds are numbers, such as `"max": "max_hp"`; its current value, or its new value when the same change sets it (Play 3.3), is the bound.
 - **`maxStep`** is the largest step one change from the model may take; **`oneWay`** lets numbers only rise, a bool only turn true, a set only gain members, and an enum only move later in `values`. Both apply to each key of a keyed variable. Starting values are exempt from `oneWay` (Play 3.3).
 - **`derive`** makes a read-only variable computed from other state whenever it is read, such as `"derive": "state.clock / 24 + 1"` for the day. Derived variables have no `initial`, `by`, `ask`, `of`, `maxStep` or `oneWay`, can't be changed, and can't read other derived variables (`CEL_ERROR`). A `derive` is evaluated at the evaluation point of whatever reads it, with `self` its owner, `char` `""`, and no `hit()`.
 - **`ask`** puts a question to the player when the session starts and records the answer. `ask` is not allowed with `of`.
@@ -510,7 +510,7 @@ Macros are the only substitution in text. `@` turns IDs into names.
 | `{{pick::<a>::<b>…}}` | One option, fixed for the session (Play 4) |
 | `{{// <comment>}}` | Nothing; a note for authors |
 
-- **`{{char}}`** in a message part, an event's `message` included, is the part's `speaker`, else the message's `char`, else it is left as written; in a character's other text, that character; in a cast member's `notes`, its character; in other text, the character being generated for, or the scenario's `narrator` for the narrator and the tracker. In a state path, `char` means the same character.
+- **`{{char}}`** in a message part, an event's `message` included, is the part's `speaker`, else the message's `char`, else it is left as written; in a character's other text, that character; in a cast member's `notes`, its character; in other text, the character being generated for, or the scenario's `narrator` for the narrator, the single voice and the tracker. In a state path, `char` means the same character.
 - **`{{user}}`** is the speaker of the first speaking part of the latest player message on the path that has a speaking part, else the first player's character, else it is left as written. In a state path, `user` means the same character.
 - A `char` or `user` path segment that means no character names no key, so the macro renders as nothing.
 - **Rendering.** A value with a label renders as its label, with the label's own macros resolved; a substituted value is never scanned for macros again. Numbers render as ECMAScript `Number.prototype.toString`, booleans as `true` or `false`, lists as items joined by `, ` (an empty list as nothing), and maps as `Name: value` pairs joined by `, `, with character keys shown by name and other keys with underscores as spaces. Map keys render in declared order (cast order for characters), and `"*"` keys in code point order.
@@ -543,7 +543,7 @@ Every expression is evaluated at a message, its **evaluation point**: for a prom
 | `hour`, `weekday` | The evaluation point's local hour (0–23) and ISO weekday (1–7) in the session's `timezone`; −1 if its `at` or the `timezone` is missing, or the zone isn't a known IANA name |
 | `opening` | The path's opening ID, or `""` |
 | `scenario` | The scenario being played |
-| `char` | The character being generated for; `""` for the narrator, events and trackers |
+| `char` | The character being generated for; `""` for the narrator, the single voice, events and trackers |
 | `user` | The player's character `{{user}}` means, or `""` |
 | `self` | The owner of the expression: a character, world or scenario ID, or `session` |
 | `players` | The players' character IDs |

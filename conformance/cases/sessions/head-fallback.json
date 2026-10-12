@@ -1,5 +1,5 @@
 {
-  "description": "The head (Format 12.1): a header head that names no message is UNKNOWN_MESSAGE, and the head is the last message",
+  "description": "The head (Format 12, 17.2): a header head that names no message is UNKNOWN_MESSAGE, and the head is the last message",
   "bundle": {
     "kind": "bundle",
     "worlds": [

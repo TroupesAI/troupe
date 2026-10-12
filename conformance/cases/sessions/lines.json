@@ -1,5 +1,5 @@
 {
-  "description": "Session lines (Format 12.1): each line after the header is a message, in file order; the header's head is the head",
+  "description": "Session lines (Format 12): each line after the header is a message, in file order; the header's head is the head",
   "bundle": {
     "kind": "bundle",
     "characters": [

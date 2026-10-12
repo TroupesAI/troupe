@@ -1,5 +1,5 @@
 {
-  "description": "A head naming a skipped line (Format 12.1, 17.2): the unreadable line is PARSE and skipped, so the header's head names no message (UNKNOWN_MESSAGE) and the head is the last message read",
+  "description": "A head naming a skipped line (Format 12, 17.2): the unreadable line is PARSE and skipped, so the header's head names no message (UNKNOWN_MESSAGE) and the head is the last message read",
   "bundle": {
     "kind": "bundle",
     "scenarios": [

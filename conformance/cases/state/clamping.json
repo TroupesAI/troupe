@@ -97,7 +97,7 @@
     },
     {
       "type": "state",
-      "name": "when the bounds cross, max wins (Format 8.1)",
+      "name": "when the bounds cross, max wins (Play 3.3 step 5)",
       "expect": {
         "odd": 5
       }

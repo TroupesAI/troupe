@@ -56,7 +56,7 @@ Format 2 applies here, including requirement keywords. "Format 7.2" means sectio
    In both, a change that would set nothing isn't recorded, except the chronicle's, which every root of a session that continues a chronicle records first.
 5. Evaluate events at the root.
 
-Every later root, from another opening or a player's message, is made the same way; in a session that continues a chronicle, its first change and its entries are copies of the first change and the entries of the session's earliest root line.
+Every later root, from another opening or a player's message, is made by steps 3 to 5; in a session that continues a chronicle, its first change and its entries are copies of the first change and the entries of the session's earliest root line.
 
 ### 2.2 Continuing a chronicle
 
@@ -117,7 +117,7 @@ A key whose prepared value is no longer valid, such as a set grown past its limi
 3. A firing chooses an outcome by a weighted roll, if there are `outcomes`. The event's `set` and `compute`, then the outcome's, produce new values; later keys replace earlier ones. Every `compute` expression sees the state before this firing. Values are prepared as above.
 4. The firing is recorded on the triggering message as `{"by": "rules", "event": name, "outcome": index, "set": {…}}`, even when `set` is empty.
 5. The `message` parts of all firings in the pass, event before outcome, form one `from: "system"` message, a child of the triggering message, which becomes the head.
-6. The `direct` texts of the firings recorded on the triggering message, each event's before its outcome's, go into the System slot of every prompt built while no model message lies on the path after it.
+6. The `direct` texts of the firings recorded on the triggering message, each event's before its outcome's, go into the System slot of every prompt built while no model message that isn't hidden lies on the path after it.
 
 ### 3.4 Model output
 
@@ -135,7 +135,7 @@ type Newcomer = Pick<Character, "id" | "name" | "aliases" | "description" | "sum
 ```
 
 - **Tracker.** A tracker run is a model call separate from the story reply. It runs on a message that isn't hidden and has content, while that message is the head and before the event pass after it. It reads the messages after the last extraction on the path before that message, up to that message, as many of them as the app chooses, and returns everything but `parts`. Its input, at the message it runs on, is:
-  - for each variable in use whose `by` includes `model`, in event order (section 3.3), its key, type, `values` or range, `description` and current value;
+  - for each variable in use whose `by` includes `model`, in event order (section 3.3), its key, type, `values` or range (a named bound at its current value), `description` and current value, and for a keyed variable its keys, or that any author ID may be one;
   - the scene's values, the ID and name of every location of the bundle and session in world order, and of every cast character in cast order;
   - the entries in use placed in `tracker`, not `disabled`, whose `when` holds: those of the worlds, the cast characters in cast order, the scenario and the session, in the order of section 5.1;
   - the session entries on the path placed in `context`, in the order of section 5.1: for a tracker run, all of them that aren't `disabled`, with their IDs and texts; for a structured reply, the IDs of those the Context slot carries;
@@ -151,7 +151,7 @@ Nothing in the payload takes `ext`, and:
 How an app takes the payload out of a reply is up to it. Output that isn't a JSON object is discarded, and nothing is recorded. Otherwise apps apply a payload in this order:
 
 1. Read its empty values as Format 2.2 says, except that an empty `knownBy` stays empty for steps 3 and 5, and drop its unknown properties (Format 15), and a tracker run's `parts`. Drop each top-level property, part, entry or newcomer that still fails the schema, and each entry or newcomer whose ID an earlier one in the payload has. A structured reply left with no parts is discarded, and nothing is recorded.
-2. `characters` join the header.
+2. `characters` join the header, after its other characters, in payload order.
 3. `parts` are stored. A speaker that names no cast character is dropped (a newcomer that joined is in the cast), and so is each `knownBy` ID other than `narrator` that names none. A `knownBy` that is empty, or whose IDs are all dropped, becomes `["narrator"]`, or `[<speaker>, "narrator"]` on a part with a speaker.
 4. `changes` are recorded as one `{"by": "model", …}` change, prepared as in section 3.3, on the message the tracker runs on or on the reply itself. Every extraction records this change, with an empty `set` when it changes nothing, which marks where the next tracker run starts.
 5. `entries` become session entries on the same message, each replacing one there with its ID and stored with each field it lacks taken from it, as Format 12.3 says of later replacements, with their `knownBy` IDs dropped and emptied as in step 3; on a root they are dropped. An entry that would take the path's session entries past their limit (Format 16) is dropped.
