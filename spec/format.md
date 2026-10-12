@@ -667,8 +667,8 @@ A message may add entries, owned by `session`. They are candidates from that mes
 ### 12.4 Other message fields
 
 - **`pinned`** marks a message to repeat in the model's context while it is on the path (Play 6).
-- **`hidden`** messages are in the transcript, but are never sent to models or scanned, and summary knowledge ignores their parts.
-- **`summary`** condenses the messages from `from` to its message (Play 6). Without `knownBy`, it is known by the characters who know every part it covers, and reaches the narrator only if the narrator can see every part (Play 7). An app that changes or removes a message a summary covers MUST remove that summary; readers take summaries as written.
+- **`hidden`** messages are in the transcript, but are never sent to models or scanned.
+- **`summary`** condenses the messages from `from` to its message (Play 6). Without `knownBy`, it is known by the characters who know every part it covers, hidden messages' parts aside, and reaches the narrator only if the narrator can see every such part (Play 7). An app that changes or removes a message a summary covers MUST remove that summary; readers take summaries as written.
 - **Records-only messages.** A system message with empty `content` carries `changes`, such as player edits (Play 3.3), and, on a root made from an opening without `content`, `opening`; it has no `summary`, `activated` or `char`, has `entries` only on a root, and isn't pinned.
 
 ---
@@ -728,7 +728,7 @@ Fields that hold a file (`cover`, `avatar`, location `image` and image parts) ho
 ## 15. Extensions and versioning
 
 - **Extensions.** Every object of a bundle, session or chronicle that this document defines with an interface MAY carry `ext`, keyed by an extension name matching `^[a-z0-9][a-z0-9.-]{0,63}$`, such as `risu.regex`. The `troupe.` prefix is reserved for the draft extensions of Appendix D. Apps MUST NOT add fields anywhere else.
-- **Unknown fields.** Readers MUST ignore fields and extensions they don't understand. They MUST keep `ext` unchanged, as a JSON value, through load, save and export; other unknown fields are dropped when the file is written. A property is unknown when its object's interface doesn't define it; for a part, the interface its `type` selects. Each is an `UNKNOWN_FIELD` warning located at the property, and `SCHEMA` is judged with unknown properties removed, so readers never reject a file only for them. A part whose `type` is present and isn't `"text"` or `"image"` is unknown as a whole: an `UNKNOWN_FIELD` warning at its `type`; the reader ignores it, so a message holding only such parts has no content, and writes it back unchanged.
+- **Unknown fields.** Readers MUST ignore fields and extensions they don't understand. They MUST keep `ext` unchanged, as a JSON value, through load, save and export; other unknown fields are dropped when the file is written. A property is unknown when its object's interface doesn't define it; for a part, the interface its `type` selects. Each is an `UNKNOWN_FIELD` warning located at the property, and `SCHEMA` is judged with unknown properties removed, so readers never reject a file only for them. A part whose `type` is present and isn't `"text"` or `"image"` is unknown as a whole: an `UNKNOWN_FIELD` warning at its `type`. Readers ignore it and MUST write it back unchanged, so a message holding only such parts has no content.
 - **Versions** are `major.minor`, compared as two integers, so `0.10` is newer than `0.9`. A reader refuses a file of another major version (`UNSUPPORTED_VERSION`). From 1.0, minor versions only add what older readers can safely ignore: readers MUST open every file of their major version and report a newer minor as an `UNSUPPORTED_VERSION` warning. Before 1.0, any minor version may break: a reader fully supports only its own, reports any other as an `UNSUPPORTED_VERSION` warning, and MAY still read it.
 
 ---
@@ -1108,11 +1108,11 @@ A new session that continues this chronicle starts with `closeness` at 58 and bo
 | No text transforms | Regex scripts that rewrite text | Most build HTML, fix one model's quirks, or display stats that state now covers. |
 | Security rules for showing and reading files are normative | Leaving safety to each app | Files come from strangers; a file safe in one app must be safe in every app. |
 | A replacement session entry takes the fields it lacks from the one it replaces | Replacing an entry whole | A model sees only an entry's ID and text, so its update of a memory keeps the memory's `carry`, `knownBy`, `pull` and `title`. |
-| A joiner listed in `players` fills a seat | Recording how each character joined | The snapshot can't tell a player's own character from a joiner listed in `players`; so a joiner listed in `players` has no `"characters"` key. |
+| A header character listed in `players` fills a seat | Recording how each character joined | The snapshot can't tell a player's own character from a newcomer listed in `players`, so neither is a key of an `of: "characters"` variable. |
 | Strict schemas, lenient readers | Either everywhere | Writers catch typos; readers stay forward compatible. |
 | A reader that keeps a file failing its schema removes each failing value | Refusing it, or each reader repairing it its own way | Every lenient reader plays the same story from the same broken file. |
 | Writers leave out empty optional fields and write booleans as they like | Allowing `""` and `[]` anywhere; treating an explicit `false` as different from absent | Two writers of the same story produce the same fields, and typed serializers that write defaults still validate. |
-| Writers use two part types; readers skip others | Open part types; refusing unknown ones | A later version can add a media part that older readers skip instead of refusing the session. |
+| Writers create two part types; readers skip others and write them back | Open part types; refusing unknown ones | A later version can add a media part that older readers skip instead of refusing the session. |
 | Readers must keep only `ext` | Keeping every unknown field, and stamping the newer version | Apps add data only in `ext`, so other unknown fields are typos or come from a version the reader doesn't support. |
 | No `requires` and no rules for extension data | Files declaring extensions they need; duties on extension authors | An app that lacks an extension ignores its data, and nothing could check those duties. |
 | Standard ZIP checks | Rejecting multi-disk archives, overlapping entries and headers that disagree | A standard ZIP library reads packages; the size, count and ratio caps bound a hostile archive. |

@@ -261,7 +261,7 @@ Troupe defines what goes into a prompt and in which slot; formatting, mapping to
 | **Context** | selected entries placed in `context`; pinned messages on the path, in path order |
 | **History** | messages on the path with parts the generation can see, image parts reaching models without image input as their `alt`, with summaries it can see standing in for messages they cover where the app chooses, and entries with a numeric position inserted at their depth |
 
-Entries keep file order within a slot, and everything in a slot is filtered by section 7. Every generation's System slot carries the session's `limits`, and fitting never drops them.
+Entries keep file order within a slot, and everything in a slot is filtered by section 7. Fitting never drops the session's `limits`.
 
 ---
 

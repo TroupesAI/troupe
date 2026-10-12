@@ -16,7 +16,7 @@ Hardening for implementation. Breaking changes from 0.11:
 - **Knowledge:** a `knownBy` that is empty, or emptied by unknown IDs or repair, is narrator-only (Format 7.4).
 - **Session entries:** a replacement takes each field it lacks from the entry it replaces, so a model can update a memory without losing its `carry`, `knownBy` or `pull`, and a model entry that overwrites one on the same message is stored merged (Format 12.3; Play 3.4).
 - **Player edits** go on a new records-only message (Play 3.3).
-- **Players** beyond a scenario's seats add seats, a seat nobody fills leaves the cast, a takeover keeps a character's keys, a joiner listed in `players` fills a seat, and a replacement of a character outside the cast counts as a new character (Format 6.1, 8.3, 12.2).
+- **Players** beyond a scenario's seats add seats, a seat nobody fills leaves the cast, a takeover keeps a character's keys, a header character listed in `players` fills a seat, and a replacement of a character outside the cast counts as a new character (Format 6.1, 8.3, 12.2).
 - **Chronicles** take back only what a session changed. Every root of a chronicle session records the chronicle's change, even empty, and holds its memories, records-only roots included; a chronicle character outside the cast joins it; questions whose key the chronicle sets aren't asked; a repeated write-back takes only the newer changes (Format 12.3, 12.4, 13; Play 2.1, 2.2).
 - **Scenarios** name their narrator for `{{char}}` (Format 6, 10).
 - **`end`** changes nothing else; history length is the app's (Format 9; Play 6).
