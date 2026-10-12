@@ -76,7 +76,7 @@ A `set` without `values` holds free-form items: `["rope", "a silver chalice"]`. 
 
 ### Rosters and newcomers
 
-Make the people who matter characters, with a `summary` for when they are offstage, and the rest world entries keyed on their names. Openings decide who starts present. Someone new who appears during a chat joins the session's characters, with a name, description and summary.
+Make the people who matter characters, with a `summary` for when they are offstage, and the rest world entries keyed on their names. An opening's `set` can list who starts present. Someone new who appears during a chat joins the session's characters, with a name, description and summary.
 
 ### Whereabouts and hidden characters
 
@@ -92,7 +92,7 @@ A scenario variable records where each character waits, and one event brings who
   "compute": { "scene.present": "scene.present.filter(c, state.where[c] == '') + state.where.filter(c, state.where[c] == scene.location)" } }
 ```
 
-Mark the ghost's cast member `spoiler`, a secret until the players walk into the cellar. Until then it is offstage. Openings should set `scene.location`, so the event sorts presence at the root. Like any event, it fires at most once per round, so presence follows the first move in a round.
+Mark the ghost's cast member `spoiler`, a secret until the players walk into the cellar. Until then it is offstage. Openings should set `scene.location`, so the event can sort presence from the start. Like any event, it fires at most once per round, so presence follows the first move in a round.
 
 ### Companions that remember
 

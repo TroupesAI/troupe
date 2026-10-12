@@ -39,7 +39,7 @@ One page for people and for LLMs asked to write Troupe files. Give it to a model
 **Traps:**
 
 1. `set` takes plain values: `"set": {"hp": 10}`. Expressions go in `compute`: `"compute": {"hp": "state.hp - 1"}`.
-2. A character's entries reach every character present unless `knownBy` is set. Put secrets in `knownBy` entries.
+2. Everyone knows a character's entries unless `knownBy` is set. Put secrets in `knownBy` entries.
 3. Inside CEL, strings use single quotes: `"when": "state.phase == 'escape'"`. Look up a computed key with brackets: `state.trust[char]`.
 4. Numbers in CEL arithmetic match the variable's type: `state.trust.kai - 0.1` for a `number`, `state.hp - 1` for an `int`.
 5. `chance` is 0–1, not a percentage. `weight` and `priority` are integers.

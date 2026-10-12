@@ -47,7 +47,7 @@
       "minItems": 1
     },
     "activated": {
-      "description": "Entries that activated for this message, in file order.",
+      "description": "The entries that reached the model for this message, as distinct references (Format 12.4).",
       "type": "array",
       "uniqueItems": true,
       "items": {
@@ -177,7 +177,7 @@
       }
     },
     {
-      "description": "Only model messages name the character they were generated for.",
+      "description": "Only model messages name the character they were written for, and record activated entries.",
       "if": {
         "not": {
           "properties": {
@@ -189,8 +189,40 @@
       },
       "then": {
         "properties": {
-          "char": false
+          "char": false,
+          "activated": false
         }
+      }
+    },
+    {
+      "description": "A root is a system message made from an opening, or a player message.",
+      "if": {
+        "not": {
+          "required": [
+            "parent"
+          ]
+        }
+      },
+      "then": {
+        "anyOf": [
+          {
+            "required": [
+              "opening"
+            ],
+            "properties": {
+              "from": {
+                "const": "system"
+              }
+            }
+          },
+          {
+            "properties": {
+              "from": {
+                "const": "player"
+              }
+            }
+          }
+        ]
       }
     }
   ],

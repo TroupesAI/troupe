@@ -14,6 +14,7 @@ Cases live in `cases/<area>/<topic>.json`, one folder per area of the spec:
 | `events` | What a recorded `end` means (Format 9) |
 | `macros` | Macro parsing and rendering (Format 10) |
 | `cel` | Conditions (Format 11) |
+| `knowledge` | Who knows a part or a summary (Format 7.4, 12.4, 12.5) |
 | `roots` | Roots made from openings (Format 6.3, 12.1) |
 | `sessions` | Session lines, the head, players and the cast (Format 12) |
 | `chronicles` | Chronicles (Format 13) |
@@ -31,18 +32,16 @@ The order of cases doesn't matter. A case file is one JSON object, described by 
 | `bundleFile` | string | Instead of `bundle`: a path to a bundle JSON file, relative to the case file. |
 | `session` | object | Optional. `{"header": SessionHeader, "messages": [Message, …]}`. `messages` lists the session's lines after the header, in file order (Format 12.1). |
 | `sessionFile` | string | Instead of `session`: a path to a `.jsonl` session file, relative to the case file. |
-| `addMessages` | array | Optional. Messages appended after the session's own messages. |
 | `tests` | array | The tests (section 3). |
 
-Bundles, session headers and chronicles given as objects leave out `troupe`: before anything else, `check` validation included, the runner sets it to the spec version. If no bundle is given, the bundle is `{"troupe": <the spec version>, "kind": "bundle"}`. Cases that test raw input instead use `parse` tests (section 3.6), which take their input inline.
+Bundles, session headers and chronicles given as objects leave out `troupe`: before anything else, `check` validation included, the runner sets it to the spec version. If no bundle is given, the bundle is `{"troupe": <the spec version>, "kind": "bundle"}`. Cases that test raw input instead use `parse` tests (section 3.7), which take their input inline.
 
 ## 2. Setup for each test
 
 Every test starts from a fresh copy of the case's inputs. Tests don't affect each other.
 
-- **Valid inputs.** `state`, `macro`, `cel` and `ended` tests run only on inputs that conform (Format 17.1): `bun run check` rejects a case whose inputs fail the schemas, or whose `check` test expects a failed check other than `UNKNOWN_MACRO`. The spec gives files that fail a check no meaning to test.
+- **Conforming inputs.** `state`, `macro`, `cel`, `ended` and `knows` tests run only on inputs that conform (Format 17.1), since the spec gives files that fail a check no meaning to test. Every case with such tests also has a `check` test that expects no codes, which a runner uses to confirm it. `bun run check` requires that test, and that the inputs pass the schemas, unknown properties included; it can't run the other checks itself.
 - **The story.** The session's `scenario` names the scenario. Without a session, use the bundle's first scenario, whose seats are then unfilled and left out of the cast (Format 6.1), so `players` holds only cast members marked `player`. A `check` test without a session checks the bundle once for each scenario (Format 11.2). Header characters replace bundle characters as Format 12.2 says.
-- **The head** is the header's `head`, or the last message.
 
 ## 3. Tests
 
@@ -72,17 +71,18 @@ The state is flattened to an object with these keys:
 
 ### 3.2 `ended`: the end of a story (Format 9)
 
-`expect` is whether the story is finished on the path to the message `at`: whether a firing recorded on that path is of an event or outcome with `end`.
+`expect` is whether the story is finished at the message `at`: whether a firing recorded on the path to it, that message included, is of an event or outcome with `end` (Format 9).
 
 ### 3.3 `macro`: macro resolution (Format 10)
 
 | Input | Meaning |
 | --- | --- |
 | `text` | Author text. |
+| `part` | Instead of `text` and `at`: `{message, index}`, the `text` of that part of that message, resolved at that message as Format 10 says of message parts. |
 | `at` | The message whose state the macros read. Omit it for the initial state, where `{{user}}` is the first player's character. `{{user}}` follows the path to `at`. |
 | `char` | What `{{char}}` and a `char` path segment mean. Omit it for none: `{{char}}` is then left as written, and a `char` segment names no key (Format 10). |
 | `owner` | What `own` means. Omit it for none. |
-| `narrator` | Optional boolean: the text is used for the narrator, so `{{char}}` without `char` renders as the scenario's `narrator`. |
+| `narrator` | Optional boolean: the text is used for a message written for the narrator, so `{{char}}` without `char` renders as the scenario's `narrator`. |
 
 `expect` is the rendered string (Format 10).
 
@@ -100,13 +100,13 @@ The state is flattened to an object with these keys:
 
 ### 3.5 `check`: checks (Format 17.2)
 
-The runner validates the bundle and the session's lines against the schemas, then runs every other check (Format 17.2).
+The runner validates the bundle and the session's lines against the schemas, then runs every other check (Format 17.2). Every check runs on the documents as written, so one value can fail several checks (Format 17.1).
 
 - `expect.codes` is the sorted list of distinct diagnostic codes reported. It is compared exactly.
 - Each session line after the header is validated against `message.schema.json`. Validators assert `format`, so a malformed timestamp is `SCHEMA`.
 - `SCHEMA` covers schema failures, such as `null`, `""` or `[]` in an optional field (Format 2.2).
 - `UNKNOWN_FIELD` (Format 15) is located at the property itself (`/characters/0/mystery`).
-- `check` tests don't use `PARSE` or `UNSUPPORTED_VERSION`; `parse` tests (section 3.6) cover them.
+- `check` tests don't use `PARSE` or `UNSUPPORTED_VERSION`; `parse` tests (section 3.7) cover them.
 - `expect.includes` lists `{code, at}` pairs that must each appear, compared on both fields.
 
 Locations:
@@ -119,7 +119,17 @@ Locations:
 
 A diagnostic about one value points at that value: a list item at its index (`/scenarios/0/worlds/1`), a duplicate ID at the duplicate's `id` (`/characters/1/id`), a reference at the field holding it (`/scenarios/0/cast/2/character`). For keys inside `set`, the pointer segment is the key as written (`/set/scene.present`).
 
-### 3.6 `parse`: raw input (Format 2.2, 12, 13, 14, 15, 16)
+### 3.6 `knows`: who knows a part or a summary (Format 7.4, 12.4, 12.5)
+
+| Input | Meaning |
+| --- | --- |
+| `message` | A message ID. |
+| `part` | The index of one of its parts. |
+| `summary` | Instead of `part`: `true`, for the message's `summary`. |
+
+`expect` is who knows it: the IDs of the characters who know it, and `narrator` when the narrator knows it, in code point order. The single voice knows everything and isn't listed.
+
+### 3.7 `parse`: raw input (Format 2.2, 12, 13, 14, 15, 16)
 
 | Input | Meaning |
 | --- | --- |
@@ -131,7 +141,7 @@ The runner parses the bytes, checks the version and validates against the schema
 
 `expect.codes` is the sorted list of distinct codes reported, compared exactly. A conforming input has none.
 
-### 3.7 `chronicle`: chronicle checks (Format 13)
+### 3.8 `chronicle`: chronicle checks (Format 13)
 
 | Input | Meaning |
 | --- | --- |
@@ -150,6 +160,7 @@ The runner parses the bytes, checks the version and validates against the schema
 
 - Put a case in the folder for its area, named after its topic: `state/clamping.json`.
 - Prefer small inline bundles.
-- Give `state`, `macro`, `cel` and `ended` tests conforming inputs, and test failed checks in `check`, `chronicle` and `parse` tests.
+- Give `state`, `macro`, `cel`, `ended` and `knows` tests conforming inputs, with a `check` test that expects no codes, and test failed checks in separate cases with `check`, `chronicle` and `parse` tests.
+- Keep inputs to what the tests read.
 - When an expectation depends on ambiguous spec text, fix the spec text rather than recording a reading in the case.
 - Cite current sections in `description`, as `Format 7.2`.

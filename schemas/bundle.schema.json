@@ -11,7 +11,8 @@
   "additionalProperties": false,
   "properties": {
     "$schema": {
-      "type": "string"
+      "type": "string",
+      "minLength": 1
     },
     "troupe": {
       "$ref": "#/$defs/version"
@@ -161,12 +162,6 @@
       "description": "A message, bundle or chronicle ID.",
       "type": "string",
       "pattern": "^[A-Za-z0-9_-]{1,64}$"
-    },
-    "ids": {
-      "type": "array",
-      "items": {
-        "$ref": "#/$defs/id"
-      }
     },
     "entryRef": {
       "description": "<owner>/<entryId>, where the owner is a character, world or scenario ID, or session.",
@@ -1209,7 +1204,8 @@
         "ext": {
           "$ref": "#/$defs/ext"
         }
-      }
+      },
+      "minProperties": 1
     },
     "list": {
       "description": "A non-empty list of strings.",

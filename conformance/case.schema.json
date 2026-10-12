@@ -33,15 +33,15 @@
           "type": "object"
         },
         "messages": {
-          "type": "array"
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
         }
       }
     },
     "sessionFile": {
       "type": "string"
-    },
-    "addMessages": {
-      "type": "array"
     },
     "tests": {
       "type": "array",
@@ -60,7 +60,8 @@
               "cel",
               "check",
               "parse",
-              "chronicle"
+              "chronicle",
+              "knows"
             ]
           }
         },
@@ -158,8 +159,7 @@
             "then": {
               "additionalProperties": false,
               "required": [
-                "expect",
-                "text"
+                "expect"
               ],
               "properties": {
                 "type": {
@@ -191,8 +191,38 @@
                 },
                 "narrator": {
                   "type": "boolean"
+                },
+                "part": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "message",
+                    "index"
+                  ],
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "index": {
+                      "type": "integer",
+                      "minimum": 0
+                    }
+                  }
                 }
-              }
+              },
+              "oneOf": [
+                {
+                  "required": [
+                    "text"
+                  ]
+                },
+                {
+                  "required": [
+                    "part"
+                  ]
+                }
+              ]
             }
           },
           {
@@ -445,7 +475,78 @@
                 "chronicleFile": {
                   "type": "string"
                 }
-              }
+              },
+              "oneOf": [
+                {
+                  "required": [
+                    "chronicle"
+                  ]
+                },
+                {
+                  "required": [
+                    "chronicleFile"
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "knows"
+                }
+              },
+              "required": [
+                "type"
+              ]
+            },
+            "then": {
+              "additionalProperties": false,
+              "required": [
+                "expect",
+                "message"
+              ],
+              "properties": {
+                "type": {
+                  "const": "knows"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "note": {
+                  "type": "string"
+                },
+                "expect": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "message": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "part": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "summary": {
+                  "const": true
+                }
+              },
+              "oneOf": [
+                {
+                  "required": [
+                    "part"
+                  ]
+                },
+                {
+                  "required": [
+                    "summary"
+                  ]
+                }
+              ]
             }
           }
         ]

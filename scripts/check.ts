@@ -1,13 +1,13 @@
 // Checks the repository's documents and data:
-//   - the schemas compile, and the examples and every complete bundle in a Markdown document validate;
+//   - the schemas compile, and the examples and every complete bundle, session header and chronicle in a Markdown document validate;
 //   - examples/ and the README's first example match the examples in spec/format.md (--write-examples rewrites examples/);
 //   - every TypeScript interface in the spec lists exactly its schema's properties;
-//   - the spec version agrees across the documents, schema URLs, examples, bundles in Markdown and cases;
+//   - the spec version agrees across the spec, the README, schema URLs, examples, documents in Markdown and cases;
 //   - every conformance case is named <area>/<topic>.json, matches conformance/case.schema.json, and the files it names exist,
 //     and its check, chronicle and parse tests expect SCHEMA exactly when the schemas reject their input;
-//   - cases with state, macro, cel or ended tests have inputs that pass the schemas, and check tests that expect no
-//     failed check other than UNKNOWN_MACRO;
-//   - relative Markdown links and #anchors resolve, and every "Format N.N" names a section.
+//   - cases with state, macro, cel, ended or knows tests have inputs that pass the schemas, unknown properties included, and a
+//     check test that expects no codes, so a runner confirms the inputs conform;
+//   - relative Markdown links and #anchors resolve, every "Format N.N" names a section, and nothing cites Troupe Play.
 import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import Ajv2020 from "ajv/dist/2020.js";
@@ -135,9 +135,8 @@ const interfaces: Record<string, ReturnType<typeof schemaOf>> = {
   Summary: schemaOf("message.schema.json", "properties", "summary"),
   Chronicle: schemaOf("chronicle.schema.json"),
 };
-const specText = format;
 for (const [name, schema] of Object.entries(interfaces)) {
-  const body = specText.match(new RegExp(`^interface ${name} \\{\n([\\s\\S]*?)\n\\}`, "m"))?.[1];
+  const body = format.match(new RegExp(`^interface ${name} \\{\n([\\s\\S]*?)\n\\}`, "m"))?.[1];
   if (!body) {
     fail(`spec: no interface ${name}`);
     continue;
@@ -205,13 +204,19 @@ function schemaCodes(path: string, c: Record<string, any>) {
   const session = c.sessionFile ? lines(read(join(dirname(path), c.sessionFile))) : c.session && [withVersion(c.session.header), ...c.session.messages];
   const sessionFails = (lines: unknown[]) =>
     schemaFails("session-header.schema.json", lines[0]) || lines.slice(1).some((m) => schemaFails("message.schema.json", m));
-  const meaning = (c.tests as Record<string, any>[]).filter((t) => ["state", "macro", "cel", "ended"].includes(t.type));
-  if (meaning.length) {
-    if (schemaFails("bundle.schema.json", bundle) || (session ? sessionFails(session) : false))
-      fail(`${path}: state, macro, cel and ended tests need inputs that pass the schemas`);
-    for (const t of c.tests as Record<string, any>[])
-      if (t.type === "check" && (t.expect?.codes ?? []).some((code: string) => code !== "UNKNOWN_MACRO"))
-        fail(`${path}: a check expects ${t.expect.codes.join(", ")}, so its state, macro, cel and ended tests have invalid inputs`);
+  // state, macro, cel, ended and knows tests need conforming inputs (conformance/README.md section 2)
+  if ((c.tests as Record<string, any>[]).some((t) => ["state", "macro", "cel", "ended", "knows"].includes(t.type))) {
+    const invalid = (name: string, value: unknown) => !validator(name)(value);
+    if (c.sessionFile && session === undefined) fail(`${path}: ${c.sessionFile} has unreadable lines`);
+    if (
+      invalid("bundle.schema.json", bundle) ||
+      (session && (invalid("session-header.schema.json", session[0]) || session.slice(1).some((m) => invalid("message.schema.json", m))))
+    )
+      fail(`${path}: state, macro, cel, ended and knows tests need inputs that pass the schemas, unknown properties included`);
+    const checks = (c.tests as Record<string, any>[]).filter((t) => t.type === "check");
+    if (!checks.length) fail(`${path}: state, macro, cel, ended and knows tests need a check test that expects no codes`);
+    for (const t of checks)
+      if (t.expect.codes.length) fail(`${path}: a check expects ${t.expect.codes.join(", ")}, so its state, macro, cel, ended and knows tests have invalid inputs`);
   }
   (c.tests as Record<string, any>[]).forEach((t, i) => {
     const where = `${path}: test ${i + 1}${t.name ? ` (${t.name})` : ""}`;
@@ -223,8 +228,7 @@ function schemaCodes(path: string, c: Record<string, any>) {
       const chronicle = t.chronicleFile ? JSON.parse(read(join(dirname(path), t.chronicleFile))) : withVersion(t.chronicle);
       fails = schemaFails("chronicle.schema.json", chronicle);
     } else if (t.type === "parse" && typeof t.text === "string" && t.kind !== "package") {
-      const expected = codes;
-      if (!expected || expected.some((code) => code === "PARSE" || code === "UNSUPPORTED_VERSION")) return;
+      if (!codes || codes.some((code) => code === "PARSE" || code === "UNSUPPORTED_VERSION")) return;
       const schema = { bundle: "bundle.schema.json", chronicle: "chronicle.schema.json" }[t.kind as string];
       try {
         if (schema) fails = schemaFails(schema, JSON.parse(t.text));
@@ -232,11 +236,11 @@ function schemaCodes(path: string, c: Record<string, any>) {
         return;
       }
       if (!schema) {
-        const read = lines(t.text);
-        if (!read) return;
-        fails = sessionFails(read);
+        const parsed = lines(t.text);
+        if (!parsed) return;
+        fails = sessionFails(parsed);
       }
-      if (fails !== expected.includes("SCHEMA")) fail(`${where}: the schemas ${fails ? "reject" : "accept"} the input, but SCHEMA is ${fails ? "not " : ""}expected`);
+      if (fails !== codes.includes("SCHEMA")) fail(`${where}: the schemas ${fails ? "reject" : "accept"} the input, but SCHEMA is ${fails ? "not " : ""}expected`);
       return;
     }
     if (fails !== undefined && codes && fails !== codes.includes("SCHEMA"))
@@ -266,22 +270,24 @@ for (const doc of markdown) {
 }
 
 // Section citations: "Format 7.2", "Format Appendix B.2" and lists such as "Format 2.2, 14 and 16" anywhere,
-// and "section 7.2" within the spec; Troupe Play no longer exists, so citing it fails
+// and "section 7.2" within the spec. Troupe Play no longer exists, so citing it fails.
 const sections = (path: string) =>
   new Set([...read(path).matchAll(/^#{2,3} (?:Appendix )?(\d+(?:\.\d+)?|[A-Z](?:\.\d+)?)[.: ]/gm)].map((m) => m[1]));
-const specSections: Record<string, Set<string>> = { Format: sections("spec/format.md"), Play: new Set() };
+const formatSections = sections("spec/format.md");
 const num = String.raw`(?:\d+(?:\.\d+)*|[A-Z](?![a-z])(?:\.\d+)*)(?![\w.]*\d)`;
 const list = String.raw`${num}(?:(?:,| and) ${num})*`;
-const cite = (where: string, text: string, own?: string) => {
-  const check = (doc: string, items: string) => {
+const cite = (where: string, text: string, own = false) => {
+  const check = (items: string) => {
     for (const n of items.split(/,| and /).map((s) => s.trim()))
-      if (!specSections[doc].has(n)) fail(`${where}: cites ${doc} ${n}, which doesn't exist`);
+      if (!formatSections.has(n)) fail(`${where}: cites Format ${n}, which doesn't exist`);
   };
-  for (const m of text.matchAll(new RegExp(String.raw`\b(Format|Play) (?:Appendix )?(${list})`, "g"))) check(m[1], m[2]);
-  if (own) for (const m of text.matchAll(new RegExp(String.raw`\bsections? (${list})(?! of Troupe)`, "g"))) check(own, m[1]);
+  for (const m of text.matchAll(new RegExp(String.raw`\bFormat (?:Appendix )?(${list})`, "g"))) check(m[1]);
+  if (own) for (const m of text.matchAll(new RegExp(String.raw`\bsections? (${list})(?! of Troupe)`, "g"))) check(m[1]);
+  for (const m of text.matchAll(/\b(?:Troupe )?Play (?:Appendix )?[\dA-Z]|play\.md/g)) fail(`${where}: cites ${m[0]}, but Troupe Play no longer exists`);
 };
-for (const doc of markdown) cite(doc, read(doc), doc === "spec/format.md" ? "Format" : undefined);
+for (const doc of markdown) cite(doc, read(doc), doc === "spec/format.md");
 for (const f of cases) cite(`conformance/cases/${f}`, read(`conformance/cases/${f}`));
+for (const f of [...schemaFiles.map((f) => `schemas/${f}`), "conformance/case.schema.json"]) cite(f, read(f));
 
 if (problems.length) {
   console.error(problems.join("\n"));

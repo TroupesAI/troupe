@@ -171,7 +171,7 @@ A heist needs a city, a target and a crew. A **world** is a setting that scenari
 
 - **The cast** lists who takes part. `{}` is a **seat** for a person; `notes` add context for this story only. A cast with two seats has room for two players.
 - **`premise`** is the situation. **`briefing`** is for the players, not the model.
-- **`set`** in an opening gives starting values, here the location. The model learns where the scene is, and conditions can test it (chapter 6).
+- **`set`** in an opening gives starting values, here the location. The location is state: text can name it, and conditions can test it (chapter 6).
 - **An opening without `content`**, like `harbor`, lets the model write the first message. A list of these works as a menu of starting points.
 - **Presence.** Who is present is state too: an opening's `set` can list `scene.present`, and the chat records who is present at its start. Everyone else is offstage, where a character's short `summary` stands for them.
 
@@ -194,7 +194,7 @@ Stories depend on people not knowing things. Elena still has the surveyor's mast
 { "id": "deal", "knownBy": ["kai"], "text": "The Duke paid Kai to lead the crew into a trap at the vault door. He is starting to regret it." }
 ```
 
-The first goes in Elena's `entries`, the second in Kai's. Without `knownBy`, a character's entries reach every character present, so a secret always needs it. An instruction for one character's turns works the same way: Kai's way of talking is an entry known only by Kai.
+The first goes in Elena's `entries`, the second in Kai's. Without `knownBy`, everyone knows a character's entries, so a secret always needs it. An instruction for one character's turns works the same way: Kai's way of talking is an entry known only by Kai.
 
 ```json
 { "id": "voice", "knownBy": ["kai"], "position": 4, "text": "{{char}} calls people 'boss' and talks in quick, joking bursts." }
@@ -303,7 +303,7 @@ flowchart TD
   O2["Opening: at the harbor"]
 ```
 
-Every outcome is written into the message where it happened: which entries activated, which values changed and who changed them, which events fired. Branches never share state: time lost on one branch is still there to spend on the other. Because every outcome is recorded, a chat saved by one app continues exactly in another. [Format Appendix B.3](../spec/format.md#b3-session) shows this chat as a file.
+Every outcome is written into the message where it happened: which entries activated, which values changed and who changed them, which events fired. Branches never share state: time lost on one branch is still there to spend on the other. Because every outcome is recorded, a chat saved by one app continues in another with the same history and state. [Format Appendix B.3](../spec/format.md#b3-session) shows this chat as a file.
 
 The player's character usually lives in the session, not the bundle. A session can also carry its own version of a bundle character, which replaces it for that chat. Text that names other characters with `{{@kai}}` instead of writing "Kai" keeps working after such a recast.
 
