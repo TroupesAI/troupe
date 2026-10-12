@@ -674,8 +674,8 @@ interface Summary {
 ### 12.2 Players and cast
 
 - **Replacements.** A header character with the ID of a bundle character replaces it for the whole session: it keeps that character's place in the cast and every reference to it. Two header characters that replace the same bundle character make the session unplayable (`DUPLICATE_ID`).
-- `players` lists the characters people control, in seat order. An ID defined in the header's `characters`, other than a replacement, fills the next empty seat; a cast member marked `player` fills its own seat and is a player whether or not it is listed, after the listed players in cast order; the ID of another cast member means a person took that character over.
-- The session's **cast** is the scenario cast with seats filled, followed by the **joiners**: header `characters` that aren't players or replacements, which joined or appeared during the session.
+- `players` lists the characters people control, in seat order. An ID defined in the header's `characters`, other than a replacement, fills the next empty seat, or adds a seat after the scenario cast when every seat is filled, so more people can play than the author planned for; a cast member marked `player` fills its own seat and is a player whether or not it is listed, after the listed players in cast order; the ID of another cast member means a person took that character over.
+- The session's **cast** is the scenario cast with seats filled, then the added seats, then the **joiners**: header `characters` that aren't players or replacements, which joined or appeared during the session.
 
 ### 12.3 Session entries
 
@@ -814,7 +814,7 @@ Messages are never dropped for a failed check, except the lines that `PARSE` and
 | `UNKNOWN_VARIABLE` | Keys in openings, events, changes and chronicle values exist and aren't derived, and variables named by `min` and `max` are valid bounds (section 8.1); a chronicle's value keys name carried variables of its character (section 13) | The key or bound is dropped |
 | `INVALID_VALUE` | `initial`, opening and event `set` values, recorded values, chronicle values and `outcome` indexes are valid | The value is dropped |
 | `UNKNOWN_MESSAGE` | `parent`, the header's `head` and summary `from` name messages, and `from` is on the path to its summary | The head or summary is ignored; a message with an unknown `parent` is skipped with its descendants |
-| `INVALID_PLAYER` | `players` names header characters or cast members, with no more header characters than seats | The ID is ignored |
+| `INVALID_PLAYER` | `players` names header characters or cast members | The ID is ignored |
 | `CEL_ERROR` | Every expression parses and type-checks, and no `derive` reads a derived variable; comprehensions nest at most two deep, without `roll()` inside (section 11.2) | The item never applies |
 | `REGEX_ERROR` | Every regex key parses as RE2 | The key is ignored |
 | `UNKNOWN_MACRO` | Macros are valid and name existing characters and variables | Left as written |
@@ -1104,6 +1104,7 @@ A new session that continues this chronicle starts with `closeness` at 58 and bo
 | Owner-scoped mechanics, `own` | One shared namespace | Characters and worlds stay self-contained when combined. |
 | Openings only in scenarios | Openings on characters too | Characters stay reusable in any story; a companion costs one small scenario, and there is one place to look. |
 | Openings without content | Every start written out | A menu of starting points costs a line each. |
+| Players beyond the seats add seats | Refusing them | A friend can join any story; the author's seats are the minimum, and secrets between people stay out of scope (`troupe.table`). |
 | Session characters replace bundle characters by ID | Roles and slots | Recasting and edited copies work without a binding layer; chronicles use the same rule. |
 | Openings as roots | A single root and header start values | Swipeable greetings, and starting values recorded like any change. |
 | Declared, typed variables; derived variables | Free-form state; bookkeeping events | Every app knows what values mean; computed views need no records. |
