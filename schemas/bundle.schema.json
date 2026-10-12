@@ -550,6 +550,10 @@
           ],
           "default": "characters"
         },
+        "narrator": {
+          "$ref": "#/$defs/nonEmpty",
+          "default": "the narrator"
+        },
         "cast": {
           "type": "array",
           "items": {

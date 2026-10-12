@@ -270,6 +270,7 @@ interface Scenario {
   premise?: string;                // the situation, sent to the model
   briefing?: string;               // for the players; never sent to models
   mode?: "characters" | "narrator";   // "characters"
+  narrator?: string;               // what text calls the narrator, in the story's language; "the narrator"
   cast?: CastMember[];             // one player seat + every bundle character
   worlds?: string[];               // world IDs; every bundle world; [] for none
   openings?: Opening[];            // none = the player writes first
@@ -527,7 +528,7 @@ Macros are the only substitution in text. `@` turns IDs into names.
 | `{{pick::<a>::<b>…}}` | One option, fixed for the session (Play 4) |
 | `{{// <comment>}}` | Nothing; a note for authors |
 
-- **`{{char}}`** is the owning character in a character's own text; in a message part, the part's `speaker`, else the message's `char`, else it is left as written; in other text, the character being generated for, or "the narrator" for the narrator. In a state path, `char` means the same character.
+- **`{{char}}`** is the owning character in a character's own text; in a message part, the part's `speaker`, else the message's `char`, else it is left as written; in other text, the character being generated for, or the scenario's `narrator` for the narrator. In a state path, `char` means the same character.
 - **`{{user}}`** is the speaker of the first part with a speaker in the latest player message on the path that has one, else the first player's character, else it is left as written. In a state path, `user` means the same character.
 - A `char` or `user` path segment that means no character names no key, so the macro renders as nothing.
 - **Rendering.** A value with a label renders as its label. Numbers render as ECMAScript `Number.prototype.toString`, booleans as `true` or `false`, lists as items joined by `, ` (an empty list as nothing), and maps as `Name: value` pairs joined by `, `, with character keys shown by name and other keys with underscores as spaces. Map keys render in declared order (cast order for characters), and `"*"` keys in code point order. Text between `{{` and `}}` that is no macro, such as `{{unknown}}`, and a macro naming a variable that isn't declared are left as written (`UNKNOWN_MACRO`); an absent key of a declared variable, a path below a value that isn't a map, or a variable whose owner isn't in use renders as nothing.
@@ -1119,6 +1120,7 @@ A new session that continues this chronicle starts with `closeness` at 58 and bo
 | `id` only links sessions and chronicles to their bundle | Rules for forks, translations and release order | Nothing could check them. |
 | No required Character Card V3 chunk in a PNG | Writers embedding a V3 copy beside the bundle | Compatibility with other formats is a choice for exporters, not a duty of every writer. |
 | No narrator voice | A character that defines the narrator | Narrator-only `system` entries already set its style. |
+| A scenario names its narrator | A fixed English name | `{{char}}` reads naturally in a story in any language. |
 | No reasoning or tool parts | Provider transcripts in messages | They mean nothing to the story; apps that keep them use `ext`. |
 | Two modes | A third, `mixed` mode | In `characters` mode the narrator can already take turns, and who speaks next is the app's choice. |
 | Sessions as an exchange snapshot | Prescribing storage, or an append-only log of edits | Apps keep their own databases; chats still move between apps intact, and readers replay no edits or deletions. |

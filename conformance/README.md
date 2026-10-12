@@ -126,7 +126,7 @@ The state is flattened to an object with these keys:
 | Input | Meaning |
 | --- | --- |
 | `for` | The character being generated for. Omit it for the narrator (in `characters` mode) or the single voice (in `narrator` mode). |
-| `parent` | The evaluation point: the parent of the message being built. Defaults to the head. |
+| `parent` | The evaluation point: the parent of the message being built. Defaults to the head; without messages, the message being built is a root, with no evaluation point. |
 | `messageId` | The ID of the message being built; rolls use it. |
 | `maxEntries` | Optional. Fitting (Play 5.5 step 3): drop entries until at most this many of those selected in steps 1 and 2, sticky ones included, remain. Pulled entries aren't fitted. When priority-100 entries alone exceed it, every droppable entry is dropped and fitting fails. |
 | `pulled` | Optional. Entry references pulled for the message (Play 5.6). Each must be eligible. |
@@ -184,7 +184,7 @@ Every field of `expect` is optional:
 | `at` | The message whose state the macros read. Omit it for the initial state. `{{user}}` follows the path to `at`. |
 | `char` | What `{{char}}` and a `char` path segment mean. Omit it for none: `{{char}}` is then left as written, and a `char` segment names no key (Format 10). |
 | `owner` | What `own` means. Omit it for none. |
-| `narrator` | Optional boolean: a narrator generation, so `{{char}}` without `char` renders as "the narrator". |
+| `narrator` | Optional boolean: a narrator generation, so `{{char}}` without `char` renders as the scenario's `narrator`. |
 
 `expect` is the rendered string (Format 10).
 
