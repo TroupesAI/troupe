@@ -7,7 +7,7 @@
 //     and its check, chronicle and parse tests expect SCHEMA exactly when the schemas reject their input;
 //   - cases with state, macro, cel, ended or knows tests have inputs that pass the schemas, unknown properties included, and a
 //     check test that expects no codes, so a runner confirms the inputs conform;
-//   - relative Markdown links and #anchors resolve, every "Format N.N" names a section, and nothing cites Troupe Play.
+//   - relative Markdown links and #anchors resolve, and every "Format N.N" names a section.
 import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import Ajv2020 from "ajv/dist/2020.js";
@@ -270,7 +270,7 @@ for (const doc of markdown) {
 }
 
 // Section citations: "Format 7.2", "Format Appendix B.2" and lists such as "Format 2.2, 14 and 16" anywhere,
-// and "section 7.2" within the spec. Troupe Play no longer exists, so citing it fails.
+// and "section 7.2" within the spec.
 const sections = (path: string) =>
   new Set([...read(path).matchAll(/^#{2,3} (?:Appendix )?(\d+(?:\.\d+)?|[A-Z](?:\.\d+)?)[.: ]/gm)].map((m) => m[1]));
 const formatSections = sections("spec/format.md");
@@ -283,7 +283,6 @@ const cite = (where: string, text: string, own = false) => {
   };
   for (const m of text.matchAll(new RegExp(String.raw`\bFormat (?:Appendix )?(${list})`, "g"))) check(m[1]);
   if (own) for (const m of text.matchAll(new RegExp(String.raw`\bsections? (${list})(?! of Troupe)`, "g"))) check(m[1]);
-  for (const m of text.matchAll(/\b(?:Troupe )?Play (?:Appendix )?[\dA-Z]|play\.md/g)) fail(`${where}: cites ${m[0]}, but Troupe Play no longer exists`);
 };
 for (const doc of markdown) cite(doc, read(doc), doc === "spec/format.md");
 for (const f of cases) cite(`conformance/cases/${f}`, read(`conformance/cases/${f}`));

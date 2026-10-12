@@ -86,7 +86,7 @@ An **entry** is any piece of text the model should read when its conditions hold
 When an entry is active:
 
 - **No `keys`:** always on. Rules, secrets and goals are written this way.
-- **With `keys`:** it activates when one of the words appears in the last 4 messages, speakers' names included. Keys match whole words and ignore case, so `vault` doesn't match `vaulted` (in Chinese, Japanese, Korean, Thai and a few other scripts, keys match anywhere). A key between slashes, such as `/vaults?/`, is a pattern for plurals and partial words.
+- **With `keys`:** it activates when one of the words appears in the last 4 messages, speakers' names included. Keys match whole words and ignore case, so `vault` doesn't match `vaulted`. A key between slashes, such as `/vaults?/`, is a pattern for plurals and partial words.
 - **With `when`:** a condition must hold too, such as "only after the tenth bell" (chapter 6).
 - **With `pull` and a `title`:** the entry is retrieved on demand, when it becomes relevant. Large lorebooks use this.
 
@@ -287,7 +287,7 @@ An **event** is a story beat written as a rule: when a condition holds, change v
 - **`outcomes`** pick one weighted alternative each time the event fires: three times in four the patrol passes, once in four it costs the crew an hour.
 - **`set` takes plain values and `compute` takes formulas.** Write `"set": {"bell": 11}` but `"compute": {"bell": "state.bell + 1"}`.
 
-A dice check works the same way: a model-set variable notes what the player is attempting, and an event `on: "player"` rolls for it with `roll()`. The result is recorded, so the model can't change it. The [authoring guide](authoring.md#checks-and-dice) shows one.
+A dice roll works the same way: a model-set variable notes what the player is attempting, and an event `on: "player"` rolls for it with `roll()`. The result is recorded, so the model can't change it. The [authoring guide](authoring.md#dice-rolls) shows one.
 
 The full story, with its secrets, variables and events in place, is [Format Appendix B.2](../spec/format.md#b2-a-story-the-lantern-heist), also in [`examples/lantern-heist.troupe.json`](../examples/lantern-heist.troupe.json).
 
@@ -346,4 +346,4 @@ A V2/V3 card becomes a bundle with one character and a scenario: greetings becom
 - [Troupe Format](../spec/format.md) lists every field. Part I is all an author needs.
 - [`examples/`](../examples/) holds the spec's examples as files, and [`schemas/bundle.schema.json`](../schemas/bundle.schema.json) lets editors check a bundle as you write it.
 
-Files hold text and data, never scripts or HTML, so they are safe to share. Text is Markdown, and anything a player or the model writes stays literal: macros resolve only in text an author wrote.
+Files hold data and sandboxed conditions, never scripts. Text is Markdown, and anything a player or the model writes is stored escaped, so macros in it never take effect.

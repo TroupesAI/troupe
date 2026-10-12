@@ -5,7 +5,7 @@
 - **[Troupe Format](spec/format.md)**: what a file contains, what each field means and when a file is valid. It is a schema: it never says how an app plays files, such as how it builds prompts, chooses entries, runs events, calls models or shows things to people.
 - **Guides** ([authoring](guides/authoring.md), [authoring brief](guides/authoring-brief.md), [Character Card V2/V3](guides/character-cards.md), [beginner's](guides/beginners.md)): patterns and mappings for people who write and convert files. They are informative and don't use RFC 2119 keywords.
 
-Libraries and apps live in their own repositories, and so does advice on how apps play files. This one holds no implementation code; `scripts/check.ts` only checks the repository.
+Libraries, apps and advice on playing files live in their own repositories. This one holds no implementation code; `scripts/check.ts` only checks the repository.
 
 ## Changing the spec
 
@@ -21,7 +21,7 @@ When the spec doesn't decide a question, fix the text; never record a reading on
 
 ## Checks
 
-Requires [Bun](https://bun.sh). `bun install`, then `bun run check` runs what CI runs: the schemas compile, and every TypeScript interface in the spec lists exactly its schema's properties; the examples, and every complete bundle in a Markdown document, validate; `examples/` and the README's first example match the spec; the version agrees everywhere; cases match `conformance/case.schema.json`, expect `SCHEMA` in check, chronicle and parse tests exactly when the schemas reject their inputs, give state, macro, cel, ended and knows tests inputs that pass the schemas and a check test that expects no codes, are named `<area>/<topic>.json` and name files that exist; and relative links, anchors and `Format`/section citations resolve.
+Requires [Bun](https://bun.sh). `bun install`, then `bun run check` runs what CI runs. The header of [`scripts/check.ts`](scripts/check.ts) lists what it checks.
 
 ## Versions
 

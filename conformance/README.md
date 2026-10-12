@@ -40,14 +40,12 @@ Bundles, session headers and chronicles given as objects leave out `troupe`: bef
 
 Every test starts from a fresh copy of the case's inputs. Tests don't affect each other.
 
-- **Conforming inputs.** `state`, `macro`, `cel`, `ended` and `knows` tests run only on inputs that conform (Format 17.1), since the spec gives files that fail a check no meaning to test. Every case with such tests also has a `check` test that expects no codes, which a runner uses to confirm it. `bun run check` requires that test, and that the inputs pass the schemas, unknown properties included; it can't run the other checks itself.
+- **Conforming inputs.** `state`, `macro`, `cel`, `ended` and `knows` tests run only on inputs that conform (Format 17.1), since the spec gives files that fail a check no meaning to test. Every case with such tests also has a `check` test that expects no codes, which a runner uses to confirm it.
 - **The story.** The session's `scenario` names the scenario. Without a session, use the bundle's first scenario, whose seats are then unfilled and left out of the cast (Format 6.1), so `players` holds only cast members marked `player`. A `check` test without a session checks the bundle once for each scenario (Format 11.2). Header characters replace bundle characters as Format 12.2 says.
 
 ## 3. Tests
 
-Each test has `type`, an optional `name` and `note` (informative), the inputs below, and `expect`. When `expect` is an object, its fields must be ones this section defines for the type; a runner should treat any other field as a suite error.
-
-### 3.0 Comparing results
+Each test has `type`, an optional `name` and `note` (informative), the inputs below, and `expect`. When `expect` is an object, its fields must be ones this section defines for the type; a runner should treat any other field as a suite error. Results are compared this way:
 
 - **Equality** is deep JSON equality. Object key order is ignored, array order matters, and numbers compare as IEEE 754 doubles.
 - **Subset** comparisons check only the keys `expect` lists; other keys in the actual result are ignored.
@@ -160,7 +158,7 @@ The runner parses the bytes, checks the version and validates against the schema
 
 - Put a case in the folder for its area, named after its topic: `state/clamping.json`.
 - Prefer small inline bundles.
-- Give `state`, `macro`, `cel`, `ended` and `knows` tests conforming inputs, with a `check` test that expects no codes, and test failed checks in separate cases with `check`, `chronicle` and `parse` tests.
+- Test failed checks in separate cases, with `check`, `chronicle` and `parse` tests; other tests need conforming inputs (section 2).
 - Keep inputs to what the tests read.
-- When an expectation depends on ambiguous spec text, fix the spec text rather than recording a reading in the case.
+- When an expectation depends on ambiguous spec text, fix the spec text (see [CONTRIBUTING.md](../CONTRIBUTING.md#changing-the-spec)).
 - Cite current sections in `description`, as `Format 7.2`.

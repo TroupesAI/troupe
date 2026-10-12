@@ -4,7 +4,7 @@
 
 Troupe is an open file format for AI roleplay: characters, the worlds they live in, the scenarios that bring them together, the mechanics that drive a story, and sessions: the chats people play, exported so any app can continue them. One file can hold a single character or a full multi-character story.
 
-This document defines the files and what every field means. It doesn't say how an app plays them: how it builds prompts, chooses entries, runs events or calls models is the app's own. A session records every outcome, so any app can continue it.
+This document defines the files and what every field means.
 
 > **Status.** This is a draft. Breaking changes are allowed until 1.0. A conformance suite accompanies this draft.
 
@@ -55,7 +55,7 @@ Non-goals: how apps play files (prompt assembly, entry selection, running events
 
 ### 1.2 Documents
 
-This document and its JSON Schemas (Appendix A) are the only normative parts of Troupe: the files, their fields and what they mean, identifiers and references, packaging, versioning, limits, and the checks a valid file passes. The [guides](../README.md#guides) are informative. "Format 7.2" means section 7.2 of this document, as the guides and the conformance suite cite it.
+This document and its JSON Schemas (Appendix A) are the normative parts of Troupe: the files, their fields and what they mean, identifiers and references, packaging, versioning, limits, and the checks a valid file passes. The schemas are normative for structure, the prose for meaning. Appendices B to D and the [guides](../README.md#guides) are informative; Appendix E lists references. "Format 7.2" means section 7.2 of this document, as the guides and the conformance suite cite it.
 
 ### 1.3 Object model
 
@@ -75,7 +75,7 @@ Six ideas carry the format:
 2. **Variables** hold typed state. Events, players or a model change them, and every change is recorded (section 8).
 3. **Events** react to state with changes, messages and directions (section 9).
 4. **Conditions** in CEL gate entries and events (section 11).
-5. **Sessions** are message trees that record every outcome, so any app can continue them (section 12).
+5. **Sessions** are message trees that record every outcome (section 12).
 6. **Chronicles** carry a character's memories and relationship from one session, and one app, to the next (section 13).
 
 ### 1.4 A first example
@@ -146,10 +146,6 @@ MUST, MUST NOT, SHOULD, SHOULD NOT and MAY are used as described in RFC 2119 and
 ### 2.5 Text
 
 Model-facing text is Markdown (CommonMark 0.31.2). Timestamps are RFC 3339 in UTC, with an uppercase `T`, ending in `Z` and without leap seconds, and language tags BCP 47 in canonical case.
-
-### 2.6 How to read this document
-
-The JSON Schemas (Appendix A) are normative for structure, the prose for meaning. Appendices B to D are informative; Appendix E lists references.
 
 ---
 

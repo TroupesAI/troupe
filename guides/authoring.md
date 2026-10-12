@@ -53,9 +53,9 @@ An `enum` `phase`, entries gated on it, and events that advance it when a beat i
 
 `ago()` covers change keys, so a status can expire without bookkeeping: `"when": "own.mood == 'upset' && ago('kai.mood') < 3"`. String literals like `'kai.mood'` need rewriting if Kai is renamed.
 
-### Checks and dice
+### Dice rolls
 
-A check rolls when someone attempts something risky, and the reply narrates the result. A model records the attempt on the player's message, and an event `on: "player"` rolls for it. `attempt` is a scenario `enum` with `values` `["none", "lock"]` and `by: ["model"]`; `picked` is a scenario `bool` labeled "opens" and "holds":
+A roll decides whether a risky attempt succeeds, and the reply narrates the result. A model records the attempt on the player's message, and an event `on: "player"` rolls for it. `attempt` is a scenario `enum` with `values` `["none", "lock"]` and `by: ["model"]`; `picked` is a scenario `bool` labeled "opens" and "holds":
 
 ```json
 { "id": "pick_lock", "on": "player", "when": "state.attempt == 'lock'",

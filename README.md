@@ -32,7 +32,7 @@ The [beginner's guide](guides/beginners.md) grows this card into a full story, w
 
 | | |
 | --- | --- |
-| [Troupe Format](spec/format.md) | The files and what every field means: bundles, characters, worlds, scenarios, entries, variables, events, sessions and chronicles. How apps play them is their own. |
+| [Troupe Format](spec/format.md) | The files and what every field means: bundles, characters, worlds, scenarios, entries, variables, events, sessions and chronicles. |
 | [Schemas](schemas/) | JSON Schemas, normative for structure (Format Appendix A). |
 | [Conformance suite](conformance/) | Language-neutral test cases and the [protocol](conformance/README.md) a test runner follows. |
 | [Examples](examples/) | The spec's worked examples as files. |
