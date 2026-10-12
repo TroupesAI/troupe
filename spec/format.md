@@ -121,7 +121,7 @@ MUST, MUST NOT, SHOULD, SHOULD NOT and MAY are used as described in RFC 2119 and
 
 - Writers MUST write I-JSON (RFC 7493): UTF-8 without a byte order mark, no duplicate member names, no surrogate or noncharacter code points, written or escaped, numbers that fit an IEEE 754 double, and integer fields and `int` values within ±(2^53 − 1), written without a fraction or exponent. Readers parse UTF-8 JSON (RFC 8259), ignore a leading byte order mark, take the last of duplicate member names, and need not check the other I-JSON constraints.
 - **Empty values.** Writers MUST NOT write `null` in a field this spec defines or in a state value, and MUST NOT write `""`, `[]` or `{}` in an optional field other than `ext`. State values and `scenario.worlds` are the exception: there `""`, `[]` and `{}` are values. Names and variable descriptions are never empty.
-- Readers MUST treat `null`, `""`, `[]` and `{}` in an optional field like a missing field, except in `ext`, state values and `scenario.worlds`, and except that `knownBy: []` reads as `["narrator"]` (section 7.4). An optional list other than a state value that checks or repairing leave empty, or that repairing removes as a whole, also reads as missing, with four exceptions: `scenario.worlds` and `cast` read as `[]`, `keys` matches nothing, and `knownBy` reads as `["narrator"]`. A `null` state value is invalid (section 8.5).
+- Readers MUST treat `null`, `""`, `[]` and `{}` in an optional field like a missing field, except in `ext`, state values and `scenario.worlds`, and except that `knownBy: []` reads as `["narrator"]` (section 7.4). An optional list other than a state value that checks or repairing leave empty, or that repairing removes as a whole, also reads as missing. Four lists are exceptions: `scenario.worlds` and `cast` then read as `[]`, `keys` matches nothing, and `knownBy` reads as `["narrator"]`. A `null` state value is invalid (section 8.5).
 - **Defaults are normative.** Every default stated in these documents or their TypeScript comments applies when a field is absent. Every boolean defaults to `false`, and one written `false` is the same as an absent one.
 
 ### 2.3 Identifiers
@@ -361,7 +361,7 @@ interface Entry {
 ### 7.2 Activation
 
 - An entry **without `keys` or `pull`** is always on, subject to `when`.
-- An entry **with `keys`** activates when one appears in recent messages, including speakers' names. Keys match whole words, ignoring case, except in the scripts Play 5.3 lists, such as Han, Kana, Hangul and Thai, where keys match anywhere. A key of at least three characters that starts and ends with `/` is a regex (section 16 item 5): `/dragons?/`, `/(?-i)Kai/`.
+- An entry **with `keys`** activates when one appears in recent messages, including speakers' names. Keys match whole words, ignoring case, except in the scripts Play 5.3 lists, where keys match anywhere. A key of at least three characters that starts and ends with `/` is a regex (section 16 item 5): `/dragons?/`, `/(?-i)Kai/`.
 - An entry **with `pull`** is retrieved when it is relevant: requested by the model, or found by the app's similarity search (Play 5.6).
 - **`when`** narrows any kind. `hit("word")` checks recent text with the same rules as keys, so `"when": "hit('glass') && !hit('guard')"` expresses AND and NOT.
 - **`priority`** is importance: it decides group competition and what fitting drops first (Play 5.5).
@@ -514,7 +514,7 @@ Macros are the only substitution in text. `@` turns IDs into names.
 - **`{{char}}`** in a message part, an event's `message` included, is the part's `speaker`, else the message's `char`, else it is left as written; in a character's other text, that character; in a cast member's `notes`, its character; in other text, the character being generated for, or the scenario's `narrator` for the narrator, the single voice and the tracker. In a state path, a `char` segment after the variable's ID means the same character.
 - **`{{user}}`** is the speaker of the first speaking part of the latest player message on the path that has a speaking part, else the first player's character, else it is left as written. In a state path, a `user` segment after the variable's ID means the same character.
 - A `char` or `user` path segment that means no character names no key, so the macro renders as nothing.
-- **Rendering.** A value with a label renders as its label, with the label's own macros resolved once, and a label met there rendering as written; a label wins over a character's or location's name in `{{@…}}`; a substituted value is never scanned for macros again. Numbers render as ECMAScript `Number.prototype.toString`, booleans as `true` or `false`, lists as items joined by `, ` (an empty list as nothing), and maps as `Name: value` pairs joined by `, `, with keys that are character IDs shown by name and other keys with underscores as spaces. Map keys render in declared order (cast order for characters), and `"*"` keys in code point order.
+- **Rendering.** A value with a label renders as its label, with the label's macros resolved; a label substituted while resolving them renders as written. In `{{@…}}`, a label wins over a character's or location's name; a substituted value is never scanned for macros again. Numbers render as ECMAScript `Number.prototype.toString`, booleans as `true` or `false`, lists as items joined by `, ` (an empty list as nothing), and maps as `Name: value` pairs joined by `, `, with keys that are character IDs shown by name and other keys with underscores as spaces. Map keys render in declared order (cast order for characters), and `"*"` keys in code point order.
 - **Unresolved.** Text between `{{` and `}}` that is no macro, such as `{{unknown}}`, and a macro naming a variable that isn't declared, as section 11.2 counts declarations, are left as written (`UNKNOWN_MACRO`); an absent key of a declared variable, a path below a value that isn't a map, or a variable whose owner isn't in use renders as nothing.
 - **Which state.** Macros in a message resolve at that message: against its state, with `{{user}}` from the path to it. Elsewhere they resolve at the evaluation point (section 11.1). In message parts and in a scenario's text, `own` means `state`.
 - **Where.** Macros resolve only in descriptions, summaries, dialogue examples, premises, briefings, notes, entry texts, message parts (openings' and event messages' included), event directions, variable descriptions, questions, labels, and image `alt`. Every other string, such as names, aliases, titles, taglines, warnings, keys, `limits` and expressions, is used as written.
@@ -663,7 +663,7 @@ interface Summary {
 
 ### 12.3 Session entries
 
-A message may add entries, owned by `session`. They are candidates from that message onward on its path, so they belong to their branch. A later message's entry with the same ID replaces it from there on, and `disabled: true` removes it. A replacement takes each field it lacks (absent, or a `false` boolean), though one with `pull` repeats its `title`, other than `disabled`, from the entry it replaces, such as `carry`, `knownBy`, `title` and `pull`. An entry that follows a `disabled` version replaces nothing.
+A message may add entries, owned by `session`. They are candidates from that message onward on its path, so they belong to their branch. A later message's entry with the same ID replaces it from there on, and `disabled: true` removes it. A replacement takes each field it lacks (absent, or a `false` boolean), other than `disabled`, from the entry it replaces, such as `carry`, `knownBy`, `title` and `pull`; one that has `pull` still states its own `title` (section 7). An entry that follows a `disabled` version replaces nothing.
 
 ### 12.4 Other message fields
 
@@ -721,7 +721,7 @@ Fields that hold a file (`cover`, `avatar`, location `image` and image parts) ho
 ### 14.3 Packages
 
 - `bundle.json` is at the root.
-- Writers give every entry a path matching `^[A-Za-z0-9_-][A-Za-z0-9._-]*(/[A-Za-z0-9_-][A-Za-z0-9._-]*)*$`, with segments of at most 255 bytes, unique when compared case-insensitively. Readers hold to the grammar the entries they read.
+- Writers give every entry a path matching `^[A-Za-z0-9_-][A-Za-z0-9._-]*(/[A-Za-z0-9_-][A-Za-z0-9._-]*)*$`, with segments of at most 255 bytes, unique when compared case-insensitively. Readers require the grammar only of the entries they read.
 - ZIP entries use the store or deflate methods and are not encrypted. Sessions are stored under `sessions/` with the `.troupe-session.jsonl` extension, and chronicles under `chronicles/` with the `.troupe-chronicle.json` extension; readers read sessions and chronicles only there, and other files only as files that the package's bundle, sessions or chronicles reference. Readers ignore every other entry, such as a directory (a name ending in `/`) or a file an archiver adds.
 
 ---

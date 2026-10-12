@@ -270,7 +270,7 @@ Entries keep file order within a slot, and everything in a slot is filtered by s
 Some content is known only to certain characters.
 
 - **Entries** follow Format 7.4.
-- **History** follows the witness rule: a text or image part is known by its speaker, by the characters present after its message's changes, and, except on a root, by those present before them. `knownBy` on a part replaces this with exactly the listed characters; whispers and thoughts use it.
+- **History** follows the witness rule: a text or image part is known by its speaker, by the characters present after its message's changes, and, except on a root, by those present before them. `knownBy` on a part replaces this with exactly the listed characters.
 - **Summaries** follow Format 12.4; **pinned messages** follow their parts.
 
 What a generation **can see**:
