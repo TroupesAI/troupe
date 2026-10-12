@@ -10,7 +10,7 @@ export const root = resolvePath("..");
 export const read = (file: string) => readFileSync(join(root, file), "utf8");
 
 export const sources = [
-  { file: "README.md", route: "index", label: "Home" },
+  { file: "README.md", route: "index", label: "Overview" },
   { file: "spec/format.md", route: "format", label: "Troupe Format" },
   { file: "guides/beginners.md", route: "guides/beginners", label: "Beginner's guide" },
   { file: "guides/authoring.md", route: "guides/authoring", label: "Authoring guide" },
