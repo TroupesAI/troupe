@@ -102,7 +102,7 @@ Before recording a change, apps drop each key that isn't valid, or whose value i
 2. for `by: "model"`, limit the difference from the current value to `maxStep`;
 3. for `oneWay` variables, except in a root's chronicle, opening and answer changes (section 2.1), keep the current value instead of a move backward; a set becomes its current members followed by the value's new ones, normalized as in step 1;
 4. round `number` values to the nearest double to the decimal that ECMAScript `Number.prototype.toFixed(6)` produces;
-5. clamp: raise the value to `min`, then lower it to `max`; a bound named by a variable whose key the change keeps is that variable's prepared new value.
+5. clamp: raise the value to `min`, then lower it to `max`; a bound named by a variable whose key the change keeps is that variable's prepared new value, even when its key comes later.
 
 A key whose prepared value is no longer valid, such as a set grown past its limit (Format 16), is dropped too, and so is a key that would take a `"*"` map past its limit, after applying the keys kept before it in the change. Within a message, changes are recorded in the order they happen: on a root, in the order of section 2.1, then any extraction's change; on any message, player and model changes before the changes of the events they trigger.
 
@@ -148,7 +148,7 @@ Nothing in the payload takes `ext`, and:
 - A newcomer whose ID names a character, world, scenario or scenario variable of the bundle or session, an earlier newcomer of the payload included, or who would take the cast past its limit (Format 16), is dropped.
 - An entry is dropped when the latest version of the session entry with its ID on the path, merged as Format 12.3 says and disabled or not, isn't placed in `context`; a model may update or disable a context entry, such as a memory.
 
-How an app takes the payload out of a reply, such as from a tool call or a fenced block, is up to it. Output that isn't a JSON object is discarded, and nothing is recorded. Otherwise apps apply a payload in this order:
+How an app takes the payload out of a reply is up to it. Output that isn't a JSON object is discarded, and nothing is recorded. Otherwise apps apply a payload in this order:
 
 1. Read its empty values as Format 2.2 says, except that an empty `knownBy` stays empty for steps 3 and 5, and drop its unknown properties (Format 15), and a tracker run's `parts`. Drop each top-level property, part, entry or newcomer that still fails the schema, and each entry or newcomer whose ID an earlier one in the payload has. A structured reply left with no parts is discarded, and nothing is recorded.
 2. `characters` join the header.
