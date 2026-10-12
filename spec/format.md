@@ -121,7 +121,7 @@ MUST, MUST NOT, SHOULD, SHOULD NOT and MAY are used as described in RFC 2119 and
 
 - Writers MUST write I-JSON (RFC 7493): UTF-8 without a byte order mark, no duplicate member names, no surrogate or noncharacter code points, written or escaped, numbers that fit an IEEE 754 double, and integer fields and `int` values within ±(2^53 − 1), written without a fraction or exponent. Readers parse UTF-8 JSON (RFC 8259), ignore a leading byte order mark, and need not check the other I-JSON constraints.
 - **Empty values.** Writers MUST NOT write `null` in a field this spec defines or in a state value, and MUST NOT write `""`, `[]` or `{}` in an optional field other than `ext`. State values and `scenario.worlds` are the exception: there `""`, `[]` and `{}` are values. Names and variable descriptions are never empty.
-- Readers MUST treat `null`, `""`, `[]` and `{}` in an optional field like a missing field, with the same exception. A list that checks or repairing leave empty also reads as missing. A `knownBy` that is or becomes empty reads as section 7.4 says. A `null` state value is invalid (section 8.5).
+- Readers MUST treat `null`, `""`, `[]` and `{}` in an optional field like a missing field, with the same exception. A list that checks or repairing leave empty also reads as missing, except `scenario.worlds`, which reads as `[]`. A `knownBy` that is or becomes empty reads as section 7.4 says. A `null` state value is invalid (section 8.5).
 - **Defaults are normative.** Every default stated in these documents or their TypeScript comments applies when a field is absent. Every boolean defaults to `false`.
 
 ### 2.3 Identifiers
@@ -370,7 +370,7 @@ interface Entry {
 
 - `"system"`: standing direction, such as tone, rules or an author's note.
 - `"context"` (default): what the model needs to know.
-- `"tracker"`: guidance only for the model that updates state (Play 3.4), such as how to judge time passing. It applies whenever its `when` holds; its other activation, timing and competition fields and its `knownBy` don't apply.
+- `"tracker"`: guidance only for the model that updates state (Play 3.4), such as how to judge time passing. It applies whenever its `when` holds, with `hit()` scanning with full knowledge; its `keys`, `pull`, timing and competition fields and its `knownBy` don't apply.
 - A number *d*: inside history, with *d* history messages after it; 0 is after the last, and a depth greater than the history places it before the first.
 
 ### 7.4 Knowledge
@@ -552,7 +552,7 @@ Every expression is evaluated at a message, its **evaluation point**: for a prom
 | `last.from`, `last.char` | The evaluation point message's `from` and `char`; `""` when it has no `char` |
 | `count(name)` | How many times an event fired, an entry activated, or a change key appeared in a recorded change on the path, matched exactly; 0 for anything else |
 | `ago(name)` | Rounds from that event's, entry's or key's latest firing, activation or change on the path to the evaluation point; 1000000000 if never |
-| `hit(key)` | Entries only: whether `key` matches the entry's scanned text (Play 5.2), or for a tracker entry the messages after the last extraction on the path up to the evaluation point |
+| `hit(key)` | Entries only: whether `key` matches the entry's scanned text (Play 5.2) |
 | `roll(n)` | Event and outcome `compute` only: a whole number from 1 to `n`, an `int`; `n` below 1 is a runtime error |
 | `min(a, b)`, `max(a, b)`, `abs(x)` | For numbers of one type |
 
@@ -661,7 +661,7 @@ interface Summary {
 
 ### 12.3 Session entries
 
-A message may add entries, owned by `session`. They are candidates from that message onward on its path, so they belong to their branch. A later message's entry with the same ID replaces it from there on, carried if the entry it replaces is (section 13), and `disabled: true` removes it.
+A message may add entries, owned by `session`. They are candidates from that message onward on its path, so they belong to their branch. A later message's entry with the same ID replaces it from there on, and `disabled: true` removes it. A replacement is carried if either entry is (section 13), and takes the replaced entry's `knownBy` when it has none.
 
 ### 12.4 Other message fields
 
@@ -782,12 +782,12 @@ Messages are never dropped for a failed check, except the lines that `PARSE`, `S
 | `UNKNOWN_FIELD` | Every property is known to the reader's schema (section 15) | A warning |
 | `DUPLICATE_ID` | IDs are unique as section 2.3 and section 12.2 require | The first is kept; a scenario variable that clashes with a character or world is ignored instead (section 2.3), and two replacements of one character make the session unplayable (section 12.2) |
 | `UNKNOWN_SCENARIO` | The header's `scenario` names a scenario | The session can't be played |
-| `UNKNOWN_CHARACTER` | Cast members, `knownBy` (where `narrator` is also allowed), speakers, example speakers (or `char`, `user`), message `char`, members of `scene.present` values and character keys name characters in the bundle or session; a memory's `knownBy` names IDs section 13 allows | The ID is ignored (section 7.4); a cast member or example exchange naming it is skipped |
+| `UNKNOWN_CHARACTER` | Cast members, `knownBy` (where `narrator` is also allowed), speakers, example speakers (or `char`, `user`), message `char`, members of `scene.present` values and character keys of `initial` objects name characters in the bundle or session; a memory's `knownBy` names IDs section 13 allows | The ID is ignored (section 7.4); a cast member or example exchange naming it is skipped |
 | `UNKNOWN_WORLD` | `scenario.worlds` names bundle worlds | The ID is ignored |
 | `UNKNOWN_LOCATION` | Locations in values and `parent` exist, without cycles | The value is invalid; a `parent` naming no location is ignored, and so is the `parent` of the first location, in file order, on each cycle |
 | `UNKNOWN_OPENING` | A root's `opening` exists | `opening` reads as `""` |
 | `UNKNOWN_NAME` | `activated` and `event` references, and literal names in `count` and `ago`, name entries, events or keys in use | Ignored; an event's values still apply |
-| `UNKNOWN_VARIABLE` | Keys in openings, events, changes and chronicle values exist and aren't derived, no two keys of one `set` or `compute` name the same full key, and variables named by `min` and `max` are valid bounds (section 8.1); a chronicle's value keys name carried variables of its character (section 13) | The key or bound is dropped |
+| `UNKNOWN_VARIABLE` | Keys in openings, events, changes and chronicle values exist, a keyed variable's key included, and aren't derived, no two keys of one `set` or `compute` name the same full key, and variables named by `min` and `max` are valid bounds (section 8.1); a chronicle's value keys name carried variables of its character (section 13) | The key or bound is dropped |
 | `INVALID_VALUE` | `initial`, opening and event `set` values, recorded values, chronicle values and `outcome` indexes are valid | The value is dropped |
 | `UNKNOWN_MESSAGE` | `parent`, the header's `head` and summary `from` name messages, and `from` is on the path to its summary | The head or summary is ignored; a message with an unknown `parent` is skipped with its descendants |
 | `INVALID_PLAYER` | `players` names header characters or cast members | The ID is ignored |
@@ -798,7 +798,7 @@ Messages are never dropped for a failed check, except the lines that `PARSE`, `S
 **Repairing.** A reader that keeps a document failing its schema repairs it:
 
 1. It reads empty values as section 2.2 says.
-2. It removes the value at the instance location of each failing keyword that asserts something itself, not one that only reports failures beneath it (`allOf`, `anyOf`, `if`, `then`, `else`, `properties`, `additionalProperties`, `items`, `propertyNames`, `$ref`). A `false` subschema fails at the value it applies to; a failure beneath `propertyNames` removes the property whose name fails; a failing `uniqueItems` removes the later duplicates; a failing `dependentRequired` removes the dependent property.
+2. It removes the value at the instance location of each keyword whose failure makes the document fail and that asserts something itself, not one that only reports failures beneath it (`allOf`, `anyOf`, `if`, `then`, `else`, `properties`, `additionalProperties`, `items`, `propertyNames`, `$ref`). A `false` subschema fails at the value it applies to; a failure beneath `propertyNames` removes the property whose name fails; a failing `uniqueItems` removes the later duplicates; a failing `dependentRequired` removes the dependent property.
 3. It validates again, until nothing fails.
 
 So an invalid `weight` reads as absent, and an entry without `text` is ignored. A `knownBy` that repairing empties or removes reads as `["narrator"]`; a `keys` list that it empties or removes matches nothing; a cast member whose `character` it removes is skipped; a message line it removes as a whole is skipped, and a message that loses its `parent` is skipped like one whose `parent` names no message; a document it removes as a whole isn't read. The other checks then run on the repaired document.

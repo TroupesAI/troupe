@@ -313,7 +313,7 @@
     },
     {
       "type": "chronicle",
-      "name": "a model's update of a carried memory is carried, though it doesn't say so",
+      "name": "a model's update of a carried memory is carried and keeps its knownBy, though it says neither",
       "chronicle": {
         "kind": "chronicle",
         "id": "c-kai",
@@ -362,6 +362,10 @@
         "memories": [
           {
             "id": "met",
+            "carry": true,
+            "knownBy": [
+              "kai"
+            ],
             "text": "Kai met Mara at the docks, in the rain."
           },
           {

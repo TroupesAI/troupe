@@ -762,6 +762,54 @@
       "parent": "2",
       "depth": 1,
       "expect": "Ann: Hello."
+    },
+    {
+      "type": "output",
+      "name": "an extraction on a root records its changes but drops its entries",
+      "message": "1",
+      "output": {
+        "changes": {
+          "mood": "tense"
+        },
+        "entries": [
+          {
+            "id": "late",
+            "text": "Not kept."
+          }
+        ]
+      },
+      "expect": {
+        "message": {
+          "id": "1",
+          "from": "player",
+          "content": [
+            {
+              "speaker": "p",
+              "text": "Hi."
+            }
+          ],
+          "entries": [
+            {
+              "id": "note",
+              "position": "system",
+              "text": "Keep the pace slow."
+            },
+            {
+              "id": "depth_note",
+              "position": 2,
+              "text": "Keep replies short."
+            }
+          ],
+          "changes": [
+            {
+              "by": "model",
+              "set": {
+                "mood": "tense"
+              }
+            }
+          ]
+        }
+      }
     }
   ]
 }

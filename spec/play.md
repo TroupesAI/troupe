@@ -56,7 +56,7 @@ Format 2 applies here, including requirement keywords. "Format 7.2" means sectio
    4. the answers.
 5. Evaluate events at the root.
 
-Every later root, from another opening or a player's message, is made the same way, with the chronicle's change and the entries copied from the session's earliest root line.
+Every later root, from another opening or a player's message, is made the same way; in a session that continues a chronicle, its chronicle's change and entries are copied from the session's earliest root line.
 
 ### 2.2 Continuing a chronicle
 
@@ -68,9 +68,9 @@ Every later root, from another opening or a player's message, is made the same w
   - Value keys and memory `knownBy` IDs that name the persona take effect only when the persona plays with its own ID (section 2.1 step 2).
 - **Writing back** from a path rewrites the chronicle with only what the session changed:
   - `values` keeps only carried keys, keyed without the owner, and takes the latest value of each carried key that a change on the path set, except the root's `by: "rules"` changes without an `event`, which hold the starting values.
-  - The memories written back are the carried session entries on the path, the latest version of each ID, whose `knownBy` is absent or names the character. An entry whose latest version on the path is on a root is skipped: a root's entries are the chronicle's copies.
+  - The memories written back are the carried session entries on the path, the latest version of each ID with the `carry` and `knownBy` it takes from earlier versions (Format 12.3), whose `knownBy` is absent or names the character. An entry whose latest version on the path is on a root is skipped: a root's entries are the chronicle's copies.
   - Each keeps in `knownBy` only the character, the persona and `narrator`.
-  - Each replaces the memory with its ID, or is added after the others in the order the IDs first appear; one with `disabled` removes that memory and is never added.
+  - Each replaces the memory with its ID, or is added after the others in the order the IDs first appear, unless the chronicle would pass its limit (Format 16); one with `disabled` removes that memory and is never added.
   - `character`, `persona`, `limits` and the rest of the chronicle stay as they are.
 
 ---
@@ -96,7 +96,7 @@ Playing never modifies a bundle: state is the bundle's starting values plus the 
 
 ### 3.3 Recording changes
 
-Before recording a change, apps drop each key whose value isn't valid (Format 8.5) or whose channel Format 8.1 and 8.4 don't allow. They then prepare each remaining value, using the state just before the change:
+Before recording a change, apps drop each key whose value isn't valid (Format 8.5) or whose channel Format 8.1 and 8.4 don't allow. They then prepare each remaining value, key by key in code point order, using the state just before the change:
 
 1. normalize a set: remove duplicates, then order listed members as declared; normalize `scene.present`: remove duplicates and IDs that name no cast character, then order it by cast order;
 2. for `by: "model"`, limit the difference from the current value to `maxStep`;
@@ -108,7 +108,7 @@ A key whose prepared value is no longer valid, such as a set grown past its limi
 
 **Readers** re-apply steps 1, 4 and 5 when loading and drop invalid keys, but don't re-check channels, `maxStep` or `oneWay`.
 
-**Player edits** to state are recorded on the head if it is a player message, else on a new `from: "system"` child of the head with empty `content`. Events are then evaluated at that message; firings already recorded there still count, so an event that fired there doesn't fire again that round.
+**Player edits** to state are recorded on the head if it is a player message without children, else on a new `from: "system"` child of the head with empty `content`. Events are then evaluated at that message; firings already recorded there still count, so an event that fired there doesn't fire again that round.
 
 **Events.** At each root, after each player or model message once its player and model changes are recorded, and after player edits:
 
@@ -138,6 +138,7 @@ type Newcomer = Pick<Character, "id" | "name" | "aliases" | "description" | "sum
   - for each variable in use whose `by` includes `model`, in event order (section 3.3), its key, type, `values` or range, `description` and current value;
   - the scene's values, the ID and name of every location of the bundle and session in world order, and of every cast character in cast order;
   - the entries in use placed in `tracker`, not `disabled`, whose `when` holds: those of the worlds, the cast characters in cast order, the scenario and the session, in the order of section 5.1;
+  - the session entries on the path placed in `context`, with their IDs and texts;
   - the messages it reads that are sent to models (Format 12.4), with full knowledge.
 - **Structured reply.** The story model returns the whole payload in its reply. For the narrator and the single voice, the System slot also carries the tracker's input (section 6). Variables have no `knownBy`, so a character's generation in `characters` mode gets no tracker input, and apps keep only the `parts` of its reply.
 - **Plain reply.** Without structure, the reply is one text part whose `speaker` is the message's `char`, or none for the narrator. Apps MUST NOT guess `knownBy` from plain text.
@@ -153,7 +154,7 @@ Output that isn't a JSON object is discarded, and nothing is recorded. Otherwise
 2. `characters` join the header.
 3. `parts` are stored. A speaker that names no cast character is dropped (a newcomer that joined is in the cast), and so is each `knownBy` ID other than `narrator` that names none. A `knownBy` whose IDs are all dropped becomes `["narrator"]`, or `[<speaker>, "narrator"]` on a part with a speaker.
 4. `changes` are recorded as one `{"by": "model", …}` change, prepared as in section 3.3, on the message the tracker runs on or on the reply itself. Every extraction records this change, with an empty `set` when it changes nothing, which marks where the next tracker run starts.
-5. `entries` become session entries on the same message, each replacing one there with its ID. An entry that would take the path's session entries past their limit (Format 16) is dropped.
+5. `entries` become session entries on the same message, each replacing one there with its ID; on a root they are dropped. An entry that would take the path's session entries past their limit (Format 16) is dropped.
 
 The event pass after a message waits for any extraction the app runs on it.
 
