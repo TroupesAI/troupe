@@ -911,6 +911,87 @@
         },
         "head": "r2"
       }
+    },
+    {
+      "type": "start",
+      "name": "a question whose key the chronicle sets isn't asked",
+      "scenario": "s",
+      "opening": "o",
+      "chronicle": {
+        "kind": "chronicle",
+        "id": "c-kai",
+        "character": {
+          "id": "kai",
+          "name": "Kai",
+          "description": "A drifter.",
+          "variables": [
+            {
+              "id": "feelings",
+              "type": "int",
+              "of": "cast",
+              "min": -10,
+              "max": 10,
+              "carry": true,
+              "description": "d"
+            },
+            {
+              "id": "mood",
+              "type": "string",
+              "description": "not carried"
+            },
+            {
+              "id": "level",
+              "type": "int",
+              "carry": true,
+              "derive": "1",
+              "description": "derived, never carried"
+            },
+            {
+              "id": "temper",
+              "type": "string",
+              "carry": true,
+              "ask": "How is Kai today?",
+              "description": "d"
+            },
+            {
+              "id": "plan",
+              "type": "string",
+              "ask": "What's the plan?",
+              "description": "d"
+            }
+          ]
+        },
+        "persona": {
+          "id": "mara",
+          "name": "Mara",
+          "description": "d"
+        },
+        "limits": {
+          "lines": [
+            "gore"
+          ],
+          "veils": [
+            "romance"
+          ]
+        },
+        "memories": [
+          {
+            "id": "met",
+            "carry": true,
+            "text": "Kai met Mara at the docks."
+          }
+        ],
+        "values": {
+          "feelings.mara": 7,
+          "level": 3,
+          "temper": "glum"
+        }
+      },
+      "expect": {
+        "questions": [
+          "kai.plan"
+        ]
+      }
     }
   ]
 }

@@ -39,7 +39,7 @@ Format 2 applies here, including requirement keywords. "Format 7.2" means sectio
 
 1. Generate a random `seed` of at least 96 bits.
 2. Fill the player seats.
-3. Ask the questions of variables in use that have `ask`.
+3. Ask the questions of variables in use that have `ask`, except those whose key the chronicle's change sets.
 4. Create a root message for the chosen opening: `from: "system"`, with `opening` set and the content copied as written, or empty for an opening without `content`. It records these changes, in order:
    1. when the session continues a chronicle, its values in one `{"by": "rules", "set": …}` change (section 2.2);
    2. `{"by": "rules", "set": …}` with the opening's `set`, except keys the chronicle's change sets, and the starting `scene.present`;
@@ -66,7 +66,7 @@ Every later root, from another opening or a player's message, is made the same w
   - The chronicle's `limits` are added to the session's `lines` and `veils`, in order, without duplicates.
   - Its `memories` are copied onto each root as carried session entries, a memory without `carry` getting `carry: true` and one without `knownBy` getting the character's ID as its `knownBy`, and its `values` are recorded on each root in one `{"by": "rules"}` change, keyed with the character's ID (`mira.closeness`), before any other change (section 2.1).
   - Value keys and memory `knownBy` IDs that name the persona take effect only when the persona plays with its own ID (section 2.1 step 2).
-- **Writing back** from a path rewrites the chronicle with only what the session changed:
+- **Writing back** from a path rewrites the chronicle with only what the session changed; an app that writes back from a session again takes only what changed on the path after the message it last wrote back from, while that message is on the path:
   - `values` keeps only carried keys, keyed without the owner, and takes the latest value of each carried key that a change on the path set, except the root's `by: "rules"` changes without an `event`, which hold the starting values.
   - The memories written back are the carried session entries on the path, the latest version of each ID, merged as Format 12.3 says, whose `knownBy` is absent or names the character. An entry whose latest version on the path is on a root is skipped.
   - Each keeps in `knownBy` only the character, the persona and `narrator`.
@@ -104,7 +104,7 @@ Before recording a change, apps drop each key that isn't valid, or whose value i
 4. round `number` values to the nearest double to the decimal that ECMAScript `Number.prototype.toFixed(6)` produces;
 5. clamp: raise the value to `min`, then lower it to `max`.
 
-A key whose prepared value is no longer valid, such as a set grown past its limit (Format 16), is dropped too, and so is a key that would take a `"*"` map past its limit, after applying the keys kept before it in the change. Within a message, changes are recorded in the order they happen: on a root, in the order of section 2.1; on any message, player and model changes before the changes of the events they trigger.
+A key whose prepared value is no longer valid, such as a set grown past its limit (Format 16), is dropped too, and so is a key that would take a `"*"` map past its limit, after applying the keys kept before it in the change. Within a message, changes are recorded in the order they happen: on a root, in the order of section 2.1, then any extraction's change; on any message, player and model changes before the changes of the events they trigger.
 
 **Readers** re-apply steps 1, 4 and 5 when loading and drop invalid keys, but don't re-check channels, `maxStep` or `oneWay`.
 
