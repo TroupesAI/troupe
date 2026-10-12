@@ -159,7 +159,7 @@ Every field of `expect` is optional:
 
 | Input | Meaning |
 | --- | --- |
-| `at` | The triggering message, which must exist with its player and model changes, and on a root the opening's change. Its recorded firings (changes with `event`) are ignored and recomputed. |
+| `at` | The triggering message, which must exist with its player and model changes, and on a root the changes Play 2.1 records. Its recorded firings (changes with `event`) are ignored and recomputed. |
 | `eventMessageId` | The ID for the system message the pass may add. |
 
 Every field of `expect` is optional:
@@ -237,7 +237,7 @@ The runner validates the bundle and the session's raw lines against the schemas,
 
 - `expect.codes` is the sorted list of distinct diagnostic codes reported. It is compared exactly.
 - Each session line after the header is validated against `message.schema.json`. Validators assert `format`, so a malformed timestamp is `SCHEMA`.
-- `SCHEMA` covers schema failures, such as `null` in a field the spec defines. `""` and `[]` in optional fields read as missing (Format 2.2) for every other operation, but writers must leave them out, so the raw document fails the schema, which is reported as `SCHEMA`.
+- `SCHEMA` covers schema failures, such as `null` in a field the spec defines. `""` and `[]` in optional fields read as missing (Format 2.2, `knownBy: []` aside) for every other operation, but writers must leave them out, so the raw document fails the schema, which is reported as `SCHEMA`.
 - `UNKNOWN_FIELD` (Format 15) is located at the property itself (`/characters/0/mystery`).
 - `check` tests don't use `PARSE` or `UNSUPPORTED_VERSION`; `parse` tests (section 4.14) cover reading.
 - `expect.includes` lists `{code, at}` pairs that must each appear, compared on both fields.

@@ -29,7 +29,7 @@ Troupe separates **what a story is** (content, state, knowledge and recorded out
 
 ### 1.2 Conventions
 
-Format 2 applies here, including requirement keywords. "Format 7.2" means section 7.2 of Troupe Format; a section number alone means this document. Normative references are listed in Format Appendix E. The [implementer's guide](../guides/implementers.md) gives informative advice.
+Format 2 applies here, including requirement keywords. "Format 7.2" means section 7.2 of Troupe Format; a section number alone means this document. Normative references are listed in Format Appendix E.
 
 ---
 
@@ -92,7 +92,7 @@ The state at a message is computed by applying, in order:
 1. every variable's initial value, a set normalized and a number clamped as in section 3.3; no location; the whole cast present except the joiners (Format 12.2);
 2. the `changes` of every message on the path from the root to that message, in path order, and within a message in array order.
 
-Playing never modifies a bundle. Derived variables are computed from that state when read and prepared by steps 1, 4 and 5 of section 3.3; one whose expression fails at runtime, or whose value then fails Format 8.5's rules for values (type, members, finiteness, `int` range and size), is absent. Readers apply recorded changes and never re-run events or trackers on load. Keys, values and validity are defined in Format 8.5.
+Playing never modifies a bundle. Derived variables are computed from that state when read and prepared by steps 1, 4 and 5 of section 3.3; one whose expression fails at runtime, or whose value then isn't a valid value (Format 8.5), is absent. Readers apply recorded changes and never re-run events or trackers on load.
 
 ### 3.3 Recording changes
 
@@ -308,6 +308,7 @@ A conforming **app** reads files as a conforming reader (Format 17.1), follows F
 | Model output adds story content only: newcomers without mechanics, entries without placement, no replacing characters, state names or directions | Accepting full characters and entries from a model | A reply, or text a player coaxes out of a model, can't add rules, recast a character or plant a standing instruction. |
 | A model payload is read leniently, item by item | Discarding a payload that fails its schema | Models write `null` and empty values for optional fields; a bad newcomer or entry shouldn't lose a reply's text and changes. |
 | `scene.present` filtered to the cast | Dropping a whole presence change for one unknown ID | Trackers often name someone the story never introduced; the rest of the change is still right. |
+| Player edits on a new records-only message | Appending to the head when it is a player message | One place for every edit, and recorded firings never need re-evaluating. |
 | Starting values exempt from `oneWay` | Preparing them like any change | An opening or a chronicle sets where the story starts, which may be below the variable's default. |
 | Prompt slots, not a fixed order or history length | One mandated order; rules for trimming history | Apps keep prompt caches warm, and fit history to their models as they see fit; numeric positions count the history as sent. |
 | SHA-256 rolls over seed, message and subject | A sequential generator | Order-independent, exact in JavaScript, fresh on regeneration. |

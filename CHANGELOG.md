@@ -17,7 +17,7 @@ Hardening for implementation. Breaking changes from 0.11:
 - **Session entries:** a replacement takes each field it lacks from the entry it replaces, so a model can update a memory without losing its `carry`, `knownBy` or `pull` (Format 12.3).
 - **Player edits** go on a new records-only message (Play 3.3).
 - **Players** beyond a scenario's seats add seats, a seat nobody fills leaves the cast, a takeover keeps a character's keys, and a replacement of a character outside the cast counts as a new character (Format 6.1, 8.3, 12.2).
-- **Chronicles** take back only what a session changed. Every root of a chronicle session records the chronicle's change, even empty, and holds its memories, records-only roots included; a replacement of a carried entry is carried; a chronicle character outside the cast joins it (Format 12.3, 12.4; Play 2.1, 2.2).
+- **Chronicles** take back only what a session changed. Every root of a chronicle session records the chronicle's change, even empty, and holds its memories, records-only roots included; a chronicle character outside the cast joins it (Format 12.3, 12.4; Play 2.1, 2.2).
 - **Scenarios** name their narrator for `{{char}}` (Format 6, 10).
 - **`end`** changes nothing else; history length is the app's (Format 9; Play 6).
 - **Removed:** the PNG-embedded form; message `author`, `model` and `stopped`; change and model-output `reason`; the session header's `id`; the order questions are asked in; display defaults for bundle and scenario names. No rule read them; apps keep such data in `ext`.
