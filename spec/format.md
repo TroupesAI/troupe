@@ -121,7 +121,7 @@ MUST, MUST NOT, SHOULD, SHOULD NOT and MAY are used as described in RFC 2119 and
 
 - Writers MUST write I-JSON (RFC 7493): UTF-8 without a byte order mark, no duplicate member names, no surrogate or noncharacter code points, written or escaped, numbers that fit an IEEE 754 double, and integer fields and `int` values within ±(2^53 − 1), written without a fraction or exponent. Readers parse UTF-8 JSON (RFC 8259), ignore a leading byte order mark, and need not check the other I-JSON constraints.
 - **Empty values.** Writers MUST NOT write `null` in a field this spec defines or in a state value, and MUST NOT write `""`, `[]` or `{}` in an optional field other than `ext`. State values and `scenario.worlds` are the exception: there `""`, `[]` and `{}` are values. Names and variable descriptions are never empty.
-- Readers MUST treat `null`, `""`, `[]` and `{}` in an optional field like a missing field, with the same exception, except that `knownBy: []` reads as `["narrator"]` (section 7.4). A list that checks or repairing leave empty, or that repairing removes as a whole, also reads as missing, with four exceptions: `scenario.worlds` and `cast` read as `[]`, `keys` matches nothing, and `knownBy` reads as `["narrator"]`. A `null` state value is invalid (section 8.5).
+- Readers MUST treat `null`, `""`, `[]` and `{}` in an optional field like a missing field, except in `ext`, state values and `scenario.worlds`, and except that `knownBy: []` reads as `["narrator"]` (section 7.4). A list that checks or repairing leave empty, or that repairing removes as a whole, also reads as missing, with four exceptions: `scenario.worlds` and `cast` read as `[]`, `keys` matches nothing, and `knownBy` reads as `["narrator"]`. A `null` state value is invalid (section 8.5).
 - **Defaults are normative.** Every default stated in these documents or their TypeScript comments applies when a field is absent. Every boolean defaults to `false`, and one written `false` is the same as an absent one.
 
 ### 2.3 Identifiers
@@ -433,7 +433,7 @@ In an owner's own events, a key written `own.nerve` means `kai.nerve`; recorded 
 
 | `of` | Keys |
 | --- | --- |
-| `"characters"` | every cast character that doesn't fill a seat (sections 6.1, 12.2); a character a person takes over keeps its key |
+| `"characters"` | every cast character that doesn't fill a seat (sections 6.1, 12.2); a scenario cast character a person takes over (section 12.2) keeps its key |
 | `"cast"` | every cast character, players included |
 | `"others"` | every cast character except the variable's owner, players included |
 | a list, such as `["watch", "guild"]` | those keys |
@@ -663,7 +663,7 @@ interface Summary {
 
 ### 12.3 Session entries
 
-A message may add entries, owned by `session`. They are candidates from that message onward on its path, so they belong to their branch. A later message's entry with the same ID replaces it from there on, and `disabled: true` removes it. A replacement, on the same message or a later one, takes each field it lacks (absent, or a `false` boolean), other than `disabled`, from the entry it replaces, such as `carry`, `knownBy`, `title` and `pull`. An entry that follows a `disabled` version replaces nothing.
+A message may add entries, owned by `session`. They are candidates from that message onward on its path, so they belong to their branch. A later message's entry with the same ID replaces it from there on, and `disabled: true` removes it. A replacement takes each field it lacks (absent, or a `false` boolean), other than `disabled`, from the entry it replaces, such as `carry`, `knownBy`, `title` and `pull`. An entry that follows a `disabled` version replaces nothing.
 
 ### 12.4 Other message fields
 
@@ -1109,7 +1109,7 @@ A new session that continues this chronicle starts with `closeness` at 58 and bo
 | No text transforms | Regex scripts that rewrite text | Most build HTML, fix one model's quirks, or display stats that state now covers. |
 | Security rules for showing and reading files are normative | Leaving safety to each app | Files come from strangers; a file safe in one app must be safe in every app. |
 | A replacement session entry takes the fields it lacks from the one it replaces | Replacing an entry whole | A model sees only an entry's ID and text, so its update of a memory keeps the memory's `carry`, `knownBy`, `pull` and `title`. |
-| A joiner a person takes over becomes a seat's character | Recording how each character joined | The snapshot can't tell a player's own character from a joiner taken over; an app that wants a joiner's keyed values kept leaves it model-played. |
+| A joiner listed in `players` fills a seat | Recording how each character joined | The snapshot can't tell a player's own character from a joiner listed in `players`; an app that wants a joiner's keyed values kept leaves it model-played. |
 | Strict schemas, lenient readers | Either everywhere | Writers catch typos; readers stay forward compatible. |
 | A reader that keeps a file failing its schema removes each failing value | Refusing it, or each reader repairing it its own way | Every lenient reader plays the same story from the same broken file. |
 | Writers leave out empty optional fields and write booleans as they like | Allowing `""` and `[]` anywhere; treating an explicit `false` as different from absent | Two writers of the same story produce the same fields, and typed serializers that write defaults still validate. |

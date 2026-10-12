@@ -1379,7 +1379,10 @@
                   "additionalProperties": false,
                   "properties": {
                     "message": {
-                      "type": "object"
+                      "type": [
+                        "object",
+                        "null"
+                      ]
                     },
                     "events": {
                       "type": "array"

@@ -159,6 +159,19 @@
         "gold": 0,
         "edits": 0
       }
+    },
+    {
+      "type": "edit",
+      "name": "an edit whose keys are all dropped records nothing",
+      "set": {
+        "edits": 3
+      },
+      "newId": "e2",
+      "expect": {
+        "message": null,
+        "events": [],
+        "head": "3"
+      }
     }
   ]
 }

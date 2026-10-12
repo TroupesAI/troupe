@@ -42,7 +42,7 @@ Format 2 applies here, including requirement keywords. "Format 7.2" means sectio
 3. Ask the questions of variables in use that have `ask`, except those whose key the chronicle's change sets.
 4. Create a root message for the chosen opening: `from: "system"`, with `opening` set and the content copied as written, or empty for an opening without `content`. It records these changes, in order:
    1. when the session continues a chronicle, its values in one `{"by": "rules", "set": …}` change (section 2.2);
-   2. `{"by": "rules", "set": …}` with the opening's `set`, except keys the chronicle's change sets, and the starting `scene.present`;
+   2. `{"by": "rules", "set": …}` with the opening's `set`, less the keys the chronicle's change sets, plus the starting `scene.present`;
    3. `{"by": "player", "set": …}` with the answers.
 
    The starting `scene.present` is the opening's `scene.present` when its `set` lists one; otherwise the cast characters who speak in its content, or, for an opening without `content`, every character in the session's cast except the joiners when the root is made (Format 12.2). The players' characters, and the chronicle's character when it isn't in the scenario's cast (section 2.2), are added to it.
@@ -66,7 +66,7 @@ Every later root, from another opening or a player's message, is made the same w
   - The chronicle's `limits` are added to the session's `lines` and `veils`, in order, without duplicates.
   - Its `memories` are copied onto each root as carried session entries, a memory without `carry` getting `carry: true` and one without `knownBy` getting the character's ID as its `knownBy`, and its `values` are recorded on each root in one `{"by": "rules"}` change, keyed with the character's ID (`mira.closeness`), before any other change (section 2.1).
   - Value keys and memory `knownBy` IDs that name the persona take effect only when the persona plays with its own ID (section 2.1 step 2).
-- **Writing back** from a path rewrites the chronicle with only what the session changed; an app that writes back from a session again takes only what changed on the path after the message it last wrote back from, while that message is on the path:
+- **Writing back** from a path rewrites the chronicle with only what the session changed; an app that writes back from a session again takes only what changed on the path after the message it last wrote back from, while that message is on the path, and otherwise from the root:
   - `values` keeps only carried keys, keyed without the owner, and takes the latest value of each carried key that a change on the path set, except the root's `by: "rules"` changes without an `event`, which hold the starting values.
   - The memories written back are the carried session entries on the path, the latest version of each ID, merged as Format 12.3 says, whose `knownBy` is absent or names the character. An entry whose latest version on the path is on a root is skipped.
   - Each keeps in `knownBy` only the character, the persona and `narrator`.
@@ -138,7 +138,7 @@ type Newcomer = Pick<Character, "id" | "name" | "aliases" | "description" | "sum
   - for each variable in use whose `by` includes `model`, in event order (section 3.3), its key, type, `values` or range, `description` and current value;
   - the scene's values, the ID and name of every location of the bundle and session in world order, and of every cast character in cast order;
   - the entries in use placed in `tracker`, not `disabled`, whose `when` holds: those of the worlds, the cast characters in cast order, the scenario and the session, in the order of section 5.1;
-  - the session entries on the path placed in `context`, in the order of section 5.1: for a tracker run, all of them with their IDs and texts; for a structured reply, the IDs of those the Context slot carries;
+  - the session entries on the path placed in `context`, in the order of section 5.1: for a tracker run, all of them that aren't `disabled`, with their IDs and texts; for a structured reply, the IDs of those the Context slot carries;
   - the messages it reads that are sent to models (Format 12.4), with full knowledge.
 - **Structured reply.** The story model returns the whole payload in its reply. For the narrator and the single voice, the System slot carries tracker input (section 6). A character's generation in `characters` mode gets none, and apps keep only the `parts` of its reply.
 - **Plain reply.** Without structure, the reply is one text part whose `speaker` is the message's `char`, or none for the narrator. Apps MUST NOT guess `knownBy` from plain text.

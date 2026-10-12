@@ -207,6 +207,10 @@
             "id": "aside",
             "position": "system",
             "text": "An aside."
+          },
+          {
+            "id": "gone",
+            "text": "A removed memo."
           }
         ]
       },
@@ -225,6 +229,13 @@
               "p"
             ],
             "text": "*Thinks of the secretword.*"
+          }
+        ],
+        "entries": [
+          {
+            "id": "gone",
+            "disabled": true,
+            "text": "x"
           }
         ]
       },
@@ -294,7 +305,7 @@
     },
     {
       "type": "tracker",
-      "name": "after the extraction on 2: hidden and records-only messages aren't read; when holds at the message it runs on; hit() scans with full knowledge, so a whisper counts; only context session entries are listed",
+      "name": "after the extraction on 2: hidden and records-only messages aren't read; when holds at the message it runs on; hit() scans with full knowledge, so a whisper counts; only context session entries are listed; a disabled context entry isn't sent",
       "at": "6",
       "expect": {
         "entries": [
