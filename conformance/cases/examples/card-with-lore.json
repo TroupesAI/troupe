@@ -1,11 +1,10 @@
 {
-  "description": "Format Appendix B.1: valid; two written openings are swipeable roots where Mira, who speaks, starts present; the style rule and the secret are always on and keyed lore waits for its words; 'Shore leave' has no content, so its root is a records-only system message with the whole cast present, its entry directs the first model message at turn 0 and then stops (Format 6.3, 7.2; Play 2.1, 5)",
+  "description": "Format Appendix B.1: valid; each opening played is a root that records who is present, and 'Shore leave' has no content, so its root is a records-only system message (Format 6.3, 12.1, 12.4)",
   "bundleFile": "../../../examples/mira-card.troupe.json",
   "session": {
     "header": {
       "kind": "session",
       "scenario": "kestrel",
-      "seed": "conformanceSeed0001",
       "characters": [
         {
           "id": "you",
@@ -113,112 +112,12 @@
       }
     },
     {
-      "type": "swipe",
-      "opening": "adrift",
-      "rootId": "2",
-      "expect": {
-        "root": {
-          "id": "2",
-          "opening": "adrift",
-          "from": "system",
-          "content": [
-            {
-              "text": "The lights flicker. Somewhere aft, something groans."
-            },
-            {
-              "speaker": "mira",
-              "text": "Good news: we're alive. Bad news: everything else."
-            }
-          ],
-          "changes": [
-            {
-              "by": "rules",
-              "set": {
-                "scene.present": [
-                  "you",
-                  "mira"
-                ]
-              }
-            }
-          ]
-        },
-        "state": {
-          "scene.present": [
-            "you",
-            "mira"
-          ]
-        }
-      }
-    },
-    {
-      "type": "select",
-      "name": "before anyone names the ship or the sister",
-      "for": "mira",
-      "parent": "1",
-      "messageId": "x",
-      "expect": {
-        "activated": [
-          "mira/style",
-          "mira/debt"
-        ]
-      }
-    },
-    {
-      "type": "select",
-      "name": "after the player names both",
-      "for": "mira",
-      "parent": "3",
-      "messageId": "y",
-      "expect": {
-        "activated": [
-          "mira/style",
-          "mira/ship",
-          "mira/sister",
-          "mira/debt"
-        ],
-        "system": [
-          "mira/style"
-        ]
-      }
-    },
-    {
       "type": "state",
       "at": "4",
       "expect": {
         "scene.present": [
           "you",
           "mira"
-        ]
-      }
-    },
-    {
-      "type": "prompt",
-      "name": "the shore entry directs the first model message; the records-only root isn't sent",
-      "for": "mira",
-      "parent": "4",
-      "messageId": "5",
-      "expect": {
-        "system": [
-          "app",
-          "entry:mira/style",
-          "entry:kestrel/shore"
-        ],
-        "history": [],
-        "texts": {
-          "entry:kestrel/shore": "Open on shore leave: Mira and You at a crowded spaceport bar."
-        }
-      }
-    },
-    {
-      "type": "select",
-      "name": "after the first round the shore entry stops",
-      "for": "mira",
-      "parent": "6",
-      "messageId": "7",
-      "expect": {
-        "activated": [
-          "mira/style",
-          "mira/debt"
         ]
       }
     }

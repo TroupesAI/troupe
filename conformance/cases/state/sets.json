@@ -1,0 +1,85 @@
+{
+  "description": "Sets render with their labels, joined by \", \" (Format 8.6, 10)",
+  "bundle": {
+    "kind": "bundle",
+    "characters": [
+      {
+        "id": "a",
+        "name": "Ann",
+        "description": "Ann."
+      },
+      {
+        "id": "b",
+        "name": "Bea",
+        "description": "Bea."
+      }
+    ],
+    "worlds": [
+      {
+        "id": "w",
+        "name": "W",
+        "locations": [
+          {
+            "id": "hall",
+            "name": "Hall"
+          }
+        ]
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s",
+        "variables": [
+          {
+            "id": "inv",
+            "type": "set",
+            "values": [
+              "rope",
+              "torch",
+              "key"
+            ],
+            "labels": {
+              "rope": "a coil of rope"
+            },
+            "by": [
+              "model"
+            ],
+            "description": "d"
+          },
+          {
+            "id": "bag",
+            "type": "set",
+            "by": [
+              "model"
+            ],
+            "description": "free-form"
+          },
+          {
+            "id": "seen",
+            "type": "set",
+            "oneWay": true,
+            "initial": [
+              "x",
+              "y"
+            ],
+            "by": [
+              "model"
+            ],
+            "description": "only grows",
+            "labels": {
+              "x": "an x"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "macro",
+      "name": "sets render with labels, joined by ', '",
+      "text": "{{state.seen}} / {{state.inv}}",
+      "expect": "an x, y / "
+    }
+  ]
+}

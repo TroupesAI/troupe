@@ -1,5 +1,5 @@
 {
-  "description": "A cast whose every member a check skips is empty, not the default (Format 2.2, 17.2): a player adds a seat, and bundle characters stay out",
+  "description": "Cast members that name no bundle character are UNKNOWN_CHARACTER (Format 6.1, 17.2)",
   "bundle": {
     "kind": "bundle",
     "characters": [
@@ -24,7 +24,6 @@
     "header": {
       "kind": "session",
       "scenario": "s",
-      "seed": "conformanceSeed0001",
       "characters": [
         {
           "id": "p",
@@ -57,21 +56,6 @@
           "UNKNOWN_CHARACTER"
         ]
       }
-    },
-    {
-      "type": "state",
-      "at": "1",
-      "expect": {
-        "scene.present": [
-          "p"
-        ]
-      }
-    },
-    {
-      "type": "cel",
-      "at": "1",
-      "expr": "players == ['p'] && !('a' in scene.present)",
-      "expect": true
     }
   ]
 }

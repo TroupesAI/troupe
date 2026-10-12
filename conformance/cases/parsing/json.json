@@ -1,5 +1,5 @@
 {
-  "description": "Reading a bundle (Format 2.2, 14.1, 17.2): the input must be UTF-8 JSON and a Troupe document of the expected kind; otherwise it is PARSE and the file isn't read. An escaped surrogate pair is one character. A bundle nested 64 deep is within the limits (Format 16)",
+  "description": "A bundle (Format 2.2, 14.1, 17.2): the input must be I-JSON and a Troupe document of the expected kind, or it is PARSE. An escaped surrogate pair is one character. A bundle nested 64 deep is within the limits (Format 16)",
   "tests": [
     {
       "type": "parse",
@@ -7,12 +7,7 @@
       "kind": "bundle",
       "text": "{\"troupe\":\"0.12\",\"kind\":\"bundle\"}",
       "expect": {
-        "ok": true,
-        "codes": [],
-        "equals": {
-          "troupe": "0.12",
-          "kind": "bundle"
-        }
+        "codes": []
       }
     },
     {
@@ -21,7 +16,6 @@
       "kind": "bundle",
       "text": "{\"troupe\":",
       "expect": {
-        "ok": false,
         "codes": [
           "PARSE"
         ]
@@ -33,7 +27,6 @@
       "kind": "bundle",
       "base64": "eyJ0cm91cGUiOiIwLjEyIiwia2luZCI6ImJ1bmRsZSIsInRhZ3MiOlsi/yJdfQ==",
       "expect": {
-        "ok": false,
         "codes": [
           "PARSE"
         ]
@@ -45,7 +38,6 @@
       "kind": "bundle",
       "text": "{\"troupe\":\"0.12\",\"kind\":\"bundle\",\"tags\":[\"\\ud83d\\ude00\"]}",
       "expect": {
-        "ok": true,
         "codes": []
       }
     },
@@ -55,7 +47,6 @@
       "kind": "bundle",
       "text": "{\"troupe\":\"0.12\",\"kind\":\"bundle\",\"ext\":{\"a.b\":[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]}}",
       "expect": {
-        "ok": true,
         "codes": []
       }
     },
@@ -65,7 +56,6 @@
       "kind": "bundle",
       "text": "[]",
       "expect": {
-        "ok": false,
         "codes": [
           "PARSE"
         ]
@@ -77,7 +67,6 @@
       "kind": "bundle",
       "text": "{\"troupe\":\"0.12\",\"kind\":\"deck\"}",
       "expect": {
-        "ok": false,
         "codes": [
           "PARSE"
         ]
@@ -87,9 +76,8 @@
       "type": "parse",
       "name": "a session header where a bundle is expected",
       "kind": "bundle",
-      "text": "{\"troupe\":\"0.12\",\"kind\":\"session\",\"scenario\":\"s\",\"seed\":\"k7Qm2xVb9TzR4pLc8NwYfA\"}",
+      "text": "{\"troupe\":\"0.12\",\"kind\":\"session\",\"scenario\":\"s\"}",
       "expect": {
-        "ok": false,
         "codes": [
           "PARSE"
         ]
@@ -101,7 +89,6 @@
       "kind": "bundle",
       "text": "{\"kind\":\"bundle\"}",
       "expect": {
-        "ok": false,
         "codes": [
           "SCHEMA"
         ]

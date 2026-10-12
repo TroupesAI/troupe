@@ -1,5 +1,5 @@
 {
-  "description": "Derived variables (Format 8.1; Play 3.2): computed from stored state when read, never recorded; read-only; can't read other derived variables",
+  "description": "Derived variables (Format 8.1, 8.6): computed from stored state when read, never recorded",
   "bundle": {
     "kind": "bundle",
     "characters": [
@@ -45,12 +45,6 @@
             "type": "bool",
             "derive": "state.clock % 24 >= 20 || state.clock % 24 < 6",
             "description": "Night time."
-          },
-          {
-            "id": "bad",
-            "type": "int",
-            "derive": "state.day + 1",
-            "description": "Reads another derived variable: never applies."
           }
         ],
         "entries": [
@@ -67,7 +61,6 @@
     "header": {
       "kind": "session",
       "scenario": "s",
-      "seed": "conformanceSeed0001",
       "characters": [
         {
           "id": "p",
@@ -125,52 +118,17 @@
       "expect": true
     },
     {
-      "type": "select",
-      "for": "a",
-      "parent": "1",
-      "messageId": "2",
-      "expect": {
-        "texts": {
-          "s/when_night": "It is night on day 2."
-        }
-      }
-    },
-    {
       "type": "macro",
       "at": "1",
       "text": "Day {{state.day}}.",
       "expect": "Day 2."
     },
     {
-      "type": "prepare",
-      "name": "a derived variable can't be changed",
-      "by": "rules",
-      "set": {
-        "day": 5,
-        "clock": 50
-      },
-      "expect": {
-        "set": {
-          "clock": 50
-        },
-        "dropped": [
-          "day"
-        ]
-      }
-    },
-    {
       "type": "check",
       "expect": {
-        "codes": [
-          "CEL_ERROR"
-        ],
-        "includes": [
-          {
-            "code": "CEL_ERROR",
-            "at": "/scenarios/0/variables/3/derive"
-          }
-        ]
-      }
+        "codes": []
+      },
+      "name": "derived variables that read stored state are valid"
     }
   ]
 }

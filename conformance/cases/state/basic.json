@@ -1,5 +1,5 @@
 {
-  "description": "State (Play 3.2): defaults, initial, changes in path order and array order, branches, the scene",
+  "description": "State (Format 8.6): defaults, initial, changes in path order and array order, branches, the scene",
   "bundle": {
     "kind": "bundle",
     "characters": [
@@ -88,7 +88,6 @@
     "header": {
       "kind": "session",
       "scenario": "s",
-      "seed": "conformanceSeed0001",
       "characters": [
         {
           "id": "p",

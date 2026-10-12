@@ -1,5 +1,5 @@
 {
-  "description": "CEL rules (Format 11.1, 11.2): comprehensions over a map visit keys in code point order; list and map literals hold one type; type names and whole state objects aren't values; CEL's runtime errors (overflow, division by zero, out-of-range conversion) make a condition false; comprehension bodies, not targets, count toward nesting; absent keys of \"*\" maps are absent in CEL (Format 8.3); matches() patterns are valid regexes (Format 16 item 5); an unknown time zone makes hour and weekday −1; with no player, user is \"\"; hit() takes a literal; selecting an absent value is a runtime error; an invalid hit() regex is a CEL_ERROR; has() is true exactly when the selection isn't a runtime error",
+  "description": "CEL rules (Format 11.1, 11.2): comprehensions over a map visit keys in code point order; list and map literals hold one type; type names and whole state objects aren't values; CEL's runtime errors (overflow, division by zero, out-of-range conversion) make a condition false; comprehension bodies, not targets, count toward nesting; absent keys of \"*\" maps are absent in CEL (Format 8.3); matches() patterns are valid regexes (Format 16); an unknown time zone makes hour and weekday −1; with no player, user is \"\"; hit() takes a literal; selecting an absent value is a runtime error; an invalid hit() regex is a CEL_ERROR; has() is true exactly when the selection isn't a runtime error",
   "bundle": {
     "kind": "bundle",
     "scenarios": [
@@ -74,7 +74,6 @@
     "header": {
       "kind": "session",
       "scenario": "s",
-      "seed": "conformanceSeed0001",
       "timezone": "Mars/Olympus"
     },
     "messages": [

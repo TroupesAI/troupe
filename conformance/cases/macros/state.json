@@ -46,7 +46,7 @@
           {
             "id": "tiny",
             "type": "number",
-            "initial": 1e-07,
+            "initial": 1e-7,
             "description": "d"
           },
           {
@@ -104,7 +104,6 @@
     "header": {
       "kind": "session",
       "scenario": "s",
-      "seed": "conformanceSeed0001",
       "characters": [
         {
           "id": "p",

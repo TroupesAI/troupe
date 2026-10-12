@@ -1,0 +1,187 @@
+{
+  "description": "A scenario without cast or worlds (Format 6.1, 6.4, 12.1): the default cast is one player seat and every bundle character in bundle order, every bundle world is in use, and the root records who is present",
+  "bundle": {
+    "kind": "bundle",
+    "characters": [
+      {
+        "id": "elena",
+        "name": "Elena Voss",
+        "description": "A meticulous thief.",
+        "entries": [
+          {
+            "id": "maps",
+            "keys": [
+              "map"
+            ],
+            "text": "{{char}} guards her maps."
+          }
+        ],
+        "variables": [
+          {
+            "id": "patience",
+            "type": "int",
+            "initial": 3,
+            "min": 0,
+            "max": 5,
+            "by": [
+              "model"
+            ],
+            "description": "How patient {{char}} is with {{user}}."
+          }
+        ],
+        "events": [
+          {
+            "id": "snap",
+            "when": "own.patience == 0",
+            "once": true,
+            "direct": "Elena loses her temper."
+          }
+        ]
+      },
+      {
+        "id": "kai",
+        "name": "Kai",
+        "description": "In the default cast, but silent in the opening."
+      }
+    ],
+    "worlds": [
+      {
+        "id": "w1",
+        "name": "One",
+        "entries": [
+          {
+            "id": "a",
+            "text": "World one."
+          }
+        ]
+      },
+      {
+        "id": "w2",
+        "name": "Two",
+        "entries": [
+          {
+            "id": "b",
+            "text": "World two."
+          }
+        ]
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "workshop",
+        "openings": [
+          {
+            "id": "late",
+            "set": {
+              "elena.patience": 2
+            },
+            "content": [
+              {
+                "speaker": "elena",
+                "text": "You're late. Sit down, and don't touch the maps."
+              }
+            ]
+          },
+          {
+            "id": "anytime",
+            "title": "Drop by"
+          }
+        ]
+      }
+    ]
+  },
+  "session": {
+    "header": {
+      "kind": "session",
+      "scenario": "workshop",
+      "characters": [
+        {
+          "id": "you",
+          "name": "Robin",
+          "description": "A client."
+        }
+      ],
+      "players": [
+        "you"
+      ],
+      "head": "2"
+    },
+    "messages": [
+      {
+        "id": "1",
+        "from": "system",
+        "content": [
+          {
+            "speaker": "elena",
+            "text": "You're late. Sit down, and don't touch the maps."
+          }
+        ],
+        "opening": "late",
+        "changes": [
+          {
+            "by": "rules",
+            "set": {
+              "elena.patience": 2,
+              "scene.present": [
+                "you",
+                "elena"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "id": "2",
+        "parent": "1",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "you",
+            "text": "Sorry. Can I see the map?"
+          }
+        ],
+        "changes": [
+          {
+            "by": "player",
+            "set": {
+              "elena.patience": 1
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "state",
+      "name": "the default cast: the seat, then Elena and Kai; the root's change leaves Kai absent",
+      "at": "1",
+      "expect": {
+        "scene.present": [
+          "you",
+          "elena"
+        ],
+        "elena.patience": 2
+      }
+    },
+    {
+      "type": "state",
+      "at": "2",
+      "expect": {
+        "scene.present": [
+          "you",
+          "elena"
+        ],
+        "elena.patience": 1
+      },
+      "name": "the state applies every recorded change"
+    },
+    {
+      "type": "check",
+      "name": "a player change to a variable without by: player isn't a failed check",
+      "expect": {
+        "codes": []
+      }
+    }
+  ]
+}

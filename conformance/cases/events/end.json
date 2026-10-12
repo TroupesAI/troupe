@@ -1,0 +1,172 @@
+{
+  "description": "end marks the story finished on the path of the message where it fired, from an event or from an outcome (Format 9)",
+  "bundle": {
+    "kind": "bundle",
+    "characters": [
+      {
+        "id": "a",
+        "name": "Ann",
+        "description": "Ann."
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s",
+        "cast": [
+          {},
+          {
+            "character": "a"
+          }
+        ],
+        "variables": [
+          {
+            "id": "stakes",
+            "type": "int",
+            "initial": 2,
+            "description": "d"
+          }
+        ],
+        "events": [
+          {
+            "id": "d1",
+            "when": "turn == 2",
+            "direct": "Raise the stakes to {{state.stakes}}.",
+            "message": [
+              {
+                "text": "A bell rings."
+              }
+            ]
+          },
+          {
+            "id": "d2",
+            "when": "turn == 2",
+            "direct": "After a model message.",
+            "outcomes": [
+              {
+                "direct": "Outcome direction.",
+                "end": true
+              }
+            ],
+            "on": "model"
+          },
+          {
+            "id": "later",
+            "when": "turn == 3",
+            "set": {
+              "stakes": 5
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "session": {
+    "header": {
+      "kind": "session",
+      "scenario": "s",
+      "characters": [
+        {
+          "id": "p",
+          "name": "Pat",
+          "description": "Pat."
+        }
+      ],
+      "players": [
+        "p"
+      ],
+      "head": "5"
+    },
+    "messages": [
+      {
+        "id": "1",
+        "from": "player",
+        "content": [
+          {
+            "text": "Start."
+          }
+        ]
+      },
+      {
+        "id": "2",
+        "parent": "1",
+        "from": "player",
+        "content": [
+          {
+            "text": "Go."
+          }
+        ],
+        "changes": [
+          {
+            "by": "rules",
+            "event": "d1",
+            "set": {}
+          }
+        ]
+      },
+      {
+        "id": "3",
+        "parent": "2",
+        "from": "system",
+        "content": [
+          {
+            "text": "A bell rings."
+          }
+        ]
+      },
+      {
+        "id": "4",
+        "parent": "3",
+        "from": "model",
+        "char": "a",
+        "content": [
+          {
+            "text": "Reply."
+          }
+        ],
+        "changes": [
+          {
+            "by": "rules",
+            "event": "d2",
+            "outcome": 0,
+            "set": {}
+          }
+        ]
+      },
+      {
+        "id": "5",
+        "parent": "4",
+        "from": "player",
+        "content": [
+          {
+            "text": "Next."
+          }
+        ]
+      },
+      {
+        "id": "3h",
+        "parent": "3",
+        "from": "model",
+        "char": "a",
+        "hidden": true,
+        "content": [
+          {
+            "text": "A hidden reply."
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "ended",
+      "at": "3",
+      "expect": false
+    },
+    {
+      "type": "ended",
+      "name": "an outcome's end finishes the path",
+      "at": "4",
+      "expect": true
+    }
+  ]
+}

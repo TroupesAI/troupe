@@ -1,0 +1,247 @@
+{
+  "description": "A chronicle's values name carried variables of its character: a value key that names no carried variable is UNKNOWN_VARIABLE (Format 13, 17.2)",
+  "bundle": {
+    "kind": "bundle",
+    "characters": [
+      {
+        "id": "ann",
+        "name": "Ann",
+        "description": "Ann."
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s",
+        "cast": [
+          {},
+          {
+            "character": "ann"
+          }
+        ],
+        "openings": [
+          {
+            "id": "o",
+            "content": [
+              {
+                "text": "Rain."
+              }
+            ]
+          },
+          {
+            "id": "o2",
+            "set": {
+              "kai.feelings.mara": 0
+            },
+            "content": [
+              {
+                "text": "Snow."
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "session": {
+    "header": {
+      "kind": "session",
+      "scenario": "s",
+      "chronicle": "c-kai",
+      "characters": [
+        {
+          "id": "mara",
+          "name": "Mara",
+          "description": "d"
+        },
+        {
+          "id": "kai",
+          "name": "Kai",
+          "description": "A drifter.",
+          "variables": [
+            {
+              "id": "feelings",
+              "type": "int",
+              "of": "cast",
+              "min": -10,
+              "max": 10,
+              "carry": true,
+              "description": "d"
+            },
+            {
+              "id": "mood",
+              "type": "string",
+              "description": "not carried"
+            },
+            {
+              "id": "level",
+              "type": "int",
+              "carry": true,
+              "derive": "1",
+              "description": "derived, never carried"
+            }
+          ]
+        }
+      ],
+      "players": [
+        "mara"
+      ],
+      "limits": {
+        "lines": [
+          "gore"
+        ],
+        "veils": [
+          "romance"
+        ]
+      }
+    },
+    "messages": [
+      {
+        "id": "1",
+        "opening": "o",
+        "from": "system",
+        "content": [
+          {
+            "text": "Rain."
+          }
+        ],
+        "entries": [
+          {
+            "id": "met",
+            "carry": true,
+            "text": "Kai met Mara at the docks.",
+            "knownBy": [
+              "kai"
+            ]
+          }
+        ],
+        "changes": [
+          {
+            "by": "rules",
+            "set": {
+              "kai.feelings.mara": 7
+            }
+          },
+          {
+            "by": "rules",
+            "set": {
+              "scene.present": [
+                "mara",
+                "kai"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "id": "2",
+        "parent": "1",
+        "from": "player",
+        "content": [
+          {
+            "text": "Hello again."
+          }
+        ],
+        "changes": [
+          {
+            "by": "model",
+            "set": {
+              "kai.feelings.mara": 9
+            }
+          }
+        ],
+        "entries": [
+          {
+            "id": "storm",
+            "carry": true,
+            "knownBy": [
+              "ann",
+              "kai",
+              "narrator",
+              "mara"
+            ],
+            "text": "Kai and Mara sheltered from a storm."
+          },
+          {
+            "id": "ann_secret",
+            "carry": true,
+            "knownBy": [
+              "ann"
+            ],
+            "text": "Ann's secret."
+          },
+          {
+            "id": "scratch",
+            "text": "Not carried."
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "chronicle",
+      "chronicle": {
+        "kind": "chronicle",
+        "id": "c-kai",
+        "character": {
+          "id": "kai",
+          "name": "Kai",
+          "description": "A drifter.",
+          "variables": [
+            {
+              "id": "feelings",
+              "type": "int",
+              "of": "cast",
+              "min": -10,
+              "max": 10,
+              "carry": true,
+              "description": "d"
+            },
+            {
+              "id": "mood",
+              "type": "string",
+              "description": "not carried"
+            },
+            {
+              "id": "level",
+              "type": "int",
+              "carry": true,
+              "derive": "1",
+              "description": "derived, never carried"
+            }
+          ]
+        },
+        "persona": {
+          "id": "mara",
+          "name": "Mara",
+          "description": "d"
+        },
+        "limits": {
+          "lines": [
+            "gore"
+          ],
+          "veils": [
+            "romance"
+          ]
+        },
+        "memories": [
+          {
+            "id": "met",
+            "carry": true,
+            "text": "Kai met Mara at the docks."
+          }
+        ],
+        "values": {
+          "feelings.mara": 7,
+          "mood": "glum",
+          "level": 3
+        }
+      },
+      "expect": {
+        "codes": [
+          "UNKNOWN_VARIABLE"
+        ]
+      }
+    }
+  ]
+}

@@ -1,5 +1,5 @@
 {
-  "description": "A change with event but by other than rules (Format 12, 17.2): repair removes event, and its outcome with it, and keeps the change, so its values still apply",
+  "description": "A change with event but by other than rules fails the schema (Format 12)",
   "bundle": {
     "kind": "bundle",
     "characters": [
@@ -35,7 +35,6 @@
     "header": {
       "kind": "session",
       "scenario": "s",
-      "seed": "conformanceSeed0001",
       "characters": [
         {
           "id": "p",
@@ -90,19 +89,6 @@
           "SCHEMA"
         ]
       }
-    },
-    {
-      "type": "state",
-      "at": "2",
-      "expect": {
-        "g": 7
-      }
-    },
-    {
-      "type": "cel",
-      "at": "2",
-      "expr": "count('patrol') == 0",
-      "expect": true
     }
   ]
 }

@@ -1,57 +1,11 @@
 {
-  "description": "Format 1.4's card: valid, without mechanics; the scenario's default cast is one seat and every bundle character, and the opening is a root with Elena present (Format 1.4, 6.1, 6.3)",
+  "description": "Format 1.4's card: valid, without mechanics; the scenario's default cast is one seat and every bundle character (Format 1.4, 6.1)",
   "bundleFile": "../../../examples/elena-card.troupe.json",
   "tests": [
     {
       "type": "check",
       "expect": {
         "codes": []
-      }
-    },
-    {
-      "type": "start",
-      "scenario": "workshop",
-      "opening": "late",
-      "characters": [
-        {
-          "id": "you",
-          "name": "You",
-          "description": "The player."
-        }
-      ],
-      "seed": "conformanceSeed0001",
-      "expect": {
-        "root": {
-          "id": "1",
-          "opening": "late",
-          "from": "system",
-          "content": [
-            {
-              "speaker": "elena",
-              "text": "You're late. Sit down, and don't touch the maps."
-            }
-          ],
-          "changes": [
-            {
-              "by": "rules",
-              "set": {
-                "scene.present": [
-                  "you",
-                  "elena"
-                ]
-              }
-            }
-          ]
-        },
-        "characters": [
-          "you"
-        ],
-        "state": {
-          "scene.present": [
-            "you",
-            "elena"
-          ]
-        }
       }
     }
   ]

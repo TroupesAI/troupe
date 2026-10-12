@@ -5,7 +5,9 @@
 //   - the spec version agrees across the documents, schema URLs, examples, bundles in Markdown and cases;
 //   - every conformance case is named <area>/<topic>.json, matches conformance/case.schema.json, and the files it names exist,
 //     and its check, chronicle and parse tests expect SCHEMA exactly when the schemas reject their input;
-//   - relative Markdown links and #anchors resolve, and every "Format N.N" or "Play N.N" names a section.
+//   - cases with state, macro, cel or ended tests have inputs that pass the schemas, and check tests that expect no
+//     failed check other than UNKNOWN_MACRO;
+//   - relative Markdown links and #anchors resolve, and every "Format N.N" names a section.
 import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import Ajv2020 from "ajv/dist/2020.js";
@@ -96,7 +98,6 @@ for (const doc of markdown) {
 // Spec version
 const version = format.match(/^\*\*Version (\d+\.\d+) /m)?.[1];
 if (!version) fail("spec/format.md has no version line");
-if (read("spec/play.md").match(/^\*\*Version (\d+\.\d+) /m)?.[1] !== version) fail("spec/play.md's version differs from spec/format.md's");
 for (const f of schemaFiles) {
   const id: string = JSON.parse(read(`schemas/${f}`)).$id;
   if (!id.includes(`/schema/${version}/`)) fail(`schemas/${f}: $id ${id} isn't version ${version}`);
@@ -133,9 +134,8 @@ const interfaces: Record<string, ReturnType<typeof schemaOf>> = {
   Change: schemaOf("message.schema.json", "$defs", "change"),
   Summary: schemaOf("message.schema.json", "properties", "summary"),
   Chronicle: schemaOf("chronicle.schema.json"),
-  ModelOutput: schemaOf("model-output.schema.json"),
 };
-const specText = format + read("spec/play.md");
+const specText = format;
 for (const [name, schema] of Object.entries(interfaces)) {
   const body = specText.match(new RegExp(`^interface ${name} \\{\n([\\s\\S]*?)\n\\}`, "m"))?.[1];
   if (!body) {
@@ -205,6 +205,14 @@ function schemaCodes(path: string, c: Record<string, any>) {
   const session = c.sessionFile ? lines(read(join(dirname(path), c.sessionFile))) : c.session && [withVersion(c.session.header), ...c.session.messages];
   const sessionFails = (lines: unknown[]) =>
     schemaFails("session-header.schema.json", lines[0]) || lines.slice(1).some((m) => schemaFails("message.schema.json", m));
+  const meaning = (c.tests as Record<string, any>[]).filter((t) => ["state", "macro", "cel", "ended"].includes(t.type));
+  if (meaning.length) {
+    if (schemaFails("bundle.schema.json", bundle) || (session ? sessionFails(session) : false))
+      fail(`${path}: state, macro, cel and ended tests need inputs that pass the schemas`);
+    for (const t of c.tests as Record<string, any>[])
+      if (t.type === "check" && (t.expect?.codes ?? []).some((code: string) => code !== "UNKNOWN_MACRO"))
+        fail(`${path}: a check expects ${t.expect.codes.join(", ")}, so its state, macro, cel and ended tests have invalid inputs`);
+  }
   (c.tests as Record<string, any>[]).forEach((t, i) => {
     const where = `${path}: test ${i + 1}${t.name ? ` (${t.name})` : ""}`;
     const codes: string[] | undefined = t.expect?.codes;
@@ -215,11 +223,9 @@ function schemaCodes(path: string, c: Record<string, any>) {
       const chronicle = t.chronicleFile ? JSON.parse(read(join(dirname(path), t.chronicleFile))) : withVersion(t.chronicle);
       fails = schemaFails("chronicle.schema.json", chronicle);
     } else if (t.type === "parse" && typeof t.text === "string" && t.kind !== "package") {
-      const expected = codes ?? (t.expect?.ok === true ? [] : undefined);
+      const expected = codes;
       if (!expected || expected.some((code) => code === "PARSE" || code === "UNSUPPORTED_VERSION")) return;
-      const schema = { bundle: "bundle.schema.json", chronicle: "chronicle.schema.json", modelOutput: "model-output.schema.json" }[
-        t.kind as string
-      ];
+      const schema = { bundle: "bundle.schema.json", chronicle: "chronicle.schema.json" }[t.kind as string];
       try {
         if (schema) fails = schemaFails(schema, JSON.parse(t.text));
       } catch {
@@ -259,11 +265,11 @@ for (const doc of markdown) {
   }
 }
 
-// Section citations: "Format 7.2", "Play 3.3", "Format Appendix B.2" and lists such as "Format 2.2, 14 and 16" anywhere,
-// and "section 7.2" within a spec document
+// Section citations: "Format 7.2", "Format Appendix B.2" and lists such as "Format 2.2, 14 and 16" anywhere,
+// and "section 7.2" within the spec; Troupe Play no longer exists, so citing it fails
 const sections = (path: string) =>
   new Set([...read(path).matchAll(/^#{2,3} (?:Appendix )?(\d+(?:\.\d+)?|[A-Z](?:\.\d+)?)[.: ]/gm)].map((m) => m[1]));
-const specSections: Record<string, Set<string>> = { Format: sections("spec/format.md"), Play: sections("spec/play.md") };
+const specSections: Record<string, Set<string>> = { Format: sections("spec/format.md"), Play: new Set() };
 const num = String.raw`(?:\d+(?:\.\d+)*|[A-Z](?![a-z])(?:\.\d+)*)(?![\w.]*\d)`;
 const list = String.raw`${num}(?:(?:,| and) ${num})*`;
 const cite = (where: string, text: string, own?: string) => {
@@ -274,7 +280,7 @@ const cite = (where: string, text: string, own?: string) => {
   for (const m of text.matchAll(new RegExp(String.raw`\b(Format|Play) (?:Appendix )?(${list})`, "g"))) check(m[1], m[2]);
   if (own) for (const m of text.matchAll(new RegExp(String.raw`\bsections? (${list})(?! of Troupe)`, "g"))) check(own, m[1]);
 };
-for (const doc of markdown) cite(doc, read(doc), { "spec/format.md": "Format", "spec/play.md": "Play" }[doc]);
+for (const doc of markdown) cite(doc, read(doc), doc === "spec/format.md" ? "Format" : undefined);
 for (const f of cases) cite(`conformance/cases/${f}`, read(`conformance/cases/${f}`));
 
 if (problems.length) {

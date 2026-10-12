@@ -11,60 +11,6 @@
       }
     },
     {
-      "type": "select",
-      "name": "message 3's activated, generating for kai",
-      "for": "kai",
-      "parent": "2",
-      "messageId": "3",
-      "expect": {
-        "activated": [
-          "veyra/weather_fog",
-          "kai/voice",
-          "kai/deal",
-          "heist/style",
-          "heist/clock"
-        ]
-      }
-    },
-    {
-      "type": "select",
-      "name": "message 4's activated, generating for kai",
-      "for": "kai",
-      "parent": "2",
-      "messageId": "4",
-      "expect": {
-        "activated": [
-          "veyra/weather_rain",
-          "kai/voice",
-          "kai/deal",
-          "heist/style",
-          "heist/clock"
-        ]
-      }
-    },
-    {
-      "type": "roll",
-      "name": "message 3 picks fog: subject veyra/weather, roll mod 4 = 3",
-      "purpose": "group",
-      "seed": "k7Qm2xVb9TzR4pLc8NwYfA",
-      "message": "3",
-      "subject": "veyra/weather",
-      "expect": {
-        "roll": 105166066022039
-      }
-    },
-    {
-      "type": "roll",
-      "name": "message 4 picks rain: roll mod 4 = 1",
-      "purpose": "group",
-      "seed": "k7Qm2xVb9TzR4pLc8NwYfA",
-      "message": "4",
-      "subject": "veyra/weather",
-      "expect": {
-        "roll": 276853273974601
-      }
-    },
-    {
       "type": "state",
       "name": "before the root: initial values, the whole cast present",
       "expect": {
@@ -122,81 +68,6 @@
       }
     },
     {
-      "type": "events",
-      "name": "no event fires at message 3 (turn 1 is not > 2)",
-      "at": "3",
-      "expect": {
-        "changes": []
-      }
-    },
-    {
-      "type": "events",
-      "at": "4",
-      "expect": {
-        "changes": []
-      }
-    },
-    {
-      "type": "events",
-      "at": "1",
-      "expect": {
-        "changes": []
-      }
-    },
-    {
-      "type": "select",
-      "name": "after message 4 Kai's deal and the session entry reach Kai; rain is kept by sticky, not re-recorded",
-      "for": "kai",
-      "parent": "4",
-      "messageId": "5",
-      "expect": {
-        "selected": [
-          "veyra/weather_rain",
-          "kai/voice",
-          "kai/deal",
-          "heist/style",
-          "heist/clock",
-          "session/stair"
-        ],
-        "activated": [
-          "kai/voice",
-          "kai/deal",
-          "heist/style",
-          "heist/clock",
-          "session/stair"
-        ]
-      }
-    },
-    {
-      "type": "select",
-      "name": "Elena sees her own secret, not Kai's voice, deal or stair note",
-      "for": "elena",
-      "parent": "4",
-      "messageId": "5",
-      "expect": {
-        "activated": [
-          "elena/master_key",
-          "heist/style",
-          "heist/clock"
-        ]
-      }
-    },
-    {
-      "type": "select",
-      "name": "in branch 3 Kai is absent, so his entries are not candidates",
-      "for": "elena",
-      "parent": "3",
-      "messageId": "5",
-      "expect": {
-        "selected": [
-          "veyra/weather_fog",
-          "elena/master_key",
-          "heist/style",
-          "heist/clock"
-        ]
-      }
-    },
-    {
       "type": "macro",
       "name": "the visible clock",
       "at": "4",
@@ -209,22 +80,6 @@
       "at": "3",
       "expect": {
         "kai.nerve": 1
-      }
-    },
-    {
-      "type": "select",
-      "name": "kai/rattled waits for own.nerve >= 2",
-      "for": "kai",
-      "parent": "3",
-      "messageId": "k3",
-      "expect": {
-        "selected": [
-          "veyra/weather_fog",
-          "kai/voice",
-          "kai/deal",
-          "heist/style",
-          "heist/clock"
-        ]
       }
     }
   ]

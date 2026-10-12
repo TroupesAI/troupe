@@ -82,7 +82,6 @@
     "header": {
       "kind": "session",
       "scenario": "s",
-      "seed": "conformanceSeed0001",
       "characters": [
         {
           "id": "p",
@@ -155,23 +154,8 @@
   },
   "tests": [
     {
-      "type": "prompt",
-      "name": "a system part with no speaker keeps {{char}}; a part with a speaker uses it",
-      "for": "a",
-      "parent": "2",
-      "messageId": "x",
-      "expect": {
-        "lines": {
-          "2": [
-            "{{char}} waits.",
-            "Bea: Bea nods."
-          ]
-        }
-      }
-    },
-    {
       "type": "macro",
-      "name": "elsewhere {{char}} is the character generated for, or the narrator",
+      "name": "elsewhere {{char}} is the character the text is used for, or the narrator",
       "narrator": true,
       "text": "{{char}}",
       "expect": "the narrator"

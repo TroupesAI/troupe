@@ -1,5 +1,5 @@
 {
-  "description": "Owners write their own variables as own.<id> in their events, recorded as full keys (Format 8.2); an opening's set is written like a recorded change, with full keys only (Format 6.3); entries, variables and events share one ID space per owner, compared in that order, and a variable or event reusing an earlier ID is the duplicate and is dropped (Format 2.3)",
+  "description": "Owners write their own variables as own.<id> in their events (Format 8.2); an opening's set uses full keys only (Format 6.3); entries, variables and events share one ID space per owner, compared in that order, and a variable or event reusing an earlier ID is the duplicate (Format 2.3)",
   "bundle": {
     "kind": "bundle",
     "characters": [
@@ -104,7 +104,6 @@
     "header": {
       "kind": "session",
       "scenario": "s",
-      "seed": "conformanceSeed0001",
       "characters": [
         {
           "id": "p",
@@ -138,83 +137,6 @@
   },
   "tests": [
     {
-      "type": "events",
-      "name": "own.nerve in Kai's event is recorded as kai.nerve",
-      "at": "1",
-      "expect": {
-        "changes": [
-          {
-            "by": "rules",
-            "event": "kai/steady",
-            "set": {
-              "kai.nerve": 1
-            }
-          }
-        ]
-      }
-    },
-    {
-      "type": "prepare",
-      "name": "own.<id> resolves for the given owner",
-      "by": "rules",
-      "owner": "kai",
-      "set": {
-        "own.nerve": 1
-      },
-      "expect": {
-        "set": {
-          "kai.nerve": 1
-        }
-      }
-    },
-    {
-      "type": "prepare",
-      "name": "own. without an owner is dropped",
-      "by": "rules",
-      "set": {
-        "own.nerve": 1
-      },
-      "expect": {
-        "set": {},
-        "dropped": [
-          "own.nerve"
-        ]
-      }
-    },
-    {
-      "type": "start",
-      "name": "an opening's own.alarm isn't resolved: it is dropped",
-      "scenario": "s",
-      "opening": "o",
-      "characters": [
-        {
-          "id": "p",
-          "name": "Pat",
-          "description": "Pat."
-        }
-      ],
-      "expect": {
-        "changes": [
-          {
-            "by": "rules",
-            "set": {
-              "kai.nerve": 3,
-              "scene.present": [
-                "p"
-              ]
-            }
-          },
-          {
-            "by": "rules",
-            "event": "kai/steady",
-            "set": {
-              "kai.nerve": 2
-            }
-          }
-        ]
-      }
-    },
-    {
       "type": "check",
       "expect": {
         "codes": [
@@ -245,7 +167,7 @@
           }
         ]
       },
-      "name": "a variable after an entry with its ID is dropped, so {{own.mood}} names nothing"
+      "name": "a variable after an entry with its ID is the DUPLICATE_ID"
     }
   ]
 }

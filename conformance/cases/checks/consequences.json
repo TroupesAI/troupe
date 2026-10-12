@@ -1,5 +1,5 @@
 {
-  "description": "What failed checks leave behind (Format 17.2): an unknown cast member is skipped; an unknown player is ignored; a location cycle loses the parent of its first location in file order, and an unknown parent is ignored; an unknown opening reads as \"\"; an unknown variable in an event is dropped while the rest applies; an unknown event name in a change is ignored while its values apply; an unknown activated reference is ignored",
+  "description": "Reference checks on a session: an unknown cast member, player, location parent, opening, variable, event name or activated reference each report their code; a location cycle is UNKNOWN_LOCATION (Format 17.2)",
   "bundle": {
     "kind": "bundle",
     "characters": [
@@ -69,7 +69,6 @@
     "header": {
       "kind": "session",
       "scenario": "s",
-      "seed": "conformanceSeed0001",
       "characters": [
         {
           "id": "p",
@@ -205,68 +204,6 @@
             "code": "UNKNOWN_NAME",
             "at": "message:3/activated/0"
           }
-        ]
-      }
-    },
-    {
-      "type": "cel",
-      "name": "an unknown opening reads as \"\"; an unknown player is ignored",
-      "at": "2",
-      "expr": "opening == '' && players == ['p']",
-      "expect": true
-    },
-    {
-      "type": "cel",
-      "name": "the cycle's first location in file order loses its parent",
-      "at": "2",
-      "expr": "scene.within == ['l2', 'l1']",
-      "expect": true
-    },
-    {
-      "type": "cel",
-      "name": "an unknown parent is ignored",
-      "at": "4",
-      "expr": "scene.within == ['l3']",
-      "expect": true
-    },
-    {
-      "type": "events",
-      "at": "2",
-      "eventMessageId": "e1",
-      "expect": {
-        "changes": [
-          {
-            "by": "rules",
-            "event": "ev1",
-            "set": {
-              "g": 1
-            }
-          }
-        ],
-        "message": null
-      }
-    },
-    {
-      "type": "state",
-      "name": "a change naming an unknown event still applies",
-      "at": "3",
-      "expect": {
-        "g": 2,
-        "scene.present": [
-          "p",
-          "a"
-        ]
-      }
-    },
-    {
-      "type": "prompt",
-      "name": "the unknown cast member is skipped",
-      "parent": "4",
-      "messageId": "5",
-      "expect": {
-        "people": [
-          "character:a",
-          "player:p"
         ]
       }
     }

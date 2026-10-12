@@ -26,20 +26,10 @@
   "tests": [
     {
       "type": "macro",
-      "name": "a narrator generation",
+      "name": "for the narrator",
       "text": "{{char}} describe la escena.",
       "narrator": true,
       "expect": "el narrador describe la escena."
-    },
-    {
-      "type": "select",
-      "name": "in an entry's text",
-      "messageId": "1",
-      "expect": {
-        "texts": {
-          "s/gen": "el narrador describe la escena."
-        }
-      }
     }
   ]
 }

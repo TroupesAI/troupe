@@ -1,5 +1,5 @@
 {
-  "description": "Package contents (Format 14.3, 16 item 7, 17.2): an exact duplicate name is PARSE and the package isn't read; chronicles under chronicles/ are read with the bundle; an unreadable line in a session inside a valid package is PARSE; compression methods other than store and deflate and segments over 255 bytes are PARSE; sessions and chronicles are read only from their folders (Format 14.3, 16)",
+  "description": "Package contents (Format 14.3, 17.2): an exact duplicate name is PARSE; chronicles under chronicles/ belong to the package; an unreadable line in a session inside a valid package is PARSE; compression methods other than store and deflate and segments over 255 bytes are PARSE; sessions and chronicles belong to the package only in their folders",
   "tests": [
     {
       "type": "parse",
@@ -7,7 +7,6 @@
       "kind": "package",
       "base64": "UEsDBBQAAAAIAAAAS11m3axbIQAAACEAAAALAAAAYnVuZGxlLmpzb26rViopyi8tSFWyUjLQMzRS0lHKzsxLAfKSSvNSclKVagFQSwMEFAAAAAgAAABLXWbdrFshAAAAIQAAAAsAAABidW5kbGUuanNvbqtWKinKLy1IVbJSMtAzNFLSUcrOzEsB8pJK81JyUpVqAVBLAQIUAxQAAAAIAAAAS11m3axbIQAAACEAAAALAAAAAAAAAAAAAACAAQAAAABidW5kbGUuanNvblBLAQIUAxQAAAAIAAAAS11m3axbIQAAACEAAAALAAAAAAAAAAAAAACAAUoAAABidW5kbGUuanNvblBLBQYAAAAAAgACAHIAAACUAAAAAAA=",
       "expect": {
-        "ok": false,
         "codes": [
           "PARSE"
         ]
@@ -19,17 +18,15 @@
       "kind": "package",
       "base64": "UEsDBBQAAAAIAAAAS11m3axbIQAAACEAAAALAAAAYnVuZGxlLmpzb26rViopyi8tSFWyUjLQMzRS0lHKzsxLAfKSSvNSclKVagFQSwMEFAAAAAgAAABLXRlLUNpUAAAAaAAAACUAAABjaHJvbmljbGVzL21pcmEudHJvdXBlLWNocm9uaWNsZS5qc29uJcxBDoAgDATAv/RsjHjkDz6iKSQ0SiEVT4S/W+W2O5tsh6blqRE8bKvbYYGTJVijpEWYrmjEPzhLlFCRWlTwfXJmRRsE8/dxzBbiTcq1cRHDAGO8UEsBAhQDFAAAAAgAAABLXWbdrFshAAAAIQAAAAsAAAAAAAAAAAAAAIABAAAAAGJ1bmRsZS5qc29uUEsBAhQDFAAAAAgAAABLXRlLUNpUAAAAaAAAACUAAAAAAAAAAAAAAIABSgAAAGNocm9uaWNsZXMvbWlyYS50cm91cGUtY2hyb25pY2xlLmpzb25QSwUGAAAAAAIAAgCMAAAA4QAAAAAA",
       "expect": {
-        "ok": true,
         "codes": []
       }
     },
     {
       "type": "parse",
-      "name": "a chronicle under chronicles/ is read: one without a character fails the schema",
+      "name": "a chronicle under chronicles/ without a character fails the schema",
       "kind": "package",
       "base64": "UEsDBBQAAAAIAAAAS11m3axbIQAAACEAAAALAAAAYnVuZGxlLmpzb26rViopyi8tSFWyUjLQMzRS0lHKzsxLAfKSSvNSclKVagFQSwMEFAAAAAgAAABLXT79N6IqAAAALgAAACUAAABjaHJvbmljbGVzL21pcmEudHJvdXBlLWNocm9uaWNsZS5qc29uq1YqKcovLUhVslIy0DM0UtJRys7MSwHykjOK8vMyk3NSgUKZYAFDpVoAUEsBAhQDFAAAAAgAAABLXWbdrFshAAAAIQAAAAsAAAAAAAAAAAAAAIABAAAAAGJ1bmRsZS5qc29uUEsBAhQDFAAAAAgAAABLXT79N6IqAAAALgAAACUAAAAAAAAAAAAAAIABSgAAAGNocm9uaWNsZXMvbWlyYS50cm91cGUtY2hyb25pY2xlLmpzb25QSwUGAAAAAAIAAgCMAAAAtwAAAAAA",
       "expect": {
-        "ok": false,
         "codes": [
           "SCHEMA"
         ]
@@ -41,7 +38,6 @@
       "kind": "package",
       "base64": "UEsDBBQAAAAIAAAAS11m3axbIQAAACEAAAALAAAAYnVuZGxlLmpzb26rViopyi8tSFWyUjLQMzRS0lHKzsxLAfKSSvNSclKVagFQSwMEFAAAAAgAAABLXTNSQ5yPAAAA1AAAACMAAABzZXNzaW9ucy9maXJzdC50cm91cGUtc2Vzc2lvbi5qc29ubHVOvQrCMBDefYybpdgiqN3cHERQRBBxiOkVQpNcSCJWQ9/di1Jwcfv++RJET3eHUMOsKCuYQqdswyxgCIosC0GiFV5RFjNFzH632JuqP91Wx9dh7rZyuXuc2zUMkwQq+yVHW0+GodPiiZ65JBvRRqgvCSL2DGCjChiuY2ss5x9O+E/2d8lQg/rPEGpN3603UEsBAhQDFAAAAAgAAABLXWbdrFshAAAAIQAAAAsAAAAAAAAAAAAAAIABAAAAAGJ1bmRsZS5qc29uUEsBAhQDFAAAAAgAAABLXTNSQ5yPAAAA1AAAACMAAAAAAAAAAAAAAIABSgAAAHNlc3Npb25zL2ZpcnN0LnRyb3VwZS1zZXNzaW9uLmpzb25sUEsFBgAAAAACAAIAigAAABoBAAAAAA==",
       "expect": {
-        "ok": false,
         "codes": [
           "PARSE"
         ]
@@ -53,7 +49,6 @@
       "kind": "package",
       "base64": "UEsDBBQAAAAIAAAAIVzlIAOiIwAAACQAAAALAAAAYnVuZGxlLmpzb26rViopyi8tSFWyUlAy0DM0UtJRUMrOzEsB8ZNK81JyUpVqAVBLAwQuAAAADAAAACFcgxbcjCUAAAABAAAACQAAAG5vdGVzLnR4dEJaaDkxQVkmU1l3S7AUAAAAAIAAQCAAIRhGgu5IpwoSDul2AoBQSwECFAMUAAAACAAAACFc5SADoiMAAAAkAAAACwAAAAAAAAAAAAAAgAEAAAAAYnVuZGxlLmpzb25QSwECLgMuAAAADAAAACFcgxbcjCUAAAABAAAACQAAAAAAAAAAAAAAgAFMAAAAbm90ZXMudHh0UEsFBgAAAAACAAIAcAAAAJgAAAAAAA==",
       "expect": {
-        "ok": false,
         "codes": [
           "PARSE"
         ]
@@ -65,7 +60,6 @@
       "kind": "package",
       "base64": "UEsDBBQAAAAIAAAAIVzlIAOiIwAAACQAAAALAAAAYnVuZGxlLmpzb26rViopyi8tSFWyUlAy0DM0UtJRUMrOzEsB8ZNK81JyUpVqAVBLAwQUAAAACAAAACFcgxbcjAMAAAABAAAABQEAAGFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWEud2VicKsAAFBLAQIUAxQAAAAIAAAAIVzlIAOiIwAAACQAAAALAAAAAAAAAAAAAACAAQAAAABidW5kbGUuanNvblBLAQIUAxQAAAAIAAAAIVyDFtyMAwAAAAEAAAAFAQAAAAAAAAAAAACAAUwAAABhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhLndlYnBQSwUGAAAAAAIAAgBsAQAAcgEAAAAA",
       "expect": {
-        "ok": false,
         "codes": [
           "PARSE"
         ]
@@ -73,12 +67,11 @@
     },
     {
       "type": "parse",
-      "name": "a session outside sessions/ isn't read",
-      "note": "The stray file isn't valid JSON, so reading it would report PARSE.",
+      "name": "a session outside sessions/ isn't part of the package",
+      "note": "The stray file isn't valid JSON, so it would be PARSE if it were part of the package.",
       "kind": "package",
       "base64": "UEsDBBQAAAAIAAAAIVzlIAOiIwAAACQAAAALAAAAYnVuZGxlLmpzb26rViopyi8tSFWyUlAy0DM0UtJRUMrOzEsB8ZNK81JyUpVqAVBLAwQUAAAACAAAACFcZsuMxgoAAAAIAAAAGgAAAHN0cmF5LnRyb3VwZS1zZXNzaW9uLmpzb25sy8svUcgqzs8DAFBLAwQUAAAACAAAACFcZsuMxgoAAAAIAAAAEgAAAHNlc3Npb25zL25vdGVzLnR4dMvLL1HIKs7PAwBQSwECFAMUAAAACAAAACFc5SADoiMAAAAkAAAACwAAAAAAAAAAAAAAgAEAAAAAYnVuZGxlLmpzb25QSwECFAMUAAAACAAAACFcZsuMxgoAAAAIAAAAGgAAAAAAAAAAAAAAgAFMAAAAc3RyYXkudHJvdXBlLXNlc3Npb24uanNvbmxQSwECFAMUAAAACAAAACFcZsuMxgoAAAAIAAAAEgAAAAAAAAAAAAAAgAGOAAAAc2Vzc2lvbnMvbm90ZXMudHh0UEsFBgAAAAADAAMAwQAAAMgAAAAAAA==",
       "expect": {
-        "ok": true,
         "codes": []
       }
     }

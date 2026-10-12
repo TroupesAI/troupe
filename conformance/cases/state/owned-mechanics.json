@@ -64,11 +64,6 @@
             "type": "int",
             "initial": 100,
             "description": "the scenario's own time"
-          },
-          {
-            "id": "w",
-            "type": "bool",
-            "description": "clashes with the world's ID"
           }
         ],
         "events": [
@@ -100,7 +95,6 @@
     "header": {
       "kind": "session",
       "scenario": "s",
-      "seed": "conformanceSeed0001",
       "characters": [
         {
           "id": "p",
@@ -134,72 +128,17 @@
       }
     },
     {
-      "type": "events",
-      "name": "each owner's tick runs, named tick, w/tick and a/tick",
-      "at": "1",
-      "expect": {
-        "changes": [
-          {
-            "by": "rules",
-            "event": "tick",
-            "set": {
-              "time": 101
-            }
-          },
-          {
-            "by": "rules",
-            "event": "w/tick",
-            "set": {
-              "w.time": 11
-            }
-          },
-          {
-            "by": "rules",
-            "event": "a/tick",
-            "set": {
-              "a.time": 10
-            }
-          }
-        ]
-      }
-    },
-    {
       "type": "cel",
       "expr": "count('w/tick') == 0 && ago('a.time') == 1000000000",
       "at": "1",
       "expect": true
     },
     {
-      "type": "start",
-      "name": "a scenario adjusts a character's starting value through an opening's set",
-      "scenario": "s",
-      "opening": "o",
-      "characters": [
-        {
-          "id": "p",
-          "name": "Pat",
-          "description": "Pat."
-        }
-      ],
-      "expect": {
-        "state": {
-          "a.time": 21
-        }
-      }
-    },
-    {
       "type": "check",
       "expect": {
-        "codes": [
-          "DUPLICATE_ID"
-        ],
-        "includes": [
-          {
-            "code": "DUPLICATE_ID",
-            "at": "/scenarios/0/variables/1/id"
-          }
-        ]
-      }
+        "codes": []
+      },
+      "name": "two owners can share a variable ID"
     }
   ]
 }

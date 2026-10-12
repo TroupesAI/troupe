@@ -25,7 +25,6 @@
     "header": {
       "kind": "session",
       "scenario": "a",
-      "seed": "conformanceSeed0001",
       "head": "1"
     },
     "messages": [

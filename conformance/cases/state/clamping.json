@@ -1,5 +1,5 @@
 {
-  "description": "Clamping (Format 8.5; Play 3.2, 3.3): a numeric value outside min and max is valid; initial values are clamped, and readers clamp recorded values when loading; clamping raises a value to min, then lowers it to max, so max wins when the bounds cross",
+  "description": "Clamping (Format 8.5, 8.6): a numeric value outside min and max is valid; initial and recorded values are clamped in the state; clamping raises a value to min, then lowers it to max, so max wins when the bounds cross",
   "bundle": {
     "kind": "bundle",
     "scenarios": [
@@ -36,7 +36,6 @@
     "header": {
       "kind": "session",
       "scenario": "s",
-      "seed": "conformanceSeed0001",
       "characters": [
         {
           "id": "p",
@@ -97,22 +96,9 @@
     },
     {
       "type": "state",
-      "name": "when the bounds cross, max wins (Play 3.3 step 5)",
+      "name": "when the bounds cross, max wins",
       "expect": {
         "odd": 5
-      }
-    },
-    {
-      "type": "prepare",
-      "name": "clamping raises to min, then lowers to max",
-      "by": "rules",
-      "set": {
-        "odd": 7
-      },
-      "expect": {
-        "set": {
-          "odd": 5
-        }
       }
     }
   ]

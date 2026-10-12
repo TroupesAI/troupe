@@ -96,7 +96,6 @@
     "header": {
       "kind": "session",
       "scenario": "s",
-      "seed": "conformanceSeed0001",
       "characters": [
         {
           "id": "p",
@@ -122,71 +121,6 @@
     ]
   },
   "tests": [
-    {
-      "type": "select",
-      "for": "a",
-      "parent": "1",
-      "messageId": "2",
-      "expect": {
-        "activated": [
-          "a/own_turn",
-          "s/mine"
-        ]
-      }
-    },
-    {
-      "type": "select",
-      "for": "b",
-      "parent": "1",
-      "messageId": "2",
-      "expect": {
-        "activated": [
-          "b/own_turn",
-          "s/mine"
-        ]
-      }
-    },
-    {
-      "type": "events",
-      "at": "1",
-      "expect": {
-        "changes": [
-          {
-            "by": "rules",
-            "event": "a/ann_tick",
-            "set": {
-              "a.ann_mood": "busy"
-            }
-          }
-        ]
-      }
-    },
-    {
-      "type": "start",
-      "name": "another scenario: scenario names it, so Ann's event checking scenario == 's' doesn't fire at the root",
-      "scenario": "duo",
-      "opening": "just_us",
-      "characters": [
-        {
-          "id": "p",
-          "name": "Pat",
-          "description": "Pat."
-        }
-      ],
-      "expect": {
-        "changes": [
-          {
-            "by": "rules",
-            "set": {
-              "scene.present": [
-                "p",
-                "a"
-              ]
-            }
-          }
-        ]
-      }
-    },
     {
       "type": "cel",
       "name": "scenario is the session's scenario ID",

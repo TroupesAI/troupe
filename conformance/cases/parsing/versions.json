@@ -1,5 +1,5 @@
 {
-  "description": "Versions (Format 15, 17.2), read by a 0.12 reader: before 1.0, another minor version is an UNSUPPORTED_VERSION warning, and the reader may still read it; another major version is refused with UNSUPPORTED_VERSION",
+  "description": "Versions (Format 15, 17.2), against this 0.12 document: a file of any other version, minor or major, is UNSUPPORTED_VERSION",
   "tests": [
     {
       "type": "parse",
@@ -40,7 +40,6 @@
       "kind": "bundle",
       "text": "{\"troupe\":\"1.0\",\"kind\":\"bundle\"}",
       "expect": {
-        "ok": false,
         "codes": [
           "UNSUPPORTED_VERSION"
         ]
@@ -52,7 +51,6 @@
       "kind": "bundle",
       "text": "{\"troupe\":\"1.12\",\"kind\":\"bundle\"}",
       "expect": {
-        "ok": false,
         "codes": [
           "UNSUPPORTED_VERSION"
         ]
@@ -62,7 +60,7 @@
       "type": "parse",
       "name": "a session of another minor",
       "kind": "session",
-      "text": "{\"troupe\":\"0.13\",\"kind\":\"session\",\"scenario\":\"s\",\"seed\":\"k7Qm2xVb9TzR4pLc8NwYfA\"}\n{\"id\":\"1\",\"from\":\"player\",\"content\":[{\"text\":\"Hi.\"}]}\n",
+      "text": "{\"troupe\":\"0.13\",\"kind\":\"session\",\"scenario\":\"s\"}\n{\"id\":\"1\",\"from\":\"player\",\"content\":[{\"text\":\"Hi.\"}]}\n",
       "expect": {
         "codes": [
           "UNSUPPORTED_VERSION"
@@ -75,7 +73,6 @@
       "kind": "chronicle",
       "text": "{\"troupe\":\"1.0\",\"kind\":\"chronicle\",\"id\":\"c1\",\"character\":{\"id\":\"mira\",\"name\":\"Mira\",\"description\":\"d\"}}\n",
       "expect": {
-        "ok": false,
         "codes": [
           "UNSUPPORTED_VERSION"
         ]

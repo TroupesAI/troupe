@@ -110,8 +110,7 @@
         { "id": "clock", "text": "The last bell to ring was the {{state.bell}}th. The plan: {{state.approach}}." },
         { "id": "late", "position": "system", "when": "state.bell >= 10", "text": "Time is short. Every exchange should cost the crew something." },
         { "id": "key_known", "when": "state.key_revealed", "text": "Elena has the surveyor's master key to the vault." },
-        { "id": "confess", "knownBy": ["kai"], "position": 2, "when": "state.trust.kai >= 0.8", "text": "Kai trusts {{user}} enough to confess the Duke's deal if asked directly." },
-        { "id": "bells", "position": "tracker", "text": "A bell rings about once an hour of story time; a long wait or a skipped scene can advance it by two." }
+        { "id": "confess", "knownBy": ["kai"], "position": 2, "when": "state.trust.kai >= 0.8", "text": "Kai trusts {{user}} enough to confess the Duke's deal if asked directly." }
       ],
       "events": [
         {

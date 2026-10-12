@@ -1,5 +1,5 @@
 {
-  "description": "Raw input (Format 2.2, 12, 15, 17.2): readers ignore a leading byte order mark in a bundle, session or chronicle; session readers skip empty lines without a diagnostic; a troupe value outside major.minor fails the schema; a session of another major version isn't read; a troupe that isn't major.minor is only SCHEMA (Format 17.2)",
+  "description": "Raw input (Format 2.2, 12, 15, 17.2): a leading byte order mark and an empty session line aren't I-JSON lines, so they are PARSE; a troupe value that isn't major.minor fails the schema; a session of another major version is UNSUPPORTED_VERSION",
   "tests": [
     {
       "type": "parse",
@@ -7,24 +7,19 @@
       "kind": "bundle",
       "text": "﻿{\"troupe\":\"0.12\",\"kind\":\"bundle\"}",
       "expect": {
-        "ok": true,
-        "codes": [],
-        "equals": {
-          "troupe": "0.12",
-          "kind": "bundle"
-        }
+        "codes": [
+          "PARSE"
+        ]
       }
     },
     {
       "type": "parse",
       "name": "a session with a byte order mark",
       "kind": "session",
-      "text": "﻿{\"troupe\":\"0.12\",\"kind\":\"session\",\"scenario\":\"s\",\"seed\":\"k7Qm2xVb9TzR4pLc8NwYfA\"}\n{\"id\":\"1\",\"from\":\"player\",\"content\":[{\"text\":\"Hi.\"}]}\n",
+      "text": "﻿{\"troupe\":\"0.12\",\"kind\":\"session\",\"scenario\":\"s\"}\n{\"id\":\"1\",\"from\":\"player\",\"content\":[{\"text\":\"Hi.\"}]}\n",
       "expect": {
-        "ok": true,
-        "codes": [],
-        "ids": [
-          "1"
+        "codes": [
+          "PARSE"
         ]
       }
     },
@@ -34,21 +29,19 @@
       "kind": "chronicle",
       "text": "﻿{\"troupe\":\"0.12\",\"kind\":\"chronicle\",\"id\":\"c1\",\"character\":{\"id\":\"mira\",\"name\":\"Mira\",\"description\":\"d\"}}\n",
       "expect": {
-        "ok": true,
-        "codes": []
+        "codes": [
+          "PARSE"
+        ]
       }
     },
     {
       "type": "parse",
-      "name": "empty lines are skipped",
+      "name": "an empty line is PARSE",
       "kind": "session",
-      "text": "{\"troupe\":\"0.12\",\"kind\":\"session\",\"scenario\":\"s\",\"seed\":\"k7Qm2xVb9TzR4pLc8NwYfA\"}\n\n{\"id\":\"1\",\"from\":\"player\",\"content\":[{\"text\":\"Hi.\"}]}\n\n{\"id\":\"2\",\"parent\":\"1\",\"from\":\"model\",\"content\":[{\"text\":\"Hello.\"}]}\n\n",
+      "text": "{\"troupe\":\"0.12\",\"kind\":\"session\",\"scenario\":\"s\"}\n\n{\"id\":\"1\",\"from\":\"player\",\"content\":[{\"text\":\"Hi.\"}]}\n\n{\"id\":\"2\",\"parent\":\"1\",\"from\":\"model\",\"content\":[{\"text\":\"Hello.\"}]}\n\n",
       "expect": {
-        "ok": true,
-        "codes": [],
-        "ids": [
-          "1",
-          "2"
+        "codes": [
+          "PARSE"
         ]
       }
     },
@@ -58,7 +51,6 @@
       "kind": "bundle",
       "text": "{\"troupe\":\"0.12.0\",\"kind\":\"bundle\"}",
       "expect": {
-        "ok": false,
         "codes": [
           "SCHEMA"
         ]
@@ -70,7 +62,6 @@
       "kind": "bundle",
       "text": "{\"troupe\":0.12,\"kind\":\"bundle\"}",
       "expect": {
-        "ok": false,
         "codes": [
           "SCHEMA"
         ]
@@ -80,9 +71,8 @@
       "type": "parse",
       "name": "a session of another major version",
       "kind": "session",
-      "text": "{\"troupe\":\"1.0\",\"kind\":\"session\",\"scenario\":\"s\",\"seed\":\"k7Qm2xVb9TzR4pLc8NwYfA\"}\n{\"id\":\"1\",\"from\":\"player\",\"content\":[{\"text\":\"Hi.\"}]}\n",
+      "text": "{\"troupe\":\"1.0\",\"kind\":\"session\",\"scenario\":\"s\"}\n{\"id\":\"1\",\"from\":\"player\",\"content\":[{\"text\":\"Hi.\"}]}\n",
       "expect": {
-        "ok": false,
         "codes": [
           "UNSUPPORTED_VERSION"
         ]

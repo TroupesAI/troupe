@@ -1,5 +1,5 @@
 {
-  "description": "A derived variable whose expression fails at runtime is absent: has() is false and its macro renders as nothing (Play 3.2; Format 10)",
+  "description": "A derived variable whose expression fails at runtime is absent: has() is false and its macro renders as nothing (Format 8.1, 10)",
   "bundle": {
     "kind": "bundle",
     "characters": [
@@ -111,7 +111,6 @@
     "header": {
       "kind": "session",
       "scenario": "s",
-      "seed": "conformanceSeed0001",
       "characters": [
         {
           "id": "p",

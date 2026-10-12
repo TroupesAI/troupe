@@ -1,0 +1,117 @@
+{
+  "description": "Two keys of one set naming the same full key, own.nerve and kai.nerve, are UNKNOWN_VARIABLE (Format 9, 17.2)",
+  "bundle": {
+    "kind": "bundle",
+    "characters": [
+      {
+        "id": "kai",
+        "name": "Kai",
+        "description": "Kai.",
+        "variables": [
+          {
+            "id": "nerve",
+            "type": "int",
+            "description": "d"
+          }
+        ],
+        "events": [
+          {
+            "id": "twice",
+            "when": "true",
+            "set": {
+              "own.nerve": 1,
+              "kai.nerve": 2
+            }
+          }
+        ]
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s",
+        "cast": [
+          {},
+          {
+            "character": "kai"
+          }
+        ],
+        "variables": [
+          {
+            "id": "x",
+            "type": "int",
+            "description": "d"
+          },
+          {
+            "id": "zero",
+            "type": "int",
+            "description": "d"
+          }
+        ],
+        "events": [
+          {
+            "id": "e",
+            "when": "true",
+            "compute": {
+              "x": "state.x + 1"
+            },
+            "outcomes": [
+              {
+                "compute": {
+                  "x": "1 / state.zero"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "session": {
+    "header": {
+      "kind": "session",
+      "scenario": "s",
+      "characters": [
+        {
+          "id": "p",
+          "name": "Pat",
+          "description": "Pat."
+        }
+      ],
+      "players": [
+        "p"
+      ]
+    },
+    "messages": [
+      {
+        "id": "1",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "x"
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "check",
+      "expect": {
+        "codes": [
+          "UNKNOWN_VARIABLE"
+        ],
+        "includes": [
+          {
+            "code": "UNKNOWN_VARIABLE",
+            "at": "/characters/0/events/0/set/own.nerve"
+          },
+          {
+            "code": "UNKNOWN_VARIABLE",
+            "at": "/characters/0/events/0/set/kai.nerve"
+          }
+        ]
+      }
+    }
+  ]
+}

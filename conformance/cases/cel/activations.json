@@ -1,0 +1,149 @@
+{
+  "description": "count() and ago() read the entries a message records in activated, pulled entries included (Format 11.1, 12.4)",
+  "bundle": {
+    "kind": "bundle",
+    "characters": [
+      {
+        "id": "a",
+        "name": "Ann",
+        "description": "Ann."
+      },
+      {
+        "id": "b",
+        "name": "Bea",
+        "description": "Bea."
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s",
+        "cast": [
+          {},
+          {
+            "character": "a"
+          },
+          {
+            "character": "b"
+          }
+        ]
+      }
+    ],
+    "worlds": [
+      {
+        "id": "w",
+        "name": "W",
+        "entries": [
+          {
+            "id": "dragons",
+            "title": "Dragons of the North",
+            "pull": true,
+            "text": "Northern dragons hoard silver."
+          },
+          {
+            "id": "elves",
+            "title": "Elves",
+            "pull": true,
+            "keys": [
+              "elf"
+            ],
+            "text": "Elves never lie."
+          },
+          {
+            "id": "secret",
+            "title": "Hidden",
+            "pull": true,
+            "knownBy": [
+              "b"
+            ],
+            "text": "Bea's secret."
+          },
+          {
+            "id": "later",
+            "title": "Later",
+            "pull": true,
+            "when": "turn > 5",
+            "text": "Not yet."
+          },
+          {
+            "id": "always",
+            "text": "Always on."
+          },
+          {
+            "id": "tome",
+            "title": "The tome",
+            "pull": true,
+            "once": true,
+            "cooldown": 3,
+            "chance": 0,
+            "text": "The tome names the dragon."
+          }
+        ]
+      }
+    ]
+  },
+  "session": {
+    "header": {
+      "kind": "session",
+      "scenario": "s",
+      "characters": [
+        {
+          "id": "p",
+          "name": "Pat",
+          "description": "Pat."
+        }
+      ],
+      "players": [
+        "p"
+      ]
+    },
+    "messages": [
+      {
+        "id": "1",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "Tell me about the land."
+          }
+        ]
+      },
+      {
+        "id": "2",
+        "parent": "1",
+        "from": "model",
+        "char": "a",
+        "activated": [
+          "w/dragons",
+          "w/always",
+          "w/tome"
+        ],
+        "content": [
+          {
+            "speaker": "a",
+            "text": "Silver..."
+          }
+        ]
+      },
+      {
+        "id": "3",
+        "parent": "2",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "An elf!"
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "cel",
+      "name": "pulled entries count as activations",
+      "at": "3",
+      "expr": "count('w/dragons') == 1 && ago('w/dragons') == 1",
+      "expect": true
+    }
+  ]
+}

@@ -7,8 +7,7 @@
   "required": [
     "troupe",
     "kind",
-    "scenario",
-    "seed"
+    "scenario"
   ],
   "additionalProperties": false,
   "properties": {
@@ -32,10 +31,6 @@
     },
     "scenario": {
       "$ref": "bundle.schema.json#/$defs/ownerId"
-    },
-    "seed": {
-      "type": "string",
-      "pattern": "^[A-Za-z0-9_-]{16,64}$"
     },
     "timezone": {
       "type": "string",

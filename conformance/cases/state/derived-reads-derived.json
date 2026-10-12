@@ -1,0 +1,117 @@
+{
+  "description": "A derived variable can't read another derived variable (Format 8.1): CEL_ERROR",
+  "bundle": {
+    "kind": "bundle",
+    "characters": [
+      {
+        "id": "a",
+        "name": "Ann",
+        "description": "Ann."
+      },
+      {
+        "id": "b",
+        "name": "Bea",
+        "description": "Bea."
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s",
+        "cast": [
+          {},
+          {
+            "character": "a"
+          },
+          {
+            "character": "b"
+          }
+        ],
+        "variables": [
+          {
+            "id": "clock",
+            "type": "int",
+            "initial": 30,
+            "oneWay": true,
+            "description": "Hours since the start."
+          },
+          {
+            "id": "day",
+            "type": "int",
+            "derive": "state.clock / 24 + 1",
+            "description": "The day."
+          },
+          {
+            "id": "night",
+            "type": "bool",
+            "derive": "state.clock % 24 >= 20 || state.clock % 24 < 6",
+            "description": "Night time."
+          },
+          {
+            "id": "bad",
+            "type": "int",
+            "derive": "state.day + 1",
+            "description": "Reads another derived variable: never applies."
+          }
+        ],
+        "entries": [
+          {
+            "id": "when_night",
+            "when": "state.night",
+            "text": "It is night on day {{state.day}}."
+          }
+        ]
+      }
+    ]
+  },
+  "session": {
+    "header": {
+      "kind": "session",
+      "scenario": "s",
+      "characters": [
+        {
+          "id": "p",
+          "name": "Pat",
+          "description": "Pat."
+        }
+      ],
+      "players": [
+        "p"
+      ]
+    },
+    "messages": [
+      {
+        "id": "1",
+        "from": "player",
+        "content": [
+          {
+            "text": "x"
+          }
+        ],
+        "changes": [
+          {
+            "by": "rules",
+            "set": {
+              "clock": 45
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "check",
+      "expect": {
+        "codes": [
+          "CEL_ERROR"
+        ],
+        "includes": [
+          {
+            "code": "CEL_ERROR",
+            "at": "/scenarios/0/variables/3/derive"
+          }
+        ]
+      }
+    }
+  ]
+}

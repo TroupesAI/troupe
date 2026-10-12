@@ -40,7 +40,6 @@
     "header": {
       "kind": "session",
       "scenario": "s",
-      "seed": "conformanceSeed0001",
       "characters": [
         {
           "id": "p",
@@ -83,49 +82,6 @@
     ]
   },
   "tests": [
-    {
-      "type": "select",
-      "name": "{{user}} is Quin, who spoke last",
-      "for": "a",
-      "parent": "2",
-      "messageId": "3",
-      "expect": {
-        "texts": {
-          "s/greet": "Ann answers Quin."
-        }
-      }
-    },
-    {
-      "type": "select",
-      "name": "{{user}} is Pat at message 1",
-      "for": "a",
-      "parent": "1",
-      "messageId": "2x",
-      "expect": {
-        "texts": {
-          "s/greet": "Ann answers Pat."
-        }
-      }
-    },
-    {
-      "type": "scanned",
-      "for": "a",
-      "parent": "2",
-      "expect": "Quin: Me too!\nPat: I type {{char}} on purpose."
-    },
-    {
-      "type": "prompt",
-      "for": "a",
-      "parent": "2",
-      "messageId": "3",
-      "expect": {
-        "lines": {
-          "1": [
-            "Pat: I type {{char}} on purpose."
-          ]
-        }
-      }
-    },
     {
       "type": "cel",
       "name": "the user alias follows the same rule",

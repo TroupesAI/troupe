@@ -1,5 +1,5 @@
 {
-  "description": "Rounds (Format 9; Play 3.1, 5.4): turn counts player messages; durations are in rounds, so a group chat behaves like a one-on-one; events fire at most once per round; elapsed",
+  "description": "Rounds (Format 11.1, 12.1): turn counts player messages, so a group chat counts like a one-on-one; elapsed",
   "bundle": {
     "kind": "bundle",
     "characters": [
@@ -56,7 +56,6 @@
     "header": {
       "kind": "session",
       "scenario": "s",
-      "seed": "conformanceSeed0001",
       "characters": [
         {
           "id": "p",
@@ -164,56 +163,6 @@
       "at": "1",
       "expr": "elapsed == 0",
       "expect": true
-    },
-    {
-      "type": "events",
-      "name": "Bea's reply is in the same round as the firing: the event waits",
-      "at": "3",
-      "expect": {
-        "changes": []
-      }
-    },
-    {
-      "type": "events",
-      "name": "the next round",
-      "at": "4",
-      "expect": {
-        "changes": [
-          {
-            "by": "rules",
-            "event": "beat",
-            "set": {
-              "beats": 2
-            }
-          }
-        ]
-      }
-    },
-    {
-      "type": "select",
-      "name": "Bea in the same round: d = 0, kept by sticky",
-      "for": "b",
-      "parent": "2",
-      "messageId": "3x",
-      "expect": {
-        "selected": [
-          "s/reminder"
-        ],
-        "activated": []
-      }
-    },
-    {
-      "type": "select",
-      "name": "the next round: d = 1, still kept",
-      "for": "a",
-      "parent": "4",
-      "messageId": "5x",
-      "expect": {
-        "selected": [
-          "s/reminder"
-        ],
-        "activated": []
-      }
     }
   ]
 }

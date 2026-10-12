@@ -1,0 +1,142 @@
+{
+  "description": "A scenario variable can't take a character's or world's ID (Format 2.3): DUPLICATE_ID",
+  "bundle": {
+    "kind": "bundle",
+    "characters": [
+      {
+        "id": "a",
+        "name": "Ann",
+        "description": "Ann.",
+        "variables": [
+          {
+            "id": "time",
+            "type": "int",
+            "initial": 9,
+            "description": "Ann's own time"
+          }
+        ],
+        "events": [
+          {
+            "id": "tick",
+            "when": "true",
+            "compute": {
+              "a.time": "own.time + 1"
+            }
+          }
+        ]
+      }
+    ],
+    "worlds": [
+      {
+        "id": "w",
+        "name": "W",
+        "variables": [
+          {
+            "id": "time",
+            "type": "int",
+            "initial": 1,
+            "description": "the world's clock"
+          }
+        ],
+        "events": [
+          {
+            "id": "tick",
+            "when": "true",
+            "compute": {
+              "w.time": "own.time + 10"
+            }
+          }
+        ]
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s",
+        "cast": [
+          {},
+          {
+            "character": "a"
+          }
+        ],
+        "variables": [
+          {
+            "id": "time",
+            "type": "int",
+            "initial": 100,
+            "description": "the scenario's own time"
+          },
+          {
+            "id": "w",
+            "type": "bool",
+            "description": "clashes with the world's ID"
+          }
+        ],
+        "events": [
+          {
+            "id": "tick",
+            "when": "true",
+            "compute": {
+              "time": "state.time + state.w.time"
+            }
+          }
+        ],
+        "openings": [
+          {
+            "id": "o",
+            "set": {
+              "a.time": 20
+            },
+            "content": [
+              {
+                "text": "Go."
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "session": {
+    "header": {
+      "kind": "session",
+      "scenario": "s",
+      "characters": [
+        {
+          "id": "p",
+          "name": "Pat",
+          "description": "Pat."
+        }
+      ],
+      "players": [
+        "p"
+      ]
+    },
+    "messages": [
+      {
+        "id": "1",
+        "from": "player",
+        "content": [
+          {
+            "text": "x"
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "check",
+      "expect": {
+        "codes": [
+          "DUPLICATE_ID"
+        ],
+        "includes": [
+          {
+            "code": "DUPLICATE_ID",
+            "at": "/scenarios/0/variables/1/id"
+          }
+        ]
+      }
+    }
+  ]
+}

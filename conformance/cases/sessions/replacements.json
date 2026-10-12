@@ -45,11 +45,6 @@
           {
             "id": "e_kai",
             "text": "Elena distrusts {{@kai}}."
-          },
-          {
-            "id": "e_old",
-            "when": "state.kai.old_only > 0",
-            "text": "Only the old Kai had this."
           }
         ]
       },
@@ -100,7 +95,6 @@
     "header": {
       "kind": "session",
       "scenario": "s",
-      "seed": "conformanceSeed0001",
       "characters": [
         {
           "id": "p",
@@ -178,49 +172,6 @@
       ]
     },
     {
-      "type": "events",
-      "name": "the original's events are gone with it",
-      "at": "1",
-      "expect": {
-        "changes": [],
-        "message": null
-      }
-    },
-    {
-      "type": "select",
-      "name": "the replacement's entries, and references to kai name the replacement",
-      "for": "kai",
-      "parent": "1",
-      "messageId": "2",
-      "expect": {
-        "activated": [
-          "elena/e_kai",
-          "kai/k_new"
-        ],
-        "texts": {
-          "kai/k_new": "Kai Mercer is the new Kai.",
-          "elena/e_kai": "Elena distrusts Kai Mercer."
-        }
-      }
-    },
-    {
-      "type": "prompt",
-      "name": "the People slot carries the replacement's description in Kai's cast position",
-      "for": "elena",
-      "parent": "1",
-      "messageId": "2",
-      "expect": {
-        "people": [
-          "character:elena",
-          "character:kai",
-          "player:p"
-        ],
-        "texts": {
-          "character:kai": "Recast Kai."
-        }
-      }
-    },
-    {
       "type": "macro",
       "text": "{{@kai}} and {{state.kai.nerve}}",
       "at": "1",
@@ -228,174 +179,9 @@
     },
     {
       "type": "check",
-      "name": "a replacement isn't a DUPLICATE_ID; expressions type-check against the replacement, not the original",
+      "name": "a replacement isn't a DUPLICATE_ID",
       "expect": {
-        "codes": [
-          "CEL_ERROR"
-        ],
-        "includes": [
-          {
-            "code": "CEL_ERROR",
-            "at": "/characters/1/entries/1/when"
-          }
-        ]
-      }
-    },
-    {
-      "type": "start",
-      "name": "listed in players, the replacement is a person taking that cast member over; the brought character fills the seat",
-      "scenario": "s",
-      "opening": "o",
-      "characters": [
-        {
-          "id": "kai",
-          "name": "Kai Mercer",
-          "description": "Recast Kai.",
-          "variables": [
-            {
-              "id": "nerve",
-              "type": "int",
-              "initial": 3,
-              "description": "How steady {{char}} is."
-            },
-            {
-              "id": "grit",
-              "type": "int",
-              "initial": 2,
-              "description": "New in the recast."
-            }
-          ],
-          "entries": [
-            {
-              "id": "k_new",
-              "text": "{{char}} is the new Kai."
-            }
-          ]
-        },
-        {
-          "id": "p",
-          "name": "Pat",
-          "description": "Pat."
-        }
-      ],
-      "players": [
-        "kai",
-        "p"
-      ],
-      "expect": {
-        "changes": [
-          {
-            "by": "rules",
-            "set": {
-              "scene.present": [
-                "p",
-                "elena",
-                "kai"
-              ]
-            }
-          }
-        ],
-        "characters": [
-          "kai",
-          "p"
-        ],
-        "header": {
-          "players": [
-            "kai",
-            "p"
-          ]
-        },
-        "state": {
-          "kai.nerve": 3
-        }
-      }
-    },
-    {
-      "type": "start",
-      "name": "not listed in players, the replacement stays model-played and absent unless it speaks",
-      "scenario": "s",
-      "opening": "o",
-      "characters": [
-        {
-          "id": "p",
-          "name": "Pat",
-          "description": "Pat."
-        },
-        {
-          "id": "kai",
-          "name": "Kai Mercer",
-          "description": "Recast Kai.",
-          "variables": [
-            {
-              "id": "nerve",
-              "type": "int",
-              "initial": 3,
-              "description": "How steady {{char}} is."
-            },
-            {
-              "id": "grit",
-              "type": "int",
-              "initial": 2,
-              "description": "New in the recast."
-            }
-          ],
-          "entries": [
-            {
-              "id": "k_new",
-              "text": "{{char}} is the new Kai."
-            }
-          ]
-        }
-      ],
-      "expect": {
-        "changes": [
-          {
-            "by": "rules",
-            "set": {
-              "scene.present": [
-                "p",
-                "elena"
-              ]
-            }
-          }
-        ],
-        "header": {
-          "players": [
-            "p"
-          ]
-        }
-      }
-    },
-    {
-      "type": "start",
-      "name": "a replacement of a character outside the cast, listed in players, fills the seat",
-      "scenario": "s",
-      "opening": "o",
-      "characters": [
-        {
-          "id": "ghost",
-          "name": "Edited Ghost",
-          "description": "An edited copy of a character outside the cast."
-        }
-      ],
-      "players": [
-        "ghost"
-      ],
-      "expect": {
-        "characters": [
-          "ghost"
-        ],
-        "changes": [
-          {
-            "by": "rules",
-            "set": {
-              "scene.present": [
-                "ghost",
-                "elena"
-              ]
-            }
-          }
-        ]
+        "codes": []
       }
     }
   ]

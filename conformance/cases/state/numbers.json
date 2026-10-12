@@ -1,5 +1,5 @@
 {
-  "description": "Numbers (Play 3.3 step 4; Format 10): recorded number values round to the nearest double to ECMAScript toFixed(6), and macros render numbers with ECMAScript Number.prototype.toString",
+  "description": "Numbers (Format 8.6, 10): number values round to the nearest double to ECMAScript toFixed(6) in the state, and macros render numbers with ECMAScript Number.prototype.toString",
   "bundle": {
     "kind": "bundle",
     "scenarios": [
@@ -40,7 +40,6 @@
     "header": {
       "kind": "session",
       "scenario": "s",
-      "seed": "conformanceSeed0001",
       "characters": [
         {
           "id": "p",
@@ -236,7 +235,7 @@
           {
             "by": "player",
             "set": {
-              "x": 1e+20
+              "x": 100000000000000000000
             }
           }
         ],
@@ -304,7 +303,7 @@
   "tests": [
     {
       "type": "state",
-      "name": "0.0078125 is recorded as 0.007813: an exact binary tie: toFixed takes the larger n",
+      "name": "0.0078125 reads as 0.007813: an exact binary tie: toFixed takes the larger n",
       "at": "1",
       "expect": {
         "x": 0.007813
@@ -319,7 +318,7 @@
     },
     {
       "type": "state",
-      "name": "-0.0078125 is recorded as -0.007813: the tie below zero",
+      "name": "-0.0078125 reads as -0.007813: the tie below zero",
       "at": "2",
       "expect": {
         "x": -0.007813
@@ -334,7 +333,7 @@
     },
     {
       "type": "state",
-      "name": "0.30000000000000004 is recorded as 0.3: rounding removes float noise",
+      "name": "0.30000000000000004 reads as 0.3: rounding removes float noise",
       "at": "3",
       "expect": {
         "x": 0.3
@@ -349,7 +348,7 @@
     },
     {
       "type": "state",
-      "name": "0.4999999 is recorded as 0.5: rounds to six places",
+      "name": "0.4999999 reads as 0.5: rounds to six places",
       "at": "4",
       "expect": {
         "x": 0.5
@@ -364,7 +363,7 @@
     },
     {
       "type": "state",
-      "name": "1.23456749 is recorded as 1.234567: the double just below the halfway point rounds down",
+      "name": "1.23456749 reads as 1.234567: the double just below the halfway point rounds down",
       "at": "5",
       "expect": {
         "x": 1.234567
@@ -379,7 +378,7 @@
     },
     {
       "type": "state",
-      "name": "5e-07 is recorded as 0: the double nearest 5e-7 lies below the halfway point",
+      "name": "5e-07 reads as 0: the double nearest 5e-7 lies below the halfway point",
       "at": "6",
       "expect": {
         "x": 0
@@ -394,7 +393,7 @@
     },
     {
       "type": "state",
-      "name": "-1e-07 is recorded as 0: negative zero renders as 0",
+      "name": "-1e-07 reads as 0: negative zero renders as 0",
       "at": "7",
       "expect": {
         "x": 0
@@ -409,7 +408,7 @@
     },
     {
       "type": "state",
-      "name": "1.5e-10 is recorded as 0: below six places, recorded values round to 0",
+      "name": "1.5e-10 reads as 0: below six places, recorded values round to 0",
       "at": "8",
       "expect": {
         "x": 0
@@ -424,7 +423,7 @@
     },
     {
       "type": "state",
-      "name": "1e+21 is recorded as 1e+21: toString switches to exponent form at 1e21",
+      "name": "1e+21 reads as 1e+21: toString switches to exponent form at 1e21",
       "at": "9",
       "expect": {
         "x": 1e+21
@@ -439,10 +438,10 @@
     },
     {
       "type": "state",
-      "name": "1e+20 is recorded as 1e+20: below 1e21, all digits",
+      "name": "1e+20 reads as 1e+20: below 1e21, all digits",
       "at": "10",
       "expect": {
-        "x": 1e+20
+        "x": 100000000000000000000
       }
     },
     {
@@ -454,7 +453,7 @@
     },
     {
       "type": "state",
-      "name": "123.456 is recorded as 123.456: plain decimals render as written",
+      "name": "123.456 reads as 123.456: plain decimals render as written",
       "at": "11",
       "expect": {
         "x": 123.456
@@ -469,7 +468,7 @@
     },
     {
       "type": "state",
-      "name": "1e-06 is recorded as 1e-06: the smallest nonzero six-place value",
+      "name": "1e-06 reads as 1e-06: the smallest nonzero six-place value",
       "at": "12",
       "expect": {
         "x": 1e-06
@@ -484,7 +483,7 @@
     },
     {
       "type": "state",
-      "name": "-1.5 is recorded as -1.5: negative values",
+      "name": "-1.5 reads as -1.5: negative values",
       "at": "13",
       "expect": {
         "x": -1.5

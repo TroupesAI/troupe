@@ -68,7 +68,6 @@
     "header": {
       "kind": "session",
       "scenario": "s",
-      "seed": "conformanceSeed0001",
       "characters": [
         {
           "id": "p",
@@ -121,48 +120,10 @@
   },
   "tests": [
     {
-      "type": "read",
-      "name": "the header's head",
-      "expect": {
-        "ids": [
-          "1",
-          "2",
-          "3"
-        ],
-        "head": "2"
-      }
-    },
-    {
       "type": "cel",
       "name": "players: listed p and b, then the unlisted player members a and c in cast order",
       "expr": "players == ['p', 'b', 'a', 'c']",
       "expect": true
-    },
-    {
-      "type": "prepare",
-      "name": "a location of a bundle world the scenario doesn't use is still a location",
-      "by": "rules",
-      "set": {
-        "scene.location": "moon"
-      },
-      "expect": {
-        "set": {
-          "scene.location": "moon"
-        }
-      }
-    },
-    {
-      "type": "prepare",
-      "by": "rules",
-      "set": {
-        "scene.location": "mars"
-      },
-      "expect": {
-        "set": {},
-        "dropped": [
-          "scene.location"
-        ]
-      }
     }
   ]
 }

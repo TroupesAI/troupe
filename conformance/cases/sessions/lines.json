@@ -33,7 +33,6 @@
     "header": {
       "kind": "session",
       "scenario": "s",
-      "seed": "conformanceSeed0001",
       "characters": [
         {
           "id": "p",
@@ -80,38 +79,6 @@
     ]
   },
   "tests": [
-    {
-      "type": "read",
-      "expect": {
-        "ids": [
-          "1",
-          "2",
-          "3"
-        ],
-        "head": "3",
-        "codes": [],
-        "message": {
-          "id": "2",
-          "parent": "1",
-          "from": "model",
-          "char": "a",
-          "content": [
-            {
-              "text": "two"
-            }
-          ]
-        }
-      }
-    },
-    {
-      "type": "select",
-      "name": "the head is the header's head",
-      "for": "a",
-      "messageId": "x",
-      "expect": {
-        "activated": []
-      }
-    },
     {
       "type": "check",
       "expect": {

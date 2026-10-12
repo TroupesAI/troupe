@@ -1,5 +1,5 @@
 {
-  "description": "Strict schemas, lenient readers (Format 15, 17.2): fields the format doesn't define are UNKNOWN_FIELD warnings, located at the field, and the file is still read and played; a part's fields are those of the interface its type selects",
+  "description": "Fields the format doesn't define are UNKNOWN_FIELD, located at the field, not SCHEMA; a part's fields are those of the interface its type selects (Format 15, 17.2)",
   "bundle": {
     "kind": "bundle",
     "futureField": true,
@@ -60,7 +60,6 @@
     "header": {
       "kind": "session",
       "scenario": "s",
-      "seed": "conformanceSeed0001",
       "characters": [
         {
           "id": "p",
@@ -129,44 +128,6 @@
           {
             "code": "UNKNOWN_FIELD",
             "at": "/scenarios/0/openings/0/content/0/src"
-          }
-        ]
-      }
-    },
-    {
-      "type": "select",
-      "name": "entries with unknown fields are still candidates",
-      "parent": "1",
-      "messageId": "2",
-      "for": "ann",
-      "expect": {
-        "activated": [
-          "s/k_all"
-        ]
-      }
-    },
-    {
-      "type": "start",
-      "name": "a file with unknown fields still starts a session",
-      "scenario": "s",
-      "opening": "o",
-      "characters": [
-        {
-          "id": "p",
-          "name": "Pat",
-          "description": "Pat."
-        }
-      ],
-      "expect": {
-        "changes": [
-          {
-            "by": "rules",
-            "set": {
-              "scene.present": [
-                "p",
-                "ann"
-              ]
-            }
           }
         ]
       }

@@ -1,5 +1,0 @@
-{"troupe":"0.12","kind":"session","scenario":"s","seed":"k7Qm2xVb9TzR4pLc8NwYfA","head":"3"}
-{"id":"1","from":"player","content":[{"text":"Hi."}]}
-{"id":"2","parent":"1","from":"model","content":[{"text":"Hello."}]}
-{"id":"3","parent":"2",
-{"id":"4","parent":"2","from":"player","content":[{"text":"Again."}]}

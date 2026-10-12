@@ -482,8 +482,7 @@
             {
               "enum": [
                 "system",
-                "context",
-                "tracker"
+                "context"
               ]
             },
             {
