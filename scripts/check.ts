@@ -1,6 +1,6 @@
 // Checks the repository's documents and data:
 //   - the schemas compile, and the examples and every complete bundle, session header and chronicle in a Markdown document validate;
-//   - examples/ and the README's first example match the examples in spec/format.md (--write-examples rewrites examples/);
+//   - examples/ and the first example of the README and the beginner's guide match the examples in spec/format.md (--write-examples rewrites examples/);
 //   - every TypeScript interface in the spec lists exactly its schema's properties;
 //   - the spec version agrees across the spec, the README, schema URLs, examples, documents in Markdown and cases;
 //   - every conformance case is named <area>/<topic>.json, matches conformance/case.schema.json, and the files it names exist,
@@ -67,8 +67,10 @@ for (const [name, text] of Object.entries(examples)) {
     lines.forEach((line, i) => validate(i === 0 ? "session-header.schema.json" : "message.schema.json", line, `${path}:${i + 1}`));
   }
 }
-const readmeCard = read("README.md").match(/```json\n([\s\S]*?\n)```/)?.[1];
-if (readmeCard !== examples["elena-card.troupe.json"]) fail("README.md: the first example differs from Format 1.4's");
+for (const doc of ["README.md", "guides/beginners.md"]) {
+  const card = read(doc).match(/```json\n([\s\S]*?\n)```/)?.[1];
+  if (card !== examples["elena-card.troupe.json"]) fail(`${doc}: the first example differs from Format 1.4's`);
+}
 const extra = readdirSync(join(root, "examples")).filter((f) => !(f in examples));
 if (extra.length) fail(`examples/ has files the spec doesn't define: ${extra.join(", ")}`);
 
