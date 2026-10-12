@@ -2,7 +2,7 @@
 
 Guidance for coding agents. Follow [CONTRIBUTING.md](CONTRIBUTING.md): it says what belongs in Format and the guides, and what a normative change touches. `bun run check` must pass before a change is done.
 
-- This repository is the spec only: a schema for files. Don't add implementation code, library-specific notes, or how apps play files, such as prompt assembly, entry selection, event passes, random number generation, model calls, UI or app actions.
+- This repository is the spec only: a schema for files. Don't add implementation code, library-specific notes, or how apps play files, such as prompt assembly, entry selection, event passes, random number generation, model calls, UI or app actions. `site/` only renders these documents as docs.troupes.ai; nothing in it defines how files are read or played.
 - Don't change normative behavior as part of editorial or repository work. Propose it instead, with the reason.
 
 ## Writing the spec

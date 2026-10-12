@@ -12,13 +12,14 @@ import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import Ajv2020 from "ajv/dist/2020.js";
 import addFormats from "ajv-formats";
+import { cited, formatCitation, sectionCitation, sections } from "./citations.ts";
 
 const root = resolve(import.meta.dir, "..");
 const read = (path: string) => readFileSync(join(root, path), "utf8");
 const problems: string[] = [];
 const fail = (msg: string) => problems.push(msg);
 const markdown = (readdirSync(root, { recursive: true }) as string[])
-  .filter((f) => f.endsWith(".md") && !/^(node_modules|\.git)\//.test(f))
+  .filter((f) => f.endsWith(".md") && !/(^|\/)(node_modules|\.git|dist|\.astro)\//.test(f))
   .sort();
 
 // Schemas
@@ -271,20 +272,14 @@ for (const doc of markdown) {
   }
 }
 
-// Section citations: "Format 7.2", "Format Appendix B.2" and lists such as "Format 2.2, 14 and 16" anywhere,
-// and "section 7.2" within the spec.
-const sections = (path: string) =>
-  new Set([...read(path).matchAll(/^#{2,3} (?:Appendix )?(\d+(?:\.\d+)?|[A-Z](?:\.\d+)?)[.: ]/gm)].map((m) => m[1]));
-const formatSections = sections("spec/format.md");
-const num = String.raw`(?:\d+(?:\.\d+)*|[A-Z](?![a-z])(?:\.\d+)*)(?![\w.]*\d)`;
-const list = String.raw`${num}(?:(?:,| and) ${num})*`;
+// Section citations (citations.ts) name sections of the spec
+const formatSections = sections(format);
 const cite = (where: string, text: string, own = false) => {
   const check = (items: string) => {
-    for (const n of items.split(/,| and /).map((s) => s.trim()))
-      if (!formatSections.has(n)) fail(`${where}: cites Format ${n}, which doesn't exist`);
+    for (const n of cited(items)) if (!formatSections.has(n)) fail(`${where}: cites Format ${n}, which doesn't exist`);
   };
-  for (const m of text.matchAll(new RegExp(String.raw`\bFormat (?:Appendix )?(${list})`, "g"))) check(m[1]);
-  if (own) for (const m of text.matchAll(new RegExp(String.raw`\bsections? (${list})(?! of Troupe)`, "g"))) check(m[1]);
+  for (const m of text.matchAll(formatCitation)) check(m[1]);
+  if (own) for (const m of text.matchAll(sectionCitation)) check(m[1]);
 };
 for (const doc of markdown) cite(doc, read(doc), doc === "spec/format.md");
 for (const f of cases) cite(`conformance/cases/${f}`, read(`conformance/cases/${f}`));
