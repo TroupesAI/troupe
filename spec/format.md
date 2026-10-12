@@ -465,7 +465,7 @@ Opening and event `set`, `compute` and recorded changes write state by key:
 
 - **Keys** are a scenario variable's ID, or an owner and a variable ID, followed by a key for keyed variables: `bell`, `trust.kai`, `kai.nerve`, `kai.feelings.elena`, `scene.location`, `scene.present`.
 - **Values** are absolute; a reader applies them without evaluating anything.
-- **Validity.** A value is valid if its key names a variable in use that isn't derived, and an allowed key, and the value has the variable's type, uses only listed members, is finite, and is an integer for `int`. A numeric value outside `min` and `max` is still valid; it is clamped (Play 3.2, 3.3). `scene.location` is a location ID of the bundle or session, or `""`; `scene.present` lists cast characters.
+- **Validity.** A value is valid if its key names a variable in use that isn't derived, and an allowed key, and the value has the variable's type, uses only listed members, is finite, is an integer for `int`, and is within the value limits of section 16. A numeric value outside `min` and `max` is still valid; it is clamped (Play 3.2, 3.3). `scene.location` is a location ID of the bundle or session, or `""`; `scene.present` lists cast characters.
 
 ---
 
@@ -585,7 +585,8 @@ state.trust[char] >= 0.8 && hour < 6
 - Cross-type numeric comparison, including `==` and `!=`, MUST work: `state.trust.kai >= 1`. Arithmetic doesn't mix types: write `state.trust.kai - 0.1`.
 - Runtime errors make a condition false.
 - `state` and `own` are not indexed by computed strings; keyed variables are.
-- Expressions use only `bool`, `int`, `double`, `string`, list and map values; `bytes`, `uint` and `null` literals and the `timestamp()` and `duration()` functions are a `CEL_ERROR`. Available functions are only `size`, `has`, `all`, `exists`, `exists_one`, `map`, `filter`, `in`, `contains`, `startsWith`, `endsWith`, `matches`, `int`, `double`, `string`, `bool`, and the functions above. `matches()` MUST use RE2 semantics. Apps SHOULD limit evaluation cost.
+- Expressions use only `bool`, `int`, `double`, `string`, list and map values; `bytes`, `uint` and `null` literals and the `timestamp()` and `duration()` functions are a `CEL_ERROR`. Available functions are only `size`, `has`, `all`, `exists`, `exists_one`, `map`, `filter`, `in`, `contains`, `startsWith`, `endsWith`, `matches`, `int`, `double`, `string`, `bool`, and the functions above. `matches()` MUST use RE2 semantics.
+- Comprehensions (`all`, `exists`, `exists_one`, `map`, `filter`) nest at most two deep, and `roll()` isn't called inside one; an expression that breaks either is a `CEL_ERROR`. With the value limits of section 16, this bounds the cost of every expression, so apps evaluate each one in full and agree on its result.
 
 ---
 
@@ -781,6 +782,9 @@ Writers MUST stay within these limits. Readers MUST accept files within them, an
 | JSON nesting depth | 64 |
 | Troupe entries in a bundle, all owners | 10,000 |
 | One CEL expression or regex key | 4 KiB |
+| Characters in a session's cast | 256 |
+| A string state value | 4 KiB |
+| Members of a set value, or keys of a `"*"` map | 256 |
 
 ---
 
@@ -811,7 +815,7 @@ Messages are never dropped for a failed check, except the lines that `PARSE` and
 | `INVALID_VALUE` | `initial`, opening and event `set` values, recorded values, chronicle values and `outcome` indexes are valid | The value is dropped |
 | `UNKNOWN_MESSAGE` | `parent`, the header's `head` and summary `from` name messages, and `from` is on the path to its summary | The head or summary is ignored; a message with an unknown `parent` is skipped with its descendants |
 | `INVALID_PLAYER` | `players` names header characters or cast members, with no more header characters than seats | The ID is ignored |
-| `CEL_ERROR` | Every expression parses and type-checks, and no `derive` reads a derived variable | The item never applies |
+| `CEL_ERROR` | Every expression parses and type-checks, and no `derive` reads a derived variable; comprehensions nest at most two deep, without `roll()` inside (section 11.2) | The item never applies |
 | `REGEX_ERROR` | Every regex key parses as RE2 | The key is ignored |
 | `UNKNOWN_MACRO` | Macros are valid and name existing characters and variables | Left as written |
 
@@ -1106,6 +1110,7 @@ A new session that continues this chronicle starts with `closeness` at 58 and bo
 | Absolute changes, recorded | JSON Patch, or recomputing | Replay needs no evaluation, from any channel. |
 | Literal `set`, CEL `compute` | One field with CEL strings | Plain values without quoting traps. |
 | Weighted outcomes, `roll(n)`, `on` | Chains of chance events | Random choices are one declaration with correct odds, rolled at the right moment. |
+| Structural limits on CEL and on values | A cost budget each app sets | Every app evaluates every expression to the same result, and cost stays bounded without measuring it. |
 | Durations in rounds | Messages | The same file behaves the same in solo and group chats. |
 | Player and model text stored escaped, so it stays literal | Resolving macros in it; deciding by who wrote a text whether to resolve it | Every text resolves the same way, so a reader never needs to know who wrote it, and no hidden state leaks through model output or prompt attacks. |
 | Priority means importance; file order is prompt order | Priority doing three jobs | Authors order lore by writing it in order. |

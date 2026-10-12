@@ -273,6 +273,20 @@
         "checkError": false
       },
       "name": "standard macros and functions"
+    },
+    {
+      "type": "cel",
+      "name": "comprehensions nest two deep",
+      "expr": "[[1, 2], [3]].all(a, a.all(b, b > 0))",
+      "expect": true
+    },
+    {
+      "type": "cel",
+      "name": "three deep is a CEL_ERROR (Format 11.2)",
+      "expr": "[[[1]]].all(a, a.all(b, b.all(c, c > 0)))",
+      "expect": {
+        "checkError": true
+      }
     }
   ]
 }
