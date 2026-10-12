@@ -23,11 +23,11 @@ When the spec doesn't decide a question, fix the text; never record a reading on
 
 Requires [Bun](https://bun.sh). `bun install`, then `bun run check` runs what CI runs. The header of [`scripts/check.ts`](scripts/check.ts) lists what it checks.
 
-The site has its own packages: in `site/`, `bun install`, then `bun run dev` to preview it, and `bun run check` and `bun run build` as CI runs them.
+The site in `site/` has its own packages. There, `bun install`, then `bun run dev` previews it, and `bun run check` and `bun run build` run what CI runs.
 
 ## Versions
 
-The spec has one version, `major.minor`. Before a minor version bump, tag the last commit of the version it replaces, such as `v0.12`: the site serves that version's schemas from the tag from then on, and fails to build if `schemas/` differs from the tag of its own version.
+The spec has one version, `major.minor`. Before a minor version bump, tag the last commit of the version it replaces and push the tag, such as `v0.12`: the site serves that version's schemas from the tag from then on, and fails to build if `schemas/` differs from the tag of its own version.
 
 A minor version bump changes, together:
 

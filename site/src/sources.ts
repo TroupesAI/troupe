@@ -24,10 +24,10 @@ export const url = (route: string) => (route === "index" ? "/" : `/${route}/`);
 // The README's first paragraph, which says what Troupe is.
 export const tagline = read("README.md").match(/^# .+\n+(.+)\n/)?.[1];
 
-// "**Version 0.12 (draft)** · October 12, 2026", the spec's version line.
-const [versionLine, version, status, date] = read("spec/format.md").match(/^\*\*Version (\S+) \((\w+)\)\*\* · (.+)\n/m) ?? [];
-if (!versionLine) throw new Error("spec/format.md has no version line");
-export const spec = { versionLine, version, status, date };
+// From the spec's version line, "**Version 0.12 (draft)** · October 12, 2026".
+const [, version, status] = read("spec/format.md").match(/^\*\*Version (\S+) \((\w+)\)\*\*/m) ?? [];
+if (!version) throw new Error("spec/format.md has no version line");
+export const spec = { version, status };
 
 // A heading's id on the site is its section number when it has one, such as 7.2 or B.1, so links read like
 // citations; other headings keep the GitHub anchor that the documents' own links use.
@@ -41,7 +41,7 @@ const anchor = (file: string, hash: string) => {
 export const resolve = (href: string, from: string): string => {
   if (/^[a-z]+:/.test(href)) return href;
   const [path, hash] = href.split("#");
-  const file = path ? normalize(join(dirname(from), path)) : from;
+  const file = path ? normalize(join(dirname(from), path)).replace(/\/$/, "") : from;
   const source = sources.find((s) => s.file === file);
   if (source) return `${path ? url(source.route) : ""}${hash ? `#${anchor(file, hash)}` : ""}`;
   if (file === "schemas") return "/schema/";

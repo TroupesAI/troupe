@@ -3,18 +3,21 @@ import type { LoaderContext } from "astro/loaders";
 import { docsSchema } from "@astrojs/starlight/schema";
 import { join, relative } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
-import { read, root, sources, spec, tagline } from "./sources.ts";
+import { read, root, sources, tagline } from "./sources.ts";
 
-// Reads the documents in place. Each one's first line, "# Title", becomes the page title; the spec's version line
-// moves to the page title area, and its contents list gives way to the table of contents.
+// Markdown text as plain text: links become their text, and emphasis and code marks go.
+const plain = (markdown: string) => markdown.replace(/\[([^\]]*)\]\([^)]*\)/g, "$1").replace(/[*`]/g, "");
+
+// Reads the documents in place. Each one's first line, "# Title", becomes the page title, and the spec's contents list
+// gives way to the table of contents.
 const load = async ({ config, store, parseData, renderMarkdown, generateDigest, watcher }: LoaderContext) => {
   store.clear();
   for (const { file, route } of sources) {
     const text = read(file);
     const [, title, rest] = text.match(/^# (.+)\n([\s\S]*)$/) ?? [];
     if (!title) throw new Error(`${file} doesn't start with a title`);
-    let body = rest.replace(spec.versionLine, "").replace(/^## Contents\n[\s\S]*?\n---\n/m, "");
-    let data: Record<string, unknown> = { title };
+    let body = rest.replace(/^## Contents\n[\s\S]*?\n---\n/m, "");
+    let data: Record<string, unknown> = { title, description: plain(body.match(/^\w.*$/m)![0]) };
     if (route === "index") {
       // The README is the home page: its first paragraph is the tagline, and it ends with sections for the repository.
       const end = body.indexOf("\n## Contributing\n");
@@ -22,6 +25,7 @@ const load = async ({ config, store, parseData, renderMarkdown, generateDigest, 
       body = body.slice(body.indexOf(tagline) + tagline.length, end);
       data = {
         title,
+        description: tagline,
         template: "splash",
         hero: {
           tagline,

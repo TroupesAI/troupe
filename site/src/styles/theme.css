@@ -34,20 +34,13 @@
   --sl-color-accent-high: oklch(0.42 0.19 295);
 }
 
-.site-title {
-  color: var(--sl-color-white);
-}
-
-.site-title img,
 .hero img {
   border-radius: 50%;
 }
 
-.site-title,
 h1#_top,
 .sl-markdown-content :is(h1, h2, h3, h4) {
   font-family: var(--font-serif);
-  font-weight: 600;
 }
 
 /* The home page's text keeps a reading width under the full-width hero. */

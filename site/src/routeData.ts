@@ -4,7 +4,7 @@ import { site, sources } from "./sources.ts";
 export const onRequest = defineRouteMiddleware(({ locals }) => {
   const { entry, head, toc } = locals.starlightRoute;
   // Pages without a document of their own, such as /schema/, share the home page's social card.
-  const card = sources.find((s) => s.route === entry.id)?.route ?? "index";
+  const card = sources.some((s) => s.route === entry.id) ? entry.id : "index";
   head.push({ tag: "meta", attrs: { property: "og:image", content: `${site}/og/${card}.png` } });
 
   // In the spec's table of contents, sections nest under their parts up to the appendices, and "1. Overview" replaces

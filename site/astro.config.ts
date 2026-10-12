@@ -1,7 +1,6 @@
 import { satteri } from "@astrojs/markdown-satteri";
 import starlight from "@astrojs/starlight";
 import { defineConfig, fontProviders } from "astro/config";
-import { dirname } from "node:path";
 import { troupeMarkdown } from "./src/markdown.ts";
 import { repo, site, sources } from "./src/sources.ts";
 
@@ -20,8 +19,6 @@ export default defineConfig({
       name: "Atkinson Hyperlegible Next",
       cssVariable: "--font-sans",
       weights: ["200 800"],
-      styles: ["normal", "italic"],
-      fallbacks: ["sans-serif"],
     },
     {
       provider: fontProviders.fontsource(),
@@ -41,7 +38,6 @@ export default defineConfig({
   integrations: [
     starlight({
       title: "Troupe",
-      logo: { src: "./src/assets/logo.webp", alt: "" },
       favicon: "/favicon.png",
       head: [{ tag: "link", attrs: { rel: "apple-touch-icon", href: "/apple-touch-icon.png" } }],
       customCss: ["./src/styles/theme.css"],
@@ -54,7 +50,7 @@ export default defineConfig({
       expressiveCode: { themes: ["rose-pine-moon", "rose-pine-dawn"] },
       social: [{ icon: "github", label: "GitHub", href: repo }],
       editLink: { baseUrl: `${repo}/edit/main/site/` },
-      markdown: { processedDirs: [...new Set(sources.map((s) => `../${dirname(s.file)}`))] },
+      markdown: { processedDirs: [".."] },
       routeMiddleware: "./src/routeData.ts",
       sidebar: [
         {
