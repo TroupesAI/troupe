@@ -20,7 +20,10 @@ export const onRequest = defineRouteMiddleware(async ({ locals }) => {
       .filter(([, value]) => value !== undefined)
       .map(([name, value]) => `${name}="${value}"`)
       .join(" ");
-    entry.data.hero!.image = { html: `<img src="${src}" srcset="${srcSet.attribute}" ${attrs} alt="${image.alt ?? ""}">` };
+    entry.data.hero!.image = {
+      html: `<img src="${src}" srcset="${srcSet.attribute}" ${attrs} alt="${image.alt}">`,
+      alt: "",
+    };
   }
   // "Troupe Format", not "Troupe Format | Troupe".
   const title = head.find((h) => h.tag === "title");
