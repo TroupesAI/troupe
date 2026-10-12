@@ -1,0 +1,249 @@
+{
+  "description": "Keyed variables (Format 8.1, 8.3, 8.5; Play 3.3): maxStep and oneWay apply to each key; recorded values for derived variables are invalid; a recorded set with duplicate members is valid (Format 8.5); readers re-apply normalizing, rounding and clamping when loading, but not channels, maxStep or oneWay; min and max can't name a derived or keyed variable",
+  "bundle": {
+    "kind": "bundle",
+    "characters": [
+      {
+        "id": "a",
+        "name": "Ann",
+        "description": "Ann."
+      },
+      {
+        "id": "b",
+        "name": "Bea",
+        "description": "Bea."
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s",
+        "cast": [
+          {},
+          {
+            "character": "a"
+          },
+          {
+            "character": "b"
+          }
+        ],
+        "variables": [
+          {
+            "id": "trust",
+            "type": "number",
+            "of": "characters",
+            "min": 0,
+            "max": 1,
+            "initial": 0.5,
+            "by": [
+              "model"
+            ],
+            "maxStep": 0.2,
+            "description": "d"
+          },
+          {
+            "id": "bond",
+            "type": "int",
+            "of": "characters",
+            "initial": 3,
+            "by": [
+              "model"
+            ],
+            "oneWay": true,
+            "description": "d"
+          },
+          {
+            "id": "tags",
+            "type": "set",
+            "of": "characters",
+            "values": [
+              "brave",
+              "shy",
+              "kind"
+            ],
+            "by": [
+              "model"
+            ],
+            "description": "d"
+          },
+          {
+            "id": "clock",
+            "type": "int",
+            "initial": 30,
+            "description": "Hours."
+          },
+          {
+            "id": "day",
+            "type": "int",
+            "derive": "state.clock / 24 + 1",
+            "description": "d"
+          },
+          {
+            "id": "secret",
+            "type": "int",
+            "description": "Nobody may change it."
+          },
+          {
+            "id": "by_day",
+            "type": "int",
+            "max": "day",
+            "description": "A bound that names a derived variable."
+          },
+          {
+            "id": "by_bond",
+            "type": "int",
+            "max": "bond",
+            "description": "A bound that names a keyed variable."
+          }
+        ]
+      }
+    ]
+  },
+  "session": {
+    "header": {
+      "kind": "session",
+      "scenario": "s",
+      "seed": "conformanceSeed0001",
+      "characters": [
+        {
+          "id": "p",
+          "name": "Pat",
+          "description": "Pat."
+        }
+      ],
+      "players": [
+        "p"
+      ]
+    },
+    "messages": [
+      {
+        "id": "1",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "Hi."
+          }
+        ],
+        "changes": [
+          {
+            "by": "model",
+            "set": {
+              "trust.a": 1.4,
+              "trust.b": 0.9123456,
+              "bond.a": 1,
+              "tags.a": [
+                "shy",
+                "brave",
+                "shy"
+              ],
+              "day": 7,
+              "secret": 4
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "prepare",
+      "name": "maxStep limits each key on its own",
+      "by": "model",
+      "set": {
+        "trust.a": 0.9,
+        "trust.b": 0.4
+      },
+      "expect": {
+        "set": {
+          "trust.a": 0.7,
+          "trust.b": 0.4
+        }
+      }
+    },
+    {
+      "type": "prepare",
+      "name": "oneWay keeps each key from moving backward",
+      "by": "model",
+      "set": {
+        "bond.a": 2,
+        "bond.b": 5
+      },
+      "expect": {
+        "set": {
+          "bond.a": 3,
+          "bond.b": 5
+        }
+      }
+    },
+    {
+      "type": "prepare",
+      "name": "oneWay applies to rules too",
+      "by": "rules",
+      "set": {
+        "bond.a": 1
+      },
+      "expect": {
+        "set": {
+          "bond.a": 3
+        }
+      }
+    },
+    {
+      "type": "prepare",
+      "name": "a derived variable can't be changed",
+      "by": "rules",
+      "set": {
+        "day": 5,
+        "clock": 40
+      },
+      "expect": {
+        "set": {
+          "clock": 40
+        },
+        "dropped": [
+          "day"
+        ]
+      }
+    },
+    {
+      "type": "state",
+      "name": "readers clamp, round and normalize recorded values, keep moves maxStep, oneWay and channels would refuse, and drop the derived key",
+      "at": "1",
+      "expect": {
+        "trust.a": 1,
+        "trust.b": 0.912346,
+        "bond.a": 1,
+        "bond.b": 3,
+        "tags.a": [
+          "brave",
+          "shy"
+        ],
+        "tags.b": [],
+        "day": 2,
+        "secret": 4
+      }
+    },
+    {
+      "type": "check",
+      "expect": {
+        "codes": [
+          "UNKNOWN_VARIABLE"
+        ],
+        "includes": [
+          {
+            "code": "UNKNOWN_VARIABLE",
+            "at": "/scenarios/0/variables/6/max"
+          },
+          {
+            "code": "UNKNOWN_VARIABLE",
+            "at": "/scenarios/0/variables/7/max"
+          },
+          {
+            "code": "UNKNOWN_VARIABLE",
+            "at": "message:1/changes/0/set/day"
+          }
+        ]
+      }
+    }
+  ]
+}

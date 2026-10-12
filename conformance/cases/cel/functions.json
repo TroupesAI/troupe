@@ -1,0 +1,84 @@
+{
+  "description": "CEL functions (Format 11.1, 11.2): exists_one, startsWith, endsWith, the conversions int, double, string and bool, and min, max and abs for numbers of one type",
+  "bundle": {
+    "kind": "bundle",
+    "scenarios": [
+      {
+        "id": "s"
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "cel",
+      "expr": "[1, 2, 3].exists_one(x, x > 2)",
+      "expect": true
+    },
+    {
+      "type": "cel",
+      "name": "exists_one is false when more than one matches",
+      "expr": "[1, 2, 3].exists_one(x, x > 1)",
+      "expect": false
+    },
+    {
+      "type": "cel",
+      "expr": "'lantern'.startsWith('lan') && 'lantern'.endsWith('tern')",
+      "expect": true
+    },
+    {
+      "type": "cel",
+      "name": "startsWith is case-sensitive",
+      "expr": "'Lantern'.startsWith('lan')",
+      "expect": false
+    },
+    {
+      "type": "cel",
+      "name": "int() truncates toward zero and parses strings",
+      "expr": "int(2.9) == 2 && int(-2.9) == -2 && int('42') == 42",
+      "expect": true
+    },
+    {
+      "type": "cel",
+      "name": "a conversion that fails is a runtime error, so the condition is false",
+      "expr": "int('many') == 0",
+      "expect": false
+    },
+    {
+      "type": "cel",
+      "expr": "double(3) == 3.0 && double('1.5') == 1.5",
+      "expect": true
+    },
+    {
+      "type": "cel",
+      "name": "string() of an int and of a string",
+      "expr": "string(42) == '42' && string('x') == 'x'",
+      "expect": true
+    },
+    {
+      "type": "cel",
+      "expr": "bool('true') && !bool('false')",
+      "expect": true
+    },
+    {
+      "type": "cel",
+      "expr": "min(2, 5) == 2 && max(2.5, 1.0) == 2.5 && abs(-3) == 3 && abs(-1.5) == 1.5",
+      "expect": true
+    },
+    {
+      "type": "cel",
+      "name": "min and max take numbers of one type",
+      "expr": "min(1, 2.0) == 1.0",
+      "expect": {
+        "checkError": true
+      }
+    },
+    {
+      "type": "cel",
+      "name": "string() of a double is a CEL_ERROR (Format 11.2)",
+      "expr": "string(1.5) == '1.5'",
+      "expect": {
+        "checkError": true
+      }
+    }
+  ]
+}

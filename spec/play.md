@@ -105,7 +105,7 @@ Then they drop each key whose value is still invalid, or whose channel isn't all
 
 **Readers** re-apply steps 1, 4 and 5 when loading and drop invalid keys, but don't re-check channels, `maxStep` or `oneWay`, so history survives later edits to the bundle.
 
-**Player edits** to state are recorded on the head if it is a player message, else on a new `from: "system"` child of the head with empty `content`. Events are then evaluated at that message.
+**Player edits** to state are recorded on the head if it is a player message, else on a new `from: "system"` child of the head with empty `content`. Events are then evaluated at that message; firings already recorded there still count, so an event that fired there doesn't fire again that round.
 
 **Events.** At each root, after each player or model message once its player and model changes are recorded, and after player edits:
 
@@ -141,7 +141,7 @@ Nothing in the payload takes `ext`. A model adds story content, never mechanics 
 - A newcomer has only `id`, `name`, `aliases`, `description` and `summary`; any other field is unknown (Format 15). A newcomer whose ID names a character of the bundle or session is dropped, so a model never replaces or redefines a character.
 - An entry takes no `position` or `priority`, which are unknown there, so it is placed in `context` with priority 50. An entry whose ID names a session entry placed in `system` or `tracker` on the path is dropped, so a model never replaces or disables a direction.
 
-Apps apply a payload in this order: `characters` join the header; `parts` are stored; `changes` are recorded as `{"by": "model", …}`, prepared as in section 3.3, on the newest message covered; and `entries` become session entries on the same message. Speakers and `knownBy` IDs other than `narrator` that name no character in the session, newcomers included, are dropped; a `knownBy` whose IDs are all dropped becomes `["narrator"]`, so a misnamed secret is never told to everyone. An extraction that finds nothing SHOULD record `{"by": "model", "set": {}}`, which marks where the next one starts. The event pass after a message waits for any extraction the app runs on it.
+Apps apply a payload in this order: `characters` join the header; `parts` are stored; `changes` are recorded as `{"by": "model", …}`, prepared as in section 3.3, on the newest message covered; and `entries` become session entries on the same message. Speakers and `knownBy` IDs other than `narrator` that name no character in the session, newcomers included, are dropped; a `knownBy` whose IDs are all dropped becomes `["narrator"]`, so a misnamed secret is never told to everyone. Every extraction records one `{"by": "model", …}` change, with an empty `set` when it changes nothing, which marks where the next one starts. The event pass after a message waits for any extraction the app runs on it.
 
 ---
 
@@ -231,13 +231,13 @@ Entries kept by `sticky` are not recorded again, so stickiness runs out.
    2. **Filter.** A matching candidate is excluded if its `when` is false, it is in cooldown, it is `once` and already recorded, or it fails its `chance` roll.
    3. **Group.** For each group of an owner with no selected entry, the remaining candidates with the highest `priority` compete, and one wins by a weighted group roll; the group's other remaining candidates are excluded. Candidates of a group that already has a selected entry are excluded.
    4. **Select.** The remaining candidates are selected.
-3. **Fit.** If space runs out, the app drops entries below priority 100, lowest `priority` first, ties broken by dropping later entries in file order. It never drops priority-100 entries; if they don't fit, generation fails. Fitting never re-rolls.
+3. **Fit.** If space runs out, the app drops entries selected in steps 1 and 2 below priority 100, lowest `priority` first, ties broken by dropping later entries in file order. It never drops priority-100 entries; if they don't fit, generation fails. Fitting never re-rolls.
 
 The app then records the entries selected in steps 1 and 2 that survived step 3, except those kept by `sticky`, together with any entries pulled for the message.
 
 ### 5.6 Pulling
 
-Entries with `pull` are retrieved when relevant, by either of two methods an app MAY offer: the model sees a catalog of their titles and requests entries by title, for example through a tool; or the app finds entries by similarity search over titles and texts. Only entries the generation can see, that are not already selected, and whose `when` holds, with `hit()` checking their scanned text, are eligible; groups, `once`, `sticky`, `cooldown` and `chance` don't apply to pulling. A pulled entry's text reaches the model, and the entry is recorded in `activated`. In apps that offer neither method, entries with `pull` activate only through their `keys`.
+Entries with `pull` are retrieved when relevant, by either of two methods an app MAY offer: the model sees a catalog of their titles and requests entries by title, for example through a tool; or the app finds entries by similarity search over titles and texts. Only entries the generation can see, that are not already selected, and whose `when` holds, with `hit()` checking their scanned text, are eligible; groups, `once`, `sticky`, `cooldown` and `chance` don't apply to pulling. Pulled entries are added after fitting (section 5.5); a pulled entry's text reaches the model, and the entry is recorded in `activated`. In apps that offer neither method, entries with `pull` activate only through their `keys`.
 
 ---
 

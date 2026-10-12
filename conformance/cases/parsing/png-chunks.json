@@ -1,0 +1,85 @@
+{
+  "description": "The image-embedded form (Format 14.4): the iTXt chunk with keyword troupe is read whether or not it is compressed; tEXt and zTXt chunks with that keyword are ignored, so they neither hold the bundle nor count as a second chunk; the chunk's language tag and translated keyword are ignored (Format 14.4)",
+  "tests": [
+    {
+      "type": "parse",
+      "name": "an uncompressed iTXt chunk",
+      "kind": "png",
+      "base64": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAAAAAA6fptVAAAAfGlUWHR0cm91cGUAAAAAAHsidHJvdXBlIjoiMC4xMSIsImtpbmQiOiJidW5kbGUiLCJjaGFyYWN0ZXJzIjpbeyJpZCI6Im1pcmEiLCJuYW1lIjoiTWlyYSIsImRlc2NyaXB0aW9uIjoiQSBzdGFyc2hpcCBlbmdpbmVlci4ifV19TpcBtAAAAApJREFUeJxjYAAAAAIAAUivpHEAAAAASUVORK5CYII=",
+      "expect": {
+        "ok": true,
+        "codes": [],
+        "equals": {
+          "troupe": "0.11",
+          "kind": "bundle",
+          "characters": [
+            {
+              "id": "mira",
+              "name": "Mira",
+              "description": "A starship engineer."
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "parse",
+      "name": "only a tEXt chunk with keyword troupe",
+      "kind": "png",
+      "base64": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAAAAAA6fptVAAAAeHRFWHR0cm91cGUAeyJ0cm91cGUiOiIwLjExIiwia2luZCI6ImJ1bmRsZSIsImNoYXJhY3RlcnMiOlt7ImlkIjoibWlyYSIsIm5hbWUiOiJNaXJhIiwiZGVzY3JpcHRpb24iOiJBIHN0YXJzaGlwIGVuZ2luZWVyLiJ9XX0BK6AfAAAACklEQVR4nGNgAAAAAgABSK+kcQAAAABJRU5ErkJggg==",
+      "expect": {
+        "ok": false,
+        "codes": [
+          "PARSE"
+        ]
+      }
+    },
+    {
+      "type": "parse",
+      "name": "only a zTXt chunk with keyword troupe",
+      "kind": "png",
+      "base64": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAAAAAA6fptVAAAAb3pUWHR0cm91cGUAAHicJcsxCoAwDEbhq8g/F9G1mwfwBOIQ22CDGktaJ/HuIo6Pj3ej2nllhkfX9j0cNtEIj+XSuDMcQiKjUNkK/HRDPjzECA5KxzeOf0UuwSRXORUeQ1MqWUmSG9ZVlNlaPPPzAu2dJO75CqAjAAAACklEQVR4nGNgAAAAAgABSK+kcQAAAABJRU5ErkJggg==",
+      "expect": {
+        "ok": false,
+        "codes": [
+          "PARSE"
+        ]
+      }
+    },
+    {
+      "type": "parse",
+      "name": "a tEXt chunk beside the iTXt chunk is ignored, not a second troupe chunk",
+      "kind": "png",
+      "base64": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAAAAAA6fptVAAAAbXRFWHR0cm91cGUAeyJ0cm91cGUiOiIwLjExIiwia2luZCI6ImJ1bmRsZSIsImNoYXJhY3RlcnMiOlt7ImlkIjoia2FpIiwibmFtZSI6IkthaSIsImRlc2NyaXB0aW9uIjoiQW4gYWNyb2JhdC4ifV199emO3gAAAHJpVFh0dHJvdXBlAAEAAAB4nCXLMQqAMAxG4avIPxfRtZsH8ATiENtggxpLWifx7iKOj493o9p5ZYZH1/Y9HDbRCI/l0rgzHEIio1DZCvx0Qz48xAgOSsc3jn9FLsEkVzkVHkNTKllJkhvWVZTZWjzz8wLtnSTuYe1TngAAAApJREFUeJxjYAAAAAIAAUivpHEAAAAASUVORK5CYII=",
+      "expect": {
+        "ok": true,
+        "codes": [],
+        "equals": {
+          "troupe": "0.11",
+          "kind": "bundle",
+          "characters": [
+            {
+              "id": "mira",
+              "name": "Mira",
+              "description": "A starship engineer."
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "parse",
+      "name": "a language tag and translated keyword are ignored",
+      "kind": "png",
+      "base64": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAAAAAA6fptVAAAAPGlUWHR0cm91cGUAAQBlbgBUcm91cGUAeJyrViopyi8tSFWyUlAy0DM0VNJRUMrOzEsB8ZNK81JyUpVqAcFhCojdSulsAAAACklEQVR4nGNgAAAAAgABSK+kcQAAAABJRU5ErkJggg==",
+      "expect": {
+        "ok": true,
+        "codes": [],
+        "equals": {
+          "troupe": "0.11",
+          "kind": "bundle"
+        }
+      }
+    }
+  ]
+}

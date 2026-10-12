@@ -1,0 +1,86 @@
+{
+  "description": "Package contents (Format 14.3, 16 item 7, 17.2): an exact duplicate name is PARSE and the package isn't read; chronicles under chronicles/ are read with the bundle; an unreadable line in a session inside a valid package is PARSE; compression methods other than store and deflate and segments over 255 bytes are PARSE; sessions and chronicles are read only from their folders (Format 14.3, 16)",
+  "tests": [
+    {
+      "type": "parse",
+      "name": "two entries with the same name",
+      "kind": "package",
+      "base64": "UEsDBBQAAAAIAAAAS13PW/r4IwAAACEAAAALAAAAYnVuZGxlLmpzb26rViopyi8tSFWyUjLQMzRU0lHKzsxLUbJSSirNS8lJVaoFAFBLAwQUAAAACAAAAEtdz1v6+CMAAAAhAAAACwAAAGJ1bmRsZS5qc29uq1YqKcovLUhVslIy0DM0VNJRys7MS1GyUkoqzUvJSVWqBQBQSwECFAMUAAAACAAAAEtdz1v6+CMAAAAhAAAACwAAAAAAAAAAAAAAgAEAAAAAYnVuZGxlLmpzb25QSwECFAMUAAAACAAAAEtdz1v6+CMAAAAhAAAACwAAAAAAAAAAAAAAgAFMAAAAYnVuZGxlLmpzb25QSwUGAAAAAAIAAgByAAAAmAAAAAAA",
+      "expect": {
+        "ok": false,
+        "codes": [
+          "PARSE"
+        ]
+      }
+    },
+    {
+      "type": "parse",
+      "name": "a chronicle under chronicles/",
+      "kind": "package",
+      "base64": "UEsDBBQAAAAIAAAAS13PW/r4IwAAACEAAAALAAAAYnVuZGxlLmpzb26rViopyi8tSFWyUjLQMzRU0lHKzsxLUbJSSirNS8lJVaoFAFBLAwQUAAAACAAAAEtd2RQoJFMAAABoAAAAJQAAAGNocm9uaWNsZXMvbWlyYS50cm91cGUtY2hyb25pY2xlLmpzb24ljEsKgDAMBe/y1kXsNnfwECUNNGg/xLoq3l1qlzMDM9CtPk1A2Dfv4XBqiSBwslqUL4GD/mJGTsECdzHQWDqrBTiUkOfjWBTlZtPWtRYQIt73A1BLAQIUAxQAAAAIAAAAS13PW/r4IwAAACEAAAALAAAAAAAAAAAAAACAAQAAAABidW5kbGUuanNvblBLAQIUAxQAAAAIAAAAS13ZFCgkUwAAAGgAAAAlAAAAAAAAAAAAAACAAUwAAABjaHJvbmljbGVzL21pcmEudHJvdXBlLWNocm9uaWNsZS5qc29uUEsFBgAAAAACAAIAjAAAAOIAAAAAAA==",
+      "expect": {
+        "ok": true,
+        "codes": []
+      }
+    },
+    {
+      "type": "parse",
+      "name": "a chronicle under chronicles/ is read: one without a character fails the schema",
+      "kind": "package",
+      "base64": "UEsDBBQAAAAIAAAAS13PW/r4IwAAACEAAAALAAAAYnVuZGxlLmpzb26rViopyi8tSFWyUjLQMzRU0lHKzsxLUbJSSirNS8lJVaoFAFBLAwQUAAAACAAAAEtdgfUoay0AAAAuAAAAJQAAAGNocm9uaWNsZXMvbWlyYS50cm91cGUtY2hyb25pY2xlLmpzb26rViopyi8tSFWyUjLQMzRU0lHKzsxLUbJSSs4oys/LTM5JVdJRygQLGCrVAgBQSwECFAMUAAAACAAAAEtdz1v6+CMAAAAhAAAACwAAAAAAAAAAAAAAgAEAAAAAYnVuZGxlLmpzb25QSwECFAMUAAAACAAAAEtdgfUoay0AAAAuAAAAJQAAAAAAAAAAAAAAgAFMAAAAY2hyb25pY2xlcy9taXJhLnRyb3VwZS1jaHJvbmljbGUuanNvblBLBQYAAAAAAgACAIwAAAC8AAAAAAA=",
+      "expect": {
+        "ok": false,
+        "codes": [
+          "SCHEMA"
+        ]
+      }
+    },
+    {
+      "type": "parse",
+      "name": "an unreadable session line inside a valid package",
+      "kind": "package",
+      "base64": "UEsDBBQAAAAIAAAAS13PW/r4IwAAACEAAAALAAAAYnVuZGxlLmpzb26rViopyi8tSFWyUjLQMzRU0lHKzsxLUbJSSirNS8lJVaoFAFBLAwQUAAAACAAAAEtdHGc61ZAAAADUAAAAIwAAAHNlc3Npb25zL2ZpcnN0LnRyb3VwZS1zZXNzaW9uLmpzb25sdYy9CsIwFEZ3H+ObQ7FFULO5OUhBEUHEIba3EJrmhiRitfTdJUrBxfH7OWdA9Hx3BIl5lucQaLWtIREoBM0WAqEiq7zmVKZIlPZ2ue+K/nRbH1+HhdtVq/JxbjYYZwN02pOq8dxBwhn1JA+Bim0kGyEvAyL1ERJbnWG8TtQEFxBwyn++v6aOazJ/RGQMf11vUEsBAhQDFAAAAAgAAABLXc9b+vgjAAAAIQAAAAsAAAAAAAAAAAAAAIABAAAAAGJ1bmRsZS5qc29uUEsBAhQDFAAAAAgAAABLXRxnOtWQAAAA1AAAACMAAAAAAAAAAAAAAIABTAAAAHNlc3Npb25zL2ZpcnN0LnRyb3VwZS1zZXNzaW9uLmpzb25sUEsFBgAAAAACAAIAigAAAB0BAAAAAA==",
+      "expect": {
+        "ok": false,
+        "codes": [
+          "PARSE"
+        ]
+      }
+    },
+    {
+      "type": "parse",
+      "name": "a compression method other than store or deflate",
+      "kind": "package",
+      "base64": "UEsDBBQAAAAIAAAAIVwGoh3ZIwAAACQAAAALAAAAYnVuZGxlLmpzb26rViopyi8tSFWyUlAy0DM0VNJRUMrOzEsB8ZNK81JyUpVqAVBLAwQuAAAADAAAACFcgxbcjCUAAAABAAAACQAAAG5vdGVzLnR4dEJaaDkxQVkmU1l3S7AUAAAAAIAAQCAAIRhGgu5IpwoSDul2AoBQSwECFAMUAAAACAAAACFcBqId2SMAAAAkAAAACwAAAAAAAAAAAAAAgAEAAAAAYnVuZGxlLmpzb25QSwECLgMuAAAADAAAACFcgxbcjCUAAAABAAAACQAAAAAAAAAAAAAAgAFMAAAAbm90ZXMudHh0UEsFBgAAAAACAAIAcAAAAJgAAAAAAA==",
+      "expect": {
+        "ok": false,
+        "codes": [
+          "PARSE"
+        ]
+      }
+    },
+    {
+      "type": "parse",
+      "name": "a path segment over 255 bytes",
+      "kind": "package",
+      "base64": "UEsDBBQAAAAIAAAAIVwGoh3ZIwAAACQAAAALAAAAYnVuZGxlLmpzb26rViopyi8tSFWyUlAy0DM0VNJRUMrOzEsB8ZNK81JyUpVqAVBLAwQUAAAACAAAACFcgxbcjAMAAAABAAAABQEAAGFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWEud2VicKsAAFBLAQIUAxQAAAAIAAAAIVwGoh3ZIwAAACQAAAALAAAAAAAAAAAAAACAAQAAAABidW5kbGUuanNvblBLAQIUAxQAAAAIAAAAIVyDFtyMAwAAAAEAAAAFAQAAAAAAAAAAAACAAUwAAABhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhLndlYnBQSwUGAAAAAAIAAgBsAQAAcgEAAAAA",
+      "expect": {
+        "ok": false,
+        "codes": [
+          "PARSE"
+        ]
+      }
+    },
+    {
+      "type": "parse",
+      "name": "a session outside sessions/ isn't read",
+      "note": "The stray file isn't valid JSON, so reading it would report PARSE.",
+      "kind": "package",
+      "base64": "UEsDBBQAAAAIAAAAIVwGoh3ZIwAAACQAAAALAAAAYnVuZGxlLmpzb26rViopyi8tSFWyUlAy0DM0VNJRUMrOzEsB8ZNK81JyUpVqAVBLAwQUAAAACAAAACFcZsuMxgoAAAAIAAAAGgAAAHN0cmF5LnRyb3VwZS1zZXNzaW9uLmpzb25sy8svUcgqzs8DAFBLAwQUAAAACAAAACFcZsuMxgoAAAAIAAAAEgAAAHNlc3Npb25zL25vdGVzLnR4dMvLL1HIKs7PAwBQSwECFAMUAAAACAAAACFcBqId2SMAAAAkAAAACwAAAAAAAAAAAAAAgAEAAAAAYnVuZGxlLmpzb25QSwECFAMUAAAACAAAACFcZsuMxgoAAAAIAAAAGgAAAAAAAAAAAAAAgAFMAAAAc3RyYXkudHJvdXBlLXNlc3Npb24uanNvbmxQSwECFAMUAAAACAAAACFcZsuMxgoAAAAIAAAAEgAAAAAAAAAAAAAAgAGOAAAAc2Vzc2lvbnMvbm90ZXMudHh0UEsFBgAAAAADAAMAwQAAAMgAAAAAAA==",
+      "expect": {
+        "ok": true,
+        "codes": []
+      }
+    }
+  ]
+}

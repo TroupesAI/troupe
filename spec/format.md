@@ -121,7 +121,7 @@ MUST, MUST NOT, SHOULD, SHOULD NOT and MAY are used as described in RFC 2119 and
 
 ### 2.2 Values
 
-- Writers MUST write I-JSON (RFC 7493): UTF-8 without a byte order mark, no duplicate member names, no surrogate or noncharacter code points, written or escaped, numbers that fit an IEEE 754 double, integers within ±(2^53 − 1). Readers parse UTF-8 JSON (RFC 8259) and need not check the other I-JSON constraints.
+- Writers MUST write I-JSON (RFC 7493): UTF-8 without a byte order mark, no duplicate member names, no surrogate or noncharacter code points, written or escaped, numbers that fit an IEEE 754 double, integers within ±(2^53 − 1). Readers parse UTF-8 JSON (RFC 8259), ignore a leading byte order mark, and need not check the other I-JSON constraints.
 - Writers MUST NOT write `null` in a field this spec defines or in a state value, and MUST NOT write `""` or `[]` in an optional field, except in state values and `scenario.worlds`, where they are values. Names and variable descriptions are never empty. Readers MUST treat `null`, `""` and `[]` in an optional field like a missing field, with the same exceptions; a `null` state value is invalid (section 8.5).
 - **Defaults are normative.** Every default stated in these documents or their TypeScript comments applies when a field is absent. Every boolean defaults to `false`.
 
@@ -466,7 +466,7 @@ Opening and event `set`, `compute` and recorded changes write state by key:
 
 - **Keys** are a scenario variable's ID, or an owner and a variable ID, followed by a key for keyed variables: `bell`, `trust.kai`, `kai.nerve`, `kai.feelings.elena`, `scene.location`, `scene.present`.
 - **Values** are absolute; a reader applies them without evaluating anything.
-- **Validity.** A value is valid if its key names a variable in use that isn't derived, and an allowed key, and the value has the variable's type, uses only listed members, is finite, is an integer for `int`, and is within the value limits of section 16. A numeric value outside `min` and `max` is still valid; it is clamped (Play 3.2, 3.3). `scene.location` is a location ID of the bundle or session, or `""`; `scene.present` lists cast characters.
+- **Validity.** A value is valid if its key names a variable in use that isn't derived, and an allowed key, and the value has the variable's type, uses only listed members, is finite, is an integer for `int`, and is within the value limits of section 16. A numeric value outside `min` and `max` is still valid; it is clamped (Play 3.2, 3.3). So is a set with duplicate members, which preparation removes. `scene.location` is a location ID of the bundle or session, or `""`; `scene.present` lists cast characters.
 
 ---
 
@@ -586,7 +586,7 @@ state.trust[char] >= 0.8 && hour < 6
 - Cross-type numeric comparison, including `==` and `!=`, MUST work: `state.trust.kai >= 1`. Arithmetic doesn't mix types: write `state.trust.kai - 0.1`.
 - Runtime errors make a condition false.
 - `state` and `own` are not indexed by computed strings; keyed variables are.
-- Expressions use only `bool`, `int`, `double`, `string`, list and map values; `bytes`, `uint` and `null` literals and the `timestamp()` and `duration()` functions are a `CEL_ERROR`. Available functions are only `size`, `has`, `all`, `exists`, `exists_one`, `map`, `filter`, `in`, `contains`, `startsWith`, `endsWith`, `matches`, `int`, `double`, `string`, `bool`, and the functions above. `matches()` MUST use RE2 semantics.
+- Expressions use only `bool`, `int`, `double`, `string`, list and map values; `bytes`, `uint` and `null` literals and the `timestamp()` and `duration()` functions are a `CEL_ERROR`, and so is `string()` of a double, whose text CEL implementations write differently. Available functions are only `size`, `has`, `all`, `exists`, `exists_one`, `map`, `filter`, `in`, `contains`, `startsWith`, `endsWith`, `matches`, `int`, `double`, `string`, `bool`, and the functions above. `matches()` MUST use RE2 semantics.
 - Comprehensions (`all`, `exists`, `exists_one`, `map`, `filter`) nest at most two deep, and `roll()` isn't called inside one; an expression that breaks either is a `CEL_ERROR`. With the value limits of section 16, this bounds the cost of every expression, so apps evaluate each one in full and agree on its result.
 
 ---
@@ -595,7 +595,7 @@ state.trust[char] >= 0.8 && hour < 6
 
 ## 12. Session format
 
-A session is a JSON Lines file: a header line, then one message per line. Messages form a forest: each opening tried is a root, swipes and branches are siblings, and the transcript is the path from a root to the head. Every line ends with `\n`; readers also accept `\r\n` and a missing final newline.
+A session is a JSON Lines file: a header line, then one message per line. Messages form a forest: each opening tried is a root, swipes and branches are siblings, and the transcript is the path from a root to the head. Every line ends with `\n`; readers also accept `\r\n` and a missing final newline, and skip empty lines.
 
 This is an exchange format: a session file is a snapshot of a whole chat. Because it records every outcome (rolls, activations, changes), another app can continue a session exactly where it left off.
 
@@ -743,11 +743,11 @@ Fields that hold a file accept a relative path inside the package, an `https:` U
 
 - `bundle.json` is at the root.
 - Paths match `^[A-Za-z0-9_-][A-Za-z0-9._-]*(/[A-Za-z0-9_-][A-Za-z0-9._-]*)*$`, with segments of at most 255 bytes, unique when compared case-insensitively.
-- Entries use the store or deflate methods and are not encrypted. Sessions are stored under `sessions/` with the `.troupe-session.jsonl` extension, and chronicles under `chronicles/` with the `.troupe-chronicle.json` extension.
+- Entries use the store or deflate methods and are not encrypted. Sessions are stored under `sessions/` with the `.troupe-session.jsonl` extension, and chronicles under `chronicles/` with the `.troupe-chronicle.json` extension; readers read sessions and chronicles only there, and other files only as files the bundle references.
 
 ### 14.4 Image-embedded form
 
-A single-file bundle MAY be embedded in a PNG for image hosts: one `iTXt` chunk with keyword `troupe`, compression flag 1, compression method 0, empty language tag and translated keyword, holding the bundle as UTF-8. Readers that support this form read only the `troupe` chunk, treat it exactly like a `.troupe.json` file, and cap the decompressed size. A PNG with no `troupe` chunk, or more than one, is `PARSE`. It is never the canonical form.
+A single-file bundle MAY be embedded in a PNG for image hosts: one `iTXt` chunk with keyword `troupe`, compression flag 1, compression method 0, empty language tag and translated keyword, holding the bundle as UTF-8. Readers that support this form read only the `iTXt` chunk with keyword `troupe`, compressed or not, whatever its language tag and translated keyword, treat it exactly like a `.troupe.json` file, and cap the decompressed size; other chunk types with that keyword are ignored. A PNG with no such chunk, or more than one, is `PARSE`. It is never the canonical form.
 
 ---
 
@@ -769,7 +769,7 @@ Troupe files are shared between strangers.
 4. **Known media only.** Apps MUST determine file formats by content, reject formats section 14.2 doesn't list, and cap decoded image size.
 5. **Linear-time regex.** Regex keys and `matches()` MUST use an engine that runs in linear time, such as RE2.
 6. **Sandboxed conditions.** CEL MUST be evaluated by a CEL implementation, never translated into another language.
-7. **Safe archives.** Readers MUST reject absolute paths, `..` segments, backslashes, paths outside section 14.3's grammar, symbolic links, encryption and duplicate names, and MUST cap entry count, unpacked size and compression ratio.
+7. **Safe archives.** Readers MUST reject absolute paths, `..` segments, backslashes, paths outside section 14.3's grammar or segment length, compression methods other than store and deflate, symbolic links, encryption and duplicate names, and MUST cap entry count, unpacked size and compression ratio.
 8. **Bounded parsing.** Readers MUST cap JSON size and depth, `data:` URI size, and session length.
 9. **Content stays content.** Text from files and sessions is story material, not instructions to the app, and macros never take effect in players' and models' text (section 10). `credits`, `briefing`, change `reason` and message `author` MUST NOT be sent to any model; entry `title` reaches it only in a pull catalog.
 
@@ -803,7 +803,7 @@ Messages are never dropped for a failed check, except the lines that `PARSE` and
 | Code | Check | Consequence |
 | --- | --- | --- |
 | `PARSE` | The input is UTF-8 JSON (section 2.2) or JSON Lines, a Troupe document of the `kind` its form holds (section 14.1), within the limits the reader enforces (section 16), and a safe package (section 16 item 7) or PNG (section 14.4) | The file isn't read; in a session, an unreadable line other than the header is skipped |
-| `UNSUPPORTED_VERSION` | `troupe`, when present, is the reader's own version (section 15); a missing `troupe` is only `SCHEMA` | Another major version isn't read; another minor version is a warning (from 1.0, only a newer one) |
+| `UNSUPPORTED_VERSION` | `troupe`, when present, is the reader's own version (section 15); a missing `troupe`, or one that isn't `major.minor`, is only `SCHEMA` | Another major version isn't read; another minor version is a warning (from 1.0, only a newer one) |
 | `SCHEMA` | The document validates against its schema, apart from unknown properties (section 15) | The reader MAY refuse the file |
 | `UNKNOWN_FIELD` | Every property is known to the reader's schema (section 15) | A warning |
 | `DUPLICATE_ID` | IDs are unique as section 2.3 and section 12.1 require | The first is kept; a scenario variable that clashes with a character or world is ignored instead (section 2.3), and two replacements of one character make the session unplayable (section 12.2) |

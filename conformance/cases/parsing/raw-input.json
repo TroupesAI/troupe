@@ -1,0 +1,92 @@
+{
+  "description": "Raw input (Format 2.2, 12, 15, 17.2): readers ignore a leading byte order mark in a bundle, session or chronicle; session readers skip empty lines without a diagnostic; a troupe value outside major.minor fails the schema; a session of another major version isn't read; a troupe that isn't major.minor is only SCHEMA (Format 17.2)",
+  "tests": [
+    {
+      "type": "parse",
+      "name": "a bundle with a byte order mark",
+      "kind": "bundle",
+      "text": "﻿{\"troupe\":\"0.11\",\"kind\":\"bundle\"}",
+      "expect": {
+        "ok": true,
+        "codes": [],
+        "equals": {
+          "troupe": "0.11",
+          "kind": "bundle"
+        }
+      }
+    },
+    {
+      "type": "parse",
+      "name": "a session with a byte order mark",
+      "kind": "session",
+      "text": "﻿{\"troupe\":\"0.11\",\"kind\":\"session\",\"scenario\":\"s\",\"seed\":\"k7Qm2xVb9TzR4pLc8NwYfA\"}\n{\"id\":\"1\",\"from\":\"player\",\"content\":[{\"text\":\"Hi.\"}]}\n",
+      "expect": {
+        "ok": true,
+        "codes": [],
+        "ids": [
+          "1"
+        ]
+      }
+    },
+    {
+      "type": "parse",
+      "name": "a chronicle with a byte order mark",
+      "kind": "chronicle",
+      "text": "﻿{\"troupe\":\"0.11\",\"kind\":\"chronicle\",\"id\":\"c1\",\"character\":{\"id\":\"mira\",\"name\":\"Mira\",\"description\":\"d\"}}\n",
+      "expect": {
+        "ok": true,
+        "codes": []
+      }
+    },
+    {
+      "type": "parse",
+      "name": "empty lines are skipped",
+      "kind": "session",
+      "text": "{\"troupe\":\"0.11\",\"kind\":\"session\",\"scenario\":\"s\",\"seed\":\"k7Qm2xVb9TzR4pLc8NwYfA\"}\n\n{\"id\":\"1\",\"from\":\"player\",\"content\":[{\"text\":\"Hi.\"}]}\n\n{\"id\":\"2\",\"parent\":\"1\",\"from\":\"model\",\"content\":[{\"text\":\"Hello.\"}]}\n\n",
+      "expect": {
+        "ok": true,
+        "codes": [],
+        "ids": [
+          "1",
+          "2"
+        ]
+      }
+    },
+    {
+      "type": "parse",
+      "name": "troupe with three parts",
+      "kind": "bundle",
+      "text": "{\"troupe\":\"0.11.0\",\"kind\":\"bundle\"}",
+      "expect": {
+        "ok": false,
+        "codes": [
+          "SCHEMA"
+        ]
+      }
+    },
+    {
+      "type": "parse",
+      "name": "troupe as a number",
+      "kind": "bundle",
+      "text": "{\"troupe\":0.11,\"kind\":\"bundle\"}",
+      "expect": {
+        "ok": false,
+        "codes": [
+          "SCHEMA"
+        ]
+      }
+    },
+    {
+      "type": "parse",
+      "name": "a session of another major version",
+      "kind": "session",
+      "text": "{\"troupe\":\"1.0\",\"kind\":\"session\",\"scenario\":\"s\",\"seed\":\"k7Qm2xVb9TzR4pLc8NwYfA\"}\n{\"id\":\"1\",\"from\":\"player\",\"content\":[{\"text\":\"Hi.\"}]}\n",
+      "expect": {
+        "ok": false,
+        "codes": [
+          "UNSUPPORTED_VERSION"
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,126 @@
+{
+  "description": "Fields that never reach a model (Format 16 item 9): a scenario's briefing, a change's reason and a message's author appear in no prompt item",
+  "bundle": {
+    "kind": "bundle",
+    "characters": [
+      {
+        "id": "a",
+        "name": "Ann",
+        "description": "Ann."
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s",
+        "premise": "A quiet night.",
+        "briefing": "BRIEFING: Ann is the thief.",
+        "cast": [
+          {},
+          {
+            "character": "a"
+          }
+        ],
+        "variables": [
+          {
+            "id": "gold",
+            "type": "int",
+            "by": [
+              "player"
+            ],
+            "description": "d"
+          }
+        ]
+      }
+    ]
+  },
+  "session": {
+    "header": {
+      "kind": "session",
+      "scenario": "s",
+      "seed": "conformanceSeed0001",
+      "characters": [
+        {
+          "id": "p",
+          "name": "Pat",
+          "description": "Pat."
+        }
+      ],
+      "players": [
+        "p"
+      ],
+      "head": "2"
+    },
+    "messages": [
+      {
+        "id": "1",
+        "from": "player",
+        "author": "handle-77",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "Hi."
+          }
+        ],
+        "changes": [
+          {
+            "by": "player",
+            "set": {
+              "gold": 1
+            },
+            "reason": "REASON: Pat found a coin."
+          }
+        ]
+      },
+      {
+        "id": "2",
+        "parent": "1",
+        "from": "model",
+        "char": "a",
+        "author": "handle-78",
+        "content": [
+          {
+            "speaker": "a",
+            "text": "Hello."
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "prompt",
+      "name": "every slot, in full",
+      "for": "a",
+      "parent": "2",
+      "messageId": "3",
+      "expect": {
+        "system": [
+          "app"
+        ],
+        "setting": [
+          "premise"
+        ],
+        "people": [
+          "character:a",
+          "player:p"
+        ],
+        "context": [],
+        "history": [
+          "message:1",
+          "message:2"
+        ],
+        "texts": {
+          "premise": "A quiet night."
+        },
+        "lines": {
+          "1": [
+            "Pat: Hi."
+          ],
+          "2": [
+            "Ann: Hello."
+          ]
+        }
+      }
+    }
+  ]
+}

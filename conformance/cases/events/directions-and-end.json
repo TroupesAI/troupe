@@ -39,14 +39,15 @@
           },
           {
             "id": "d2",
-            "when": "turn == 4",
+            "when": "turn == 2",
             "direct": "After a model message.",
             "outcomes": [
               {
                 "direct": "Outcome direction.",
                 "end": true
               }
-            ]
+            ],
+            "on": "model"
           }
         ]
       }

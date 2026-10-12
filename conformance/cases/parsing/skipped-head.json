@@ -1,0 +1,29 @@
+{
+  "description": "A head naming a skipped line (Format 12.1, 17.2): the unreadable line is PARSE and skipped, so the header's head names no message (UNKNOWN_MESSAGE) and the head is the last message read",
+  "bundle": {
+    "kind": "bundle",
+    "scenarios": [
+      {
+        "id": "s"
+      }
+    ]
+  },
+  "sessionFile": "skipped-head.troupe-session.jsonl",
+  "tests": [
+    {
+      "type": "read",
+      "expect": {
+        "ids": [
+          "1",
+          "2",
+          "4"
+        ],
+        "head": "4",
+        "codes": [
+          "PARSE",
+          "UNKNOWN_MESSAGE"
+        ]
+      }
+    }
+  ]
+}

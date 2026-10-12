@@ -1,0 +1,174 @@
+{
+  "description": "Player edits (Play 3.3): when the head is a player message, the edit is appended to its changes and events are evaluated at that message, where one the edit makes true fires; firings already recorded there still count, so an event doesn't fire twice in a round",
+  "bundle": {
+    "kind": "bundle",
+    "characters": [
+      {
+        "id": "a",
+        "name": "Ann",
+        "description": "Ann."
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s",
+        "cast": [
+          {},
+          {
+            "character": "a"
+          }
+        ],
+        "variables": [
+          {
+            "id": "gold",
+            "type": "int",
+            "by": [
+              "player"
+            ],
+            "description": "d"
+          },
+          {
+            "id": "edits",
+            "type": "int",
+            "description": "d"
+          }
+        ],
+        "events": [
+          {
+            "id": "on_gold",
+            "when": "ago('gold') == 0",
+            "compute": {
+              "edits": "state.edits + 1"
+            }
+          },
+          {
+            "id": "greet",
+            "on": "player",
+            "when": "true",
+            "set": {}
+          }
+        ]
+      }
+    ]
+  },
+  "session": {
+    "header": {
+      "kind": "session",
+      "scenario": "s",
+      "seed": "conformanceSeed0001",
+      "characters": [
+        {
+          "id": "p",
+          "name": "Pat",
+          "description": "Pat."
+        }
+      ],
+      "players": [
+        "p"
+      ],
+      "head": "3"
+    },
+    "messages": [
+      {
+        "id": "1",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "Hi."
+          }
+        ]
+      },
+      {
+        "id": "2",
+        "parent": "1",
+        "from": "model",
+        "char": "a",
+        "content": [
+          {
+            "speaker": "a",
+            "text": "Hello."
+          }
+        ]
+      },
+      {
+        "id": "3",
+        "parent": "2",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "Again."
+          }
+        ],
+        "changes": [
+          {
+            "by": "rules",
+            "event": "greet",
+            "set": {}
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "edit",
+      "name": "the head is a player message: the edit is appended there, and on_gold fires; greet, which already fired there, doesn't fire again",
+      "set": {
+        "gold": 5
+      },
+      "expect": {
+        "message": {
+          "id": "3",
+          "parent": "2",
+          "from": "player",
+          "content": [
+            {
+              "speaker": "p",
+              "text": "Again."
+            }
+          ],
+          "changes": [
+            {
+              "by": "rules",
+              "event": "greet",
+              "set": {}
+            },
+            {
+              "by": "player",
+              "set": {
+                "gold": 5
+              }
+            },
+            {
+              "by": "rules",
+              "event": "on_gold",
+              "set": {
+                "edits": 1
+              }
+            }
+          ]
+        },
+        "events": [
+          {
+            "by": "rules",
+            "event": "on_gold",
+            "set": {
+              "edits": 1
+            }
+          }
+        ],
+        "head": "3"
+      }
+    },
+    {
+      "type": "state",
+      "at": "3",
+      "expect": {
+        "gold": 0,
+        "edits": 0
+      }
+    }
+  ]
+}

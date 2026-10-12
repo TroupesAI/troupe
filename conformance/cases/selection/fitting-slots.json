@@ -1,0 +1,212 @@
+{
+  "description": "Fitting across slots (Play 5.5 step 3): system, context and depth entries compete together, lowest priority dropped first and later file order first among ties; priority 100 stays; pulled entries are added after fitting (Play 5.6)",
+  "bundle": {
+    "kind": "bundle",
+    "characters": [
+      {
+        "id": "a",
+        "name": "Ann",
+        "description": "Ann."
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s",
+        "cast": [
+          {},
+          {
+            "character": "a"
+          }
+        ],
+        "entries": [
+          {
+            "id": "sys1",
+            "position": "system",
+            "priority": 20,
+            "text": "sys1"
+          },
+          {
+            "id": "ctx1",
+            "priority": 60,
+            "text": "ctx1"
+          },
+          {
+            "id": "dep1",
+            "position": 2,
+            "priority": 20,
+            "text": "dep1"
+          },
+          {
+            "id": "ctx2",
+            "priority": 10,
+            "text": "ctx2"
+          },
+          {
+            "id": "sys2",
+            "position": "system",
+            "priority": 100,
+            "text": "sys2"
+          },
+          {
+            "id": "pl",
+            "title": "Lore",
+            "pull": true,
+            "priority": 0,
+            "text": "pl"
+          }
+        ]
+      }
+    ]
+  },
+  "session": {
+    "header": {
+      "kind": "session",
+      "scenario": "s",
+      "seed": "conformanceSeed0001",
+      "characters": [
+        {
+          "id": "p",
+          "name": "Pat",
+          "description": "Pat."
+        }
+      ],
+      "players": [
+        "p"
+      ],
+      "head": "3"
+    },
+    "messages": [
+      {
+        "id": "1",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "One."
+          }
+        ]
+      },
+      {
+        "id": "2",
+        "parent": "1",
+        "from": "model",
+        "char": "a",
+        "content": [
+          {
+            "speaker": "a",
+            "text": "Two."
+          }
+        ]
+      },
+      {
+        "id": "3",
+        "parent": "2",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "Three."
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "select",
+      "name": "three of five dropped across slots",
+      "for": "a",
+      "parent": "3",
+      "messageId": "4",
+      "maxEntries": 2,
+      "expect": {
+        "dropped": [
+          "s/ctx2",
+          "s/dep1",
+          "s/sys1"
+        ],
+        "failed": false,
+        "system": [
+          "s/sys2"
+        ],
+        "depth": [],
+        "activated": [
+          "s/ctx1",
+          "s/sys2"
+        ]
+      }
+    },
+    {
+      "type": "select",
+      "name": "room for three: the depth entry, later in file order, is dropped before the system entry of equal priority",
+      "for": "a",
+      "parent": "3",
+      "messageId": "4",
+      "maxEntries": 3,
+      "expect": {
+        "dropped": [
+          "s/ctx2",
+          "s/dep1"
+        ],
+        "failed": false,
+        "system": [
+          "s/sys1",
+          "s/sys2"
+        ],
+        "context": [
+          "s/ctx1"
+        ],
+        "depth": [],
+        "activated": [
+          "s/sys1",
+          "s/ctx1",
+          "s/sys2"
+        ]
+      }
+    },
+    {
+      "type": "select",
+      "name": "room for one: only priority 100 is left, which fits",
+      "for": "a",
+      "parent": "3",
+      "messageId": "4",
+      "maxEntries": 1,
+      "expect": {
+        "dropped": [
+          "s/ctx2",
+          "s/dep1",
+          "s/sys1",
+          "s/ctx1"
+        ],
+        "failed": false,
+        "activated": [
+          "s/sys2"
+        ]
+      }
+    },
+    {
+      "type": "select",
+      "name": "a pulled entry isn't fitted, even at priority 0",
+      "for": "a",
+      "parent": "3",
+      "messageId": "4",
+      "maxEntries": 2,
+      "pulled": [
+        "s/pl"
+      ],
+      "expect": {
+        "dropped": [
+          "s/ctx2",
+          "s/dep1",
+          "s/sys1"
+        ],
+        "failed": false,
+        "activated": [
+          "s/ctx1",
+          "s/sys2",
+          "s/pl"
+        ]
+      }
+    }
+  ]
+}
