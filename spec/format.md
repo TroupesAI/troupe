@@ -433,7 +433,7 @@ In an owner's own events, a key written `own.nerve` means `kai.nerve`; recorded 
 | `"*"` | any author ID; keys appear when a change sets them, such as `"inventory.torch": 2` |
 
 - Read a key as `state.trust.kai` or `own.feelings.elena`; change it as `trust.kai` or `own.feelings.elena`. In CEL, look up a computed key with brackets: `state.trust[char]`, `own.feelings[user]`. Change keys always name keys literally, so `trust.char` names a key `char`.
-- `initial` is one value for every key, or an object of values by key with `*` as an optional default; keys outside the key set are ignored, and a key without a value or `*` takes the type's default. Every key of the key set, a joiner's included, holds its initial value until a change sets it.
+- `initial` is one value for every key, or an object, with at least one member, of values by key with `*` as an optional default; keys outside the key set are ignored, and a key without a value or `*` takes the type's default. Every key of the key set, a joiner's included, holds its initial value until a change sets it.
 - Keys of `"*"` maps start absent, and `"*"` takes no `initial`. For bounds, `maxStep` and `oneWay`, an absent key counts as the type's default (section 8.1), and setting a key to the default removes it; in CEL an absent key is absent, so test it with `has()` or `in`. Their keys are in code point order.
 
 ### 8.4 The scene
@@ -457,9 +457,9 @@ The state at a message is computed by applying, in order:
 
 Recorded and derived values are normalized by every rule below, key by key in code point order of the full keys, and initial values by rules *a* and *c*:
 
-- *a.* A set loses duplicates, and its listed members are ordered as declared; `scene.present` loses duplicates and IDs that name no cast character, and is ordered by cast order.
+- *a.* A set loses duplicates, keeping each member's first occurrence; a set with `values` is then ordered as declared, and one without keeps that order; `scene.present` loses duplicates and IDs that name no cast character, and is ordered by cast order.
 - *b.* A `number` is rounded to the nearest double to the decimal that ECMAScript `Number.prototype.toFixed(6)` produces.
-- *c.* A number is raised to `min`, then lowered to `max`; a bound named by a variable that the same change sets is that variable's normalized new value, even when its key comes later. A value already stored isn't clamped again when its bound changes later.
+- *c.* A number is raised to `min`, then lowered to `max`; a bound named by a variable that the same change sets is that variable's normalized new value, even when its key comes later, and for initial values it is that variable's normalized initial value. A value already stored isn't clamped again when its bound changes later.
 
 Derived variables are computed from that state when read (section 8.1). Recorded changes are never re-derived: the state of a session doesn't depend on the events, chances or models that produced its changes.
 
@@ -679,7 +679,7 @@ A message may add entries, owned by `session`. They apply from that message onwa
 
 - **`activated`** lists, on a model message, the entries that reached the model for it, those retrieved by `pull` included. An entry kept active by `sticky` isn't listed again.
 - **`pinned`** marks a message that matters for as long as it is on the path, however far back it lies.
-- **`hidden`** messages stay on the path, and their changes, firings, activations and rounds count, but nobody knows their parts and keys don't match them.
+- **`hidden`** messages stay on the path, and their changes, firings, activations and rounds count, but no character, the narrator or the single voice knows their parts, and keys don't match them.
 - **`summary`** condenses the messages from `from` to its message, as the file holds them. Without `knownBy`, it is known by the characters who know every part it covers, hidden messages' parts aside, and by the narrator only if the narrator knows every such part (section 12.5).
 - **Records-only messages.** A system message with empty `content` carries `changes`, such as a player's edits to state, and, on a root made from an opening without `content`, `opening`; it has no `summary`, `activated` or `char`, has `entries` only on a root, and isn't pinned.
 
@@ -735,7 +735,7 @@ Fields that hold a file (`cover`, `avatar`, location `image` and image parts) ho
 ### 14.3 Packages
 
 - `bundle.json` is at the root. Sessions are stored under `sessions/` with the `.troupe-session.jsonl` extension, and chronicles under `chronicles/` with the `.troupe-chronicle.json` extension. The package's other files are the files that the bundle, sessions or chronicles reference.
-- These entries have paths matching `^[A-Za-z0-9_-][A-Za-z0-9._-]*(/[A-Za-z0-9_-][A-Za-z0-9._-]*)*$`, with segments of at most 255 bytes. Every other entry, such as a directory (a name ending in `/`) or a file an archiver adds, isn't part of the package.
+- Every file under `sessions/` or `chronicles/` with its extension is a session or chronicle of the package. The package's files have paths matching `^[A-Za-z0-9_-][A-Za-z0-9._-]*(/[A-Za-z0-9_-][A-Za-z0-9._-]*)*$`, with segments of at most 255 bytes. Every other entry, such as a directory (a name ending in `/`) or a file an archiver adds, isn't part of the package.
 - No ZIP entry has an absolute path, a `..` segment or a backslash, is a symbolic link, is encrypted, uses a compression method other than store and deflate, or has the name of another entry compared case-insensitively.
 
 ---

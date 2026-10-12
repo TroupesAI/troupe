@@ -127,7 +127,7 @@ A diagnostic about one value points at that value: a list item at its index (`/s
 | `part` | The index of one of its parts. |
 | `summary` | Instead of `part`: `true`, for the message's `summary`. |
 
-`expect` is who knows it: the IDs of the characters who know it, and `narrator` when the narrator knows it, in code point order. The single voice knows everything and isn't listed.
+`expect` is who knows it: the IDs of the characters who know it, and `narrator` when the narrator knows it, in code point order. The single voice knows everything but hidden messages' parts, and isn't listed.
 
 ### 3.7 `parse`: raw input (Format 2.2, 12, 13, 14, 15, 16)
 
