@@ -2,6 +2,7 @@
 // and citations such as "Format 7.2" become links.
 import type { SatteriProcessorOptions } from "@astrojs/markdown-satteri";
 import type { Element, ElementContent, Text } from "hast";
+import { renderMermaidSVG } from "beautiful-mermaid";
 import { relative } from "node:path";
 import { fileURLToPath } from "node:url";
 import { formatCitation, sectionCitation, sectionNumber } from "../../scripts/sections.ts";
@@ -87,3 +88,18 @@ export const troupeMarkdown: Plugin = ({ fileURL }) => {
   };
 };
 
+// A Mermaid diagram as inline SVG, drawn at build time in the site's colors, so it follows the theme without a script.
+// The renderer's font rules go, since the page sets the font, and its markers' ids take a key unique within the page.
+export const diagram = (code: string, key: number) => {
+  const svg = renderMermaidSVG(code, {
+    bg: "var(--sl-color-bg)",
+    fg: "var(--sl-color-white)",
+    accent: "var(--sl-color-accent)",
+    transparent: true,
+    padding: 8,
+  })
+    .replace(/^\s*(@import|text \{).*$/gm, "")
+    .replaceAll("arrowhead", `arrowhead-${key}`)
+    .replace(/\s*\n\s*/g, " ");
+  return `<figure class="diagram">${svg}</figure>`;
+};

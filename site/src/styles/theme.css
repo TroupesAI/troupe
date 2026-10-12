@@ -136,6 +136,19 @@ h1#_top,
   white-space: nowrap;
 }
 
+.diagram {
+  overflow-x: auto;
+}
+
+.diagram svg {
+  margin-inline: auto;
+  max-width: none;
+}
+
+.diagram text {
+  font-family: var(--font-sans);
+}
+
 .pagination-links a {
   box-shadow: none;
 }

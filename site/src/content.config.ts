@@ -3,21 +3,24 @@ import type { LoaderContext } from "astro/loaders";
 import { docsSchema } from "@astrojs/starlight/schema";
 import { join, relative } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
+import { diagram } from "./markdown.ts";
 import { read, readme, root, sources } from "./sources.ts";
 
 // Markdown text as plain text: links become their text, and emphasis and code marks go.
 const plain = (markdown: string) => markdown.replace(/\[([^\]]*)\]\([^)]*\)/g, "$1").replace(/[*`]/g, "");
 
-// Reads the documents in place. Each one's first line, "# Title", becomes the page title, and the spec's contents list
-// gives way to the table of contents. The store changes only once every document has rendered, so a document with an
-// error leaves the last good pages in place.
+// Reads the documents in place. Each one's first line, "# Title", becomes the page title, the spec's contents list
+// gives way to the table of contents, and Mermaid blocks become diagrams. The store changes only once every document
+// has rendered, so a document with an error leaves the last good pages in place.
 const load = async ({ config, store, parseData, renderMarkdown, generateDigest }: LoaderContext) => {
   const entries = [];
   for (const { file, route } of sources) {
     const text = read(file);
     const [, title, rest] = text.match(/^# (.+)\n([\s\S]*)$/) ?? [];
     if (!title) throw new Error(`${file} doesn't start with a title`);
-    let body = rest.replace(/^## Contents\n[\s\S]*?\n---\n/m, "");
+    let body = rest
+      .replace(/^## Contents\n[\s\S]*?\n---\n/m, "")
+      .replace(/^```mermaid\n([\s\S]*?)^```$/gm, (_, code, at) => diagram(code, at));
     let data: Record<string, unknown> = { title, description: plain(body.match(/^\w.*$/m)![0]) };
     if (route === "index") {
       const { tagline, main } = readme(text);
