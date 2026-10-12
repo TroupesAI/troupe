@@ -31,7 +31,7 @@ const load = async ({ config, store, parseData, renderMarkdown, generateDigest }
         template: "splash",
         hero: {
           tagline,
-          image: { file: "site/src/assets/logo.webp" },
+          image: { file: "site/src/assets/logo-transparent.webp" },
           actions: [
             { text: "Start the beginner's guide", link: "/guides/beginners/", icon: "right-arrow" },
             { text: "Read the spec", link: "/format/", variant: "minimal" },

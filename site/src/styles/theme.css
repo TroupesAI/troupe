@@ -159,9 +159,9 @@ h1#_top,
 
 /* Home */
 
+/* The hero's logo is the cut-out one, so the glow follows its outline. */
 .hero img {
-  border-radius: 50%;
-  box-shadow: 0 0 6rem -1rem color-mix(in oklch, var(--sl-color-accent) 45%, transparent);
+  filter: drop-shadow(0 0 3rem color-mix(in oklch, var(--sl-color-accent) 35%, transparent));
 }
 
 /* The home page's text keeps a reading width under the full-width hero. */
