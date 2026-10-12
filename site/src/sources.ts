@@ -9,6 +9,7 @@ export const root = resolvePath("..");
 export const read = (file: string) => readFileSync(join(root, file), "utf8");
 
 export const sources = [
+  { file: "README.md", route: "index", label: "Home" },
   { file: "spec/format.md", route: "format", label: "Troupe Format" },
   { file: "guides/beginners.md", route: "guides/beginners", label: "Beginner's guide" },
   { file: "guides/authoring.md", route: "guides/authoring", label: "Authoring guide" },
@@ -16,6 +17,8 @@ export const sources = [
   { file: "guides/character-cards.md", route: "guides/character-cards", label: "Character Card V2/V3" },
   { file: "conformance/README.md", route: "conformance", label: "Conformance" },
 ];
+
+export const url = (route: string) => (route === "index" ? "/" : `/${route}/`);
 
 // "**Version 0.12 (draft)** · October 12, 2026", the spec's version line.
 const [versionLine, version, status, date] = read("spec/format.md").match(/^\*\*Version (\S+) \((\w+)\)\*\* · (.+)\n/m) ?? [];
@@ -36,8 +39,8 @@ export const resolve = (href: string, from: string): string => {
   const [path, hash] = href.split("#");
   const file = path ? normalize(join(dirname(from), path)) : from;
   const source = sources.find((s) => s.file === file);
-  if (source) return `${path ? `/${source.route}/` : ""}${hash ? `#${anchor(file, hash)}` : ""}`;
-  if (file === "README.md") return `/${hash ? `#${hash}` : ""}`;
+  if (source) return `${path ? url(source.route) : ""}${hash ? `#${anchor(file, hash)}` : ""}`;
+  if (file === "schemas") return "/schema/";
   if (/^schemas\/[^/]+\.json$/.test(file)) return `/schema/${spec.version}/${file.slice("schemas/".length)}`;
   if (existsSync(join(root, file))) {
     return `${repo}/${statSync(join(root, file)).isDirectory() ? "tree" : "blob"}/main/${file}${hash ? `#${hash}` : ""}`;

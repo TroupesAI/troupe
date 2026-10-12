@@ -13,12 +13,31 @@ const load = async ({ config, store, parseData, renderMarkdown, generateDigest, 
     const text = read(file);
     const [, title, rest] = text.match(/^# (.+)\n([\s\S]*)$/) ?? [];
     if (!title) throw new Error(`${file} doesn't start with a title`);
-    const body = rest.replace(spec.versionLine, "").replace(/^## Contents\n[\s\S]*?\n---\n/m, "");
+    let body = rest.replace(spec.versionLine, "").replace(/^## Contents\n[\s\S]*?\n---\n/m, "");
+    let data: Record<string, unknown> = { title };
+    if (route === "index") {
+      // The README is the home page: its first paragraph is the tagline, and it ends with sections for the repository.
+      const [, tagline, main] = body.match(/^\n*(.+)\n([\s\S]*?)\n## Contributing\n/) ?? [];
+      if (!main) throw new Error("README.md has no first paragraph and Contributing section");
+      body = main;
+      data = {
+        title,
+        template: "splash",
+        hero: {
+          tagline,
+          image: { file: "site/src/assets/logo.webp" },
+          actions: [
+            { text: "Start the beginner's guide", link: "/guides/beginners/", icon: "right-arrow" },
+            { text: "Read the spec", link: "/format/", variant: "minimal" },
+          ],
+        },
+      };
+    }
     store.set({
       id: route,
       filePath: relative(fileURLToPath(config.root), join(root, file)),
       digest: generateDigest(text),
-      data: await parseData({ id: route, data: { title } }),
+      data: await parseData({ id: route, data, filePath: file }),
       rendered: await renderMarkdown(body, { fileURL: pathToFileURL(join(root, file)) }),
     });
   }

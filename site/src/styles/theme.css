@@ -38,7 +38,8 @@
   color: var(--sl-color-white);
 }
 
-.site-title img {
+.site-title img,
+.hero img {
   border-radius: 50%;
 }
 
@@ -47,4 +48,9 @@ h1#_top,
 .sl-markdown-content :is(h1, h2, h3, h4) {
   font-family: var(--font-serif);
   font-weight: 600;
+}
+
+/* The home page's text keeps a reading width under the full-width hero. */
+[data-has-hero] .sl-markdown-content {
+  max-width: 50rem;
 }

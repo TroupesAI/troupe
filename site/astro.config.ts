@@ -45,7 +45,12 @@ export default defineConfig({
       favicon: "/favicon.png",
       head: [{ tag: "link", attrs: { rel: "apple-touch-icon", href: "/apple-touch-icon.png" } }],
       customCss: ["./src/styles/theme.css"],
-      components: { Head: "./src/components/Head.astro" },
+      components: {
+        Head: "./src/components/Head.astro",
+        SiteTitle: "./src/components/SiteTitle.astro",
+        PageTitle: "./src/components/PageTitle.astro",
+        Footer: "./src/components/Footer.astro",
+      },
       expressiveCode: { themes: ["rose-pine-moon", "rose-pine-dawn"] },
       social: [{ icon: "github", label: "GitHub", href: repo }],
       editLink: { baseUrl: `${repo}/edit/main/site/` },

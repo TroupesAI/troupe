@@ -1,0 +1,21 @@
+---
+import Default from "@astrojs/starlight/components/SiteTitle.astro";
+import { spec } from "../sources.ts";
+---
+
+<Default />
+<a class="version" href="/format/">{spec.version} {spec.status}</a>
+
+<style>
+  .version {
+    align-self: center;
+    margin-inline-start: 0.75rem;
+    padding: 0.125rem 0.5rem;
+    border-radius: 1rem;
+    background: var(--moon);
+    color: var(--moon-ink);
+    font-size: var(--sl-text-xs);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+</style>

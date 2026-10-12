@@ -1,0 +1,19 @@
+---
+import Default from "@astrojs/starlight/components/PageTitle.astro";
+import { spec } from "../sources.ts";
+---
+
+<Default />
+{
+  Astro.locals.starlightRoute.entry.id === "format" && (
+    <p>
+      Version {spec.version} ({spec.status}) · {spec.date}
+    </p>
+  )
+}
+
+<style>
+  p {
+    color: var(--sl-color-gray-3);
+  }
+</style>

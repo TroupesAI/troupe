@@ -52,4 +52,4 @@ See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## License
 
-The specification and guides (`spec/`, `guides/`) are licensed under [CC BY 4.0](spec/LICENSE). Everything else, including the schemas, the conformance suite, the examples and the scripts, is licensed under [Apache-2.0](LICENSE).
+The specification and guides (`spec/`, `guides/`) are licensed under [CC BY 4.0](spec/LICENSE). Everything else, including the schemas, the conformance suite, the examples and the scripts, is licensed under [Apache-2.0](LICENSE). The TroupesAI logo in `site/` is covered by neither.
