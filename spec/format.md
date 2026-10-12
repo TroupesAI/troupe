@@ -122,7 +122,8 @@ MUST, MUST NOT, SHOULD, SHOULD NOT and MAY are used as described in RFC 2119 and
 ### 2.2 Values
 
 - Writers MUST write I-JSON (RFC 7493): UTF-8 without a byte order mark, no duplicate member names, no surrogate or noncharacter code points, written or escaped, numbers that fit an IEEE 754 double, integers within ±(2^53 − 1). Readers parse UTF-8 JSON (RFC 8259), ignore a leading byte order mark, and need not check the other I-JSON constraints.
-- Writers MUST NOT write `null` in a field this spec defines or in a state value, and MUST NOT write `""`, `[]` or `{}` in an optional field other than `ext`, except in state values and `scenario.worlds`, where they are values. Names and variable descriptions are never empty. Readers MUST treat `null`, `""`, `[]` and `{}` in an optional field like a missing field, with the same exceptions, except that `knownBy: []` reads as `["narrator"]`, so an emptied list never reveals a secret; a `null` state value is invalid (section 8.5).
+- **Empty values.** Writers MUST NOT write `null`, and MUST NOT write `""`, `[]` or `{}` in an optional field other than `ext`. State values and `scenario.worlds` are the exception: there `""`, `[]` and `{}` are values. Names and variable descriptions are never empty.
+- Readers MUST treat `null`, `""`, `[]` and `{}` in an optional field like a missing field, with the same exception, and read `knownBy: []` as `["narrator"]`, so an emptied list never reveals a secret. A `null` state value is invalid (section 8.5).
 - **Defaults are normative.** Every default stated in these documents or their TypeScript comments applies when a field is absent. Every boolean defaults to `false`.
 
 ### 2.3 Identifiers
