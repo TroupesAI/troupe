@@ -1,6 +1,7 @@
 // Checks the repository's documents and data:
 //   - the schemas compile, and the examples and every complete bundle in a Markdown document validate;
 //   - examples/ and the README's first example match the examples in spec/format.md (--write-examples rewrites examples/);
+//   - every TypeScript interface in the spec lists exactly its schema's properties;
 //   - the spec version agrees across the documents, schema URLs, examples, bundles in Markdown and cases;
 //   - every conformance case is named <area>/<topic>.json, matches conformance/case.schema.json, and the files it names exist;
 //   - relative Markdown links and #anchors resolve, and every "Format N.N" or "Play N.N" names a section.
@@ -105,6 +106,42 @@ if (!read("README.md").includes(`v${version} draft`)) fail(`README.md: the statu
 for (const doc of [...markdown, ...Object.keys(examples).map((n) => `examples/${n}`)])
   for (const m of read(doc).matchAll(/troupes\.ai\/schema\/(\d+\.\d+)\//g))
     if (m[1] !== version) fail(`${doc}: schema URL for version ${m[1]}, not ${version}`);
+
+// TypeScript interfaces and schemas list the same properties
+const schemaOf = (file: string, ...path: string[]) =>
+  path.reduce((o: any, k) => o[k], JSON.parse(read(`schemas/${file}`))) as { properties?: Record<string, unknown> };
+const interfaces: Record<string, ReturnType<typeof schemaOf>> = {
+  Bundle: schemaOf("bundle.schema.json"),
+  Character: schemaOf("bundle.schema.json", "$defs", "character"),
+  Line: schemaOf("bundle.schema.json", "$defs", "line"),
+  World: schemaOf("bundle.schema.json", "$defs", "world"),
+  Location: schemaOf("bundle.schema.json", "$defs", "location"),
+  Scenario: schemaOf("bundle.schema.json", "$defs", "scenario"),
+  CastMember: schemaOf("bundle.schema.json", "$defs", "castMember"),
+  Opening: schemaOf("bundle.schema.json", "$defs", "opening"),
+  Entry: schemaOf("bundle.schema.json", "$defs", "entry"),
+  Variable: schemaOf("bundle.schema.json", "$defs", "variable"),
+  Event: schemaOf("bundle.schema.json", "$defs", "event"),
+  Outcome: schemaOf("bundle.schema.json", "$defs", "outcome"),
+  Limits: schemaOf("bundle.schema.json", "$defs", "limits"),
+  SessionHeader: schemaOf("session-header.schema.json"),
+  Message: schemaOf("message.schema.json"),
+  Change: schemaOf("message.schema.json", "$defs", "change"),
+  Summary: schemaOf("message.schema.json", "properties", "summary"),
+  Chronicle: schemaOf("chronicle.schema.json"),
+  ModelOutput: schemaOf("model-output.schema.json"),
+};
+const specText = format + read("spec/play.md");
+for (const [name, schema] of Object.entries(interfaces)) {
+  const body = specText.match(new RegExp(`^interface ${name} \\{\n([\\s\\S]*?)\n\\}`, "m"))?.[1];
+  if (!body) {
+    fail(`spec: no interface ${name}`);
+    continue;
+  }
+  const fields = [...body.matchAll(/^  (\$?\w+)\??:/gm)].map((m) => m[1]).sort();
+  const props = Object.keys(schema.properties ?? {}).sort();
+  if (fields.join() !== props.join()) fail(`spec: interface ${name} lists ${fields.join(", ")}; its schema has ${props.join(", ")}`);
+}
 
 // Conformance cases: cases/<area>/<topic>.json, matching the case schema, and files they name exist
 const caseFiles = (readdirSync(join(root, "conformance/cases"), { recursive: true }) as string[]).sort();
