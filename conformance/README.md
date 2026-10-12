@@ -174,7 +174,7 @@ Every field of `expect` is optional:
 
 ### 4.8 `directions` and `ended`
 
-`at` is the evaluation point. For `directions`, `expect` is the list of `direct` texts, unresolved, that the System slot of a prompt built there carries (Play 3.3 step 6): those of event-pass firings on messages from the latest model message on the path, that message included. For `ended`, `expect` is whether the story is finished on that path.
+`at` is the evaluation point. For `directions`, `expect` is the list of `direct` texts, unresolved, that the System slot of a prompt built there carries (Play 3.3 step 6): those of event-pass firings on messages from the latest model message on the path that isn't hidden, that message included. For `ended`, `expect` is whether the story is finished on that path.
 
 ### 4.9 `macro`: macro resolution (Format 10)
 

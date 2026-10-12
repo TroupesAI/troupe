@@ -1,5 +1,5 @@
 {
-  "description": "Packages (Format 14.3, 16 item 7): bundle.json at the root, sessions under sessions/; absolute paths, .. segments, backslashes, paths outside the grammar, names equal when compared case-insensitively, encryption and symbolic links are PARSE, and the package isn't read",
+  "description": "Packages (Format 14.3, 16 item 7): bundle.json at the root, sessions under sessions/; absolute paths, .. segments, backslashes, paths outside the grammar, names equal when compared case-insensitively, encryption and symbolic links are PARSE, and the package isn't read; a directory entry (a name ending in /) is ignored",
   "tests": [
     {
       "type": "parse",
@@ -16,6 +16,16 @@
       "name": "a package with a session",
       "kind": "package",
       "base64": "UEsDBBQAAAAIAAAAS11m3axbIQAAACEAAAALAAAAYnVuZGxlLmpzb26rViopyi8tSFWyUjLQMzRS0lHKzsxLAfKSSvNSclKVagFQSwMEFAAAAAgAAABLXWd3mIN6AAAAiAAAACMAAABzZXNzaW9ucy9maXJzdC50cm91cGUtc2Vzc2lvbi5qc29ubKtWKinKLy1IVbJSMtAzNFLSUcrOzEsB8opTi4sz8/OAAsXJqXmJRZn5IEEQNzUVJJ9tHphrVBGWZBlSFWRS4JNs4VcemeaoVMtVrZQJkjcEKk0rys8FMgtyEitTi4D85Py8ktS8EiWr6GqlktQKIEPJI1NPqTa2lgsAUEsBAhQDFAAAAAgAAABLXWbdrFshAAAAIQAAAAsAAAAAAAAAAAAAAIABAAAAAGJ1bmRsZS5qc29uUEsBAhQDFAAAAAgAAABLXWd3mIN6AAAAiAAAACMAAAAAAAAAAAAAAIABSgAAAHNlc3Npb25zL2ZpcnN0LnRyb3VwZS1zZXNzaW9uLmpzb25sUEsFBgAAAAACAAIAigAAAAUBAAAAAA==",
+      "expect": {
+        "ok": true,
+        "codes": []
+      }
+    },
+    {
+      "type": "parse",
+      "name": "a directory entry is ignored",
+      "kind": "package",
+      "base64": "UEsDBBQAAAAAAAAAIQAAAAAAAAAAAAAAAAAJAAAAc2Vzc2lvbnMvUEsDBBQAAAAIAAAAIVx/OZYCOgAAAEAAAAALAAAAYnVuZGxlLmpzb26rViopyi8tSFWyUlAy0DM0UtJRUMrOzEsB8ZNK81JyUkEixcmpeYlFmfnFSlYK0dVKmWDpYqXa2FoAUEsBAhQDFAAAAAAAAAAhAAAAAAAAAAAAAAAAAAkAAAAAAAAAAAAAAIABAAAAAHNlc3Npb25zL1BLAQIUAxQAAAAIAAAAIVx/OZYCOgAAAEAAAAALAAAAAAAAAAAAAACAAScAAABidW5kbGUuanNvblBLBQYAAAAAAgACAHAAAACKAAAAAAA=",
       "expect": {
         "ok": true,
         "codes": []
