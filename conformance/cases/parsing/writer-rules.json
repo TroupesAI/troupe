@@ -1,5 +1,5 @@
 {
-  "description": "Writer rules in the schemas (Format 2.2, 2.3, 8.1, 12, 15): booleans written as false are defaults; empty optional fields and null state values are SCHEMA; reserved IDs; bool labels; integer weights of at least 1; closed part types; unknown properties on parts, events and outcomes are only warnings; message shapes",
+  "description": "Writer rules in the schemas (Format 2.2, 2.3, 8.1, 12, 15): booleans written as false are defaults; empty optional fields, including {}, and null state values are SCHEMA; reserved IDs; bool labels; integer weights of at least 1; parts of an unknown type are skipped with a warning; unknown properties on parts, events and outcomes are only warnings; message shapes",
   "tests": [
     {
       "type": "parse",
@@ -28,6 +28,18 @@
       "name": "an empty list in an optional field",
       "kind": "bundle",
       "text": "{\"troupe\": \"0.12\", \"kind\": \"bundle\", \"characters\": [{\"id\": \"a\", \"name\": \"Ann\", \"description\": \"Ann.\", \"aliases\": []}]}",
+      "expect": {
+        "ok": false,
+        "codes": [
+          "SCHEMA"
+        ]
+      }
+    },
+    {
+      "type": "parse",
+      "name": "an empty object in an optional field",
+      "kind": "bundle",
+      "text": "{\"troupe\": \"0.12\", \"kind\": \"bundle\", \"scenarios\": [{\"id\": \"s\", \"variables\": [{\"id\": \"v\", \"type\": \"bool\", \"labels\": {}, \"description\": \"d\"}]}]}",
       "expect": {
         "ok": false,
         "codes": [
@@ -107,13 +119,13 @@
     },
     {
       "type": "parse",
-      "name": "a part of an unknown type",
+      "name": "a part of an unknown type is only a warning; readers skip it",
       "kind": "bundle",
       "text": "{\"troupe\": \"0.12\", \"kind\": \"bundle\", \"scenarios\": [{\"id\": \"s\", \"openings\": [{\"id\": \"o\", \"content\": [{\"type\": \"audio\", \"text\": \"x\"}]}]}]}",
       "expect": {
-        "ok": false,
+        "ok": true,
         "codes": [
-          "SCHEMA"
+          "UNKNOWN_FIELD"
         ]
       }
     },

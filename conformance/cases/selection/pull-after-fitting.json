@@ -1,0 +1,114 @@
+{
+  "description": "Pulling and fitting (Play 5.5, 5.6): an entry that fitting dropped isn't eligible for pulling for that message",
+  "bundle": {
+    "kind": "bundle",
+    "characters": [
+      {
+        "id": "a",
+        "name": "Ann",
+        "description": "Ann."
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s",
+        "cast": [
+          {},
+          {
+            "character": "a"
+          }
+        ],
+        "entries": [
+          {
+            "id": "e1",
+            "priority": 100,
+            "text": "e1"
+          },
+          {
+            "id": "kp",
+            "title": "KP",
+            "pull": true,
+            "keys": [
+              "three"
+            ],
+            "priority": 0,
+            "text": "kp"
+          },
+          {
+            "id": "pl",
+            "title": "PL",
+            "pull": true,
+            "text": "pl"
+          }
+        ]
+      }
+    ]
+  },
+  "session": {
+    "header": {
+      "kind": "session",
+      "scenario": "s",
+      "seed": "conformanceSeed0001",
+      "characters": [
+        {
+          "id": "p",
+          "name": "Pat",
+          "description": "Pat."
+        }
+      ],
+      "players": [
+        "p"
+      ]
+    },
+    "messages": [
+      {
+        "id": "1",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "Three."
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "select",
+      "name": "kp activates by its key, so only pl is in the catalog",
+      "for": "a",
+      "parent": "1",
+      "messageId": "2",
+      "expect": {
+        "activated": [
+          "s/e1",
+          "s/kp"
+        ],
+        "catalog": [
+          "s/pl"
+        ]
+      }
+    },
+    {
+      "type": "select",
+      "name": "fitting drops kp, which can't then be pulled",
+      "for": "a",
+      "parent": "1",
+      "messageId": "2",
+      "maxEntries": 1,
+      "expect": {
+        "dropped": [
+          "s/kp"
+        ],
+        "failed": false,
+        "activated": [
+          "s/e1"
+        ],
+        "catalog": [
+          "s/pl"
+        ]
+      }
+    }
+  ]
+}

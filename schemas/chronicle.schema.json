@@ -44,7 +44,7 @@
       "minItems": 1
     },
     "values": {
-      "$ref": "bundle.schema.json#/$defs/stateValues"
+      "$ref": "bundle.schema.json#/$defs/nonEmptyStateValues"
     },
     "ext": {
       "$ref": "bundle.schema.json#/$defs/ext"

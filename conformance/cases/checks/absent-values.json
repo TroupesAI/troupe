@@ -1,5 +1,5 @@
 {
-  "description": "null, \"\" and [] read like missing fields, except inside state values (Format 2.2); an opening's content is optional, so [] there reads as missing",
+  "description": "null, \"\" and [] read like missing fields, except inside state values and knownBy, where [] reads as [\"narrator\"] (Format 2.2); an opening's content is optional, so [] there reads as missing",
   "bundle": {
     "kind": "bundle",
     "tagline": "",
@@ -16,7 +16,7 @@
             "keys": [],
             "when": null,
             "knownBy": [],
-            "text": "everyone knows this"
+            "text": "only the narrator knows this"
           },
           {
             "id": "f",
@@ -88,19 +88,18 @@
     },
     {
       "type": "select",
-      "name": "knownBy [] reads as missing: everyone knows e; keys null and keys [] are always-on",
+      "name": "knownBy [] reads as narrator-only, so Ann doesn't get e; keys null and keys [] are always-on",
       "for": "a",
       "messageId": "1",
       "expect": {
         "activated": [
-          "a/e",
           "a/f"
         ]
       }
     },
     {
       "type": "select",
-      "name": "keys [] is always-on: a viewer that sees everything gets e too",
+      "name": "the narrator gets e: knownBy [] names it, and keys [] is always-on",
       "messageId": "1",
       "expect": {
         "activated": [

@@ -47,7 +47,7 @@ Bundles, session headers and chronicles given as objects leave out `troupe`: bef
 
 Every test starts from a fresh copy of the case's inputs. Tests don't affect each other.
 
-1. **Absent values.** Apply Format 2.2 to the bundle, the session header and every message: `null`, `""` and `[]` in optional fields read as missing. State values (`set`, `initial`) keep `""` and `[]`. `scenario.worlds` keeps `[]`. Required text fields (an entry's or part's `text`, a character's `description`) and message `content` keep `""` and `[]`; an opening's `content` is optional, so `[]` there reads as missing.
+1. **Absent values.** Apply Format 2.2 to the bundle, the session header and every message: `null`, `""`, `[]` and `{}` in optional fields read as missing, except that `knownBy: []` reads as `["narrator"]`. State values (`set`, `initial`) keep `""` and `[]`. `scenario.worlds` keeps `[]`. Required text fields (an entry's or part's `text`, a character's `description`) and message `content` keep `""` and `[]`; an opening's `content` is optional, so `[]` there reads as missing.
 2. **Reading.** Read the session lines as a reader does (Format 12.1, 17.2): a line repeating an earlier message's ID is skipped, a message whose `parent` names no earlier message is skipped with its descendants, and the head is the header's `head` if it names a message, else the last message.
 3. **The story.** The session's `scenario` names the scenario. Without a session, a `start` test names it with `scenario`; otherwise use the bundle's first scenario. Header characters replace bundle characters as Format 12.2 says.
 
@@ -290,7 +290,7 @@ Every field of `expect` is optional:
 | `text` | The input as a string, encoded as UTF-8 to get its bytes. |
 | `base64` | Instead of `text`: the input's bytes, in base64. Used for bytes that aren't valid UTF-8 text and for binary formats. |
 
-The reader parses the bytes, checks the version, validates against the schema (unknown properties as `UNKNOWN_FIELD`, Format 15) and, for sessions, reads the messages (Format 12.1). For a package it reads `bundle.json` and every session and chronicle in it.
+The reader parses the bytes, checks the version, validates against the schema (unknown properties and parts of unknown type as `UNKNOWN_FIELD`, Format 15) and, for sessions, reads the messages (Format 12.1). For a package it reads `bundle.json` and every session and chronicle in it.
 
 Every field of `expect` is optional:
 

@@ -44,8 +44,7 @@
           {
             "id": "greet",
             "on": "player",
-            "when": "true",
-            "set": {}
+            "when": "true"
           }
         ]
       }

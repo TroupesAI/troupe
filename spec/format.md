@@ -122,7 +122,7 @@ MUST, MUST NOT, SHOULD, SHOULD NOT and MAY are used as described in RFC 2119 and
 ### 2.2 Values
 
 - Writers MUST write I-JSON (RFC 7493): UTF-8 without a byte order mark, no duplicate member names, no surrogate or noncharacter code points, written or escaped, numbers that fit an IEEE 754 double, integers within ±(2^53 − 1). Readers parse UTF-8 JSON (RFC 8259), ignore a leading byte order mark, and need not check the other I-JSON constraints.
-- Writers MUST NOT write `null` in a field this spec defines or in a state value, and MUST NOT write `""` or `[]` in an optional field, except in state values and `scenario.worlds`, where they are values. Names and variable descriptions are never empty. Readers MUST treat `null`, `""` and `[]` in an optional field like a missing field, with the same exceptions; a `null` state value is invalid (section 8.5).
+- Writers MUST NOT write `null` in a field this spec defines or in a state value, and MUST NOT write `""`, `[]` or `{}` in an optional field other than `ext`, except in state values and `scenario.worlds`, where they are values. Names and variable descriptions are never empty. Readers MUST treat `null`, `""`, `[]` and `{}` in an optional field like a missing field, with the same exceptions, except that `knownBy: []` reads as `["narrator"]`, so an emptied list never reveals a secret; a `null` state value is invalid (section 8.5).
 - **Defaults are normative.** Every default stated in these documents or their TypeScript comments applies when a field is absent. Every boolean defaults to `false`.
 
 ### 2.3 Identifiers
@@ -344,7 +344,7 @@ interface Entry {
   chance?: number;                 // 0–1; 1
 
   // competition
-  group?: string;                  // at most one entry per group of the same owner is used
+  group?: string;                  // at most one entry per group of the same owner is selected (Play 5.5)
   weight?: number;                 // integer 1–1,000,000; odds among equal priority; 1
   priority?: number;               // integer 0–100; 50; importance in groups and when space runs out
 
@@ -442,7 +442,7 @@ A character's mood or a world's clock travels with it into every scenario, and t
 
 | `of` | Keys |
 | --- | --- |
-| `"characters"` | every cast character that isn't a player's |
+| `"characters"` | every cast character that doesn't fill a seat (sections 6.1, 12.2); a character a person takes over keeps its key |
 | `"cast"` | every cast character, players included |
 | `"others"` | every cast character except the variable's owner, players included |
 | a list, such as `["watch", "guild"]` | those keys |
@@ -529,7 +529,7 @@ Macros are the only substitution in text. `@` turns IDs into names.
 - **Rendering.** A value with a label renders as its label. Numbers render as ECMAScript `Number.prototype.toString`, booleans as `true` or `false`, lists as items joined by `, ` (an empty list as nothing), and maps as `Name: value` pairs joined by `, `, with character keys shown by name and other keys with underscores as spaces. Map keys render in declared order (cast order for characters), and `"*"` keys in code point order. Text between `{{` and `}}` that is no macro, such as `{{unknown}}`, and a macro naming a variable that isn't declared are left as written (`UNKNOWN_MACRO`); an absent key of a declared variable, a path below a value that isn't a map, or a variable whose owner isn't in use renders as nothing.
 - **Which state.** Macros in a message resolve against the state at that message; elsewhere, against the evaluation point (section 11.1). In a scenario's text, openings included, `own` means `state`; session entries have no `own`.
 - **Where.** Authors write macros in descriptions, summaries, premises, briefings, notes, entry texts, openings, event messages and directions, variable descriptions, questions, labels, and image `alt`. Entry titles and keys are never resolved.
-- **Player and model text** is stored escaped: apps MUST write each `\` in it as `\\` and each `{{` as `\{{`, including in entries and characters that a model adds. Resolving it then gives back exactly what was written, so macros never take effect in it, and every text in a session resolves the same way, whoever wrote it.
+- **Player and model text** is stored escaped: in message parts' `text` and `alt`, and in the `text`, `description` and `summary` of entries and characters a model adds, apps MUST write each `\` as `\\` and each `{{` as `\{{`. Names, aliases, titles, keys and expressions are stored as written. Resolving the escaped text gives back exactly what was written, so macros never take effect in it, and every text in a session resolves the same way, whoever wrote it.
 - **Parsing** is one left-to-right scan. At each `{{`, the longest form in the table, with no spaces outside comments and options, is a macro; otherwise the first `{` is kept and scanning resumes at the next character. A comment runs from `{{//` to the next `}}`. Options can't contain `::` or `}}`. `\{{` produces a literal `{{`, and `\\` a literal `\`.
 - **Stored text keeps its macros.** They resolve when text is shown or sent.
 
@@ -582,7 +582,7 @@ state.trust[char] >= 0.8 && hour < 6
 - Runtime errors make a condition false.
 - `state` and `own` are not indexed by computed strings; keyed variables are.
 - Expressions use only `bool`, `int`, `double`, `string`, list and map values; `bytes`, `uint` and `null` literals and the `timestamp()` and `duration()` functions are a `CEL_ERROR`, and so is `string()` of a double. Available functions are only `size`, `has`, `all`, `exists`, `exists_one`, `map`, `filter`, `in`, `contains`, `startsWith`, `endsWith`, `matches`, `int`, `double`, `string`, `bool`, and the functions above. `matches()` MUST use RE2 semantics.
-- Comprehensions (`all`, `exists`, `exists_one`, `map`, `filter`) nest at most two deep, and `roll()` isn't called inside one; an expression that breaks either is a `CEL_ERROR`. No app-set budget stops an evaluation.
+- Comprehensions (`all`, `exists`, `exists_one`, `map`, `filter`) nest at most two deep; inside one, `roll()` isn't called and `+` doesn't join strings or lists. `matches()` takes a string literal as its pattern, which is checked at load like a regex key. An expression that breaks any of these is a `CEL_ERROR`. No app-set budget stops an evaluation.
 
 ---
 
@@ -635,7 +635,7 @@ interface Message {
   ext?: Ext;
 }
 
-type Part =                         // only these two types; every part MAY also carry ext
+type Part =                         // writers use only these two types; every part MAY also carry ext
   | { type?: "text"; text: string; speaker?: string; knownBy?: string[] }
   | { type: "image"; src: string; alt?: string; speaker?: string; knownBy?: string[] };
 
@@ -739,7 +739,7 @@ Fields that hold a file accept a relative path inside the package, an `https:` U
 ## 15. Extensions and versioning
 
 - **Extensions.** Every object that a Troupe document defines with an interface MAY carry `ext`, keyed by an extension name matching `^[a-z0-9][a-z0-9.-]{0,63}$`, such as `risu.regex`. The `troupe.` prefix is reserved for the draft extensions of Appendix D. Apps MUST NOT add fields anywhere else.
-- **Unknown fields.** Readers MUST ignore fields and extensions they don't understand. They MUST keep `ext` unchanged through load, save and export; other unknown fields are dropped when the file is written. The schemas reject unknown properties to catch typos. A property is unknown when its object's interface doesn't define it; for a part, the interface its `type` selects. Each is an `UNKNOWN_FIELD` warning located at the property, and `SCHEMA` is judged with unknown properties removed, so readers never reject a file only for them. Validators assert `format`, so timestamps must be valid RFC 3339.
+- **Unknown fields.** Readers MUST ignore fields and extensions they don't understand. They MUST keep `ext` unchanged through load, save and export; other unknown fields are dropped when the file is written. The schemas reject unknown properties to catch typos. A property is unknown when its object's interface doesn't define it; for a part, the interface its `type` selects. Each is an `UNKNOWN_FIELD` warning located at the property, and `SCHEMA` is judged with unknown properties removed, so readers never reject a file only for them. A part whose `type` the reader doesn't know is unknown as a whole: an `UNKNOWN_FIELD` warning at its `type`; the reader doesn't show, send or scan it, and writes it back unchanged. Validators assert `format`, so timestamps must be valid RFC 3339.
 - **Versions** are `major.minor`, compared as two integers, so `0.10` is newer than `0.9`. A reader refuses a file of another major version (`UNSUPPORTED_VERSION`). From 1.0, minor versions only add what older readers can safely ignore: readers MUST open every file of their major version and report a newer minor as an `UNSUPPORTED_VERSION` warning. Before 1.0, any minor version may break: a reader fully supports only its own, reports any other as an `UNSUPPORTED_VERSION` warning, and MAY still read it.
 
 ---
@@ -770,8 +770,8 @@ Writers MUST stay within these limits. Readers MUST accept files within them, an
 | Troupe entries in a bundle, all owners | 10,000 |
 | One CEL expression or regex key | 4 KiB |
 | Characters in a session's cast | 256 |
-| A string state value | 4 KiB |
-| Members of a set value, or keys of a `"*"` map | 256 |
+| A string state value, in UTF-8 | 4 KiB |
+| Distinct members of a set value, or keys of a `"*"` map after a change | 256 |
 
 ---
 
@@ -802,7 +802,7 @@ Messages are never dropped for a failed check, except the lines that `PARSE` and
 | `INVALID_VALUE` | `initial`, opening and event `set` values, recorded values, chronicle values and `outcome` indexes are valid | The value is dropped |
 | `UNKNOWN_MESSAGE` | `parent`, the header's `head` and summary `from` name messages, and `from` is on the path to its summary | The head or summary is ignored; a message with an unknown `parent` is skipped with its descendants |
 | `INVALID_PLAYER` | `players` names header characters or cast members | The ID is ignored |
-| `CEL_ERROR` | Every expression parses and type-checks, and no `derive` reads a derived variable; comprehensions nest at most two deep, without `roll()` inside (section 11.2) | The item never applies |
+| `CEL_ERROR` | Every expression parses and type-checks, and no `derive` reads a derived variable; comprehensions and `matches()` follow section 11.2 | The item never applies |
 | `REGEX_ERROR` | Every regex key parses as RE2 | The key is ignored |
 | `UNKNOWN_MACRO` | Macros are valid and name existing characters and variables | Left as written |
 
@@ -1107,7 +1107,7 @@ A new session that continues this chronicle starts with `closeness` at 58 and bo
 | No text transforms | Regex scripts that rewrite text | Most build HTML, fix one model's quirks, or display stats that state now covers. |
 | Strict schemas, lenient readers | Either everywhere | Writers catch typos; readers stay forward compatible. |
 | Writers leave out empty optional fields and write booleans as they like | Allowing `""` and `[]` anywhere; treating an explicit `false` as different from absent | Two writers of the same story produce the same fields, and typed serializers that write defaults still validate. |
-| Two part types, closed | Open part types | Every reader shows and sends every part; new media belongs in `ext` until a version adds a type. |
+| Writers use two part types; readers skip others | Open part types; refusing unknown ones | A later version can add a media part that older readers skip instead of refusing the session. |
 | Readers must keep only `ext` | Keeping every unknown field, and stamping the newer version | Apps add data only in `ext`, so other unknown fields are typos or come from a version the reader doesn't support. |
 | No `requires` and no rules for extension data | Files declaring extensions they need; duties on extension authors | An app that lacks an extension ignores its data, and nothing could check those duties. |
 | Standard ZIP checks | Rejecting multi-disk archives, overlapping entries and headers that disagree | A standard ZIP library reads packages; the size, count and ratio caps bound a hostile archive. |

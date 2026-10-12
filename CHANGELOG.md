@@ -6,10 +6,10 @@ Hardening for implementation. Breaking changes from 0.11:
 
 - **Model output** adds story content only: newcomers carry identity without mechanics and never replace a character; model entries take no `position` or `priority` and never replace a `system` or `tracker` entry; a `knownBy` whose IDs are all dropped becomes narrator-only (Play 3.4).
 - **Player and model text** is stored escaped, and every text resolves the same way (Format 10).
-- **Writers** leave out empty optional fields and never write `null` state values; booleans written as `false` are defaults; parts are text or image only; `own` is reserved for variables (Format 2.2, 2.3, 12).
+- **Writers** leave out empty optional fields (`""`, `[]`, `{}`) and never write `null` state values, and readers read `knownBy: []` as narrator-only; booleans written as `false` are defaults; writers use only text and image parts, and readers skip others; `own` is reserved for variables (Format 2.2, 2.3, 12).
 - **CEL** is bounded structurally: comprehensions nest at most two deep, `roll()` isn't called inside one, `string()` of a double is a `CEL_ERROR`, and string, set, `"*"` map and cast sizes have limits (Format 11.2, 16).
 - **Chronicles** take back only what a session changed (Play 2.2).
-- **Players** beyond a scenario's seats add seats (Format 12.2).
+- **Players** beyond a scenario's seats add seats, and a takeover keeps a character's keys (Format 8.3, 12.2).
 - **Scenarios** name their narrator for `{{char}}` (Format 6, 10).
 - **Readers** ignore a leading BOM and empty session lines and reject other ZIP compression methods; the unpacked package limit is 512 MiB (Format 2.2, 12, 14, 16).
 - **Removed:** the PNG-embedded form; message `author`, `model` and `stopped`; change and model-output `reason`; the session header's `id`; the order questions are asked in. No rule read them; apps keep such data in `ext`.

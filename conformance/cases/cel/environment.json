@@ -287,6 +287,28 @@
       "expect": {
         "checkError": true
       }
+    },
+    {
+      "type": "cel",
+      "name": "+ on numbers inside a comprehension is fine",
+      "expr": "[1, 2].map(x, x + 1) == [2, 3]",
+      "expect": true
+    },
+    {
+      "type": "cel",
+      "name": "+ joining strings inside a comprehension is a CEL_ERROR (Format 11.2)",
+      "expr": "size([1, 2].map(x, 'a' + 'b')) == 2",
+      "expect": {
+        "checkError": true
+      }
+    },
+    {
+      "type": "cel",
+      "name": "matches() takes only a literal pattern (Format 11.2)",
+      "expr": "'kai'.matches(string(1))",
+      "expect": {
+        "checkError": true
+      }
     }
   ]
 }

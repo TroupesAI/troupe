@@ -29,7 +29,8 @@
       }
     },
     "changes": {
-      "$ref": "bundle.schema.json#/$defs/stateValues"
+      "description": "Keys and values are checked by preparation (Play 3.3), not here.",
+      "type": "object"
     },
     "entries": {
       "type": "array",

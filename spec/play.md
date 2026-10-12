@@ -42,7 +42,7 @@ Format 2 applies here, including requirement keywords. "Format 7.2" means sectio
 3. Ask the questions of variables in use that have `ask`.
 4. Create a root message for the chosen opening: `from: "system"`, with `opening` set and the content copied as written, or empty for an opening without `content`. It records these changes, in order:
    1. when the session continues a chronicle, its values in one `{"by": "rules", "set": …}` change (section 2.2);
-   2. `{"by": "rules", "set": …}` with the opening's `set` and the starting `scene.present`;
+   2. `{"by": "rules", "set": …}` with the opening's `set`, except keys the chronicle's change sets, and the starting `scene.present`;
    3. `{"by": "player", "set": …}` with the answers.
 
    Of these, a change that would set nothing isn't recorded.
@@ -137,10 +137,10 @@ type Newcomer = Pick<Character, "id" | "name" | "aliases" | "description" | "sum
 
 Nothing in the payload takes `ext`. A model adds story content, never mechanics or standing direction:
 
-- A newcomer has only `id`, `name`, `aliases`, `description` and `summary`; any other field is unknown (Format 15). A newcomer whose ID names a character of the bundle or session is dropped.
-- An entry takes no `position` or `priority`, which are unknown there, so it is placed in `context` with priority 50. An entry whose ID names a session entry placed in `system` or `tracker` on the path is dropped.
+- A newcomer has only `id`, `name`, `aliases`, `description` and `summary`; any other field is unknown (Format 15). A newcomer whose ID names a character, world, scenario or scenario variable of the bundle or session, or who would take the cast past its limit (Format 16), is dropped.
+- An entry takes no `position` or `priority`, which are unknown there, so it is placed in `context` with priority 50. An entry whose ID names a session entry on the path that isn't placed in `context` is dropped; a model may update or disable a context entry, such as a memory.
 
-Apps apply a payload in this order: `characters` join the header; `parts` are stored; `changes` are recorded as `{"by": "model", …}`, prepared as in section 3.3, on the newest message covered; and `entries` become session entries on the same message. Speakers and `knownBy` IDs other than `narrator` that name no character in the session, newcomers included, are dropped; a `knownBy` whose IDs are all dropped becomes `["narrator"]`. Every extraction records one `{"by": "model", …}` change, with an empty `set` when it changes nothing, which marks where the next one starts. The event pass after a message waits for any extraction the app runs on it.
+Apps apply a payload in this order: `characters` join the header; `parts` are stored; `changes` are recorded as `{"by": "model", …}`, prepared as in section 3.3, on the newest message covered; and `entries` become session entries on the same message. Speakers that name no character in the session, newcomers included, are dropped, and so are `knownBy` IDs other than `narrator` that name none; a `knownBy` whose IDs are all dropped becomes `["narrator"]`, or `[<speaker>, "narrator"]` on a part with a speaker. Change keys and values that aren't valid are dropped by preparation; a payload that otherwise fails its schema is discarded. An **extraction** is a tracker run, or a structured reply from the narrator or the single voice. Each records one `{"by": "model", …}` change, with an empty `set` when it changes nothing, which marks where the next tracker run starts. The event pass after a message waits for any extraction the app runs on it.
 
 ---
 
@@ -234,7 +234,7 @@ The app then records the entries selected in steps 1 and 2 that survived step 3,
 
 ### 5.6 Pulling
 
-Entries with `pull` are retrieved when relevant, by either of two methods an app MAY offer: the model sees a catalog of their titles and requests entries by title, for example through a tool; or the app finds entries by similarity search over titles and texts. Only entries the generation can see, that are not already selected, and whose `when` holds, with `hit()` checking their scanned text, are eligible; groups, `once`, `sticky`, `cooldown` and `chance` don't apply to pulling. Pulled entries are added after fitting (section 5.5); a pulled entry's text reaches the model, and the entry is recorded in `activated`. In apps that offer neither method, entries with `pull` activate only through their `keys`.
+Entries with `pull` are retrieved when relevant, by either of two methods an app MAY offer: the model sees a catalog of their titles and requests entries by title, for example through a tool; or the app finds entries by similarity search over titles and texts. Only entries the generation can see, that weren't selected or dropped by fitting, and whose `when` holds, with `hit()` checking their scanned text, are eligible; groups, `once`, `sticky`, `cooldown` and `chance` don't apply to pulling. Pulled entries are added after fitting (section 5.5); a pulled entry's text reaches the model, and the entry is recorded in `activated`, so its `sticky`, `cooldown` and `once` then count from that record (section 5.4). In apps that offer neither method, entries with `pull` activate only through their `keys`.
 
 ---
 
@@ -292,7 +292,7 @@ A conforming **app** reads files as a conforming reader (Format 17.1), and also 
 | Witness knowledge, `["narrator"]` | Everyone knows everything; `[]` | Offstage characters miss events; no empty-list footgun. |
 | Presence from openings, offstage summaries on mention | Everyone present, every summary | Casts and rosters scale. |
 | One model-output payload; characters' replies carry only parts | Separate tracker and reply rules; state from every reply | Speakers, state and memories travel the same way from any transport, and a character's model never reads variable descriptions it mustn't know. |
-| Model output adds story content only: newcomers without mechanics, entries without placement, no replacing characters or directions | Accepting full characters and entries from a model | A reply, or text a player coaxes out of a model, can't add rules, recast a character or plant a standing instruction. |
+| Model output adds story content only: newcomers without mechanics, entries without placement, no replacing characters, state names or directions | Accepting full characters and entries from a model | A reply, or text a player coaxes out of a model, can't add rules, recast a character or plant a standing instruction. |
 | Prompt slots, not a fixed order | One mandated order | Apps keep prompt caches warm with long contexts. |
 | SHA-256 rolls over seed, message and subject | A sequential generator | Order-independent, exact in JavaScript, fresh on regeneration. |
 | Recorded activations; sticky not re-recorded | Recomputing history | Timers continue in any app, and run out. |

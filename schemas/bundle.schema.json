@@ -658,7 +658,7 @@
           "$ref": "#/$defs/nonEmpty"
         },
         "set": {
-          "$ref": "#/$defs/stateValues"
+          "$ref": "#/$defs/nonEmptyStateValues"
         },
         "content": {
           "type": "array",
@@ -706,7 +706,8 @@
           "type": "object",
           "additionalProperties": {
             "$ref": "#/$defs/nonEmpty"
-          }
+          },
+          "minProperties": 1
         },
         "min": {
           "anyOf": [
@@ -1077,7 +1078,7 @@
           "default": 1
         },
         "set": {
-          "$ref": "#/$defs/stateValues"
+          "$ref": "#/$defs/nonEmptyStateValues"
         },
         "compute": {
           "type": "object",
@@ -1086,7 +1087,8 @@
           },
           "additionalProperties": {
             "$ref": "#/$defs/cel"
-          }
+          },
+          "minProperties": 1
         },
         "message": {
           "type": "array",
@@ -1124,7 +1126,7 @@
           "default": 1
         },
         "set": {
-          "$ref": "#/$defs/stateValues"
+          "$ref": "#/$defs/nonEmptyStateValues"
         },
         "compute": {
           "type": "object",
@@ -1133,7 +1135,8 @@
           },
           "additionalProperties": {
             "$ref": "#/$defs/cel"
-          }
+          },
+          "minProperties": 1
         },
         "message": {
           "type": "array",
@@ -1253,6 +1256,14 @@
       "items": {
         "$ref": "#/$defs/id"
       }
+    },
+    "nonEmptyStateValues": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/stateValues"
+        }
+      ],
+      "minProperties": 1
     }
   }
 }

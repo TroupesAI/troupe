@@ -1,0 +1,105 @@
+{
+  "description": "A takeover (Format 8.3, 12.2): a person who takes over a cast member makes it a player, but an of: \"characters\" variable keeps its key, so recorded values stay valid",
+  "bundle": {
+    "kind": "bundle",
+    "characters": [
+      {
+        "id": "a",
+        "name": "Ann",
+        "description": "Ann."
+      },
+      {
+        "id": "b",
+        "name": "Bea",
+        "description": "Bea."
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s",
+        "cast": [
+          {},
+          {
+            "character": "a"
+          },
+          {
+            "character": "b"
+          }
+        ],
+        "variables": [
+          {
+            "id": "trust",
+            "type": "number",
+            "of": "characters",
+            "initial": 0.5,
+            "by": [
+              "model"
+            ],
+            "description": "d"
+          }
+        ]
+      }
+    ]
+  },
+  "session": {
+    "header": {
+      "kind": "session",
+      "scenario": "s",
+      "seed": "conformanceSeed0001",
+      "characters": [
+        {
+          "id": "p",
+          "name": "Pat",
+          "description": "Pat."
+        }
+      ],
+      "players": [
+        "p",
+        "b"
+      ]
+    },
+    "messages": [
+      {
+        "id": "1",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "Hi."
+          }
+        ],
+        "changes": [
+          {
+            "by": "model",
+            "set": {
+              "trust.b": 0.9
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "cel",
+      "name": "b is a player",
+      "expr": "players == ['p', 'b']",
+      "expect": true
+    },
+    {
+      "type": "state",
+      "name": "trust keeps b's key and its recorded value",
+      "at": "1",
+      "expect": {
+        "trust.a": 0.5,
+        "trust.b": 0.9
+      }
+    },
+    {
+      "type": "check",
+      "expect": {
+        "codes": []
+      }
+    }
+  ]
+}

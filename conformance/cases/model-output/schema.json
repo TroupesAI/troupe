@@ -1,5 +1,5 @@
 {
-  "description": "The model output schema (Play 3.4, Format Appendix A: model-output.schema.json): structured replies and tracker results validate; speakers and knownBy are plain strings; unknown properties, including newcomers' mechanics and entries' position and priority, are UNKNOWN_FIELD warnings (Format 15); a part without text or a malformed change key is SCHEMA",
+  "description": "The model output schema (Play 3.4, Format Appendix A: model-output.schema.json): structured replies and tracker results validate; speakers and knownBy are plain strings; unknown properties, including newcomers' mechanics and entries' position and priority, are UNKNOWN_FIELD warnings (Format 15); change keys and values are left to preparation; a part without text is SCHEMA",
   "tests": [
     {
       "type": "parse",
@@ -91,14 +91,12 @@
     },
     {
       "type": "parse",
-      "name": "a malformed change key",
+      "name": "a malformed change key is left to preparation",
       "kind": "modelOutput",
       "text": "{\"changes\":{\"Bad Key\":1}}",
       "expect": {
-        "ok": false,
-        "codes": [
-          "SCHEMA"
-        ]
+        "ok": true,
+        "codes": []
       }
     },
     {
