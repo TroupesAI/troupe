@@ -137,18 +137,16 @@
     },
     {
       "type": "parse",
-      "name": "a message whose only part repair removes keeps an empty content, and its replies stay",
+      "name": "a message left without parts is removed, and its replies are skipped",
       "kind": "session",
       "text": "{\"troupe\":\"0.12\",\"kind\":\"session\",\"scenario\":\"s\",\"seed\":\"conformanceSeed0001\"}\n{\"id\":\"1\",\"from\":\"player\",\"content\":[{\"type\":\"image\",\"src\":\"data:image/jpg;base64,AAAA\"}]}\n{\"id\":\"2\",\"parent\":\"1\",\"from\":\"model\",\"content\":[{\"text\":\"Nice photo.\"}]}\n",
       "expect": {
         "ok": false,
         "codes": [
-          "SCHEMA"
+          "SCHEMA",
+          "UNKNOWN_MESSAGE"
         ],
-        "ids": [
-          "1",
-          "2"
-        ]
+        "ids": []
       }
     }
   ]
