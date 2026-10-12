@@ -231,14 +231,19 @@
       },
       "if": {
         "required": [
-          "event"
-        ]
+          "by"
+        ],
+        "properties": {
+          "by": {
+            "not": {
+              "const": "rules"
+            }
+          }
+        }
       },
       "then": {
         "properties": {
-          "by": {
-            "const": "rules"
-          }
+          "event": false
         }
       }
     }

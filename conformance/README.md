@@ -345,7 +345,7 @@ Starting from a chronicle (section 4.11 input `chronicle`) follows Play 2.2. The
 | --- | --- |
 | `set` | The values the player sets, `key → value`. |
 | `newId` | The ID of the records-only system message the edit is recorded on. |
-| `eventMessageId` | The ID for the system message the event pass may add. |
+| `eventMessageId` | The ID for the system message the event pass may add; required when it adds one. |
 
 The edit is prepared as a `player` change (Play 3.3) against the state at the head. A new message `{"id": newId, "parent": head, "from": "system", "content": [], "changes": [change]}` is added and becomes the head. Events are then evaluated at that message as in section 4.7, and their firings are recorded after the change. If preparation drops every key, nothing is added, no events are evaluated, `expect.message` is `null` and the head is unchanged.
 

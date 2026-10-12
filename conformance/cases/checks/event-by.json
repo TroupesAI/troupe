@@ -1,0 +1,108 @@
+{
+  "description": "A change with event but by other than rules (Format 12, 17.2): repair removes event, and its outcome with it, and keeps the change, so its values still apply",
+  "bundle": {
+    "kind": "bundle",
+    "characters": [
+      {
+        "id": "a",
+        "name": "Ann",
+        "description": "Ann."
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s",
+        "cast": [
+          {},
+          {
+            "character": "a"
+          }
+        ],
+        "variables": [
+          {
+            "id": "g",
+            "type": "int",
+            "by": [
+              "model"
+            ],
+            "description": "d"
+          }
+        ]
+      }
+    ]
+  },
+  "session": {
+    "header": {
+      "kind": "session",
+      "scenario": "s",
+      "seed": "conformanceSeed0001",
+      "characters": [
+        {
+          "id": "p",
+          "name": "Pat",
+          "description": "Pat."
+        }
+      ],
+      "players": [
+        "p"
+      ]
+    },
+    "messages": [
+      {
+        "id": "1",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "x"
+          }
+        ]
+      },
+      {
+        "id": "2",
+        "parent": "1",
+        "from": "model",
+        "char": "a",
+        "content": [
+          {
+            "speaker": "a",
+            "text": "y"
+          }
+        ],
+        "changes": [
+          {
+            "by": "model",
+            "event": "patrol",
+            "outcome": 0,
+            "set": {
+              "g": 7
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "check",
+      "expect": {
+        "codes": [
+          "SCHEMA"
+        ]
+      }
+    },
+    {
+      "type": "state",
+      "at": "2",
+      "expect": {
+        "g": 7
+      }
+    },
+    {
+      "type": "cel",
+      "at": "2",
+      "expr": "count('patrol') == 0",
+      "expect": true
+    }
+  ]
+}

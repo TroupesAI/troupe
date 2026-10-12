@@ -1152,7 +1152,19 @@
                 "base64": {
                   "type": "string"
                 }
-              }
+              },
+              "oneOf": [
+                {
+                  "required": [
+                    "text"
+                  ]
+                },
+                {
+                  "required": [
+                    "base64"
+                  ]
+                }
+              ]
             }
           },
           {
@@ -1278,7 +1290,19 @@
                     "object"
                   ]
                 }
-              }
+              },
+              "oneOf": [
+                {
+                  "required": [
+                    "reply"
+                  ]
+                },
+                {
+                  "required": [
+                    "message"
+                  ]
+                }
+              ]
             }
           },
           {
@@ -1362,6 +1386,7 @@
               "additionalProperties": false,
               "required": [
                 "expect",
+                "newId",
                 "set"
               ],
               "properties": {

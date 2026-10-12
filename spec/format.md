@@ -663,7 +663,7 @@ interface Summary {
 
 ### 12.3 Session entries
 
-A message may add entries, owned by `session`. They are candidates from that message onward on its path, so they belong to their branch. A later message's entry with the same ID replaces it from there on, and `disabled: true` removes it. A replacement takes each field it lacks (absent, or a `false` boolean), other than `disabled`, from the entry it replaces, such as `carry`, `knownBy`, `title` and `pull`. An entry that follows a `disabled` version replaces nothing.
+A message may add entries, owned by `session`. They are candidates from that message onward on its path, so they belong to their branch. A later message's entry with the same ID replaces it from there on, and `disabled: true` removes it. A replacement takes each field it lacks (absent, or a `false` boolean), though one with `pull` repeats its `title`, other than `disabled`, from the entry it replaces, such as `carry`, `knownBy`, `title` and `pull`. An entry that follows a `disabled` version replaces nothing.
 
 ### 12.4 Other message fields
 
@@ -782,7 +782,7 @@ Messages are never dropped for a failed check, except the lines that `PARSE`, `S
 | `UNSUPPORTED_VERSION` | `troupe`, when present, is the reader's own version (section 15); a missing `troupe`, or one that isn't `major.minor`, is only `SCHEMA` | Another major version isn't read; another minor version is a warning (from 1.0, only a newer one) |
 | `SCHEMA` | The document validates against its schema, with `format` asserted, apart from unknown properties (section 15) | The reader MAY refuse the file; otherwise it repairs it (below) |
 | `UNKNOWN_FIELD` | Every property is known to the reader's schema (section 15) | A warning |
-| `DUPLICATE_ID` | IDs are unique as section 2.3 and section 12.2 require | The first is kept; a scenario variable that clashes with a character or world is ignored instead (section 2.3), and two replacements of one character make the session unplayable (section 12.2) |
+| `DUPLICATE_ID` | IDs are unique as section 2.3 and section 12.2 require, and a chronicle's persona has an ID other than its character's | The first is kept; a scenario variable that clashes with a character or world is ignored instead (section 2.3), two replacements of one character make the session unplayable (section 12.2), and a persona with its character's ID is ignored |
 | `UNKNOWN_SCENARIO` | The header's `scenario` names a scenario | The session can't be played |
 | `UNKNOWN_CHARACTER` | Cast members, `knownBy` (where `narrator` is also allowed), speakers, example speakers (or `char`, `user`), message `char`, members of `scene.present` values and character keys of `initial` objects name characters in the bundle or session; a memory's `knownBy` names IDs section 13 allows | The ID is ignored (section 7.4); a cast member or example exchange naming it is skipped |
 | `UNKNOWN_WORLD` | `scenario.worlds` names bundle worlds | The ID is ignored |
@@ -803,7 +803,7 @@ Messages are never dropped for a failed check, except the lines that `PARSE`, `S
 2. It removes the value at the instance location of each keyword whose failure makes the document fail and that asserts something itself, not one that only reports failures beneath it (`allOf`, `if`, `then`, `else`, `properties`, `additionalProperties`, `items`, `propertyNames`, `$ref`). A failing `anyOf` removes the value it applies to, whatever its branches report; a `false` subschema fails at the value it applies to; a failure beneath `propertyNames` removes the property whose name fails; a failing `uniqueItems` removes the later duplicates; a failing `dependentRequired` removes the dependent property.
 3. It validates again, until nothing fails.
 
-So an invalid `weight` reads as absent, and an entry without `text` is ignored. A list it empties or removes reads as section 2.2 says; a cast member whose `character` it removes is skipped; a message line it removes as a whole is skipped, and a message that loses its `parent` is skipped like one whose `parent` names no message; a document it removes as a whole isn't read. The other checks then run on the repaired document.
+So an invalid `weight` reads as absent, and an entry without `text` is ignored. A list it empties or removes reads as section 2.2 says; a cast member whose `character` it removes, or a `player` member without one, is skipped; a message line it removes as a whole is skipped, and a message that loses its `parent` is skipped like one whose `parent` names no message; a document it removes as a whole isn't read. The other checks then run on the repaired document.
 
 ---
 

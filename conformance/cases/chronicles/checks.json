@@ -1,5 +1,5 @@
 {
-  "description": "Chronicle checks (Format 13, 17.2): a memory's knownBy names the character, the persona or narrator; values name carried variables and are valid",
+  "description": "Chronicle checks (Format 13, 17.2): a memory's knownBy names the character, the persona or narrator; values name carried variables and are valid; a persona needs an ID other than the character's",
   "tests": [
     {
       "type": "chronicle",
@@ -45,6 +45,29 @@
           "INVALID_VALUE",
           "UNKNOWN_CHARACTER",
           "UNKNOWN_VARIABLE"
+        ]
+      }
+    },
+    {
+      "type": "chronicle",
+      "name": "a persona with the character's ID is DUPLICATE_ID",
+      "chronicle": {
+        "kind": "chronicle",
+        "id": "c-same",
+        "character": {
+          "id": "mira",
+          "name": "Mira",
+          "description": "d"
+        },
+        "persona": {
+          "id": "mira",
+          "name": "Also Mira",
+          "description": "d"
+        }
+      },
+      "expect": {
+        "codes": [
+          "DUPLICATE_ID"
         ]
       }
     }
