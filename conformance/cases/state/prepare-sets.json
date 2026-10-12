@@ -65,7 +65,10 @@
             "by": [
               "model"
             ],
-            "description": "only grows"
+            "description": "only grows",
+            "labels": {
+              "x": "an x"
+            }
           }
         ]
       }
@@ -130,7 +133,7 @@
     },
     {
       "type": "prepare",
-      "name": "oneWay set: removed members are kept",
+      "name": "oneWay set: removed members are kept, current members first, then new ones",
       "by": "model",
       "set": {
         "seen": [
@@ -214,7 +217,7 @@
       "type": "macro",
       "name": "sets render with labels, joined by ', '",
       "text": "{{state.seen}} / {{state.inv}}",
-      "expect": "x, y / "
+      "expect": "an x, y / "
     }
   ]
 }

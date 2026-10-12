@@ -1,5 +1,5 @@
 {
-  "description": "min and max may name another variable of the same owner, whose current value is the bound (Format 8.1); rounding comes before clamping (Play 3.3 steps 4–5)",
+  "description": "min and max may name another variable of the same owner, whose current value is the bound, unless that variable's own bounds name variables (Format 8.1); rounding comes before clamping (Play 3.3 steps 4–5)",
   "bundle": {
     "kind": "bundle",
     "characters": [
@@ -55,6 +55,12 @@
             "type": "int",
             "max": "nowhere",
             "description": "d"
+          },
+          {
+            "id": "chained",
+            "type": "int",
+            "max": "hp",
+            "description": "Bounded by hp, whose own max names a variable."
           }
         ]
       }
@@ -147,6 +153,10 @@
           {
             "code": "UNKNOWN_VARIABLE",
             "at": "/scenarios/0/variables/3/max"
+          },
+          {
+            "code": "UNKNOWN_VARIABLE",
+            "at": "/scenarios/0/variables/4/max"
           }
         ]
       }

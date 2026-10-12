@@ -34,7 +34,7 @@
       "$ref": "bundle.schema.json#/$defs/limits"
     },
     "scenario": {
-      "$ref": "bundle.schema.json#/$defs/id"
+      "$ref": "bundle.schema.json#/$defs/ownerId"
     },
     "seed": {
       "type": "string",
@@ -48,20 +48,23 @@
       "type": "array",
       "items": {
         "$ref": "bundle.schema.json#/$defs/character"
-      }
+      },
+      "minItems": 1
     },
     "players": {
       "type": "array",
       "uniqueItems": true,
       "items": {
-        "$ref": "bundle.schema.json#/$defs/id"
-      }
+        "$ref": "bundle.schema.json#/$defs/characterId"
+      },
+      "minItems": 1
     },
     "worlds": {
       "type": "array",
       "items": {
         "$ref": "bundle.schema.json#/$defs/world"
-      }
+      },
+      "minItems": 1
     },
     "head": {
       "$ref": "bundle.schema.json#/$defs/opaqueId"

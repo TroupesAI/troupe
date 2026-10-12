@@ -1,5 +1,5 @@
 {
-  "description": "Pulling (Format 7.2; Play 5.6): entries with pull and a title form a catalog of visible entries not selected whose when holds; pulled entries are recorded; pull entries without keys are not always-on",
+  "description": "Pulling (Format 7.2; Play 5.6): entries with pull and a title form a catalog of visible entries not selected whose when holds; once, cooldown and chance don't limit pulling; pulled entries are recorded; pull entries without keys are not always-on",
   "bundle": {
     "kind": "bundle",
     "characters": [
@@ -67,6 +67,15 @@
           {
             "id": "always",
             "text": "Always on."
+          },
+          {
+            "id": "tome",
+            "title": "The tome",
+            "pull": true,
+            "once": true,
+            "cooldown": 3,
+            "chance": 0,
+            "text": "The tome names the dragon."
           }
         ]
       }
@@ -106,7 +115,8 @@
         "char": "a",
         "activated": [
           "w/dragons",
-          "w/always"
+          "w/always",
+          "w/tome"
         ],
         "content": [
           {
@@ -141,7 +151,8 @@
         ],
         "catalog": [
           "w/dragons",
-          "w/elves"
+          "w/elves",
+          "w/tome"
         ]
       }
     },
@@ -161,7 +172,8 @@
         ],
         "catalog": [
           "w/dragons",
-          "w/elves"
+          "w/elves",
+          "w/tome"
         ]
       }
     },
@@ -177,7 +189,8 @@
           "w/always"
         ],
         "catalog": [
-          "w/dragons"
+          "w/dragons",
+          "w/tome"
         ]
       }
     },
@@ -191,7 +204,30 @@
         "catalog": [
           "w/dragons",
           "w/elves",
-          "w/secret"
+          "w/secret",
+          "w/tome"
+        ]
+      }
+    },
+    {
+      "type": "select",
+      "name": "once, cooldown and chance don't limit pulling",
+      "note": "w/tome is once, was recorded on message 2 (d = 1, inside its cooldown of 3), and has chance 0; it is still eligible and can be pulled.",
+      "for": "a",
+      "parent": "3",
+      "messageId": "4x",
+      "pulled": [
+        "w/tome"
+      ],
+      "expect": {
+        "activated": [
+          "w/elves",
+          "w/always",
+          "w/tome"
+        ],
+        "catalog": [
+          "w/dragons",
+          "w/tome"
         ]
       }
     },

@@ -170,7 +170,7 @@
     },
     {
       "type": "cel",
-      "expr": "state.trust.kai - 1",
+      "expr": "state.trust.kai - 1 > 0",
       "kind": "event",
       "expect": {
         "checkError": true

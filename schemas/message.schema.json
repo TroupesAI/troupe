@@ -28,11 +28,10 @@
       ]
     },
     "char": {
-      "$ref": "bundle.schema.json#/$defs/id"
+      "$ref": "bundle.schema.json#/$defs/characterId"
     },
     "author": {
-      "type": "string",
-      "minLength": 1
+      "$ref": "bundle.schema.json#/$defs/nonEmpty"
     },
     "content": {
       "type": "array",
@@ -44,7 +43,7 @@
       "$ref": "bundle.schema.json#/$defs/timestamp"
     },
     "model": {
-      "type": "string"
+      "$ref": "bundle.schema.json#/$defs/nonEmpty"
     },
     "stopped": {
       "type": "boolean"
@@ -53,7 +52,8 @@
       "type": "array",
       "items": {
         "$ref": "#/$defs/change"
-      }
+      },
+      "minItems": 1
     },
     "activated": {
       "description": "Entries that activated for this message, in file order.",
@@ -61,13 +61,15 @@
       "uniqueItems": true,
       "items": {
         "$ref": "bundle.schema.json#/$defs/entryRef"
-      }
+      },
+      "minItems": 1
     },
     "entries": {
       "type": "array",
       "items": {
         "$ref": "bundle.schema.json#/$defs/entry"
-      }
+      },
+      "minItems": 1
     },
     "summary": {
       "type": "object",
@@ -84,7 +86,7 @@
           "$ref": "bundle.schema.json#/$defs/opaqueId"
         },
         "knownBy": {
-          "$ref": "bundle.schema.json#/$defs/ids"
+          "$ref": "bundle.schema.json#/$defs/knownBy"
         },
         "ext": {
           "$ref": "bundle.schema.json#/$defs/ext"
@@ -101,17 +103,9 @@
       "$ref": "bundle.schema.json#/$defs/ext"
     }
   },
-  "dependentSchemas": {
-    "opening": {
-      "not": {
-        "required": [
-          "parent"
-        ]
-      }
-    }
-  },
   "allOf": [
     {
+      "description": "Only system messages may have empty content.",
       "if": {
         "not": {
           "properties": {
@@ -130,6 +124,7 @@
       }
     },
     {
+      "description": "A records-only message carries changes, and on a root an opening, and nothing a model or reader would use as content.",
       "if": {
         "properties": {
           "content": {
@@ -145,6 +140,79 @@
           "from": {
             "const": "system"
           }
+        },
+        "not": {
+          "anyOf": [
+            {
+              "required": [
+                "entries"
+              ]
+            },
+            {
+              "required": [
+                "summary"
+              ]
+            },
+            {
+              "required": [
+                "activated"
+              ]
+            },
+            {
+              "required": [
+                "char"
+              ]
+            },
+            {
+              "required": [
+                "pinned"
+              ],
+              "properties": {
+                "pinned": {
+                  "const": true
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "description": "A root made from an opening is a system message without a parent.",
+      "if": {
+        "required": [
+          "opening"
+        ]
+      },
+      "then": {
+        "not": {
+          "required": [
+            "parent"
+          ]
+        },
+        "properties": {
+          "from": {
+            "const": "system"
+          }
+        }
+      }
+    },
+    {
+      "description": "Only model messages name the character they were generated for.",
+      "if": {
+        "not": {
+          "properties": {
+            "from": {
+              "const": "model"
+            }
+          }
+        }
+      },
+      "then": {
+        "not": {
+          "required": [
+            "char"
+          ]
         }
       }
     }
@@ -176,7 +244,7 @@
           "minimum": 0
         },
         "reason": {
-          "type": "string"
+          "$ref": "bundle.schema.json#/$defs/nonEmpty"
         },
         "ext": {
           "$ref": "bundle.schema.json#/$defs/ext"

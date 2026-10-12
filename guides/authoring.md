@@ -76,7 +76,7 @@ A `set` without `values` holds free-form items: `["rope", "a silver chalice"]`. 
 
 ### Rosters and newcomers
 
-Make the people who matter characters, with a `summary` for when they are mentioned offstage, and the rest world entries keyed on their names. Openings decide who starts present. The tracker may introduce someone new, who joins the session's characters with their own description and entries; a `tracker` entry tells it when.
+Make the people who matter characters, with a `summary` for when they are mentioned offstage, and the rest world entries keyed on their names. Openings decide who starts present. The tracker may introduce someone new, who joins the session's characters with a name, description and summary; a `tracker` entry tells it when.
 
 ### Whereabouts and hidden characters
 

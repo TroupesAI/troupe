@@ -1,0 +1,193 @@
+{
+  "description": "Writer rules in the schemas (Format 2.2, 2.3, 8.1, 12, 15): booleans written as false are defaults; empty optional fields and null state values are SCHEMA; reserved IDs; bool labels; integer weights of at least 1; closed part types; unknown properties on parts, events and outcomes are only warnings; message shapes",
+  "tests": [
+    {
+      "type": "parse",
+      "name": "booleans written as false are the defaults",
+      "kind": "bundle",
+      "text": "{\"troupe\": \"0.11\", \"kind\": \"bundle\", \"characters\": [{\"id\": \"a\", \"name\": \"Ann\", \"description\": \"Ann.\", \"entries\": [{\"id\": \"e\", \"text\": \"t\", \"pull\": false, \"once\": false}], \"variables\": [{\"id\": \"v\", \"description\": \"d\", \"type\": \"string\", \"oneWay\": false}, {\"id\": \"w\", \"description\": \"d\", \"type\": \"int\", \"derive\": \"1\", \"oneWay\": false}]}]}",
+      "expect": {
+        "ok": true,
+        "codes": []
+      }
+    },
+    {
+      "type": "parse",
+      "name": "an empty string in an optional field",
+      "kind": "bundle",
+      "text": "{\"troupe\": \"0.11\", \"kind\": \"bundle\", \"tagline\": \"\", \"characters\": [{\"id\": \"a\", \"name\": \"Ann\", \"description\": \"Ann.\"}]}",
+      "expect": {
+        "ok": false,
+        "codes": [
+          "SCHEMA"
+        ]
+      }
+    },
+    {
+      "type": "parse",
+      "name": "an empty list in an optional field",
+      "kind": "bundle",
+      "text": "{\"troupe\": \"0.11\", \"kind\": \"bundle\", \"characters\": [{\"id\": \"a\", \"name\": \"Ann\", \"description\": \"Ann.\", \"aliases\": []}]}",
+      "expect": {
+        "ok": false,
+        "codes": [
+          "SCHEMA"
+        ]
+      }
+    },
+    {
+      "type": "parse",
+      "name": "scenario.worlds may be empty",
+      "kind": "bundle",
+      "text": "{\"troupe\": \"0.11\", \"kind\": \"bundle\", \"scenarios\": [{\"id\": \"s\", \"worlds\": []}]}",
+      "expect": {
+        "ok": true,
+        "codes": []
+      }
+    },
+    {
+      "type": "parse",
+      "name": "null as a state value",
+      "kind": "bundle",
+      "text": "{\"troupe\": \"0.11\", \"kind\": \"bundle\", \"scenarios\": [{\"id\": \"s\", \"variables\": [{\"id\": \"v\", \"description\": \"d\", \"type\": \"int\"}], \"openings\": [{\"id\": \"o\", \"set\": {\"v\": null}}]}]}",
+      "expect": {
+        "ok": false,
+        "codes": [
+          "SCHEMA"
+        ]
+      }
+    },
+    {
+      "type": "parse",
+      "name": "null as an initial value",
+      "kind": "bundle",
+      "text": "{\"troupe\": \"0.11\", \"kind\": \"bundle\", \"scenarios\": [{\"id\": \"s\", \"variables\": [{\"id\": \"v\", \"description\": \"d\", \"type\": \"int\", \"initial\": null}]}]}",
+      "expect": {
+        "ok": false,
+        "codes": [
+          "SCHEMA"
+        ]
+      }
+    },
+    {
+      "type": "parse",
+      "name": "a variable named own",
+      "kind": "bundle",
+      "text": "{\"troupe\": \"0.11\", \"kind\": \"bundle\", \"scenarios\": [{\"id\": \"s\", \"variables\": [{\"id\": \"own\", \"description\": \"d\", \"type\": \"int\"}]}]}",
+      "expect": {
+        "ok": false,
+        "codes": [
+          "SCHEMA"
+        ]
+      }
+    },
+    {
+      "type": "parse",
+      "name": "bool labels name true and false only",
+      "kind": "bundle",
+      "text": "{\"troupe\": \"0.11\", \"kind\": \"bundle\", \"scenarios\": [{\"id\": \"s\", \"variables\": [{\"id\": \"v\", \"description\": \"d\", \"type\": \"bool\", \"labels\": {\"yes\": \"Yes\"}}]}]}",
+      "expect": {
+        "ok": false,
+        "codes": [
+          "SCHEMA"
+        ]
+      }
+    },
+    {
+      "type": "parse",
+      "name": "weight 0",
+      "kind": "bundle",
+      "text": "{\"troupe\": \"0.11\", \"kind\": \"bundle\", \"scenarios\": [{\"id\": \"s\", \"events\": [{\"id\": \"e\", \"when\": \"true\", \"outcomes\": [{\"weight\": 0}]}]}]}",
+      "expect": {
+        "ok": false,
+        "codes": [
+          "SCHEMA"
+        ]
+      }
+    },
+    {
+      "type": "parse",
+      "name": "a part of an unknown type",
+      "kind": "bundle",
+      "text": "{\"troupe\": \"0.11\", \"kind\": \"bundle\", \"scenarios\": [{\"id\": \"s\", \"openings\": [{\"id\": \"o\", \"content\": [{\"type\": \"audio\", \"text\": \"x\"}]}]}]}",
+      "expect": {
+        "ok": false,
+        "codes": [
+          "SCHEMA"
+        ]
+      }
+    },
+    {
+      "type": "parse",
+      "name": "an unknown property on an image part is only a warning",
+      "kind": "bundle",
+      "text": "{\"troupe\": \"0.11\", \"kind\": \"bundle\", \"scenarios\": [{\"id\": \"s\", \"openings\": [{\"id\": \"o\", \"content\": [{\"type\": \"image\", \"src\": \"a.png\", \"alt\": \"A map.\", \"caption\": \"x\"}]}]}]}",
+      "expect": {
+        "ok": true,
+        "codes": [
+          "UNKNOWN_FIELD"
+        ]
+      }
+    },
+    {
+      "type": "parse",
+      "name": "an unknown property on an event or outcome is only a warning",
+      "kind": "bundle",
+      "text": "{\"troupe\": \"0.11\", \"kind\": \"bundle\", \"scenarios\": [{\"id\": \"s\", \"events\": [{\"id\": \"e\", \"when\": \"true\", \"mood\": \"x\", \"outcomes\": [{\"weight\": 2, \"mood\": \"y\"}]}]}]}",
+      "expect": {
+        "ok": true,
+        "codes": [
+          "UNKNOWN_FIELD"
+        ]
+      }
+    },
+    {
+      "type": "parse",
+      "name": "a speaker that is a reserved word",
+      "kind": "bundle",
+      "text": "{\"troupe\": \"0.11\", \"kind\": \"bundle\", \"scenarios\": [{\"id\": \"s\", \"openings\": [{\"id\": \"o\", \"content\": [{\"speaker\": \"user\", \"text\": \"x\"}]}]}]}",
+      "expect": {
+        "ok": false,
+        "codes": [
+          "SCHEMA"
+        ]
+      }
+    },
+    {
+      "type": "parse",
+      "name": "a player message naming a char",
+      "kind": "session",
+      "text": "{\"troupe\": \"0.11\", \"kind\": \"session\", \"scenario\": \"s\", \"seed\": \"conformanceSeed0001\"}\n{\"id\": \"1\", \"from\": \"player\", \"char\": \"a\", \"content\": [{\"text\": \"x\"}]}\n",
+      "expect": {
+        "ok": false,
+        "codes": [
+          "SCHEMA"
+        ]
+      }
+    },
+    {
+      "type": "parse",
+      "name": "a records-only message with entries",
+      "kind": "session",
+      "text": "{\"troupe\": \"0.11\", \"kind\": \"session\", \"scenario\": \"s\", \"seed\": \"conformanceSeed0001\"}\n{\"id\": \"1\", \"from\": \"system\", \"content\": [], \"changes\": [{\"by\": \"player\", \"set\": {}}], \"entries\": [{\"id\": \"e\", \"text\": \"t\"}]}\n",
+      "expect": {
+        "ok": false,
+        "codes": [
+          "SCHEMA"
+        ]
+      }
+    },
+    {
+      "type": "parse",
+      "name": "an opening root is a system message",
+      "kind": "session",
+      "text": "{\"troupe\": \"0.11\", \"kind\": \"session\", \"scenario\": \"s\", \"seed\": \"conformanceSeed0001\"}\n{\"id\": \"1\", \"opening\": \"o\", \"from\": \"player\", \"content\": [{\"text\": \"x\"}]}\n",
+      "expect": {
+        "ok": false,
+        "codes": [
+          "SCHEMA"
+        ]
+      }
+    }
+  ]
+}

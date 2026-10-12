@@ -74,6 +74,7 @@ Each test has `type`, an optional `name` and `note` (informative), the inputs be
 - **Equality** is deep JSON equality. Object key order is ignored, array order matters, and numbers compare as IEEE 754 doubles.
 - **Subset** comparisons check only the keys `expect` lists; other keys in the actual result are ignored.
 - Lists of entry references, IDs and names are compared in the order the spec defines: file order, cast order, firing order or line order, as stated for each test.
+- Where `expect` gives a list of changes, firings or IDs, an absent field in the result counts as `[]`. Whole messages are compared as written: a message records only what the spec says it records, so a runner adds no `at`, `model` or `author`, and a message with no changes has no `changes`.
 
 ### 4.1 `roll`: rolls (Play 4)
 
@@ -127,7 +128,7 @@ The state is flattened to an object with these keys:
 | `for` | The character being generated for. Omit it for the narrator (in `characters` mode) or the single voice (in `narrator` mode). |
 | `parent` | The evaluation point: the parent of the message being built. Defaults to the head. |
 | `messageId` | The ID of the message being built; rolls use it. |
-| `maxEntries` | Optional. Fitting (Play 5.5 step 3): drop entries until at most this many remain. |
+| `maxEntries` | Optional. Fitting (Play 5.5 step 3): drop entries until at most this many of those selected in steps 1 and 2, sticky ones included, remain. Pulled entries aren't fitted. When priority-100 entries alone exceed it, every droppable entry is dropped and fitting fails. |
 | `pulled` | Optional. Entry references pulled for the message (Play 5.6). Each must be eligible. |
 
 Candidates exclude `disabled` entries and entries placed in `tracker` (Play 5.1).
@@ -149,7 +150,7 @@ Every field of `expect` is optional:
 | Input | Meaning |
 | --- | --- |
 | `for` | The viewer, as for `select`. |
-| `parent` | The evaluation point. |
+| `parent` | The evaluation point. Required. |
 | `depth` | The scan depth; 4 by default. |
 
 `expect` is the scanned text string (Play 5.2).
@@ -181,7 +182,7 @@ Every field of `expect` is optional:
 | --- | --- |
 | `text` | Author text. |
 | `at` | The message whose state the macros read. Omit it for the initial state. `{{user}}` follows the path to `at`. |
-| `char` | What `{{char}}` and a `char` path segment mean. |
+| `char` | What `{{char}}` and a `char` path segment mean. Omit it for none: `{{char}}` is then left as written, and a `char` segment names no key (Format 10). |
 | `owner` | What `own` means. Omit it for none. |
 | `narrator` | Optional boolean: a narrator generation, so `{{char}}` without `char` renders as "the narrator". |
 
@@ -193,7 +194,7 @@ Every field of `expect` is optional:
 | --- | --- |
 | `expr` | A CEL expression. |
 | `kind` | `"entry"` or `"event"`, which decides whether `hit()` is available; `"event"` by default. |
-| `at` | The evaluation point. Omit it for none: `turn` 0 and the initial state. |
+| `at` | The evaluation point. Omit it for none: `turn` 0, the initial state, `opening` and `last.*` `""`, `elapsed` 0, `hour` and `weekday` −1; `players` and `user` come from the session's header. |
 | `char` | The value of `char`; `""` by default. |
 | `self` | The expression's owner, which also types `own`; the scenario by default. |
 
@@ -213,7 +214,7 @@ Every field of `expect` is optional:
 | `firstMessage` | Without an opening: the player's first message, without `id` and `parent`. |
 | `chronicle` | `start` only: the chronicle document the session continues (Format 13). |
 
-`swipe` adds another root to the case's session. An opening without `content` makes a records-only root (Play 2.1 step 4); the runner doesn't generate the first model message (step 6).
+`start` ignores the case's session and starts a new one. `swipe` adds another root to the case's session, and the new root becomes the head. An opening without `content` makes a records-only root (Play 2.1 step 4); the runner doesn't generate the first model message (step 6).
 
 Every field of `expect` is optional:
 
@@ -236,7 +237,7 @@ The runner validates the bundle and the session's raw lines against the schemas,
 
 - `expect.codes` is the sorted list of distinct diagnostic codes reported. It is compared exactly.
 - Each session line after the header is validated against `message.schema.json`. Validators assert `format`, so a malformed timestamp is `SCHEMA`.
-- `SCHEMA` covers schema failures, such as `null` in a field the spec defines. `""` and `[]` in optional fields read as missing (Format 2.2) for every other operation, but the raw document still fails the schema where it sets `minLength` or `minItems`, which is reported as `SCHEMA`.
+- `SCHEMA` covers schema failures, such as `null` in a field the spec defines. `""` and `[]` in optional fields read as missing (Format 2.2) for every other operation, but writers must leave them out, so the raw document fails the schema, which is reported as `SCHEMA`.
 - `UNKNOWN_FIELD` (Format 15) is located at the property itself (`/characters/0/mystery`).
 - `check` tests don't use `PARSE` or `UNSUPPORTED_VERSION`; `parse` tests (section 4.14) cover reading.
 - `expect.includes` lists `{code, at}` pairs that must each appear, compared on both fields.
@@ -262,7 +263,7 @@ Inputs are as for `select`, plus `summaries`: an optional boolean that lets ever
 | An event direction | `direction` |
 | The premise | `premise` |
 | A world description | `world:<id>` |
-| A location and its parents, innermost first | `location:<id>` |
+| Each of the current location and its parents, innermost first | `location:<id>` |
 | A present model-played character, or the character being generated for when absent | `character:<id>` |
 | A player's character | `player:<id>` |
 | An offstage character's summary | `offstage:<id>` |
@@ -277,7 +278,7 @@ The text of a `character:<id>` item is the character's resolved `description`; i
 Every field of `expect` is optional:
 
 - each slot name, compared as the full list of item strings in order
-- `lines`, a subset map from history message ID to its lines: each visible part as `<speaker name>: <text>`, or `<text>` without a speaker. Text is macro-resolved in author messages and literal in player and model messages. Image parts render as `[image]` or `[image: <alt>]`, with `alt` macro-resolved in author messages; Hidden messages and records-only system messages are left out.
+- `lines`, a subset map from the ID of a `message:` item to its lines: each visible part as `<speaker name>: <text>`, or `<text>` without a speaker. Text is macro-resolved; player and model text is stored escaped (Format 10), so it comes out as written. Image parts render as `[image]` or `[image: <alt>]`, with `alt` macro-resolved; Hidden messages and records-only system messages are left out.
 - `texts`, a subset map from item string to the item's resolved text
 - `directions`, the resolved direction texts
 
@@ -293,7 +294,7 @@ The reader parses the bytes, checks the version, validates against the schema (u
 
 Every field of `expect` is optional:
 
-- `ok` is whether a document is read with no error diagnostics. Another minor version or an unknown field is a warning, so the input is still `ok`.
+- `ok` is whether no error is reported. Every code is an error except `UNKNOWN_FIELD` and `UNSUPPORTED_VERSION` for another minor version, which are warnings; a skipped session line (`PARSE`) is an error.
 - `codes` is the sorted list of distinct codes reported, compared exactly.
 - `equals` is the bundle read, for `bundle` and `png`, after absent values read as missing (Format 2.2).
 - `ids` is, for `session`, the IDs of the messages read, in line order.
@@ -315,13 +316,14 @@ The test reads the case's raw session lines.
 | `message` | Instead of `reply`: an existing message, for a tracker extraction. |
 | `output` | A string for a plain reply, or a `ModelOutput` object. |
 
-The output is applied as Play 3.4 says, with model text stored escaped (Format 10) and changes recorded as `{"by": "model", "set", "reason"?}`.
+The output is applied as Play 3.4 says: properties unknown to `model-output.schema.json` are dropped first (Format 15), model text is stored escaped (Format 10), and changes are recorded as `{"by": "model", "set", "reason"?}`. No event pass follows; `events` tests cover it.
 
 Every field of `expect` is optional:
 
 - `message` is the resulting message.
 - `dropped` is the list of change keys dropped by preparation.
 - `characters` is the header characters' IDs afterwards.
+- `newcomers` is the characters the output added to the header, as stored.
 
 ### 4.17 `chronicle`: chronicle checks and writing back (Format 13; Play 2.2)
 

@@ -45,7 +45,7 @@
       "type": "match",
       "name": "Kelvin sign (NFC to K, folds to k)",
       "key": "5k",
-      "text": "It was 5K outside",
+      "text": "It was 5K outside",
       "expect": true
     },
     {

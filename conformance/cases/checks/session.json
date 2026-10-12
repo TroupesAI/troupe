@@ -81,7 +81,7 @@
     "messages": [
       {
         "id": "1",
-        "from": "player",
+        "from": "system",
         "content": [
           {
             "speaker": "p",

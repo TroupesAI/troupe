@@ -1,5 +1,5 @@
 {
-  "description": "Starting from a chronicle (Play 2.2): values are validated and only carried keys kept; when no character is brought, the persona fills the first seat with its own ID, and otherwise values keyed to it don't apply; a character with no bundle character joins the cast and is present; the chronicle's limits join the session's; writing back sets only keys a change on the path set, keeps only carried keys, trims a memory's knownBy to the character, narrator and the persona, and skips root entries unchanged from how the start copied them",
+  "description": "Starting from a chronicle (Play 2.2): values are validated and only carried keys kept, and a chronicle change that sets nothing isn't recorded (Play 2.1); when no character is brought, the persona fills the first seat with its own ID, and otherwise values keyed to it don't apply; a character with no bundle character joins the cast and is present; the chronicle's limits join the session's; writing back sets only keys a change on the path set, keeps only carried keys, trims a memory's knownBy to the character, narrator and the persona, and skips root entries unchanged from how the start copied them",
   "bundle": {
     "kind": "bundle",
     "characters": [
@@ -443,6 +443,85 @@
           "description": "A courier."
         }
       ]
+    },
+    {
+      "type": "start",
+      "name": "no carried value is left: no chronicle change is recorded",
+      "scenario": "s",
+      "opening": "o",
+      "chronicle": {
+        "kind": "chronicle",
+        "id": "c-kai",
+        "character": {
+          "id": "kai",
+          "name": "Kai",
+          "description": "A drifter.",
+          "variables": [
+            {
+              "id": "feelings",
+              "type": "int",
+              "of": "cast",
+              "min": -10,
+              "max": 10,
+              "carry": true,
+              "description": "d"
+            },
+            {
+              "id": "mood",
+              "type": "string",
+              "description": "not carried"
+            },
+            {
+              "id": "level",
+              "type": "int",
+              "carry": true,
+              "derive": "1",
+              "description": "derived, never carried"
+            }
+          ]
+        },
+        "persona": {
+          "id": "mara",
+          "name": "Mara",
+          "description": "d"
+        },
+        "limits": {
+          "lines": [
+            "gore"
+          ],
+          "veils": [
+            "romance"
+          ]
+        },
+        "memories": [
+          {
+            "id": "met",
+            "carry": true,
+            "text": "Kai met Mara at the docks."
+          }
+        ],
+        "values": {
+          "mood": "glum",
+          "level": 3
+        }
+      },
+      "expect": {
+        "changes": [
+          {
+            "by": "rules",
+            "set": {
+              "scene.present": [
+                "mara",
+                "kai"
+              ]
+            }
+          }
+        ],
+        "characters": [
+          "mara",
+          "kai"
+        ]
+      }
     },
     {
       "type": "prompt",

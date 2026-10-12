@@ -38,38 +38,36 @@ Format 2 applies here, including requirement keywords. "Format 7.2" means sectio
 ### 2.1 Starting
 
 1. Generate a `seed` of at least 96 random bits, such as 16 bytes in base64url.
-2. Fill the player seats. A character, world or location the app brings into the session needs an ID that Format 2.3 allows in the session: unique, except for a character meant as a replacement (Format 12.2). How the app ensures this is its own choice.
+2. Fill the player seats. A character, world or location brought into the session has an ID that Format 2.3 allows there: unique, except for a character meant as a replacement (Format 12.2).
 3. Ask the questions of variables with `ask`.
 4. Create a root message for the chosen opening: `from: "system"`, with `opening` set and the content copied as written, or empty for an opening without `content`. It records these changes, in order:
    1. when the session continues a chronicle, its values in one `{"by": "rules", "set": …}` change (section 2.2);
    2. `{"by": "rules", "set": …}` with the opening's `set` and the starting `scene.present`;
    3. `{"by": "player", "set": …}` with the answers.
 
-   The starting `scene.present` is the opening's `scene.present` when its `set` lists one; otherwise the characters who speak in its content, or, for an opening without `content`, every character in the session's cast when it starts (Format 12.2). The players' characters, and the chronicle's character when it has no bundle character (section 2.2), are added to it.
+   Of these, a change that would set nothing isn't recorded.
+
+   The starting `scene.present` is the opening's `scene.present` when its `set` lists one; otherwise the cast characters who speak in its content, or, for an opening without `content`, every character in the session's cast when it starts (Format 12.2). The players' characters, and the chronicle's character when it has no bundle character (section 2.2), are added to it.
 
    Without an opening, the player's first message is the root. It records the chronicle's change, then its own changes, then the answers. When the chronicle's character has no bundle character, the chronicle's change also sets `scene.present`: the presence of section 3.2 plus that character, in cast order.
 5. Evaluate events at the root. Opening macros see their results.
-6. For an opening without `content`, generate the first model message as a child of the root (or of the root's event message), for a present model-played character chosen by the app, or the narrator.
+6. For an opening without `content`, the first model message is a child of the root, or of the root's event message, generated for a present model-played character or the narrator.
 
-Swiping to another opening creates another root, starting again from step 4.
+Another opening tried in the same session gets its own root, made by steps 4 and 5.
 
 ### 2.2 Continuing a chronicle
 
 - **Starting.** A session continues at most one chronicle, named by `chronicle`.
-  - The chronicle's `character` is copied into the header's `characters`, where it replaces the bundle character with the same ID (Format 12.2). The character keeps that ID for life, so bundle references to it still work. When the character has no bundle character, it joins the cast and is present at the start (section 2.1).
-  - `persona` fills the first seat without a `character` unless the people playing bring another character, and the chronicle's `limits` are added to the session's `lines` and `veils`, without duplicates, in order.
+  - The chronicle's `character` is copied into the header's `characters`, after the others, where it replaces the bundle character with the same ID (Format 12.2). The character keeps that ID for life, so bundle references to it still work. When the character has no bundle character, it joins the cast and is present at the start (section 2.1).
+  - `persona` fills the first seat without a `character`, first in the header's `characters`, unless the people playing bring another character, and the chronicle's `limits` are added to the session's `lines` and `veils`, without duplicates, in order.
   - Its `memories` are copied onto the root as session entries, a memory without `knownBy` getting the character's, and its `values` are recorded on the root in one `{"by": "rules"}` change, keyed with the character's ID (`mira.closeness`), before any other change (section 2.1).
   - Value keys and memory `knownBy` IDs that name the persona take effect only when the persona plays with its own ID (section 2.1 step 2).
   - The session never needs the chronicle file to replay.
-- **Writing back.** Apps write back to the chronicle when they choose, such as when a conversation pauses, by rewriting it from the head path.
+- **Writing back** from a path rewrites the chronicle:
   - `values` keeps only carried keys, keyed without the owner, and takes the latest value of each carried key that a change on the path set.
   - The memories written back are the carried session entries on the path, the latest version of each ID, whose `knownBy` is absent or names the character. Root entries unchanged from how the start copied them are skipped.
   - Each keeps in `knownBy` only the character, the persona and `narrator`.
   - Each replaces the memory with its ID, or is added after the others in the order the IDs first appear; one with `disabled` removes that memory.
-
-### 2.3 Turns
-
-Who speaks next is up to the app. Apps MAY let a person take over a model-played character (Format 12.2).
 
 ---
 
@@ -98,7 +96,7 @@ Before recording, apps prepare each value, using the state just before the chang
 
 1. normalize a set: remove duplicates, then order listed members as declared;
 2. for `by: "model"`, limit the difference from the current value to `maxStep`;
-3. for `oneWay` variables, keep the current value instead of a move backward; a set keeps its current members and accepts additions;
+3. for `oneWay` variables, keep the current value instead of a move backward; a set becomes its current members followed by the value's new ones, normalized as in step 1;
 4. round `number` values to the nearest double to the decimal that ECMAScript `Number.prototype.toFixed(6)` produces;
 5. clamp to `min` and `max`.
 
@@ -126,20 +124,23 @@ interface ModelOutput {
   parts?: { speaker?: string; text: string; knownBy?: string[] }[];   // a reply's parts
   changes?: Record<string, Json>;  // keys that changed, with new values
   reason?: string;
-  entries?: Entry[];               // session entries to add, such as memories
-  characters?: Character[];        // newcomers who appeared, with a change adding them to scene.present
+  entries?: Entry[];               // session entries to add, such as memories; no position or priority
+  characters?: Newcomer[];         // newcomers who appeared, with a change adding them to scene.present
 }
+
+type Newcomer = Pick<Character, "id" | "name" | "aliases" | "description" | "summary">;
 ```
 
 - **Tracker.** A separate model call or a tool call reads the messages since the last extraction on the path and returns everything but `parts`. Its input is, for each variable whose `by` includes `model`, its key, type, `values` or range, `description` and current value; the scene, with location names and the cast; entries placed in `tracker` whose `when` holds; and the messages, with full knowledge.
 - **Structured reply.** The story model returns the whole payload in its reply. For the narrator and the single voice, the System slot also carries the tracker's input other than the messages, so it knows which values it may change. Variables have no `knownBy`, so a character's generation in `characters` mode gets no tracker input, and apps keep only the `parts` of its reply.
 - **Plain reply.** Without structure, the reply is one text part whose `speaker` is the message's `char`, or none for the narrator. Apps MUST NOT guess `knownBy` from plain text.
 
-Apps apply a payload in this order: `characters` join the header; `parts` are stored, dropping speakers and `knownBy` IDs that name no character in the session, newcomers included; `changes` are recorded as `{"by": "model", …}`, prepared as in section 3.3, on the newest message covered; and `entries` become session entries on the same message. An extraction that finds nothing SHOULD record `{"by": "model", "set": {}}`, which marks where the next one starts. Failure is not fatal. The event pass after a message waits for any extraction the app runs on it.
+Nothing in the payload takes `ext`. A model adds story content, never mechanics or standing direction:
 
-### 3.5 Edits and regeneration
+- A newcomer has only `id`, `name`, `aliases`, `description` and `summary`; any other field is unknown (Format 15). A newcomer whose ID names a character of the bundle or session is dropped, so a model never replaces or redefines a character.
+- An entry takes no `position` or `priority`, which are unknown there, so it is placed in `context` with priority 50. An entry whose ID names a session entry placed in `system` or `tracker` on the path is dropped, so a model never replaces or disables a direction.
 
-Changes are history. When a message's content is edited, the app SHOULD re-derive that message's `model` and `rules` changes, and the event message they add, and keep its `player` changes; other messages keep their records. A regenerated message is a new sibling with its own changes and rolls. Continuing a stopped message appends to it, keeping its ID and rolls.
+Apps apply a payload in this order: `characters` join the header; `parts` are stored; `changes` are recorded as `{"by": "model", …}`, prepared as in section 3.3, on the newest message covered; and `entries` become session entries on the same message. Speakers and `knownBy` IDs other than `narrator` that name no character in the session, newcomers included, are dropped; a `knownBy` whose IDs are all dropped becomes `["narrator"]`, so a misnamed secret is never told to everyone. An extraction that finds nothing SHOULD record `{"by": "model", "set": {}}`, which marks where the next one starts. The event pass after a message waits for any extraction the app runs on it.
 
 ---
 
@@ -164,7 +165,7 @@ The result is below 2^53, so JavaScript computes it exactly without BigInt.
 | `roll(n)` | `dice` | the triggering message | `<event name>/<part>/<key>/<k>`: key is the compute key as written; part is `e` for the event or the outcome index; *k* numbers the `roll` calls in that expression by where they start, from 0 | `roll mod n + 1` |
 | `{{pick}}` | `pick` | `""` | the options joined by `::`, then `#` and the macro's index among the picks in that field, from 0 | option `roll mod count` |
 
-- **`seed`** is the session's. Apps MUST assign a message's ID before building its prompt. Continuing a message keeps its ID, so its rolls repeat; regenerating creates a new ID and new rolls.
+- **`seed`** is the session's. A message's ID is fixed before its prompt is built, since its rolls use it.
 - **Weighted pick:** with candidates in order and total integer weight *W*, let `t = roll mod W`; pick the first candidate whose running total of weights exceeds `t`.
 - `chance · 2^48` is exact in double precision, so `chance: 1` always passes and `0` never does.
 - Identical picks in different fields agree, by design.
@@ -200,7 +201,7 @@ This is also the **file order**; within an owner, entries keep their array order
 
 ### 5.2 Scanned text
 
-An entry's scanned text is built from the last `scanDepth` messages on the path that aren't hidden and have content, newest first. Each text part that the generation can see, in array order, contributes `<speaker name>: <text>`, or its text when it has no speaker, with comments removed and author macros resolved. Contributions are joined with `\n`. Image parts are never scanned. A key that names a character therefore matches whenever that character speaks.
+An entry's scanned text is built from the last `scanDepth` messages on the path that aren't hidden and have content, newest first. Each text part that the generation can see, in array order, contributes `<speaker name>: <text>`, or its text when it has no speaker, with macros resolved (Format 10). Contributions are joined with `\n`. Image parts are never scanned. A key that names a character therefore matches whenever that character speaks.
 
 ### 5.3 Matching
 
@@ -209,6 +210,7 @@ Matching works on Unicode scalar values, with scanned text and plain keys normal
 - **Case:** comparison uses simple case folding (statuses C and S of `CaseFolding.txt`), as JavaScript regular expressions with the `iu` flags and Go's `unicode.SimpleFold` do.
 - **Plain keys** match where no letter, digit or mark (General Categories L, N and M) directly touches either end of an occurrence. Keys containing Han, Hiragana, Katakana, Hangul, Thai, Lao, Khmer, Myanmar or Tibetan characters match anywhere.
 - **Regex keys** are compiled unchanged as RE2 patterns, case-insensitive unless the pattern clears the flag, and match anywhere.
+- An empty key, as in `hit('')`, matches nothing.
 
 ### 5.4 Activation records
 
@@ -228,13 +230,13 @@ Entries kept by `sticky` are not recorded again, so stickiness runs out.
    2. **Filter.** A matching candidate is excluded if its `when` is false, it is in cooldown, it is `once` and already recorded, or it fails its `chance` roll.
    3. **Group.** For each group of an owner with no selected entry, the remaining candidates with the highest `priority` compete, and one wins by a weighted group roll; the group's other remaining candidates are excluded. Candidates of a group that already has a selected entry are excluded.
    4. **Select.** The remaining candidates are selected.
-3. **Fit.** If space runs out, the app drops entries below priority 100, lowest `priority` first, ties broken by dropping later entries in file order. It never drops priority-100 entries; if they don't fit, generation fails. Fitting never re-rolls. How an app shortens examples and history is its own choice.
+3. **Fit.** If space runs out, the app drops entries below priority 100, lowest `priority` first, ties broken by dropping later entries in file order. It never drops priority-100 entries; if they don't fit, generation fails. Fitting never re-rolls.
 
-The app then records the entries selected in steps 1 and 2 that survived step 3, except those kept by `sticky`, together with any entries pulled for the message. Previews and other prompts that don't create a model message record nothing. Continuing a message reuses its records.
+The app then records the entries selected in steps 1 and 2 that survived step 3, except those kept by `sticky`, together with any entries pulled for the message.
 
 ### 5.6 Pulling
 
-Entries with `pull` are retrieved when relevant, by either of two methods an app MAY offer: the model sees a catalog of their titles and requests entries by title, for example through a tool; or the app finds entries by similarity search over titles and texts. Only entries the generation can see, that are not already selected, and whose `when` holds, with `hit()` checking their scanned text, are eligible. A pulled entry's text reaches the model, and the entry is recorded in `activated`. In apps that offer neither method, entries with `pull` activate only through their `keys`.
+Entries with `pull` are retrieved when relevant, by either of two methods an app MAY offer: the model sees a catalog of their titles and requests entries by title, for example through a tool; or the app finds entries by similarity search over titles and texts. Only entries the generation can see, that are not already selected, and whose `when` holds, with `hit()` checking their scanned text, are eligible; groups, `once`, `sticky`, `cooldown` and `chance` don't apply to pulling. A pulled entry's text reaches the model, and the entry is recorded in `activated`. In apps that offer neither method, entries with `pull` activate only through their `keys`.
 
 ---
 
@@ -245,7 +247,7 @@ Troupe defines what goes into a prompt and in which slot; formatting, mapping to
 | Slot | Contents, in order |
 | --- | --- |
 | **System** | the app's own prompt; the session's `limits` (Format 12); selected entries placed in `system`; event directions (section 3.3) |
-| **Setting** | the premise; world descriptions; the current location and its parents |
+| **Setting** | the premise; world descriptions; the current location and its parents, innermost first |
 | **People** | present model-played characters, then the character being generated for if absent: description and cast `notes`; the players' characters, with their cast `notes`; offstage cast characters whose name or alias, as a plain key, matches the scanned text (section 5.2) of the last 4 messages, as the generation can see it: their `summary`, a character without one contributing nothing; dialogue examples of the present model-played characters and the character being generated for |
 | **Context** | selected entries placed in `context`; pinned messages |
 | **History** | messages on the path with parts the generation can see, image parts reaching models without image input as their `alt`, with summaries it can see standing in for messages they cover where the app chooses, and entries with a numeric position inserted at their depth |
@@ -276,7 +278,7 @@ Knowledge limits what models see, never what people see; secrets between human p
 
 ## 8. Conformance
 
-A conforming **app** reads files as a conforming reader (Format 17.1), and also computes and records state, evaluates events, selects entries, computes rolls, fills prompt slots, applies knowledge rules and the session's `limits`, records the scene, keeps player and model text literal and follows Format 16, all exactly as this document describes. Pulling is optional. An app without multiplayer lets one person control every player seat.
+A conforming **app** reads files as a conforming reader (Format 17.1), and also computes and records state, evaluates events, selects entries, computes rolls, fills prompt slots, applies knowledge rules and the session's `limits`, records the scene, keeps player and model text literal and follows Format 16, all exactly as this document describes. Pulling is optional.
 
 ---
 
@@ -284,12 +286,14 @@ A conforming **app** reads files as a conforming reader (Format 17.1), and also 
 
 | Decision | Instead of | Why |
 | --- | --- | --- |
+| App actions unspecified: editing, deleting, continuing, previews, turn order | Procedures for each | A reader only ever sees the snapshot those actions leave, so the spec constrains the snapshot (permanent message IDs, summaries that match their messages) and leaves the actions to apps. |
 | Story fixed, fitting a recorded baseline | Specifying only content, or only procedures | Outcomes replay exactly, and better fitting can come later. |
 | Identical entry selection is a MUST | Leaving selection to each app | Every app gives the model the same lore for the same file and session, and the conformance suite can test selection. |
 | Events in a single pass, once per round, one message per pass | Cascading rules | Deterministic, terminating, no accidental branches. |
 | Witness knowledge, `["narrator"]` | Everyone knows everything; `[]` | Offstage characters miss events; no empty-list footgun. |
 | Presence from openings, offstage summaries on mention | Everyone present, every summary | Casts and rosters scale. |
 | One model-output payload; characters' replies carry only parts | Separate tracker and reply rules; state from every reply | Speakers, state and memories travel the same way from any transport, and a character's model never reads variable descriptions it mustn't know. |
+| Model output adds story content only: newcomers without mechanics, entries without placement, no replacing characters or directions | Accepting full characters and entries from a model | A reply, or text a player coaxes out of a model, can't add rules, recast a character or plant a standing instruction. |
 | Prompt slots, not a fixed order | One mandated order | Apps keep prompt caches warm with long contexts. |
 | SHA-256 rolls over seed, message and subject | A sequential generator | Order-independent, exact in JavaScript, fresh on regeneration. |
 | Recorded activations; sticky not re-recorded | Recomputing history | Timers continue in any app, and run out. |

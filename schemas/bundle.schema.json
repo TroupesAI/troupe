@@ -26,19 +26,19 @@
       "$ref": "#/$defs/nonEmpty"
     },
     "version": {
-      "type": "string"
+      "$ref": "#/$defs/nonEmpty"
     },
     "authors": {
-      "$ref": "#/$defs/strings"
+      "$ref": "#/$defs/list"
     },
     "credits": {
-      "type": "string"
+      "$ref": "#/$defs/nonEmpty"
     },
     "language": {
-      "type": "string"
+      "$ref": "#/$defs/nonEmpty"
     },
     "tags": {
-      "$ref": "#/$defs/strings"
+      "$ref": "#/$defs/list"
     },
     "rating": {
       "enum": [
@@ -48,7 +48,7 @@
       ]
     },
     "warnings": {
-      "$ref": "#/$defs/strings"
+      "$ref": "#/$defs/list"
     },
     "cover": {
       "$ref": "#/$defs/image"
@@ -57,25 +57,28 @@
       "type": "array",
       "items": {
         "$ref": "#/$defs/character"
-      }
+      },
+      "minItems": 1
     },
     "worlds": {
       "type": "array",
       "items": {
         "$ref": "#/$defs/world"
-      }
+      },
+      "minItems": 1
     },
     "scenarios": {
       "type": "array",
       "items": {
         "$ref": "#/$defs/scenario"
-      }
+      },
+      "minItems": 1
     },
     "ext": {
       "$ref": "#/$defs/ext"
     },
     "tagline": {
-      "type": "string"
+      "$ref": "#/$defs/nonEmpty"
     }
   },
   "$defs": {
@@ -146,7 +149,10 @@
         },
         {
           "not": {
-            "const": "scene"
+            "enum": [
+              "scene",
+              "own"
+            ]
           }
         }
       ]
@@ -177,17 +183,16 @@
       "type": "object",
       "propertyNames": {
         "$ref": "#/$defs/stateKey"
+      },
+      "additionalProperties": {
+        "not": {
+          "type": "null"
+        }
       }
     },
     "nonEmpty": {
       "type": "string",
       "minLength": 1
-    },
-    "strings": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
     },
     "timestamp": {
       "type": "string",
@@ -254,13 +259,13 @@
           "$ref": "#/$defs/nonEmpty"
         },
         "aliases": {
-          "$ref": "#/$defs/strings"
+          "$ref": "#/$defs/list"
         },
         "description": {
           "type": "string"
         },
         "summary": {
-          "type": "string"
+          "$ref": "#/$defs/nonEmpty"
         },
         "examples": {
           "type": "array",
@@ -270,25 +275,29 @@
             "items": {
               "$ref": "#/$defs/line"
             }
-          }
+          },
+          "minItems": 1
         },
         "entries": {
           "type": "array",
           "items": {
             "$ref": "#/$defs/entry"
-          }
+          },
+          "minItems": 1
         },
         "variables": {
           "type": "array",
           "items": {
             "$ref": "#/$defs/variable"
-          }
+          },
+          "minItems": 1
         },
         "events": {
           "type": "array",
           "items": {
             "$ref": "#/$defs/event"
-          }
+          },
+          "minItems": 1
         },
         "avatar": {
           "$ref": "#/$defs/image"
@@ -306,8 +315,17 @@
       "additionalProperties": false,
       "properties": {
         "speaker": {
-          "type": "string",
-          "pattern": "^[a-z][a-z0-9_]{0,63}$"
+          "anyOf": [
+            {
+              "$ref": "#/$defs/characterId"
+            },
+            {
+              "enum": [
+                "char",
+                "user"
+              ]
+            }
+          ]
         },
         "text": {
           "type": "string"
@@ -332,31 +350,35 @@
           "$ref": "#/$defs/nonEmpty"
         },
         "description": {
-          "type": "string"
+          "$ref": "#/$defs/nonEmpty"
         },
         "locations": {
           "type": "array",
           "items": {
             "$ref": "#/$defs/location"
-          }
+          },
+          "minItems": 1
         },
         "entries": {
           "type": "array",
           "items": {
             "$ref": "#/$defs/entry"
-          }
+          },
+          "minItems": 1
         },
         "variables": {
           "type": "array",
           "items": {
             "$ref": "#/$defs/variable"
-          }
+          },
+          "minItems": 1
         },
         "events": {
           "type": "array",
           "items": {
             "$ref": "#/$defs/event"
-          }
+          },
+          "minItems": 1
         },
         "ext": {
           "$ref": "#/$defs/ext"
@@ -378,7 +400,7 @@
           "$ref": "#/$defs/nonEmpty"
         },
         "description": {
-          "type": "string"
+          "$ref": "#/$defs/nonEmpty"
         },
         "parent": {
           "$ref": "#/$defs/id"
@@ -406,14 +428,15 @@
           "type": "string"
         },
         "title": {
-          "type": "string"
+          "$ref": "#/$defs/nonEmpty"
         },
         "keys": {
           "type": "array",
           "items": {
             "type": "string",
             "minLength": 1
-          }
+          },
+          "minItems": 1
         },
         "when": {
           "$ref": "#/$defs/cel"
@@ -470,7 +493,7 @@
           "default": "context"
         },
         "knownBy": {
-          "$ref": "#/$defs/ids"
+          "$ref": "#/$defs/knownBy"
         },
         "disabled": {
           "type": "boolean"
@@ -485,8 +508,18 @@
           "type": "boolean"
         }
       },
-      "dependentRequired": {
-        "pull": [
+      "if": {
+        "required": [
+          "pull"
+        ],
+        "properties": {
+          "pull": {
+            "const": true
+          }
+        }
+      },
+      "then": {
+        "required": [
           "title"
         ]
       }
@@ -502,13 +535,13 @@
           "$ref": "#/$defs/ownerId"
         },
         "name": {
-          "type": "string"
+          "$ref": "#/$defs/nonEmpty"
         },
         "premise": {
-          "type": "string"
+          "$ref": "#/$defs/nonEmpty"
         },
         "briefing": {
-          "type": "string"
+          "$ref": "#/$defs/nonEmpty"
         },
         "mode": {
           "enum": [
@@ -521,40 +554,49 @@
           "type": "array",
           "items": {
             "$ref": "#/$defs/castMember"
-          }
+          },
+          "minItems": 1
         },
         "worlds": {
-          "$ref": "#/$defs/ids"
+          "description": "World IDs; [] for none.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ownerId"
+          }
         },
         "openings": {
           "type": "array",
           "items": {
             "$ref": "#/$defs/opening"
-          }
+          },
+          "minItems": 1
         },
         "entries": {
           "type": "array",
           "items": {
             "$ref": "#/$defs/entry"
-          }
+          },
+          "minItems": 1
         },
         "variables": {
           "type": "array",
           "items": {
             "$ref": "#/$defs/variable"
-          }
+          },
+          "minItems": 1
         },
         "events": {
           "type": "array",
           "items": {
             "$ref": "#/$defs/event"
-          }
+          },
+          "minItems": 1
         },
         "ext": {
           "$ref": "#/$defs/ext"
         },
         "tagline": {
-          "type": "string"
+          "$ref": "#/$defs/nonEmpty"
         }
       }
     },
@@ -566,7 +608,7 @@
           "$ref": "#/$defs/characterId"
         },
         "notes": {
-          "type": "string"
+          "$ref": "#/$defs/nonEmpty"
         },
         "ext": {
           "$ref": "#/$defs/ext"
@@ -609,7 +651,7 @@
           "$ref": "#/$defs/id"
         },
         "title": {
-          "type": "string"
+          "$ref": "#/$defs/nonEmpty"
         },
         "set": {
           "$ref": "#/$defs/stateValues"
@@ -668,7 +710,7 @@
               "type": "number"
             },
             {
-              "$ref": "#/$defs/id"
+              "$ref": "#/$defs/variableId"
             }
           ]
         },
@@ -678,12 +720,15 @@
               "type": "number"
             },
             {
-              "$ref": "#/$defs/id"
+              "$ref": "#/$defs/variableId"
             }
           ]
         },
         "initial": {
-          "description": "Validity is checked against the declaration (INVALID_VALUE)."
+          "description": "Validity is checked against the declaration (INVALID_VALUE).",
+          "not": {
+            "type": "null"
+          }
         },
         "of": {
           "anyOf": [
@@ -716,7 +761,8 @@
               "player",
               "model"
             ]
-          }
+          },
+          "minItems": 1
         },
         "maxStep": {
           "type": "number",
@@ -846,7 +892,7 @@
                     "type": "integer"
                   },
                   {
-                    "$ref": "#/$defs/id"
+                    "$ref": "#/$defs/variableId"
                   }
                 ]
               },
@@ -856,7 +902,7 @@
                     "type": "integer"
                   },
                   {
-                    "$ref": "#/$defs/id"
+                    "$ref": "#/$defs/variableId"
                   }
                 ]
               },
@@ -875,10 +921,10 @@
             }
           },
           "then": {
-            "not": {
-              "required": [
-                "oneWay"
-              ]
+            "properties": {
+              "oneWay": {
+                "const": false
+              }
             }
           }
         },
@@ -933,13 +979,13 @@
                   "required": [
                     "maxStep"
                   ]
-                },
-                {
-                  "required": [
-                    "oneWay"
-                  ]
                 }
               ]
+            },
+            "properties": {
+              "oneWay": {
+                "const": false
+              }
             }
           }
         },
@@ -961,13 +1007,108 @@
               ]
             }
           }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "bool"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "labels": {
+                "propertyNames": {
+                  "enum": [
+                    "true",
+                    "false"
+                  ]
+                }
+              }
+            }
+          }
         }
       ]
     },
-    "effects": {
-      "description": "Fields shared by events and outcomes.",
+    "event": {
       "type": "object",
+      "required": [
+        "id",
+        "when"
+      ],
+      "additionalProperties": false,
       "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "when": {
+          "$ref": "#/$defs/cel"
+        },
+        "on": {
+          "enum": [
+            "player",
+            "model"
+          ]
+        },
+        "once": {
+          "type": "boolean"
+        },
+        "cooldown": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "chance": {
+          "$ref": "#/$defs/unit",
+          "default": 1
+        },
+        "set": {
+          "$ref": "#/$defs/stateValues"
+        },
+        "compute": {
+          "type": "object",
+          "propertyNames": {
+            "$ref": "#/$defs/stateKey"
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/cel"
+          }
+        },
+        "message": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/part"
+          }
+        },
+        "direct": {
+          "$ref": "#/$defs/nonEmpty"
+        },
+        "end": {
+          "type": "boolean"
+        },
+        "ext": {
+          "$ref": "#/$defs/ext"
+        },
+        "outcomes": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/outcome"
+          }
+        }
+      }
+    },
+    "outcome": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "weight": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000000,
+          "default": 1
+        },
         "set": {
           "$ref": "#/$defs/stateValues"
         },
@@ -998,117 +1139,70 @@
         }
       }
     },
-    "event": {
-      "type": "object",
-      "required": [
-        "id",
-        "when"
-      ],
-      "$ref": "#/$defs/effects",
-      "unevaluatedProperties": false,
-      "properties": {
-        "id": {
-          "$ref": "#/$defs/id"
-        },
-        "when": {
-          "$ref": "#/$defs/cel"
-        },
-        "once": {
-          "type": "boolean"
-        },
-        "cooldown": {
-          "type": "integer",
-          "minimum": 1
-        },
-        "chance": {
-          "$ref": "#/$defs/unit",
-          "default": 1
-        },
-        "outcomes": {
-          "type": "array",
-          "minItems": 1,
-          "items": {
-            "$ref": "#/$defs/outcome"
-          }
-        },
-        "on": {
-          "enum": [
-            "player",
-            "model"
-          ]
-        }
-      }
-    },
-    "outcome": {
-      "type": "object",
-      "$ref": "#/$defs/effects",
-      "unevaluatedProperties": false,
-      "properties": {
-        "weight": {
-          "type": "integer",
-          "minimum": 1,
-          "maximum": 1000000,
-          "default": 1
-        }
-      }
-    },
     "part": {
-      "oneOf": [
-        {
-          "title": "Text part",
-          "type": "object",
-          "required": [
-            "text"
-          ],
-          "additionalProperties": false,
-          "properties": {
-            "type": {
-              "const": "text"
-            },
-            "text": {
-              "type": "string"
-            },
-            "speaker": {
-              "$ref": "#/$defs/id"
-            },
-            "knownBy": {
-              "$ref": "#/$defs/ids"
-            },
-            "ext": {
-              "$ref": "#/$defs/ext"
-            }
-          }
-        },
-        {
-          "title": "Image part",
-          "type": "object",
-          "required": [
-            "type",
-            "src"
-          ],
-          "additionalProperties": false,
-          "properties": {
-            "type": {
-              "const": "image"
-            },
-            "src": {
-              "$ref": "#/$defs/image"
-            },
-            "alt": {
-              "type": "string"
-            },
-            "speaker": {
-              "$ref": "#/$defs/id"
-            },
-            "ext": {
-              "$ref": "#/$defs/ext"
-            },
-            "knownBy": {
-              "$ref": "#/$defs/ids"
-            }
+      "description": "A text part, or an image part with type image (Format 12).",
+      "if": {
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "const": "image"
           }
         }
-      ]
+      },
+      "then": {
+        "type": "object",
+        "required": [
+          "type",
+          "src"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "type": {
+            "const": "image"
+          },
+          "src": {
+            "$ref": "#/$defs/image"
+          },
+          "alt": {
+            "$ref": "#/$defs/nonEmpty"
+          },
+          "speaker": {
+            "$ref": "#/$defs/characterId"
+          },
+          "ext": {
+            "$ref": "#/$defs/ext"
+          },
+          "knownBy": {
+            "$ref": "#/$defs/knownBy"
+          }
+        }
+      },
+      "else": {
+        "type": "object",
+        "required": [
+          "text"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "type": {
+            "const": "text"
+          },
+          "text": {
+            "type": "string"
+          },
+          "speaker": {
+            "$ref": "#/$defs/characterId"
+          },
+          "knownBy": {
+            "$ref": "#/$defs/knownBy"
+          },
+          "ext": {
+            "$ref": "#/$defs/ext"
+          }
+        }
+      }
     },
     "eventName": {
       "description": "A scenario event ID, or <owner>/<id> for a character's or world's event.",
@@ -1120,14 +1214,30 @@
       "additionalProperties": false,
       "properties": {
         "lines": {
-          "$ref": "#/$defs/strings"
+          "$ref": "#/$defs/list"
         },
         "veils": {
-          "$ref": "#/$defs/strings"
+          "$ref": "#/$defs/list"
         },
         "ext": {
           "$ref": "#/$defs/ext"
         }
+      }
+    },
+    "list": {
+      "description": "A non-empty list of strings.",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string"
+      }
+    },
+    "knownBy": {
+      "description": "Character IDs, or narrator; non-empty.",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/id"
       }
     }
   }

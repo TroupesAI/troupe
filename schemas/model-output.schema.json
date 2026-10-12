@@ -2,12 +2,13 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://troupes.ai/schema/0.11/model-output.schema.json",
   "title": "Troupe model output",
-  "description": "What a model returns (Play 3.4): a structured reply, or a tracker's result without parts.",
+  "description": "What a model returns (Play 3.4): a structured reply, or a tracker's result without parts. Speakers and knownBy IDs are plain strings, because apps drop the ones that name no character.",
   "type": "object",
   "additionalProperties": false,
   "properties": {
     "parts": {
       "type": "array",
+      "minItems": 1,
       "items": {
         "type": "object",
         "required": [
@@ -16,13 +17,13 @@
         "additionalProperties": false,
         "properties": {
           "speaker": {
-            "$ref": "bundle.schema.json#/$defs/id"
+            "$ref": "bundle.schema.json#/$defs/nonEmpty"
           },
           "text": {
             "type": "string"
           },
           "knownBy": {
-            "$ref": "bundle.schema.json#/$defs/ids"
+            "$ref": "#/$defs/names"
           }
         }
       }
@@ -31,18 +32,130 @@
       "$ref": "bundle.schema.json#/$defs/stateValues"
     },
     "reason": {
-      "type": "string"
+      "$ref": "bundle.schema.json#/$defs/nonEmpty"
     },
     "entries": {
       "type": "array",
+      "minItems": 1,
       "items": {
-        "$ref": "bundle.schema.json#/$defs/entry"
+        "$ref": "#/$defs/entry"
       }
     },
     "characters": {
       "type": "array",
+      "minItems": 1,
       "items": {
-        "$ref": "bundle.schema.json#/$defs/character"
+        "$ref": "#/$defs/newcomer"
+      }
+    }
+  },
+  "$defs": {
+    "names": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "bundle.schema.json#/$defs/nonEmpty"
+      }
+    },
+    "entry": {
+      "description": "A session entry a model adds: an Entry without position or priority (Play 3.4).",
+      "type": "object",
+      "required": [
+        "id",
+        "text"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "bundle.schema.json#/$defs/id"
+        },
+        "text": {
+          "type": "string"
+        },
+        "title": {
+          "$ref": "bundle.schema.json#/$defs/nonEmpty"
+        },
+        "keys": {
+          "$ref": "bundle.schema.json#/$defs/entry/properties/keys"
+        },
+        "pull": {
+          "type": "boolean"
+        },
+        "when": {
+          "$ref": "bundle.schema.json#/$defs/cel"
+        },
+        "scanDepth": {
+          "$ref": "bundle.schema.json#/$defs/entry/properties/scanDepth"
+        },
+        "once": {
+          "type": "boolean"
+        },
+        "sticky": {
+          "$ref": "bundle.schema.json#/$defs/entry/properties/sticky"
+        },
+        "cooldown": {
+          "$ref": "bundle.schema.json#/$defs/entry/properties/cooldown"
+        },
+        "chance": {
+          "$ref": "bundle.schema.json#/$defs/entry/properties/chance"
+        },
+        "group": {
+          "$ref": "bundle.schema.json#/$defs/id"
+        },
+        "weight": {
+          "$ref": "bundle.schema.json#/$defs/entry/properties/weight"
+        },
+        "knownBy": {
+          "$ref": "#/$defs/names"
+        },
+        "carry": {
+          "type": "boolean"
+        },
+        "disabled": {
+          "type": "boolean"
+        }
+      },
+      "if": {
+        "required": [
+          "pull"
+        ],
+        "properties": {
+          "pull": {
+            "const": true
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "title"
+        ]
+      }
+    },
+    "newcomer": {
+      "description": "A character a model introduces: identity only, no mechanics (Play 3.4).",
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "description"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "bundle.schema.json#/$defs/characterId"
+        },
+        "name": {
+          "$ref": "bundle.schema.json#/$defs/nonEmpty"
+        },
+        "aliases": {
+          "$ref": "bundle.schema.json#/$defs/list"
+        },
+        "description": {
+          "type": "string"
+        },
+        "summary": {
+          "$ref": "bundle.schema.json#/$defs/nonEmpty"
+        }
       }
     }
   }

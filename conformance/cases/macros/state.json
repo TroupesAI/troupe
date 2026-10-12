@@ -199,8 +199,8 @@
     {
       "type": "macro",
       "text": "{{@state.approach}}",
-      "expect": "quiet",
-      "name": "{{@state}} of a value that names no character or location renders the value"
+      "expect": "Slip in unseen",
+      "name": "{{@state}} renders a label like {{state}}: a value with a label renders as its label"
     }
   ]
 }

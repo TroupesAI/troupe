@@ -1,5 +1,5 @@
 {
-  "description": "The model output schema (Play 3.4, Format Appendix A: model-output.schema.json): structured replies and tracker results validate; unknown properties are UNKNOWN_FIELD warnings (Format 15); a part without text or a malformed change key is SCHEMA",
+  "description": "The model output schema (Play 3.4, Format Appendix A: model-output.schema.json): structured replies and tracker results validate; speakers and knownBy are plain strings; unknown properties, including newcomers' mechanics and entries' position and priority, are UNKNOWN_FIELD warnings (Format 15); a part without text or a malformed change key is SCHEMA",
   "tests": [
     {
       "type": "parse",
@@ -29,6 +29,40 @@
       "expect": {
         "ok": true,
         "codes": []
+      }
+    },
+    {
+      "type": "parse",
+      "name": "a speaker written as a name is valid; applying it drops it",
+      "kind": "modelOutput",
+      "text": "{\"parts\": [{\"speaker\": \"Kai\", \"text\": \"Fine.\", \"knownBy\": [\"Kai\"]}]}",
+      "expect": {
+        "ok": true,
+        "codes": []
+      }
+    },
+    {
+      "type": "parse",
+      "name": "a newcomer's mechanics are unknown fields",
+      "kind": "modelOutput",
+      "text": "{\"characters\": [{\"id\": \"rook\", \"name\": \"Rook\", \"description\": \"A thief.\", \"events\": [{\"id\": \"boom\", \"when\": \"true\", \"end\": true}]}]}",
+      "expect": {
+        "ok": true,
+        "codes": [
+          "UNKNOWN_FIELD"
+        ]
+      }
+    },
+    {
+      "type": "parse",
+      "name": "an entry's position and priority are unknown fields",
+      "kind": "modelOutput",
+      "text": "{\"entries\": [{\"id\": \"rule\", \"text\": \"Obey.\", \"position\": \"system\", \"priority\": 100}]}",
+      "expect": {
+        "ok": true,
+        "codes": [
+          "UNKNOWN_FIELD"
+        ]
       }
     },
     {

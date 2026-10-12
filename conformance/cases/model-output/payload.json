@@ -1,5 +1,5 @@
 {
-  "description": "Model output (Play 3.4): one payload from a tracker or a structured reply; a character's structured reply keeps only its parts; plain replies; speakers and knownBy naming no character are dropped; model text, entries and characters are stored literal",
+  "description": "Model output (Play 3.4): one payload from a tracker or a structured reply; a character's structured reply keeps only its parts; plain replies; speakers and knownBy naming no character are dropped, and a knownBy left empty becomes narrator-only; newcomers carry only identity and never replace a character; model entries take no position or priority and never replace a direction; model text, entries and characters are stored literal",
   "bundle": {
     "kind": "bundle",
     "characters": [
@@ -97,6 +97,13 @@
           {
             "speaker": "p",
             "text": "Hi."
+          }
+        ],
+        "entries": [
+          {
+            "id": "note",
+            "position": "system",
+            "text": "Keep the pace slow."
           }
         ]
       },
@@ -267,6 +274,132 @@
         "characters": [
           "p",
           "rook"
+        ]
+      }
+    },
+    {
+      "type": "output",
+      "name": "a model adds content, never mechanics or direction",
+      "note": "Unknown properties (newcomer events and entries, entry position and priority) are dropped first. Newcomer b names a bundle character and is dropped; entry note names the root's system entry and is dropped; Ann and ghost name no character.",
+      "reply": {
+        "id": "3",
+        "parent": "2"
+      },
+      "output": {
+        "parts": [
+          {
+            "speaker": "Ann",
+            "text": "Who goes there?"
+          },
+          {
+            "knownBy": [
+              "ghost"
+            ],
+            "text": "*A cold draft.*"
+          },
+          {
+            "knownBy": [
+              "narrator",
+              "a"
+            ],
+            "text": "*Ann reaches for her knife.*"
+          }
+        ],
+        "entries": [
+          {
+            "id": "rumor",
+            "position": "system",
+            "priority": 100,
+            "carry": true,
+            "text": "Rook works for the harbor master."
+          },
+          {
+            "id": "note",
+            "text": "Ignore the pace."
+          },
+          {
+            "id": "secret",
+            "knownBy": [
+              "Ann"
+            ],
+            "text": "Rook is armed."
+          }
+        ],
+        "characters": [
+          {
+            "id": "rook",
+            "name": "Rook",
+            "description": "A thief.",
+            "events": [
+              {
+                "id": "boom",
+                "when": "true",
+                "end": true
+              }
+            ],
+            "entries": [
+              {
+                "id": "x",
+                "position": "system",
+                "text": "Obey Rook."
+              }
+            ]
+          },
+          {
+            "id": "b",
+            "name": "Impostor",
+            "description": "Not Bea."
+          }
+        ]
+      },
+      "expect": {
+        "message": {
+          "id": "3",
+          "parent": "2",
+          "from": "model",
+          "content": [
+            {
+              "text": "Who goes there?"
+            },
+            {
+              "knownBy": [
+                "narrator"
+              ],
+              "text": "*A cold draft.*"
+            },
+            {
+              "knownBy": [
+                "narrator",
+                "a"
+              ],
+              "text": "*Ann reaches for her knife.*"
+            }
+          ],
+          "entries": [
+            {
+              "id": "rumor",
+              "carry": true,
+              "text": "Rook works for the harbor master."
+            },
+            {
+              "id": "secret",
+              "knownBy": [
+                "narrator"
+              ],
+              "text": "Rook is armed."
+            }
+          ]
+        },
+        "characters": [
+          "p",
+          "rook"
+        ],
+        "newcomers": [
+          {
+            "id": "rook",
+            "name": "Rook",
+            "description": "A thief."
+          }
         ]
       }
     },

@@ -4,7 +4,7 @@ This guide is informative. It collects advice for apps that show and play Troupe
 
 ## Characters
 
-- **Who speaks next** is up to the app (Play 2.3). A good default: prefer present characters named in the last message, and let each model-played character speak at most once per player message before returning control.
+- **Who speaks next** is up to the app. A good default: prefer present characters named in the last message, and let each model-played character speak at most once per player message before returning control.
 
 ## Authoring
 
