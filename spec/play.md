@@ -25,7 +25,7 @@ This document defines how an app plays Troupe files: how it starts and continues
 
 ### 1.1 Story and fitting
 
-Troupe separates **what a story is** (content, state, knowledge and recorded outcomes) from **how an app fits it to a model** (which entries to activate, where to place them, what to leave out). The first is fixed by this specification. The second has a deterministic baseline that apps follow when they create a message (sections 5 and 6). Because every outcome is recorded, later versions can add better activation and fitting methods without changing how existing sessions replay.
+Troupe separates **what a story is** (content, state, knowledge and recorded outcomes) from **how an app fits it to a model** (which entries to activate, where to place them, what to leave out). The first is fixed by this specification. The second has a deterministic baseline that apps follow when they create a message (sections 5 and 6).
 
 ### 1.2 Conventions
 
@@ -37,7 +37,7 @@ Format 2 applies here, including requirement keywords. "Format 7.2" means sectio
 
 ### 2.1 Starting
 
-1. Generate a `seed` of at least 96 random bits, such as 16 bytes in base64url.
+1. Generate a random `seed` of at least 96 bits.
 2. Fill the player seats.
 3. Ask the questions of variables in use that have `ask`.
 4. Create a root message for the chosen opening: `from: "system"`, with `opening` set and the content copied as written, or empty for an opening without `content`. It records these changes, in order:
@@ -50,7 +50,7 @@ Format 2 applies here, including requirement keywords. "Format 7.2" means sectio
    The starting `scene.present` is the opening's `scene.present` when its `set` lists one; otherwise the cast characters who speak in its content, or, for an opening without `content`, every character in the session's cast when the root is made (Format 12.2). The players' characters, and the chronicle's character when it isn't in the scenario's cast (section 2.2), are added to it.
 
    Without an opening, the player's first message is the root. It records the chronicle's change, then its own changes, then the answers. When the chronicle's character isn't in the scenario's cast, the chronicle's change also sets `scene.present`: the presence of section 3.2 plus that character, in cast order.
-5. Evaluate events at the root. Opening macros see their results.
+5. Evaluate events at the root.
 
 Another opening tried in the same session gets its own root, made by steps 3 to 5, with the chronicle's change and memories copied from the first root.
 
@@ -88,7 +88,7 @@ The state at a message is computed by applying, in order:
 1. every variable's initial value, clamped as in section 3.3; no location; the whole cast present except the joiners (Format 12.2);
 2. the `changes` of every message on the path from the root to that message, in path order, and within a message in array order.
 
-Playing never modifies a bundle: state is the bundle's starting values plus the changes recorded in the session. Derived variables are computed from that state when read and prepared by steps 1, 4 and 5 of section 3.3; one whose expression fails at runtime, or whose value is then invalid, is absent. Readers apply recorded changes and never re-run events or trackers on load. The state at a message includes its own changes. Branches never share state. Keys, values and validity are defined in Format 8.5.
+Playing never modifies a bundle: state is the bundle's starting values plus the changes recorded in the session. Derived variables are computed from that state when read and prepared by steps 1, 4 and 5 of section 3.3; one whose expression fails at runtime, or whose value is then invalid, is absent. Readers apply recorded changes and never re-run events or trackers on load. Keys, values and validity are defined in Format 8.5.
 
 ### 3.3 Recording changes
 
@@ -100,7 +100,7 @@ Before recording a change, apps drop each key whose value isn't valid (Format 8.
 4. round `number` values to the nearest double to the decimal that ECMAScript `Number.prototype.toFixed(6)` produces;
 5. clamp: raise the value to `min`, then lower it to `max`.
 
-A key whose prepared value is no longer valid, such as a set grown past its limit (Format 16), is dropped too. Dropped keys produce a warning; the rest are kept. Within a message, changes are recorded in the order they happen: on a root, in the order of section 2.1; on any message, player and model changes before the changes of the events they trigger.
+A key whose prepared value is no longer valid, such as a set grown past its limit (Format 16), is dropped too. The rest are kept. Within a message, changes are recorded in the order they happen: on a root, in the order of section 2.1; on any message, player and model changes before the changes of the events they trigger.
 
 **Readers** re-apply steps 1, 4 and 5 when loading and drop invalid keys, but don't re-check channels, `maxStep` or `oneWay`, so history survives later edits to the bundle.
 
@@ -109,7 +109,7 @@ A key whose prepared value is no longer valid, such as a set grown past its limi
 **Events.** At each root, after each player or model message once its player and model changes are recorded, and after player edits:
 
 1. Events in use are evaluated once each, in the order scenario, the scenario's worlds, the session's worlds, characters (cast order), each in array order, in a single pass, skipping events whose `on` doesn't match the triggering message; a root made from an opening, and a records-only message, match neither. Each sees the state, firings and counts left by those before it. Messages added by events don't trigger evaluation.
-2. An event fires when its `when` is true; it isn't `once` with an earlier firing on the path; its distance from its last firing is greater than `cooldown` (0 when unset), so it fires at most once per round (an event that fired after a player message can't fire again after the replies in that round); and its `chance` roll succeeds.
+2. An event fires when its `when` is true; it isn't `once` with an earlier firing on the path; its distance from its last firing is greater than `cooldown` (0 when unset), so it fires at most once per round; and its `chance` roll succeeds.
 3. A firing chooses an outcome by a weighted roll, if there are `outcomes`. The event's `set` and `compute`, then the outcome's, produce new values; later keys replace earlier ones. Every `compute` expression sees the state before this firing. Values are prepared as above.
 4. The firing is recorded on the triggering message as `{"by": "rules", "event": name, "outcome": index, "set": {…}}`, even when `set` is empty.
 5. The `message` parts of all firings in the pass, event before outcome, form one `from: "system"` message, a child of the triggering message, which becomes the head.
@@ -141,9 +141,9 @@ type Newcomer = Pick<Character, "id" | "name" | "aliases" | "description" | "sum
 Nothing in the payload takes `ext`. A model adds story content, never mechanics or standing direction:
 
 - A newcomer whose ID names a character, world, scenario or scenario variable of the bundle or session, an earlier newcomer of the payload included, or who would take the cast past its limit (Format 16), is dropped.
-- An entry is placed in `context` with priority 50. An entry whose ID names a session entry on the path that isn't placed in `context` is dropped; a model may update or disable a context entry, such as a memory.
+- An entry whose ID names a session entry on the path that isn't placed in `context` is dropped; a model may update or disable a context entry, such as a memory.
 
-Apps apply a payload in this order: `characters` join the header; `parts` are stored; `changes` are recorded as `{"by": "model", …}`, prepared as in section 3.3, on the newest message it reads, or the reply itself; and `entries` become session entries on the same message. Speakers that name no cast character, newcomers included, are dropped, and so are `knownBy` IDs other than `narrator` that name none; a `knownBy` whose IDs are all dropped becomes `["narrator"]`, or `[<speaker>, "narrator"]` on a part with a speaker. Before applying a payload, apps read its empty values as Format 2.2 says and drop its unknown properties (Format 15); a part, entry or newcomer that still fails the schema is dropped, and so is an entry or newcomer whose ID an earlier one in the payload has; change keys and values that aren't valid are dropped by preparation. Output that isn't a JSON object, and a structured reply left with no parts, is discarded, and nothing is recorded. An **extraction** is a tracker run, or a structured reply from the narrator or the single voice. Each records one `{"by": "model", …}` change, with an empty `set` when it changes nothing, which marks where the next tracker run starts. The event pass after a message waits for any extraction the app runs on it.
+Apps apply a payload in this order: `characters` join the header; `parts` are stored; `changes` are recorded as `{"by": "model", …}`, prepared as in section 3.3, on the newest message it reads, or the reply itself; and `entries` become session entries on the same message. Speakers that name no cast character are dropped (a newcomer that joined is in the cast), and so are `knownBy` IDs other than `narrator` that name none; a `knownBy` whose IDs are all dropped becomes `["narrator"]`, or `[<speaker>, "narrator"]` on a part with a speaker. Before applying a payload, apps read its empty values as Format 2.2 says and drop its unknown properties (Format 15); a part, entry or newcomer that still fails the schema is dropped, and so is an entry or newcomer whose ID an earlier one in the payload has; change keys and values that aren't valid are dropped by preparation. Output that isn't a JSON object, and a structured reply left with no parts, is discarded, and nothing is recorded. An **extraction** is a tracker run, or a structured reply from the narrator or the single voice. Each records one `{"by": "model", …}` change, with an empty `set` when it changes nothing, which marks where the next tracker run starts. The event pass after a message waits for any extraction the app runs on it.
 
 ---
 
@@ -164,12 +164,12 @@ roll(purpose, seed, messageId, subject):
 | Event `chance` | `event` | the triggering message | event name | passes if `roll < chance · 2^48` |
 | Event outcome | `outcome` | the triggering message | event name | weighted pick |
 | `roll(n)` | `dice` | the triggering message | `<event name>/<part>/<key>/<k>`: key is the compute key as written; part is `e` for the event or the outcome index; *k* numbers the `roll` calls in that expression by where they start, from 0 | `roll mod n + 1` |
-| `{{pick}}` | `pick` | `""` | the options joined by `::`, then `#` and the macro's index among the picks in that field, from 0 | option `roll mod count` |
+| `{{pick}}` | `pick` | `""` | the options joined by `::`, then `#` and the macro's index among the picks in that string, from 0 | option `roll mod count` |
 
 - **`seed`** is the session's. A message's ID is fixed before its prompt is built, since its rolls use it.
 - **Weighted pick:** with candidates in order and total integer weight *W*, let `t = roll mod W`; pick the first candidate whose running total of weights exceeds `t`.
 - `chance · 2^48` is exact in double precision, so `chance: 1` always passes and `0` never does.
-- Identical picks in different fields agree, by design.
+- Identical picks in different strings agree.
 
 Test vectors, with seed `k7Qm2xVb9TzR4pLc8NwYfA`:
 
@@ -202,11 +202,11 @@ This is also the **file order**; within an owner, entries keep their array order
 
 ### 5.2 Scanned text
 
-An entry's scanned text is built from the last `scanDepth` messages on the path that aren't hidden and have content, newest first. Each text part that the generation can see, in array order, contributes `<speaker name>: <text>`, or its text when it has no speaker, with macros resolved (Format 10). Contributions are joined with `\n`. Image parts are never scanned. A key that names a character therefore matches whenever that character speaks.
+An entry's scanned text is built from the last `scanDepth` messages on the path, counted as section 3.1 says, newest first. Each text part that the generation can see, in array order, contributes `<speaker name>: <text>`, or its text when it has no speaker, with macros resolved (Format 10). Contributions are joined with `\n`. Image parts are never scanned.
 
 ### 5.3 Matching
 
-Matching works on Unicode scalar values, with scanned text and plain keys normalized to NFC. Apps SHOULD use Unicode 15.1 or later; the conformance suite tests only characters whose properties have been stable since 15.1.
+Matching works on Unicode scalar values, with scanned text and plain keys normalized to NFC. Apps SHOULD use Unicode 15.1 or later.
 
 - **Case:** comparison uses simple case folding (statuses C and S of `CaseFolding.txt`).
 - **Plain keys** match where no letter, digit or mark (General Categories L, N and M) directly touches either end of an occurrence. Keys containing Han, Hiragana, Katakana, Hangul, Thai, Lao, Khmer, Myanmar or Tibetan characters match anywhere.
@@ -220,8 +220,6 @@ Each new model message records the entries that **activated** for it in `activat
 - **Sticky:** for an entry with `sticky`, if *d* ≤ `sticky`, the entry is kept without needing to match.
 - **Cooldown:** if `sticky` < *d* ≤ `sticky` + `cooldown` (an unset `sticky` counts as 0), it can't activate.
 - **Once:** an entry recorded anywhere on the path can't activate again.
-
-Entries kept by `sticky` are not recorded again, so stickiness runs out.
 
 ### 5.5 Steps
 
@@ -279,7 +277,7 @@ Knowledge limits what models see, never what people see; secrets between human p
 
 ## 8. Conformance
 
-A conforming **app** reads files as a conforming reader (Format 17.1), and also computes and records state, evaluates events, selects entries, computes rolls, fills prompt slots, applies knowledge rules and the session's `limits`, records the scene, keeps player and model text literal and follows Format 16, all exactly as this document describes. Pulling is optional.
+A conforming **app** reads files as a conforming reader (Format 17.1), follows Format 16, and does everything this document requires. Pulling is optional.
 
 ---
 

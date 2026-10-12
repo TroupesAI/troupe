@@ -350,7 +350,7 @@ The chat never needs the chronicle file to replay: everything it uses is copied 
 
 ## 10. Coming from Character Card V2/V3
 
-A V2/V3 card becomes a bundle with one character and a scenario: greetings become swipeable openings, the scenario text becomes the `premise`, the system prompt and post-history instructions become entries known only by the character, and the lorebook becomes entries, with secondary keys written as `when` with `hit()`. A chat file becomes a session, with swipes as siblings. [Character Card V2/V3 and Troupe](character-cards.md) maps every field, in both directions.
+A V2/V3 card becomes a bundle with one character and a scenario: greetings become alternative openings, the scenario text becomes the `premise`, the system prompt and post-history instructions become entries known only by the character, and the lorebook becomes entries, with secondary keys written as `when` with `hit()`. A chat file becomes a session, with swipes as siblings. [Character Card V2/V3 and Troupe](character-cards.md) maps every field, in both directions.
 
 ## 11. Where next
 
