@@ -63,11 +63,12 @@ Another opening tried in the same session gets its own root, made by steps 4 and
   - Its `memories` are copied onto the root as session entries, a memory without `knownBy` getting the character's, and its `values` are recorded on the root in one `{"by": "rules"}` change, keyed with the character's ID (`mira.closeness`), before any other change (section 2.1).
   - Value keys and memory `knownBy` IDs that name the persona take effect only when the persona plays with its own ID (section 2.1 step 2).
   - The session never needs the chronicle file to replay.
-- **Writing back** from a path rewrites the chronicle:
-  - `values` keeps only carried keys, keyed without the owner, and takes the latest value of each carried key that a change on the path set.
+- **Writing back** from a path rewrites the chronicle with only what the session changed, so sessions that continue one chronicle side by side keep each other's progress:
+  - `values` keeps only carried keys, keyed without the owner, and takes the latest value of each carried key that a change on the path set, except the chronicle's own change on the root.
   - The memories written back are the carried session entries on the path, the latest version of each ID, whose `knownBy` is absent or names the character. Root entries unchanged from how the start copied them are skipped.
   - Each keeps in `knownBy` only the character, the persona and `narrator`.
   - Each replaces the memory with its ID, or is added after the others in the order the IDs first appear; one with `disabled` removes that memory.
+  - `character`, `persona`, `limits` and the rest of the chronicle stay as they are.
 
 ---
 
@@ -286,6 +287,7 @@ A conforming **app** reads files as a conforming reader (Format 17.1), and also 
 
 | Decision | Instead of | Why |
 | --- | --- | --- |
+| Write-back carries only what a session changed | Rewriting every carried value from the path | Two sessions that continue one chronicle keep each other's progress; a key both changed takes the later write. |
 | App actions unspecified: editing, deleting, continuing, previews, turn order | Procedures for each | A reader only ever sees the snapshot those actions leave, so the spec constrains the snapshot (permanent message IDs, summaries that match their messages) and leaves the actions to apps. |
 | Story fixed, fitting a recorded baseline | Specifying only content, or only procedures | Outcomes replay exactly, and better fitting can come later. |
 | Identical entry selection is a MUST | Leaving selection to each app | Every app gives the model the same lore for the same file and session, and the conformance suite can test selection. |
