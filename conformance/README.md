@@ -136,7 +136,7 @@ A diagnostic about one value points at that value: a list item at its index (`/s
 | `base64` | Instead of `text`: the input's bytes, in base64. Used for bytes that aren't valid UTF-8 text and for binary formats. |
 | `level` | Optional. `"session"` when `expect` depends on a package's sessions, which a bundle reader may leave unread (Format 16.2). |
 
-The runner parses the bytes, checks the version and validates against the schema, with unknown properties and parts of unknown type as `UNKNOWN_FIELD` (Format 14). For a package it checks the archive and its `bundle.json` and, for a session reader, every session in it (Format 13.3, 16.2). It runs no other checks; `check` tests cover them.
+The runner parses the bytes, checks the version and validates against the schema, with unknown properties as `UNKNOWN_FIELD` (Format 14). For a package it checks the archive and its `bundle.json` and, for a session reader, every session in it (Format 13.3, 16.2). It runs no other checks; `check` tests cover them.
 
 `expect.codes` is the sorted list of distinct codes reported, compared exactly. A conforming input has none.
 

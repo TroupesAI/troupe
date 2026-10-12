@@ -1,5 +1,5 @@
 {
-  "description": "State macros (Format 10): labels, numbers as ECMAScript toString, booleans, lists, maps, char/user path segments, {{@state.x}}, the state at a message",
+  "description": "State macros (Format 10): labels, used as written, numbers as ECMAScript toString, booleans, lists, maps, char/user path segments, {{@state.x}}, the state at a message",
   "bundle": {
     "kind": "bundle",
     "characters": [
@@ -86,6 +86,17 @@
             "type": "string",
             "initial": "b",
             "description": "a character ID"
+          },
+          {
+            "id": "mood",
+            "type": "enum",
+            "values": [
+              "calm"
+            ],
+            "labels": {
+              "calm": "{{@a}} is calm"
+            },
+            "description": "d"
           },
           {
             "id": "crew",
@@ -199,6 +210,12 @@
       "text": "{{@state.approach}}",
       "expect": "Slip in unseen",
       "name": "{{@state}} renders a label like {{state}}: a value with a label renders as its label"
+    },
+    {
+      "type": "macro",
+      "name": "a label is used as written: macros in it don't resolve",
+      "text": "{{state.mood}}",
+      "expect": "{{@a}} is calm"
     },
     {
       "type": "check",

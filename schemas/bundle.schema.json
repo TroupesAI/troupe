@@ -1096,7 +1096,7 @@
       }
     },
     "part": {
-      "description": "A text part, or an image part with type image (Format 12). A part of another type is unknown to this version (Format 14): only its type is checked.",
+      "description": "A text part, or an image part with type image (Format 12).",
       "if": {
         "required": [
           "type"
@@ -1136,46 +1136,26 @@
         }
       },
       "else": {
-        "if": {
-          "required": [
-            "type"
-          ],
-          "properties": {
-            "type": {
-              "not": {
-                "const": "text"
-              }
-            }
-          }
-        },
-        "then": {
-          "type": "object",
-          "required": [
-            "type"
-          ]
-        },
-        "else": {
-          "type": "object",
-          "required": [
-            "text"
-          ],
-          "additionalProperties": false,
-          "properties": {
-            "type": {
-              "const": "text"
-            },
-            "text": {
-              "type": "string"
-            },
-            "speaker": {
-              "$ref": "#/$defs/characterId"
-            },
-            "knownBy": {
-              "$ref": "#/$defs/knownBy"
-            },
-            "ext": {
-              "$ref": "#/$defs/ext"
-            }
+        "type": "object",
+        "required": [
+          "text"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "type": {
+            "const": "text"
+          },
+          "text": {
+            "type": "string"
+          },
+          "speaker": {
+            "$ref": "#/$defs/characterId"
+          },
+          "knownBy": {
+            "$ref": "#/$defs/knownBy"
+          },
+          "ext": {
+            "$ref": "#/$defs/ext"
           }
         }
       }

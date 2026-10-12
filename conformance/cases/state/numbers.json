@@ -1,5 +1,5 @@
 {
-  "description": "Numbers (Format 8.6, 10): number values round to the nearest double to ECMAScript toFixed(6) in the state, and macros render numbers with ECMAScript Number.prototype.toString",
+  "description": "Numbers (Format 8.6, 10): number values round to the nearest double to ECMAScript toFixed(6) in the state, and macros render numbers with ECMAScript Number.prototype.toString; an int written 8.0 is the integer 8 (Format 2.2)",
   "bundle": {
     "kind": "bundle",
     "scenarios": [
@@ -30,6 +30,12 @@
             "id": "noisy",
             "type": "number",
             "initial": 0.30000000000000004,
+            "description": "d"
+          },
+          {
+            "id": "whole",
+            "type": "int",
+            "initial": 8.0,
             "description": "d"
           }
         ]
@@ -501,6 +507,12 @@
       "name": "initial values aren't rounded, so they render unrounded",
       "text": "{{state.big}} {{state.small}} {{state.noisy}}",
       "expect": "1e+21 1.5e-10 0.30000000000000004"
+    },
+    {
+      "type": "macro",
+      "name": "an int written 8.0 is the integer 8",
+      "text": "{{state.whole}}",
+      "expect": "8"
     },
     {
       "type": "check",

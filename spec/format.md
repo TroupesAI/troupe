@@ -109,7 +109,7 @@ MUST, MUST NOT, SHOULD, SHOULD NOT and MAY are used as described in RFC 2119 and
 
 ### 2.2 Values
 
-- Documents are I-JSON (RFC 7493): UTF-8 without a byte order mark, no duplicate member names, no surrogate or noncharacter code points, written or escaped, numbers that fit an IEEE 754 double, and integer fields and `int` values within ±(2^53 − 1). Writers write integers without a fraction or exponent.
+- Documents are I-JSON (RFC 7493): UTF-8 without a byte order mark, no duplicate member names, no surrogate or noncharacter code points, written or escaped, numbers that fit an IEEE 754 double, and integer fields and `int` values within ±(2^53 − 1). Writers write integers without a fraction or exponent, but a number with a zero fraction, such as `8.0`, is still an integer.
 - **Empty values.** `null` never appears in a field this spec defines or in a state value, and `""`, `[]` and `{}` never appear in an optional field other than `ext`: an optional field without a value is left out. State values and `scenario.worlds` are the exception: there `""`, `[]` and `{}` are values. Names and variable descriptions are never empty.
 - **Defaults are normative.** Every default stated in this document or its TypeScript comments applies when a field is absent. Every boolean defaults to `false`, and one written `false` is the same as an absent one.
 
@@ -394,7 +394,7 @@ interface Variable {
 - **Defaults.** Without `initial`: `false`; `0` raised to `min` or lowered to `max`; `""`; the first of `values`; `[]`.
 - **`by`** says who besides the rules is meant to change the variable: `player`, the people playing, and `model`, a model's output. Changes `by: "rules"`, from openings and events, and the players' answers to `ask` may change any variable.
 - **`min` and `max`** are numbers, or name another numeric variable of the same owner, an `int` for an `int`, that is neither keyed nor derived and whose own bounds, as written, are numbers, such as `"max": "max_hp"`; its current value, or its new value when the same change sets it (section 8.6), is the bound.
-- **`maxStep`** is the largest step one change `by: "model"` is meant to take; **`oneWay`** means numbers only rise, a bool only turns true, a set only gains members, and an enum only moves later in `values`. Both apply to each key of a keyed variable. A root's changes are exempt from `oneWay`, so a story may start below a variable's default.
+- **`maxStep`** is the largest step one change `by: "model"` is meant to take; **`oneWay`** means numbers only rise, a bool only turns true, a set only gains members, and an enum only moves later in `values`. Both apply to each key of a keyed variable.
 - **Recorded changes apply as written** (section 8.6): no check compares them with `by`, `maxStep` or `oneWay`, which guide whoever records a change.
 - **`derive`** makes a read-only variable computed from other state whenever it is read, such as `"derive": "state.clock / 24 + 1"` for the day. Derived variables have no `initial`, `by`, `ask`, `of`, `maxStep` or `oneWay`, can't be changed, and can't read other derived variables (`CEL_ERROR`). A `derive` is evaluated at the evaluation point of whatever reads it, with `self` its owner, `char` `""`, and no `hit()`. Its value is normalized like a recorded value (section 8.6); one whose expression fails at runtime, or that then isn't a valid value (section 8.5), is absent.
 - **`ask`** is a question for the players when a session starts; their answer is recorded on the root as a `by: "player"` change. `ask` is not allowed with `of`.
@@ -436,7 +436,7 @@ Opening and event `set`, `compute` and recorded changes write state by key:
 
 - **Keys** are a scenario variable's ID, or an owner and a variable ID, followed by a key for keyed variables: `bell`, `trust.kai`, `kai.nerve`, `kai.feelings.elena`, `scene.location`, `scene.present`.
 - **Values** are absolute.
-- **Validity.** A key is valid when it is `scene.location` or `scene.present`, or names a variable in use that isn't derived and, for a keyed variable, a key the variable allows. A value is valid when it has the variable's type, uses only listed members, is finite, is an integer within ±(2^53 − 1) for `int` (compared by value, so `8.0`, though writers write `8`, is the integer 8), and is within the value limits of section 15. A numeric value outside `min` and `max` is still valid; it is clamped (section 8.6). A set with duplicate members is valid too; it is normalized. `scene.location` is a location ID of the bundle or session, or `""`; `scene.present` is a list of strings (section 8.6).
+- **Validity.** A key is valid when it is `scene.location` or `scene.present`, or names a variable in use that isn't derived and, for a keyed variable, a key the variable allows. A value is valid when it has the variable's type, uses only listed members, is finite, is an integer within ±(2^53 − 1) for `int`, and is within the value limits of section 15. A numeric value outside `min` and `max` is still valid; it is clamped (section 8.6). A set with duplicate members is valid too; it is normalized. `scene.location` is a location ID of the bundle or session, or `""`; `scene.present` is a list of strings (section 8.6).
 
 ### 8.6 State at a message
 
@@ -514,10 +514,10 @@ Macros are the only substitution in text. `@` turns IDs into names.
 - **`{{char}}`** in a message part, an event's `message` included, is the part's `speaker`, else the message's `char`, else it is left as written; in a character's other text, that character; in a cast member's `notes`, its character; in other text, the character a message is written for, or the scenario's `narrator` for the narrator and the single voice. In a state path, a `char` segment after the variable's ID means the same character.
 - **`{{user}}`** is the speaker of the first speaking part of the latest player message on the path that has a speaking part, else the first player's character, else it is left as written. In a state path, a `user` segment after the variable's ID means the same character.
 - A `char` or `user` path segment that means no character names no key, so the macro renders as nothing.
-- **Rendering.** A value with a label renders as its label, with the label's macros resolved; a label substituted while resolving them renders as written. In `{{@…}}`, a label wins over a character's or location's name; a substituted value is never scanned for macros again. Numbers render as ECMAScript `Number.prototype.toString`, booleans as `true` or `false`, lists as items joined by `, ` (an empty list as nothing), and maps as `Name: value` pairs joined by `, `, with keys that are character IDs shown by name and other keys with underscores as spaces. Map keys render in declared order (cast order for characters), and `"*"` keys in code point order.
+- **Rendering.** A value with a label renders as its label. In `{{@…}}`, a label wins over a character's or location's name; a substituted value is never scanned for macros again. Numbers render as ECMAScript `Number.prototype.toString`, booleans as `true` or `false`, lists as items joined by `, ` (an empty list as nothing), and maps as `Name: value` pairs joined by `, `, with keys that are character IDs shown by name and other keys with underscores as spaces. Map keys render in declared order (cast order for characters), and `"*"` keys in code point order.
 - **Unresolved.** Text between `{{` and `}}` that is no macro, such as `{{unknown}}`, and a macro naming a variable that isn't declared, as section 11.2 counts declarations, are left as written (`UNKNOWN_MACRO`); an absent key of a declared variable, a path below a value that isn't a map, or a variable whose owner isn't in use renders as nothing.
 - **Which state.** Macros in a message resolve at that message: against its state, with `{{user}}` from the path to it. Elsewhere they resolve at the evaluation point (section 11.1). In message parts and in a scenario's text, `own` means `state`.
-- **Where.** Macros resolve only in descriptions, summaries, dialogue examples, premises, briefings, notes, entry texts, message parts (openings' and event messages' included), event directions, variable descriptions, questions, labels, and image `alt`. Every other string, such as names, aliases, titles, taglines, warnings, keys, `limits` and expressions, is used as written.
+- **Where.** Macros resolve only in descriptions, summaries, dialogue examples, premises, briefings, notes, entry texts, message parts (openings' and event messages' included), event directions, variable descriptions, questions and image `alt`. Every other string, such as names, aliases, titles, labels, taglines, warnings, keys, `limits` and expressions, is used as written.
 - **Player and model text** is stored escaped: in message parts' `text` and `alt`, in message `summary` text, and in the `text`, `description` and `summary` of entries and characters a model adds, writers MUST write each `\` as `\\` and each `{{` as `\{{`, in one left-to-right pass. Names, aliases, titles, keys and expressions are stored as written. Resolving the escaped text gives back exactly what was written, so macros never take effect in it.
 - **Parsing** is one left-to-right scan. At each `{{`, the longest form in the table, with no spaces outside comments and options, is a macro; otherwise the first `{` is kept and scanning resumes at the next character. A comment runs from `{{//` to the next `}}`. A pick has at least two options, none empty, and options can't contain `::` or `}}`. `\{{` produces a literal `{{`, and `\\` a literal `\`.
 - **Stored text keeps its macros.** They resolve when text is shown or sent.
@@ -624,7 +624,7 @@ interface Message {
   ext?: Ext;
 }
 
-type Part =                         // writers create only these two types (section 14); every part MAY also carry ext; no speaker = narration
+type Part =                         // every part MAY also carry ext; no speaker = narration
   | { type?: "text"; text: string; speaker?: string; knownBy?: string[] }
   | { type: "image"; src: string; alt?: string; speaker?: string; knownBy?: string[] };
 
@@ -705,7 +705,7 @@ Fields that hold a file (`cover`, `avatar`, location `image` and image parts) ho
 ## 14. Extensions and versioning
 
 - **Extensions.** Every object of a bundle or session that this document defines with an interface MAY carry `ext`, keyed by an extension name matching `^[a-z0-9][a-z0-9.-]{0,63}$`, such as `risu.regex`. The `troupe.` prefix is reserved for the draft extensions of Appendix D. Writers MUST NOT add fields anywhere else, and MUST keep every `ext` of a file they rewrite unchanged, as a JSON value.
-- **Unknown fields.** A property is unknown when its object's interface doesn't define it; for a part, the interface its `type` selects. An unknown property carries no meaning, and is an `UNKNOWN_FIELD` located at the property; `SCHEMA` is judged with unknown properties removed. A part whose `type` is present and isn't `"text"` or `"image"` is unknown as a whole, an `UNKNOWN_FIELD` at its `type`, so a message, opening or event message holding only such parts has no content. Writers MUST keep such parts of a file they rewrite unchanged.
+- **Unknown fields.** A property is unknown when its object's interface doesn't define it; for a part, the interface its `type` selects. An unknown property carries no meaning, and is an `UNKNOWN_FIELD` located at the property; `SCHEMA` is judged with unknown properties removed.
 - **Versions** are `major.minor`, compared as two integers, so `0.10` is newer than `0.9`. From 1.0, minor versions only add what files of an older minor can do without; before 1.0, any minor version may break. A file of a version other than this document's is `UNSUPPORTED_VERSION`.
 
 ---
@@ -738,7 +738,7 @@ Files hold data and sandboxed expressions (section 11), never scripts, and their
 
 ### 16.1 Requirements
 
-A **conforming file** validates against the schemas, passes the checks of section 16.3, stays within the limits of section 15, and follows section 14. A conforming **writer** writes only conforming files, except that a file it rewrites keeps its parts of an unknown type (section 14), whose `UNKNOWN_FIELD` it then still has.
+A **conforming file** validates against the schemas, passes the checks of section 16.3, stays within the limits of section 15, and follows section 14. A conforming **writer** writes only conforming files.
 
 ### 16.2 Readers
 
@@ -1045,7 +1045,6 @@ Two thieves hired by the player to steal a duke's storm lantern before the twelf
 | A replacement session entry takes the fields it lacks from the one it replaces | Replacing an entry whole | An update of a memory that gives only its ID and text keeps the memory's `knownBy`, `pull` and `title`. |
 | A header character listed in `players` fills a seat | Recording how each character joined | The snapshot can't tell a player's own character from a newcomer listed in `players`, so neither is a key of an `of: "characters"` variable. |
 | Writers leave out empty optional fields and write booleans as they like | Allowing `""` and `[]` anywhere; treating an explicit `false` as different from absent | Two writers of the same story produce the same fields, and typed serializers that write defaults still validate. |
-| Two part types; others are unknown and kept | Open part types; invalid unknown ones | A later version can add a media part that older versions report as `UNKNOWN_FIELD` rather than `SCHEMA`, and that rewriting keeps. |
 | No `requires` and no rules for extension data | Files declaring extensions they need; duties on extension authors | Extension data is optional by nature, and nothing could check those duties. |
 | ZIP entries outside the package's files aren't part of it | Failing any entry outside the path grammar | Archivers add files such as `__MACOSX/` and `.DS_Store`, and people zip folders with stray files; only the package's files need the grammar, while unsafe entries still fail. |
 | Limits on files, on CEL and on values | Only a file size cap, or each app's own | Every conforming file is bounded in size and in the work it asks for. A package's 512 MiB holds a full bundle and a full session with room for images. |
