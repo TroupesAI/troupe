@@ -56,6 +56,12 @@
       "expect": {
         "codes": [
           "INVALID_PLAYER"
+        ],
+        "includes": [
+          {
+            "code": "INVALID_PLAYER",
+            "at": "header/players"
+          }
         ]
       }
     }

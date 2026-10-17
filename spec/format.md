@@ -694,7 +694,7 @@ Each check has a code, for validators to report it with. Every check runs on the
 | `UNKNOWN_OPENING` | A root's `opening` exists |
 | `UNKNOWN_NAME` | `activated` names entries in use |
 | `UNKNOWN_VARIABLE` | Keys in openings and changes are valid keys (section 8.5) |
-| `INVALID_VALUE` | `initial`, opening `set` values and recorded values are valid values for their variables (section 8.5); unknown locations and characters in values are reported only as `UNKNOWN_LOCATION` and `UNKNOWN_CHARACTER` |
+| `INVALID_VALUE` | `initial` values, and the values of valid keys in opening `set` and recorded changes, are valid for their variables (section 8.5); unknown locations and characters in values are reported only as `UNKNOWN_LOCATION` and `UNKNOWN_CHARACTER` |
 | `UNKNOWN_MESSAGE` | `parent` names a message on an earlier line, and the header's `head` names a message |
 | `INVALID_PLAYER` | `players` names header characters or cast members, and lists every cast member marked `player` |
 | `CEL_ERROR` | Every expression parses, type-checks and follows section 10.2 |

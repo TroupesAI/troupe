@@ -245,6 +245,11 @@
                 "self": {
                   "type": "string",
                   "minLength": 1
+                },
+                "scanDepth": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 100
                 }
               }
             }
