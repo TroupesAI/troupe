@@ -625,7 +625,7 @@ A message part is known by its speaker, by the characters present after its mess
 
 ### 12.2 Files
 
-Fields that hold a file (`cover`, `avatar`, location `image` and image parts) hold a PNG, JPEG, WebP, AVIF or GIF image, as an `https:` URL, a `data:` URI with base64 content and the lowercase media type `image/png`, `image/jpeg`, `image/webp`, `image/avif` or `image/gif`, or, in a package only, a path from the package root.
+Fields that hold a file (`cover`, `avatar`, location `image` and image parts) hold a PNG, JPEG, WebP, AVIF or GIF image, as an `https:` URL, a `data:` URI with base64 content and the lowercase media type `image/png`, `image/jpeg`, `image/webp`, `image/avif` or `image/gif`, or, in a package only, a path from the package root. Readers don't check a file's content, and an app that shows a file decides what to do with one that isn't the image it claims to be.
 
 ### 12.3 Packages
 
