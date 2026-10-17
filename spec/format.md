@@ -627,7 +627,7 @@ Fields that hold a file (`cover`, `avatar`, location `image` and image parts) ho
 
 ### 12.3 Packages
 
-- `bundle.json` is at the root. Sessions are stored under `sessions/` with the `.troupe-session.jsonl` extension. The package's other files are the files that the bundle or sessions reference, and every path they reference is one of them.
+- `bundle.json` is at the root. Sessions are stored under `sessions/` with the `.troupe-session.jsonl` extension. Every path the bundle or sessions reference is a file of the package. A package may also hold files nothing in this document references, such as files an extension uses (section 13), and a writer that rewrites a package keeps them.
 - Every file under `sessions/` with that extension is a session of the package. The package's files have paths matching `^[A-Za-z0-9_-][A-Za-z0-9._-]*(/[A-Za-z0-9_-][A-Za-z0-9._-]*)*$`, with segments of at most 255 bytes. Every other entry, such as a directory (a name ending in `/`) or a file an archiver adds, isn't part of the package.
 - No ZIP entry has an absolute path, a `..` segment or a backslash, is a symbolic link, is encrypted, uses a compression method other than store and deflate, or has the name of another entry compared ASCII case-insensitively.
 
@@ -970,7 +970,9 @@ Two thieves hired by the player to steal a duke's storm lantern before the twelf
 These draft extensions use the `troupe.` prefix (section 13) and may join the core once proven:
 
 - **`troupe.overlay`:** a bundle that patches another by ID, for translations and mods.
-- **`troupe.media`:** sprites, audio, voices and provenance of generated media.
+- **`troupe.media`:** expression images: a character's images by label, such as `angry`, and the label a message part shows. Voices and audio stay out: voices belong to a provider, and audio to an app's interface.
+
+An extension joins this repository with its own document, a schema for its `ext` value and conformance cases, and shares the spec's version.
 
 ---
 
