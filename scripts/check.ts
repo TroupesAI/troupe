@@ -87,7 +87,7 @@ for (const doc of markdown) {
     try {
       value = JSON.parse(m[1]);
     } catch (e) {
-      // fragments such as a single entry or event aren't JSON documents; a document that fails to parse is an error
+      // fragments such as a single entry or variable aren't JSON documents; a document that fails to parse is an error
       if (/"kind":\s*"(bundle|session)"/.test(m[1]))
         fail(`${doc}:${text.slice(0, m.index).split("\n").length}: ${(e as Error).message}`);
       continue;

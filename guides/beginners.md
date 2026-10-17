@@ -309,7 +309,7 @@ flowchart TD
   O2["Opening: at the manor gates"]
 ```
 
-Every change is written into the message where it happened: which values changed and who changed them, and which entries activated. Branches never share state: time lost on one branch is still there to spend on the other. Because every change is recorded, a saved chat reopens with the same history and state, without replaying anything. [Format Appendix B.3](../spec/format.md#b3-session) shows this chat as a file.
+Every change is written into the message where it happened: which values changed and who changed them, and which entries activated. Branches never share state: time lost on one branch is still there to spend on the other. Because every change is recorded, a saved chat reopens with the same history and state, without replaying anything. [Format Appendix B.3](../spec/format.md#b3-session) shows the rooftop branch of this chat as a file.
 
 The player's character usually lives in the session, not the bundle, and so does anyone new who joins during the chat. What players and models write is stored as written, so a `{{user}}` typed in the chat stays as typed.
 

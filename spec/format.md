@@ -341,7 +341,7 @@ interface Entry {
 ### 7.2 Activation
 
 - An entry **without `keys` or `pull`** is always on, subject to `when`.
-- An entry **with `keys`** activates when one appears in its **scanned text**: the last `scanDepth` messages on the path that aren't hidden and have content, each text part known to whoever the message is written for (section 11.5) as its speaker's name and its text.
+- An entry **with `keys`** activates when one appears in its **scanned text**: the last `scanDepth` messages on the path that aren't hidden and have content, each text part known to whoever the message being written is for (section 11.5), as its speaker's name and its text as shown.
 - **Matching.** Keys match whole words, ignoring case: no letter, mark or number (Unicode categories L, M and N) comes right before or after a match, and case is compared by Unicode simple case folding. A key containing Han, Hiragana, Katakana, Hangul, Thai, Lao, Khmer, Myanmar or Tibetan characters matches anywhere. A key of at least three characters that starts and ends with `/` is a regex (section 14), case-insensitive unless it clears the flag, that matches anywhere: `/dragons?/`, `/(?-i)Kai/`.
 - An entry **with `pull`** is retrieved when it is relevant, by its `title` or its text, such as on a model's request or by a search.
 - **`when`** narrows any kind. `hit("word")` checks the scanned text as keys do, so `"when": "hit('glass') && !hit('guard')"` expresses AND and NOT; `hit('')` is false.
@@ -412,7 +412,7 @@ Session entries have no `own`: in their text `{{own.…}}` is left as written, a
 | --- | --- |
 | `"cast"` | every cast character (section 11.2) |
 | a list, such as `["watch", "guild"]` | those keys |
-| `"*"` | any author ID; keys appear when a change sets them, such as `"state.inventory.torch": 2` |
+| `"*"` | any author ID other than `char` and `user`; keys appear when a change sets them, such as `"state.inventory.torch": 2` |
 
 - Read and change a key as `state.trust.kai`, or read it as `own.feelings.elena` in its owner's text and conditions. In CEL, look up a computed key with brackets: `state.trust[char]`, `own.feelings[user]`.
 - `initial` is one value for every key, or an object, with at least one member, of values by key with `*` as an optional default; keys outside the key set are ignored, and a key without a value or `*` takes the type's default. Every key of the key set, a joiner's included, holds its initial value until a change sets it.
@@ -459,10 +459,10 @@ Macros are the only substitution in text.
 | `{{pick::<a>::<b>…}}` | One of the options, chosen at random each time the text resolves |
 | `{{// <comment>}}` | Nothing; a note for authors |
 
-- **`{{char}}`** in a message part is the part's `speaker`, else the message's `char`, else it is left as written; in a character's other text, that character; in a cast member's `notes`, its character; in other text, the character a message is written for, or the scenario's `narrator` for the narrator and the single voice. In a state path, a `char` segment after the variable's name means the same character.
+- **`{{char}}`** in a message part is the part's `speaker`, else it is left as written; in a character's other text, that character; in a cast member's `notes`, its character or the character filling its seat; in other text, the character a message is written for, or the scenario's `narrator` for the narrator and the single voice. In a state path, a `char` segment after the variable's name means the same character.
 - **`{{user}}`** is the speaker of the first speaking part of the latest player message on the path that has a speaking part, else the first player's character, else it is left as written. In a state path, a `user` segment after the variable's name means the same character.
 - A `char` or `user` path segment that means no character names no key, so the macro renders as nothing.
-- **Rendering.** A value with a label renders as its label, a string that is a character ID as that character's name, else one that is a location ID as that location's name. Numbers render as decimal integers, booleans as `true` or `false`, lists as items joined by `, ` (an empty list as nothing), and maps as `Name: value` pairs joined by `, `, each item and value rendered as above, with keys that are character IDs shown by name and other keys with underscores as spaces. Map keys render in the order of `of`: cast order for `"cast"`, list order for a list, and code point order for `"*"`. A substituted value is never scanned for macros again.
+- **Rendering.** A value with a label renders as its label, a string that is a character ID as that character's name, else one that is a location ID as that location's name. Numbers render as decimal integers, booleans as `true` or `false`, lists as items joined by `, ` (an empty list as nothing), and maps as `Name: value` pairs joined by `, `, each item and value rendered as above, with keys that are character IDs shown by name and other keys with underscores as spaces. Map keys render in the order of `of`: cast order for `"cast"`, list order for a list, and code point order for `"*"`. `{{scene.location}}` always renders as its location's name. A substituted value is never scanned for macros again.
 - **Unresolved.** Text between `{{` and `}}` that is no macro, such as `{{unknown}}`, and a macro naming a variable that isn't declared, as section 10.2 counts declarations, are left as written (`UNKNOWN_MACRO`); an absent key of a declared variable, a path below a value that isn't a map, or a variable whose owner isn't in use renders as nothing.
 - **Which state.** Macros in a message resolve at that message: against its state, with `{{user}}` from the path to it. Elsewhere they resolve at the evaluation point (section 10.1). In a scenario's text and in roots made from its openings, `own` means `state`.
 - **Where.** Macros resolve in descriptions, summaries, dialogue examples, premises, briefings, notes, entry texts, variable descriptions, openings' `content` and the roots made from it, and image `alt`, in the bundle and in a session's characters, worlds and entries. Player and model messages are used as written, and so is every other string, such as names, aliases, titles, labels, taglines, warnings, keys, `limits` and expressions.
@@ -508,14 +508,14 @@ state.trust[char] >= 80 && hour < 6
 
 ### 10.2 Rules
 
-- Every expression type-checks: `state` against the scenario's variables and the variables of every character and world of the bundle and session, and `own` against the expression owner's. A bundle without a session is checked once for each scenario, with the expressions in use in it (section 6.4); an expression in use in no scenario is checked once, against no scenario variables.
+- Every expression type-checks: `state` against the scenario's variables and the variables of every character and world of the bundle and session, and `own` against the expression owner's. A bundle is checked once for each scenario, with the expressions in use in it (section 6.4), and a session's entries with its scenario; an expression in use in no scenario is checked once, against no scenario variables.
 - Conditions have type `bool`.
 - Evaluation follows the CEL language definition, including its errors, such as integer overflow and division by zero. A runtime error makes a condition false; `&&` and `||` absorb an error when their other operand decides the result.
 - `state`, `own` and `scene` are only selected from, as in `state.bell`: never indexed by computed strings or used as values. Keyed variables are maps, indexed with brackets (section 8.3); selecting `char` or `user` from one, as in `state.trust.char`, is a `CEL_ERROR`, since `state.trust[char]` is meant.
 - Expressions use only `bool`, `int`, `string`, list and map values, and list and map literals hold values of one type. `double`, `bytes`, `uint` and `null` literals and type names used as values are a `CEL_ERROR`.
-- Available functions are only `size`, `has`, `in`, `contains`, `startsWith`, `endsWith` and `hit()`. `hit()` takes a string literal key.
+- Expressions may use CEL's operators, `?:` included. The only functions and macros are `size`, `has`, `contains`, `startsWith`, `endsWith` and `hit()`, which takes a string literal key.
 - Selecting an absent value, such as a variable whose owner isn't in use or an absent key, is a runtime error. `has()` of such a selection is true exactly when selecting it isn't a runtime error, whatever the value, and is never an error itself.
-- An expression that breaks any of these rules is a `CEL_ERROR`, and so is a `hit()` key that isn't a valid regex.
+- An expression that breaks any of these rules is a `CEL_ERROR`, and so is a `hit()` key that is a regex but isn't valid (section 14).
 
 ---
 
@@ -575,7 +575,7 @@ interface Change {
 ### 11.1 Messages
 
 - Every `parent` names a message on an earlier line.
-- A **root** is a system message made from an opening, or a player message. A root made from an opening has `opening` set, holds the opening's `content` as written, or none, and records the opening's `set`, if any, as its first change, `by: "opening"`, with the players' characters added to a `scene.present` it sets.
+- A **root** is a system message made from an opening, or a player message. Every other system message is records-only (section 11.4). A root made from an opening has `opening` set, holds the opening's `content` as written, or none, and records the opening's `set`, if any, as its first change, `by: "opening"`, with the players' characters added to a `scene.present` it sets.
 - **Rounds** count player messages on a path: a message's `turn` is the number of player messages from the root to it, inclusive, and a message being written has its parent's. `turn`, `sticky` and `cooldown` count rounds, as differences of `turn`.
 
 ### 11.2 Players and cast
@@ -682,7 +682,7 @@ Each check has a code, for validators to report it with. Every check runs on the
 
 | Code | Check |
 | --- | --- |
-| `PARSE` | The input is I-JSON (section 2.2), or session lines of I-JSON (section 11), a Troupe document of the `kind` its form holds (section 12.1), within the limits of section 14 other than the value limits, with package paths only in a package (section 12.2), and a package follows section 12.3 |
+| `PARSE` | The input is I-JSON (section 2.2), or session lines of I-JSON (section 11), a Troupe document of the `kind` its form holds (section 12.1), within the limits table of section 14 other than the value limits, with package paths only in a package (section 12.2), and a package follows section 12.3 |
 | `UNSUPPORTED_VERSION` | `troupe`, when present, is this document's version (section 13); a missing `troupe`, or one that isn't `major.minor`, is only `SCHEMA` |
 | `SCHEMA` | The document validates against its schema, with `format` asserted, apart from unknown properties (section 13) |
 | `UNKNOWN_FIELD` | Every property is one this document defines (section 13) |
@@ -930,7 +930,7 @@ Two thieves hired by the player to steal a duke's storm lantern before the twelf
 | Absolute changes, recorded | JSON Patch, or recomputing | Replay needs no evaluation, from any channel. |
 | Keys written as state is read | A separate spelling for writes | One name for each value, in conditions, macros, openings and changes. |
 | A schema of files, not of how apps play them | A second document fixing prompt assembly, entry selection, context strategy and model output | Sessions record every change, so a reader needs only the meaning of what is stored; how an app writes prompts and calls models is its own, and can improve without a new version. |
-| No summaries or pinned messages | Fields for an app's context strategy | Apps fit long chats into a model's context their own way; a memory is a session entry. |
+| No message summaries or pinned messages | Fields for an app's context strategy | Apps fit long chats into a model's context their own way; a memory is a session entry. |
 | Valid files, not repair | Rules for reading broken files leniently | A file either conforms or fails a check with a code; what an app does with a broken file is its own. |
 | Readers accept every conforming file of their level and read it as defined, at one of two levels | No duty on readers; every reader reading sessions | A file that conforms opens with the same meaning in every app that reads its kind; an app that only edits or plays bundles conforms without reading another app's chats. |
 | Recorded changes apply as written; `by`, `maxStep` and `oneWay` aren't checked | A check that replays every change against its variable | Readers never second-guess a recorded change, so a session reads the same everywhere; the fields still tell writers and models what is meant. |

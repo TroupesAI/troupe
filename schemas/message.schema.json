@@ -90,6 +90,26 @@
       }
     },
     {
+      "description": "A system message after the root is records-only: it has no content.",
+      "if": {
+        "required": [
+          "parent"
+        ],
+        "properties": {
+          "from": {
+            "const": "system"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "content": {
+            "maxItems": 0
+          }
+        }
+      }
+    },
+    {
       "description": "A records-only message is a system message without activated or char; after the root it carries changes and no entries.",
       "if": {
         "properties": {
