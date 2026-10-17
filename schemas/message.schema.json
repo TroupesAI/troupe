@@ -110,8 +110,11 @@
       }
     },
     {
-      "description": "A records-only message is a system message without activated or char; after the root it carries changes and no entries.",
+      "description": "A records-only message after the root carries changes and no entries.",
       "if": {
+        "required": [
+          "parent"
+        ],
         "properties": {
           "content": {
             "maxItems": 0
@@ -119,25 +122,11 @@
         }
       },
       "then": {
+        "required": [
+          "changes"
+        ],
         "properties": {
-          "from": {
-            "const": "system"
-          },
-          "activated": false,
-          "char": false
-        },
-        "if": {
-          "required": [
-            "parent"
-          ]
-        },
-        "then": {
-          "required": [
-            "changes"
-          ],
-          "properties": {
-            "entries": false
-          }
+          "entries": false
         }
       }
     },
@@ -215,6 +204,31 @@
           }
         ]
       }
+    },
+    {
+      "description": "Only a root made from an opening records a change by opening.",
+      "if": {
+        "not": {
+          "required": [
+            "opening"
+          ]
+        }
+      },
+      "then": {
+        "properties": {
+          "changes": {
+            "items": {
+              "properties": {
+                "by": {
+                  "not": {
+                    "const": "opening"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   ],
   "$defs": {
@@ -234,7 +248,7 @@
           ]
         },
         "set": {
-          "$ref": "bundle.schema.json#/$defs/stateValues"
+          "$ref": "bundle.schema.json#/$defs/nonEmptyStateValues"
         },
         "ext": {
           "$ref": "bundle.schema.json#/$defs/ext"

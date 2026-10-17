@@ -1,5 +1,5 @@
 {
-  "description": "Rules in the schemas (Format 2.2, 2.3, 8.1, 8.5, 11, 13): booleans written as false are defaults; empty optional fields, including {}, and null state values are SCHEMA; reserved IDs and variable keys; bool labels; integers, with a zero fraction allowed (Format 2.2); integer weights of at least 1; state keys start with state. or scene.; a change is by opening, player or model; parts of an unknown type are SCHEMA; unknown properties are UNKNOWN_FIELD, not SCHEMA; message shapes",
+  "description": "Rules in the schemas (Format 2.2, 2.3, 8.1, 8.5, 11, 13): booleans written as false are defaults; empty optional fields, including {}, and null state values are SCHEMA; reserved IDs and variable keys; bool labels; integers, with a zero fraction allowed (Format 2.2); integer weights of at least 1; state keys start with state. or scene.; a change is by opening, player or model, sets at least one key, and is by opening only on a root made from an opening; an initial object has members; parts of an unknown type are SCHEMA; unknown properties are UNKNOWN_FIELD, not SCHEMA; message shapes",
   "tests": [
     {
       "type": "parse",
@@ -240,6 +240,39 @@
       "name": "a variable key named char",
       "kind": "bundle",
       "text": "{\"troupe\": \"0.13\", \"kind\": \"bundle\", \"scenarios\": [{\"id\": \"s\", \"variables\": [{\"id\": \"v\", \"description\": \"d\", \"type\": \"int\", \"of\": [\"char\", \"watch\"]}]}]}",
+      "expect": {
+        "codes": [
+          "SCHEMA"
+        ]
+      }
+    },
+    {
+      "type": "parse",
+      "name": "a change that sets nothing",
+      "kind": "session",
+      "text": "{\"troupe\": \"0.13\", \"kind\": \"session\", \"scenario\": \"s\"}\n{\"id\": \"1\", \"from\": \"player\", \"content\": [{\"text\": \"Hi.\"}], \"changes\": [{\"by\": \"player\", \"set\": {}}]}\n",
+      "expect": {
+        "codes": [
+          "SCHEMA"
+        ]
+      }
+    },
+    {
+      "type": "parse",
+      "name": "a change by opening outside a root made from an opening",
+      "kind": "session",
+      "text": "{\"troupe\": \"0.13\", \"kind\": \"session\", \"scenario\": \"s\"}\n{\"id\": \"1\", \"from\": \"player\", \"content\": [{\"text\": \"Hi.\"}], \"changes\": [{\"by\": \"opening\", \"set\": {\"state.v\": true}}]}\n",
+      "expect": {
+        "codes": [
+          "SCHEMA"
+        ]
+      }
+    },
+    {
+      "type": "parse",
+      "name": "an initial object without members",
+      "kind": "bundle",
+      "text": "{\"troupe\": \"0.13\", \"kind\": \"bundle\", \"scenarios\": [{\"id\": \"s\", \"variables\": [{\"id\": \"v\", \"type\": \"int\", \"of\": \"cast\", \"initial\": {}, \"description\": \"d\"}]}]}",
       "expect": {
         "codes": [
           "SCHEMA"

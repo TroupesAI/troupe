@@ -26,6 +26,9 @@
     "name": {
       "$ref": "#/$defs/nonEmpty"
     },
+    "tagline": {
+      "$ref": "#/$defs/nonEmpty"
+    },
     "version": {
       "$ref": "#/$defs/nonEmpty"
     },
@@ -77,9 +80,6 @@
     },
     "ext": {
       "$ref": "#/$defs/ext"
-    },
-    "tagline": {
-      "$ref": "#/$defs/nonEmpty"
     }
   },
   "$defs": {
@@ -460,7 +460,7 @@
             "system",
             "context"
           ],
-          "default": "context"
+          "description": "Absent: context, unless the entry has depth."
         },
         "depth": {
           "type": "integer",
@@ -521,6 +521,9 @@
         "name": {
           "$ref": "#/$defs/nonEmpty"
         },
+        "tagline": {
+          "$ref": "#/$defs/nonEmpty"
+        },
         "premise": {
           "$ref": "#/$defs/nonEmpty"
         },
@@ -575,9 +578,6 @@
         },
         "ext": {
           "$ref": "#/$defs/ext"
-        },
-        "tagline": {
-          "$ref": "#/$defs/nonEmpty"
         }
       }
     },
@@ -704,7 +704,8 @@
               "not": {
                 "type": "null"
               }
-            }
+            },
+            "minProperties": 1
           }
         },
         "of": {
@@ -973,11 +974,7 @@
       }
     },
     "nonEmptyStateValues": {
-      "allOf": [
-        {
-          "$ref": "#/$defs/stateValues"
-        }
-      ],
+      "$ref": "#/$defs/stateValues",
       "minProperties": 1
     },
     "keyId": {

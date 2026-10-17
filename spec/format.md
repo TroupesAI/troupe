@@ -567,7 +567,7 @@ type Part =                         // every part MAY also carry ext; no speaker
 
 interface Change {
   by: "opening" | "player" | "model";   // an opening's start; the people playing; a model's output
-  set: Record<string, Json>;       // full key → new value
+  set: Record<string, Json>;       // full key → new value; at least one
   ext?: Ext;
 }
 ```
@@ -575,7 +575,7 @@ interface Change {
 ### 11.1 Messages
 
 - Every `parent` names a message on an earlier line.
-- A **root** is a system message made from an opening, or a player message. Every other system message is records-only (section 11.4). A root made from an opening has `opening` set, holds the opening's `content` as written, or none, and records the opening's `set`, if any, as its first change, `by: "opening"`, with the players' characters added to a `scene.present` it sets.
+- A **root** is a system message made from an opening, or a player message. Every other system message is records-only (section 11.4). A root made from an opening has `opening` set, holds the opening's `content` as written, or none, and records the opening's `set`, if any, as its first change, `by: "opening"`, with the players' characters added to a `scene.present` it sets. Only such a root has changes `by: "opening"`.
 - **Rounds** count player messages on a path: a message's `turn` is the number of player messages from the root to it, inclusive, and a message being written has its parent's. `turn`, `sticky` and `cooldown` count rounds, as differences of `turn`.
 
 ### 11.2 Players and cast
