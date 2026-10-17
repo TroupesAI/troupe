@@ -1,6 +1,6 @@
 # Troupe Format
 
-**Version 0.13 (draft)** · October 17, 2026
+**Version 0.14 (draft)** · October 17, 2026
 
 Troupe is an open file format for AI roleplay: characters, the worlds they live in, the scenarios that bring them together, the state a story tracks, and sessions: the chats people play, with every change recorded. One file can hold a single character or a full multi-character story.
 
@@ -79,7 +79,7 @@ This is a complete card: a character, and a scenario that starts a chat with the
 
 ```json
 {
-  "troupe": "0.13",
+  "troupe": "0.14",
   "kind": "bundle",
   "characters": [
     { "id": "elena", "name": "Elena Voss", "description": "A meticulous thief and mapmaker. Calm, exacting, dry humor." }
@@ -153,7 +153,7 @@ A bundle states the spec version and publishing metadata once, then lists its co
 ```ts
 interface Bundle {
   $schema?: string;
-  troupe: string;                  // spec version, e.g. "0.13"
+  troupe: string;                  // spec version, e.g. "0.14"
   kind: "bundle";
   id?: string;                     // a random ID, such as a UUID; lets sessions find the bundle
   name?: string;                   // the title
@@ -535,6 +535,7 @@ interface SessionHeader {
   $schema?: string;
   troupe: string;
   kind: "session";
+  name?: string;                   // the chat's title, for people, not models
   bundle?: string;                 // the bundle's id; inside a package, its bundle.json is played
   limits?: Limits;                 // the players' lines and veils
   scenario: string;                // scenario ID
@@ -718,7 +719,7 @@ Each check has a code, for validators to report it with. Every check runs on the
 
 ## Appendix A: JSON Schemas
 
-The JSON Schema 2020-12 files are normative for structure. Each `$id` names the schema and its minor version, and is where the schema is published, such as `https://docs.troupes.ai/schema/0.13/bundle.schema.json`.
+The JSON Schema 2020-12 files are normative for structure. Each `$id` names the schema and its minor version, and is where the schema is published, such as `https://docs.troupes.ai/schema/0.14/bundle.schema.json`.
 
 | File | Validates |
 | --- | --- |
@@ -736,7 +737,7 @@ A companion with keyed lore, a style rule, a secret, two written openings, and a
 
 ```json
 {
-  "troupe": "0.13",
+  "troupe": "0.14",
   "kind": "bundle",
   "characters": [
     {
@@ -773,8 +774,8 @@ Two thieves hired by the player to steal a duke's storm lantern before the twelf
 
 ```json
 {
-  "$schema": "https://docs.troupes.ai/schema/0.13/bundle.schema.json",
-  "troupe": "0.13",
+  "$schema": "https://docs.troupes.ai/schema/0.14/bundle.schema.json",
+  "troupe": "0.14",
   "kind": "bundle",
   "id": "4b7d2c1e-9a3f-4e8b-b6d0-2f5a8c9e1d37",
   "name": "The Lantern Heist",
@@ -919,7 +920,7 @@ Two thieves hired by the player to steal a duke's storm lantern before the twelf
 ### B.3 Session
 
 ```text
-{"troupe":"0.13","kind":"session","scenario":"heist","characters":[{"id":"mara","name":"Mara","description":"A retired smuggler with a debt to settle."}],"players":["mara"],"head":"4"}
+{"troupe":"0.14","kind":"session","scenario":"heist","characters":[{"id":"mara","name":"Mara","description":"A retired smuggler with a debt to settle."}],"players":["mara"],"head":"4"}
 {"id":"1","opening":"rooftop_briefing","from":"system","content":[{"text":"Rain hammers the slate roofs above the Duke's manor."},{"speaker":"elena","text":"*Elena unrolls a soaked map.* Two guards on the east stair. We go at the eighth bell."},{"speaker":"kai","text":"Or we go now, while they're drunk. *He grins at {{user}}.* Your call, boss."}],"changes":[{"by":"opening","set":{"scene.location":"rooftops"}}]}
 {"id":"2","parent":"1","from":"player","at":"2026-10-17T21:04:00+02:00","content":[{"speaker":"mara","text":"We wait for the eighth bell. Kai, you take the east stair."}],"changes":[{"by":"player","set":{"state.approach":"quiet"}}]}
 {"id":"3","parent":"2","from":"model","char":"kai","activated":["veyra/weather_fog","veyra/guards","kai/voice","kai/deal","heist/style","heist/clock"],"content":[{"speaker":"kai","text":"East stair. Sure. *He's gone before anyone can stop him.*"}],"changes":[{"by":"model","set":{"scene.present":["mara","elena"],"state.kai.nerve":1}}]}

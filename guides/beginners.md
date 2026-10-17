@@ -32,7 +32,7 @@ This is a complete Troupe file. It holds one character and one way to start a ch
 
 ```json
 {
-  "troupe": "0.13",
+  "troupe": "0.14",
   "kind": "bundle",
   "characters": [
     { "id": "elena", "name": "Elena Voss", "description": "A meticulous thief and mapmaker. Calm, exacting, dry humor." }
@@ -64,7 +64,7 @@ An **entry** is any piece of text the model should read when its conditions hold
 
 ```json
 {
-  "troupe": "0.13",
+  "troupe": "0.14",
   "kind": "bundle",
   "characters": [
     {
@@ -107,7 +107,7 @@ A heist needs a city, a target and a crew. A **world** is a setting that scenari
 
 ```json
 {
-  "troupe": "0.13",
+  "troupe": "0.14",
   "kind": "bundle",
   "name": "The Lantern Heist",
   "characters": [

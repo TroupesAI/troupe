@@ -95,7 +95,7 @@
       "type": "parse",
       "name": "limits left empty once its unknown field is removed",
       "kind": "session",
-      "text": "{\"troupe\": \"0.13\", \"kind\": \"session\", \"scenario\": \"s\", \"limits\": {\"mystery\": 1}}\n{\"id\": \"1\", \"from\": \"player\", \"content\": [{\"text\": \"x\"}]}\n",
+      "text": "{\"troupe\": \"0.14\", \"kind\": \"session\", \"scenario\": \"s\", \"limits\": {\"mystery\": 1}}\n{\"id\": \"1\", \"from\": \"player\", \"content\": [{\"text\": \"x\"}]}\n",
       "expect": {
         "codes": [
           "SCHEMA",

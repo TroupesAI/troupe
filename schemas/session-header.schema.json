@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://docs.troupes.ai/schema/0.13/session-header.schema.json",
+  "$id": "https://docs.troupes.ai/schema/0.14/session-header.schema.json",
   "title": "Troupe session header",
   "description": "The first line of a Troupe session file.",
   "type": "object",
@@ -20,6 +20,9 @@
     },
     "kind": {
       "const": "session"
+    },
+    "name": {
+      "$ref": "bundle.schema.json#/$defs/nonEmpty"
     },
     "bundle": {
       "$ref": "bundle.schema.json#/$defs/opaqueId"
