@@ -295,7 +295,7 @@ And this to Elena's:
 - **`chance`** is a percentage: while the crew is on the rooftops, the patrol comes up 30 times in 100, so it passes now and then.
 - **`betrayed`** changes how Elena plays from the moment Kai confesses.
 
-The full story, with its secrets, variables and entries in place, is [Format Appendix B.2](../spec/format.md#b2-a-story-the-lantern-heist), also in [`examples/lantern-heist/bundle.json`](../examples/lantern-heist/bundle.json).
+The full story, with its secrets, variables and entries in place, is [Format Appendix B.2](../spec/format.md#b2-a-story-the-lantern-heist), also in [`examples/lantern-heist/bundle.json`](../examples/lantern-heist/bundle.json); its second opening, `caught`, is written out in place of `gates`.
 
 ## 8. Sessions
 

@@ -65,13 +65,6 @@ export const troupeMarkdown: Plugin = ({ fileURL }) => {
         },
       },
       {
-        // A table header row with no text, such as the README's "| | |", names nothing.
-        filter: ["thead"],
-        visit(node, ctx) {
-          if (!ctx.textContent(node).trim()) ctx.removeNode(node);
-        },
-      },
-      {
         filter: ["a"],
         visit(node, ctx) {
           if (typeof node.properties.href === "string") ctx.setProperty(node, "href", resolve(node.properties.href, file));

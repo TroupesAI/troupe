@@ -31,7 +31,7 @@ export const readme = (text = read("README.md")) => {
   return { tagline, main };
 };
 
-// From the spec's version line, "**Version 0.12 (draft)** · October 12, 2026".
+// From the spec's version line, such as "**Version 0.13 (draft)** · <date>".
 export const spec = () => {
   const [, version, status] = read("spec/format.md").match(/^\*\*Version (\S+) \((\w+)\)\*\*/m) ?? [];
   if (!version) throw new Error("spec/format.md has no version line");

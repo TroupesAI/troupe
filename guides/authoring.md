@@ -55,11 +55,11 @@ Make the people who matter characters, with a `summary` for when they are offsta
 
 ### Companions that remember
 
-Give a companion its own variables for the relationship, such as `{"id": "closeness", "type": "int", "min": 0, "max": 100, "by": ["model"], "description": "How close {{char}} feels to {{user}}."}`, and add memories as session entries with `pull` and a `title` (Format 11.3), so each comes back only when it matters. A memory belongs to its branch, and a later entry with the same ID replaces it.
+The [beginner's guide](beginners.md#9-companions-who-remember) builds one: a `closeness` variable of the character's own, and memories as session entries with `pull` and a `title` (Format 11.3).
 
 ### Time awareness
 
-`elapsed`, `hour` and `weekday` let a companion notice time. `hour` and `weekday` read the local time at the offset of the message's `at`, and are −1 when it has none: `{"id": "late_night", "when": "hour >= 0 && hour < 5", "text": "It is the middle of the night where {{user}} is."}`. `"when": "elapsed >= 86400"` notices that the player has been away for a day.
+`elapsed`, `hour` and `weekday` let a companion notice time. `hour` and `weekday` read the local time at the offset of the latest message's `at`, the evaluation point (Format 10.1), and are −1 when it has none: `{"id": "late_night", "when": "hour >= 0 && hour < 5", "text": "It is the middle of the night where {{user}} is."}`. `"when": "elapsed >= 86400"` notices that the player has been away for a day.
 
 ### Point-in-time canon
 

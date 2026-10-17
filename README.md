@@ -46,7 +46,7 @@ These are informative.
 
 ## Contributing
 
-Troupe is in early development, and breaking changes are welcome. Checks need [Bun](https://bun.sh): `bun install`, then `bun run check` runs what CI runs. The site in `site/` has its own packages: there, `bun install`, then `bun run dev` previews it.
+Troupe is in early development, and breaking changes are welcome. Checks need [Bun](https://bun.sh): `bun install`, then `bun run check` runs the repository checks. The site in `site/` has its own packages: there, `bun install`, then `bun run dev` previews it and `bun run check` and `bun run build` run its checks. CI runs all of these.
 
 ## License
 

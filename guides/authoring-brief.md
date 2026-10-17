@@ -41,7 +41,7 @@ One page for people and for LLMs asked to write Troupe files. Give it to a model
 3. Keys in `set` are written as they are read: `"state.bell"`, `"state.kai.nerve"`, never `"bell"` or `"own.nerve"`.
 4. A variable's value reaches the model only through text that shows it, such as an entry with `{{state.bell}}`.
 5. `speaker`, `knownBy`, cast `character` and `players` take character IDs, not names: `"speaker": "elena"`, not `"Elena Voss"`.
-6. `knownBy: ["narrator"]` is for the narrator alone; an explicit `knownBy` hides an entry from the narrator unless it lists `narrator`. Narrator-only clues belong to the scenario, because a character's entries only count while they are present.
+6. `knownBy: ["narrator"]` is for the narrator alone; in `characters` mode, an explicit `knownBy` hides an entry from the narrator unless it lists `narrator`. Narrator-only clues belong to the scenario, because a character's entries only count while they are present.
 7. Characters, worlds and scenarios can't be called `char`, `user`, `narrator`, `session`, `state`, `scene`, `players` or `own`, a variable can't be called `scene` or `own`, and no variable key can be `char` or `user`; no ID can be a CEL word such as `var`, `loop`, `function` or `package`.
 8. Leave the player's character out unless the story defines it; then mark its cast member `player`.
 9. Don't write `null`, and don't write `""` or `[]` for a field without a value: leave it out.
