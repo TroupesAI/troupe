@@ -86,7 +86,7 @@ An **entry** is any piece of text the model should read when its conditions hold
 When an entry is active:
 
 - **No `keys`:** always on. Rules, secrets and goals are written this way.
-- **With `keys`:** it activates when one of the words appears in the last 4 messages, speakers' names included. Keys match whole words and ignore case, so `vault` doesn't match `vaulted`. A key between slashes, such as `/vaults?/`, is a pattern for plurals and partial words.
+- **With `keys`:** it activates when one of the words appears in the last 4 messages, speakers' names included. Keys match whole words and ignore case, so `vault` doesn't match `vaulted`. A key written `/pattern/flags`, such as `/vaults?/i`, is a pattern for plurals and partial words; it ignores case only with the flag `i`.
 - **With `when`:** a condition must hold too, such as "only after the tenth bell" (chapter 6).
 - **With `pull` and a `title`:** the entry is retrieved on demand, when it becomes relevant. Large lorebooks use this.
 
@@ -208,7 +208,7 @@ By default, the scenario's `mode` is `characters`: each character's turns are wr
 | Kai, thinking: *If the Duke's men are early, this ends badly.* (`knownBy: ["kai"]`) | no | yes |
 | Elena to Mara, after Kai has left: "Watch him." | yes | no |
 
-In `narrator` mode, one voice writes the whole scene and knows everything. A **narrator** can also take turns in `characters` mode; an entry with `knownBy: ["narrator"]` is known only by the narrator, which is how a mystery's clues stay hidden from its suspects. Knowledge is about characters, never about what people can read in the file.
+In `narrator` mode, the narrator writes the whole scene and knows everything but hidden messages. A **narrator** can also take turns in `characters` mode; an entry with `knownBy: ["narrator"]` is known only by the narrator, which is how a mystery's clues stay hidden from its suspects. Knowledge is about characters, never about what people can read in the file.
 
 ## 6. Keeping score
 

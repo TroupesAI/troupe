@@ -23,8 +23,8 @@ Each card becomes a bundle with one character and a scenario `main` that holds i
 | `assets` icon / background | `avatar` / a location `image`; other assets in `ext` |
 | Lorebook entries | Character entries, or a world named after the book |
 | `keys`, `constant`, `enabled` | `keys`, no keys, `disabled` |
-| SillyTavern regex keys `/p/flags` | The same key, keeping only the flags `i`, `m` and `s` |
-| `case_sensitive`, `match_whole_words: false` | A regex key of the escaped key: `/\bkey\b/` for a case-sensitive whole word, `/key/i` for part of a word, `/key/` for both |
+| SillyTavern regex keys `/p/flags` | The same key, keeping only the flags `i`, `m` and `s`; a key with other forms (Format 14), such as a lookahead or a backreference, is rewritten or kept in `ext` |
+| `case_sensitive`, `match_whole_words: false` | A regex key of the escaped key: `/key/` when case-sensitive, else `/key/i`, with `\b` before and after it for whole words, which suits keys in ASCII letters |
 | `secondary_keys` AND ANY / NOT ANY / AND ALL / NOT ALL, `@@additional_keys`, `@@exclude_keys` | `when` with `hit()`: `hit('a') \|\| hit('b')`, `!hit('a') && !hit('b')`, `hit('a') && hit('b')`, `!(hit('a') && hit('b'))` |
 | `insertion_order` | the entry's place in `entries` |
 | `priority` (V2), importance | `priority`, rescaled to 0–100 |

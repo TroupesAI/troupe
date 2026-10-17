@@ -108,7 +108,9 @@ Locations:
 | In a session header | `header/<pointer>` | `header/players` |
 | In a message (its schema failures included) | `message:<id>/<pointer within the message>` | `message:3/changes/0/set/state.hp` |
 
-A diagnostic about one value points at that value: a list item at its index (`/scenarios/0/worlds/1`), a duplicate ID at the `id` of each later one (`/characters/1/id`), comparing the bundle's characters, worlds and scenarios, then the session's characters and worlds, and locations in world order, the bundle's before the session's, a reference at the field holding it (`/scenarios/0/cast/2/character`), and a location cycle at the `parent` of each location on it. For keys inside `set`, the pointer segment is the key as written (`/set/scene.present`). An unknown property is located at the property itself (`/characters/0/mystery`).
+A diagnostic about one value points at that value: a list item at its index (`/scenarios/0/worlds/1`), a reference at the field holding it (`/scenarios/0/cast/2/character`), an unknown property at the property (`/characters/0/mystery`), and a location cycle at the `parent` of each location on it. For keys inside `set`, the pointer segment is the key as written (`/set/scene.present`).
+
+A duplicate ID is at the `id` of each one after the first (`/characters/1/id`), in this order: the bundle's characters, worlds and scenarios, then the session's characters and worlds; locations in world order, the bundle's before the session's. A scenario variable with a character's or world's ID is at the variable's `id`.
 
 ### 3.5 `knows`: who knows a part (Format 7.4, 11.5)
 

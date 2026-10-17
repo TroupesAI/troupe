@@ -342,7 +342,7 @@ interface Entry {
 
 - An entry **without `keys` or `pull`** is always on, subject to `when`.
 - An entry **with `keys`** activates when one appears in its **scanned text**: the last `scanDepth` messages on the path that aren't hidden and have content, each text part known to whoever the message being written is for (section 11.5), as its speaker's name and its text as shown.
-- **Matching.** Keys match whole words, ignoring case: no letter, mark or number (Unicode categories L, M and N) comes right before or after a match, and case is compared by Unicode simple case folding. A key containing Han, Hiragana, Katakana, Hangul, Thai, Lao, Khmer, Myanmar or Tibetan characters matches anywhere. A key written `/pattern/flags`, matching `^/.+/[a-z]*$`, is a **regex key** (section 14). It matches anywhere, and ignores case only with the flag `i`: `/dragons?/i`, `/\bKai\b/`.
+- **Matching.** Keys match whole words, ignoring case: no letter, mark or number (Unicode categories L, M and N) comes right before or after a match, and case is compared by Unicode simple case folding. A key containing Han, Hiragana, Katakana, Hangul, Thai, Lao, Khmer, Myanmar or Tibetan characters matches anywhere. A key that matches `^/.+/[a-z]*$` is a **regex key** (section 14), written `/pattern/flags`: its pattern is the text between the first and the last `/`, and its flags the letters after. It matches anywhere, and ignores case only with the flag `i`: `/dragons?/i`, `/\bKai\b/`.
 - An entry **with `pull`** is retrieved when it is relevant, by its `title` or its text, such as on a model's request or by a search.
 - **`when`** narrows any kind. `hit("word")` checks the scanned text as keys do, so `"when": "hit('glass') && !hit('guard')"` expresses AND and NOT; `hit('')` is false.
 - **Timing.** `once`, `sticky` and `cooldown` count from the messages that record the entry in `activated` (section 11.4). `chance` is the percent probability that the entry activates when it otherwise would.
@@ -358,7 +358,7 @@ interface Entry {
 
 ### 7.4 Knowledge
 
-`knownBy` lists the characters who know an entry, and `narrator` in it names the narrator. Without it, everyone knows the entry; `["narrator"]` makes it narrator-only. In `characters` mode the narrator knows everything except content whose `knownBy` leaves it out; in `narrator` mode, where it plays every character, it knows everything. Section 11.5 says who knows a message's parts.
+`knownBy` lists the characters who know an entry, and `narrator` in it names the narrator. Without it, everyone knows the entry; `["narrator"]` makes it narrator-only. In `characters` mode the narrator knows everything except content whose `knownBy` leaves it out; in `narrator` mode, where it writes every character's lines, it knows everything but hidden messages' parts (section 11.4). Section 11.5 says who knows a message's parts.
 
 ---
 
@@ -463,8 +463,8 @@ Macros are the only substitution in text.
   - in a message part, the part's `speaker`; without one, it is left as written;
   - in a character's other text, that character;
   - in a cast member's `notes`, its character, or the character filling its seat;
-  - in other text, the character the message is written for, or the scenario's `narrator` when it is written for the narrator.
-- **`{{user}}`** is the speaker of the first speaking part in the latest player message on the path that has one, else the first player's character; with neither, it is left as written.
+  - in other text, the character the message being written is for, or the scenario's `narrator` when it is for the narrator.
+- **`{{user}}`** is the speaker of the first speaking part in the latest player message on the path that has a speaking part, else the first player's character; with neither, it is left as written.
 - In a state path, a `char` or `user` segment after the variable's name means the same character as the macro. When that is no character, the segment names no key, so the macro renders as nothing.
 - **Rendering.** A value with a label renders as its label, a string that is a character ID as that character's name, else one that is a location ID as that location's name. Numbers render as decimal integers, booleans as `true` or `false`, lists as items joined by `, ` (an empty list as nothing), and maps as `Name: value` pairs joined by `, `, each item and value rendered as above, with keys that are character IDs shown by name and other keys with underscores as spaces. Map keys render in the order of `of`: cast order for `"cast"`, list order for a list, and code point order for `"*"`. `{{scene.location}}` always renders as its location's name. A substituted value is never scanned for macros again.
 - **Unresolved.** Text between `{{` and `}}` that is no macro, such as `{{unknown}}`, and a macro naming a variable that isn't declared, as section 10.2 counts declarations, are left as written (`UNKNOWN_MACRO`); an absent key of a declared variable, a path below a value that isn't a map, or a variable whose owner isn't in use renders as nothing.
@@ -581,7 +581,7 @@ interface Change {
 - Every `parent` names a message on an earlier line.
 - A **root** is a system message made from an opening, or a player message. Every other system message is records-only (section 11.4).
 - A root made from an opening has `opening` set, and:
-  - holds the opening's `content` as written, with each `{{pick}}` replaced by the option chosen, or no content when the opening has none;
+  - holds the opening's `content` as written, with each `{{pick}}` replaced by the option chosen, its `\` and `{{` escaped as section 9 says, or no content when the opening has none;
   - records the opening's `set`, if any, as its first change, `by: "opening"`, with the players' characters added to a `scene.present` it sets. Only such a root has changes `by: "opening"`.
 - **Rounds** count player messages on a path: a message's `turn` is the number of player messages from the root to it, inclusive, and a message being written has its parent's. `turn`, `sticky` and `cooldown` count rounds, as differences of `turn`.
 
@@ -646,12 +646,13 @@ Fields that hold a file (`cover`, `avatar`, location `image` and image parts) ho
 Files hold data and sandboxed expressions (section 10), never scripts, and their size and the work they ask for are bounded. Their text is Markdown, which can hold raw HTML, links and images; how they are shown is the app's.
 
 - **Regexes.** A regex key is valid when its flags are distinct, from `i` (ignore case), `m` (`^` and `$` also match at line breaks) and `s` (`.` also matches line breaks), and its pattern is built only from:
-  - characters, with a `\` before any of ``^$\.*+?()[]{}|/`` that stands for itself; in a class, only `\`, `]` and a `-` that isn't first or last need one;
-  - `.`, `^`, `$`, `|`, groups `(…)` and `(?:…)`, and classes `[…]` and `[^…]` of characters, ranges such as `a-z` and class escapes;
-  - the class escapes `\d`, `\D`, `\w`, `\W`, `\s`, `\S`, `\t`, `\n`, `\r`, `\f`, `\v`, and `\p{…}` and `\P{…}` with a Unicode general category abbreviation such as `L` or `Lu`; outside classes, also `\b` and `\B`;
-  - after a character, `.`, class, class escape or group, one of the quantifiers `*`, `+`, `?`, `{n}`, `{n,}` and `{n,m}` with n ≤ m, optionally followed by `?`.
+  - characters, including `\t`, `\n`, `\r`, `\f` and `\v`, with a `\` before any of ``^$\.*+?()[]{}|/`` that stands for itself; in a class, a `\` before `\`, `[`, `]` and a `-` that isn't first or last;
+  - `.`, `^`, `$`, `\b`, `\B`, `|`, groups `(…)` and `(?:…)`;
+  - classes `[…]` and `[^…]` of at least one character, class escape or range `x-y`, with `x` not after `y`;
+  - the class escapes `\d`, `\D`, `\w`, `\W`, `\s`, `\S`, and `\p{…}` and `\P{…}` with the abbreviation of a Unicode general category other than `Cn` and `LC`, such as `L` or `Lu`;
+  - after a character, `.`, class, class escape or group, a quantifier `*`, `+`, `?`, `{n}`, `{n,}` or `{n,m}`, with n ≤ m ≤ 1000, optionally followed by `?`.
 
-  The pattern means what it means in ECMAScript with the `u` flag. It nests groups at most 100 deep, and written out in full, with each counted repetition replaced by its copies (`x{2,3}` as `xxx`, `x{2,}` as `xxx*`), it is at most 1000 bytes, so `(a{10}){200}` is too long. Such a pattern compiles in ECMAScript and RE2 alike, and is regular, so it runs in linear time on an automaton engine such as RE2.
+  The pattern means what it means in ECMAScript with the `u` flag. It nests groups at most 100 deep, and written out in full, with each counted repetition replaced by its copies (`x{2,3}` as `xxx`, `x{2,}` as `xxx*`), it is at most 1000 bytes, so `(a{10}){200}` is too long. Such a pattern compiles in ECMAScript and RE2 alike, and is regular, so it can run in linear time on an automaton engine.
 - **Limits.** Files stay within these limits:
 
 | Item | Size limit |
@@ -960,7 +961,7 @@ Two thieves hired by the player to steal a duke's storm lantern before the twelf
 | Sessions as an exchange snapshot | Prescribing storage, or an append-only log of edits | Apps keep their own databases; chats still move intact between session readers. |
 | Writers leave out empty optional fields | Allowing `""` and `[]` anywhere | Two writers of the same story produce the same fields. |
 | Limits on files, on CEL and on values | Only a file size cap, or each app's own | Every conforming file is bounded in size and in the work it asks for. |
-| Regex keys written `/pattern/flags`, in forms ECMAScript and RE2 share | RE2 syntax, or whatever an engine accepts | SillyTavern's regex keys work as written, every app can compile them, and a key is valid or `REGEX_ERROR` alike everywhere. |
+| Regex keys written `/pattern/flags`, in forms ECMAScript and RE2 share | RE2 syntax, or whatever an engine accepts | Most SillyTavern regex keys work as written, every app can compile them, and a key is valid or `REGEX_ERROR` alike everywhere. |
 
 ---
 
