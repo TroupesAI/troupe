@@ -1,5 +1,5 @@
 {
-  "description": "Macro parsing (Format 9): {{char}}, {{user}}, comments, escapes, picks; unknown forms, such as {{foo}}, are left as written and rescanned from the next character",
+  "description": "Macro parsing (Format 9): {{char}}, {{user}}, no spaces outside comments and options, comments, escapes, picks; unknown forms, such as {{foo}}, are left as written and rescanned from the next character",
   "bundle": {
     "kind": "bundle",
     "characters": [
@@ -59,6 +59,13 @@
       "name": "{{char}} with no character is left as written",
       "text": "{{char}} waits.",
       "expect": "{{char}} waits."
+    },
+    {
+      "type": "macro",
+      "name": "no spaces outside comments and options",
+      "text": "{{ char }} and {{char }}",
+      "char": "a",
+      "expect": "{{ char }} and {{char }}"
     },
     {
       "type": "macro",

@@ -248,6 +248,17 @@
     },
     {
       "type": "parse",
+      "name": "a change by system",
+      "kind": "session",
+      "text": "{\"troupe\": \"0.13\", \"kind\": \"session\", \"scenario\": \"s\"}\n{\"id\": \"1\", \"from\": \"player\", \"content\": [{\"text\": \"Hi.\"}], \"changes\": [{\"by\": \"system\", \"set\": {\"state.v\": true}}]}\n",
+      "expect": {
+        "codes": [
+          "SCHEMA"
+        ]
+      }
+    },
+    {
+      "type": "parse",
       "name": "a change that sets nothing",
       "kind": "session",
       "text": "{\"troupe\": \"0.13\", \"kind\": \"session\", \"scenario\": \"s\"}\n{\"id\": \"1\", \"from\": \"player\", \"content\": [{\"text\": \"Hi.\"}], \"changes\": [{\"by\": \"player\", \"set\": {}}]}\n",

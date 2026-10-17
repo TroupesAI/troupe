@@ -115,7 +115,7 @@
               "calm"
             ],
             "labels": {
-              "calm": "{{char}} is calm"
+              "calm": "{{state.leader}} is calm"
             },
             "description": "d"
           },
@@ -232,7 +232,7 @@
       "type": "macro",
       "name": "a label is used as written: macros in it don't resolve",
       "text": "{{state.mood}}",
-      "expect": "{{char}} is calm"
+      "expect": "{{state.leader}} is calm"
     },
     {
       "type": "check",

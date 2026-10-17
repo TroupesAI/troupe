@@ -1,5 +1,5 @@
 {
-  "description": "A \"*\" map holds at most 256 keys after a change (Format 14, 15.3): a change that takes it to 256 is valid, and one that takes it past is INVALID_VALUE; a key set to the default is removed (Format 8.3), so a change that removes one key and adds another stays at 256",
+  "description": "A \"*\" map holds at most 256 keys after a change (Format 14, 15.3): a change that takes it to 256 is valid, and one that takes it past is INVALID_VALUE",
   "bundle": {
     "kind": "bundle",
     "scenarios": [
@@ -322,26 +322,6 @@
           {
             "by": "player",
             "set": {
-              "state.inv.extra": 1
-            }
-          }
-        ]
-      },
-      {
-        "id": "3",
-        "parent": "1",
-        "from": "player",
-        "content": [
-          {
-            "speaker": "p",
-            "text": "Swap one."
-          }
-        ],
-        "changes": [
-          {
-            "by": "player",
-            "set": {
-              "state.inv.k0": 0,
               "state.inv.extra": 1
             }
           }

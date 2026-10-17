@@ -1,5 +1,5 @@
 {
-  "description": "Macro parsing and context (Format 9): \\ and \\{{ escapes, a { before a macro kept, one at a time, comments removed, own in a scenario's text, {{user}} from the first speaking part of the latest player message, and a location ID rendered as the location's name",
+  "description": "Macro parsing and context (Format 9): \\\\ and \\{{ escapes, a { before a macro kept, one at a time, comments removed, own in a scenario's text, {{user}} from the first speaking part of the latest player message, and a location ID rendered as the location's name",
   "bundle": {
     "kind": "bundle",
     "worlds": [

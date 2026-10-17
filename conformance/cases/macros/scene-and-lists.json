@@ -54,15 +54,6 @@
             "id": "crew",
             "type": "set",
             "description": "empty by default"
-          },
-          {
-            "id": "party",
-            "type": "set",
-            "initial": [
-              "b",
-              "a"
-            ],
-            "description": "character IDs"
           }
         ]
       }
