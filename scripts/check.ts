@@ -187,11 +187,20 @@ for (const f of cases) {
   schemaCodes(path, value);
 }
 
-// A case's expected codes agree with the schemas: SCHEMA is expected exactly when an input fails them, apart from
-// unknown properties (Format 13). Covers check tests and parse tests of a single JSON document or session.
+// A case's expected codes agree with the schemas: SCHEMA is expected exactly when an input fails them with its unknown
+// properties removed (Format 13). Covers check tests and parse tests of a single JSON document or session.
 function schemaFails(name: string, value: unknown): boolean {
   const v = validator(name);
-  return !v(value) && (v.errors ?? []).some((e) => e.keyword !== "additionalProperties" && e.keyword !== "if");
+  const doc = structuredClone(value);
+  while (!v(doc)) {
+    const unknown = (v.errors ?? []).filter((e) => e.keyword === "additionalProperties");
+    if (!unknown.length) return true;
+    for (const e of unknown) {
+      const path = e.instancePath.split("/").slice(1).map((s) => s.replaceAll("~1", "/").replaceAll("~0", "~"));
+      delete path.reduce((o: any, k) => o[k], doc)[e.params.additionalProperty];
+    }
+  }
+  return false;
 }
 function schemaCodes(path: string, c: Record<string, any>) {
   const withVersion = (o: Record<string, unknown>) => ({ troupe: version, ...o });

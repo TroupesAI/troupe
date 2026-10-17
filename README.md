@@ -50,4 +50,4 @@ Troupe is in early development, and breaking changes are welcome. Checks need [B
 
 ## License
 
-The specification and guides (`spec/`, `guides/`) are licensed under [CC BY 4.0](spec/LICENSE). Everything else, including the schemas, the conformance suite, the examples and the scripts, is licensed under [Apache-2.0](LICENSE). The TroupesAI logo in `site/` is covered by neither.
+The specification and guides (`spec/`, `guides/`) and the examples generated from the specification (`examples/`) are licensed under [CC BY 4.0](spec/LICENSE). Everything else, including the schemas, the conformance suite and the scripts, is licensed under [Apache-2.0](LICENSE). The TroupesAI logo and the icons made from it in `site/` are covered by neither.

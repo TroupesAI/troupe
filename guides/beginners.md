@@ -329,8 +329,8 @@ A variable for closeness goes in the character's own `variables`, so it travels 
 Her entries can react to it, such as `"when": "own.closeness >= 60"` for an entry in which she teases the player gently. During a chat, memories are added as entries on a message, with `pull` and a `title` so each is retrieved only when it matters:
 
 ```json
-{ "id": "lake", "title": "The promise about the lake", "pull": true, "knownBy": ["mira"],
-  "text": "Mira promised Mara they would see the frozen lake on Thessa in spring." }
+{ "id": "harbor_wall", "title": "The promise about the harbor wall", "pull": true, "knownBy": ["elena"],
+  "text": "Elena promised Mara they would walk the harbor wall together on the first dry night." }
 ```
 
 A memory added on a message holds from there on, on that branch only, so a reply that is swiped away takes its memories with it.

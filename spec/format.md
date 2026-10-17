@@ -107,7 +107,7 @@ MUST, MUST NOT, SHOULD, SHOULD NOT and MAY are used as described in RFC 2119 and
 
 ### 2.2 Values
 
-- Documents are I-JSON (RFC 7493): UTF-8 without a byte order mark, no duplicate member names, no surrogate or noncharacter code points, written or escaped, numbers that fit an IEEE 754 double, and integer fields and `int` values within ±(2^53 − 1). Writers write integers without a fraction or exponent, but a number with a zero fraction, such as `8.0`, is still an integer.
+- Documents are I-JSON (RFC 7493): UTF-8 without a byte order mark, no duplicate member names, no surrogate or noncharacter code points, written or escaped, numbers that fit an IEEE 754 double, and integer fields within ±(2^53 − 1). Writers write integers without a fraction or exponent, but a number with a zero fraction, such as `8.0`, is still an integer.
 - **Empty values.** `null` never appears in a field this spec defines or in a state value, and `""`, `[]` and `{}` never appear in an optional field other than `ext`: an optional field without a value is left out. State values and `scenario.worlds` are the exception: there `""`, `[]` and `{}` are values. Names, variable descriptions and the strings in lists such as `tags`, `keys` and `values` are never empty, and an example exchange has at least one line.
 - **Defaults are normative.** Every default stated in this document or its TypeScript comments applies when a field is absent. Every boolean defaults to `false`, and one written `false` is the same as an absent one.
 

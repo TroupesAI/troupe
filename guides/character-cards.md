@@ -51,7 +51,7 @@ A bundle's first character exports with a lossy mapping, the import table in rev
 
 | Troupe | Character Card V3 |
 | --- | --- |
-| `name`, `aliases`, `description`, `examples`, `avatar` | `name`, `nickname` (the first alias), `description`, `mes_example`, the icon asset |
+| `name`, the first alias, `description`, `examples`, `avatar` | `nickname` and `name`, or `name` alone without aliases; `description`, `mes_example`, the icon asset |
 | The openings with `content` of the first scenario whose cast includes it; its `premise`, `briefing` | `first_mes` and `alternate_greetings`; `scenario`, `creator_notes` |
 | The bundle's `authors`, `tags`, `version` | `creator`, `tags`, `character_version` |
 | Its own entry with `position: "system"`, known only by it | `system_prompt` |
