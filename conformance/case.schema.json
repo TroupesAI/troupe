@@ -55,7 +55,6 @@
           "type": {
             "enum": [
               "state",
-              "ended",
               "macro",
               "cel",
               "check",
@@ -103,43 +102,6 @@
                   "items": {
                     "type": "string"
                   }
-                }
-              }
-            }
-          },
-          {
-            "if": {
-              "properties": {
-                "type": {
-                  "const": "ended"
-                }
-              },
-              "required": [
-                "type"
-              ]
-            },
-            "then": {
-              "additionalProperties": false,
-              "required": [
-                "expect",
-                "at"
-              ],
-              "properties": {
-                "type": {
-                  "const": "ended"
-                },
-                "name": {
-                  "type": "string"
-                },
-                "note": {
-                  "type": "string"
-                },
-                "expect": {
-                  "type": "boolean"
-                },
-                "at": {
-                  "type": "string",
-                  "minLength": 1
                 }
               }
             }
@@ -272,12 +234,6 @@
                 },
                 "expr": {
                   "type": "string"
-                },
-                "kind": {
-                  "enum": [
-                    "entry",
-                    "event"
-                  ]
                 },
                 "at": {
                   "type": "string",
@@ -444,7 +400,8 @@
               "additionalProperties": false,
               "required": [
                 "expect",
-                "message"
+                "message",
+                "part"
               ],
               "properties": {
                 "type": {
@@ -469,23 +426,8 @@
                 "part": {
                   "type": "integer",
                   "minimum": 0
-                },
-                "summary": {
-                  "const": true
                 }
-              },
-              "oneOf": [
-                {
-                  "required": [
-                    "part"
-                  ]
-                },
-                {
-                  "required": [
-                    "summary"
-                  ]
-                }
-              ]
+              }
             }
           }
         ]

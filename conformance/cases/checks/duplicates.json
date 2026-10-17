@@ -1,5 +1,5 @@
 {
-  "description": "Duplicate IDs (Format 2.3, 16.3): characters, worlds and scenarios share one namespace, compared characters first; locations are unique across worlds; openings within a scenario. A cast names each character once and worlds lists each world once",
+  "description": "Duplicate IDs (Format 2.3, 15.3): characters, worlds and scenarios share one namespace, compared characters first; locations are unique across worlds; openings within a scenario. A cast names each character once and worlds lists each world once. An entry and a variable of one owner may share an ID",
   "bundle": {
     "kind": "bundle",
     "characters": [
@@ -11,7 +11,20 @@
       {
         "id": "kai",
         "name": "Kai",
-        "description": "Kai."
+        "description": "Kai.",
+        "entries": [
+          {
+            "id": "mood",
+            "text": "Kai is restless."
+          }
+        ],
+        "variables": [
+          {
+            "id": "mood",
+            "type": "int",
+            "description": "d"
+          }
+        ]
       }
     ],
     "worlds": [
@@ -26,6 +39,19 @@
           {
             "id": "l",
             "name": "L"
+          }
+        ],
+        "entries": [
+          {
+            "id": "tide",
+            "text": "The tide is turning."
+          }
+        ],
+        "variables": [
+          {
+            "id": "tide",
+            "type": "int",
+            "description": "d"
           }
         ]
       },

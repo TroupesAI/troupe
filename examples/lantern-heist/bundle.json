@@ -27,7 +27,8 @@
         ]
       ],
       "entries": [
-        { "id": "master_key", "knownBy": ["elena"], "text": "Elena still has the surveyor's master key to the Duke's vault, and hasn't told anyone." }
+        { "id": "master_key", "knownBy": ["elena"], "text": "Elena still has the surveyor's master key to the Duke's vault, and hasn't told anyone." },
+        { "id": "betrayed", "knownBy": ["elena"], "when": "state.kai_confessed", "text": "Elena knows Kai meant to lead the crew into the Duke's trap. She is furious with him." }
       ],
       "avatar": "elena.webp"
     },
@@ -43,7 +44,7 @@
         }
       ],
       "entries": [
-        { "id": "voice", "knownBy": ["kai"], "position": 4, "text": "{{char}} calls people 'boss' and talks in quick, joking bursts." },
+        { "id": "voice", "knownBy": ["kai"], "depth": 4, "text": "{{char}} calls people 'boss' and talks in quick, joking bursts." },
         { "id": "deal", "knownBy": ["kai"], "text": "The Duke paid Kai to lead the crew into a trap at the vault door. He is starting to regret it." },
         { "id": "rattled", "knownBy": ["kai"], "when": "own.nerve >= 2", "text": "{{char}} is rattled: he jokes too fast and keeps looking for exits." }
       ],
@@ -63,6 +64,7 @@
       ],
       "entries": [
         { "id": "storm_lantern", "keys": ["lantern"], "priority": 80, "text": "The lantern holds a captured storm. If its glass cracks, the harbor floods within the hour." },
+        { "id": "guards", "when": "'manor' in scene.within", "text": "Guards walk the manor in pairs and change shifts at every bell." },
         { "id": "weather_rain", "group": "weather", "weight": 3, "sticky": 6, "cooldown": 4, "text": "Rain keeps falling, slicking every roof and muffling footsteps." },
         { "id": "weather_fog", "group": "weather", "sticky": 6, "cooldown": 4, "text": "Fog rolls in from the harbor; nobody can see past ten paces." }
       ]
@@ -86,15 +88,15 @@
           "by": ["model"], "maxStep": 2, "oneWay": true
         },
         {
-          "id": "trust", "type": "number", "of": "characters", "initial": { "*": 0.5, "elena": 0.7, "kai": 0.4 }, "min": 0, "max": 1,
-          "description": "How much this character trusts {{user}}, from 0 to 1. Rises when promises are kept or risks are shared; falls on lies and reckless orders.",
-          "by": ["model"], "maxStep": 0.2, "spoiler": true
+          "id": "trust", "type": "int", "of": "cast", "initial": { "*": 50, "elena": 70, "kai": 40 }, "min": 0, "max": 100,
+          "description": "How much this character trusts {{user}}, from 0 to 100. Rises when promises are kept or risks are shared; falls on lies and reckless orders.",
+          "by": ["model"], "maxStep": 20, "spoiler": true
         },
         {
           "id": "approach", "type": "enum", "values": ["quiet", "loud"],
           "labels": { "quiet": "Slip in unseen", "loud": "Make a scene and grab it" },
           "description": "How {{user}} wants the job done.",
-          "ask": "How do you want to play this job?"
+          "by": ["player"]
         },
         {
           "id": "key_revealed", "type": "bool", "oneWay": true, "by": ["model"],
@@ -109,26 +111,10 @@
         { "id": "style", "position": "system", "text": "Write in second person, present tense. Keep scenes tense and end each reply on a choice for {{user}}." },
         { "id": "clock", "text": "The last bell to ring was the {{state.bell}}th. The plan: {{state.approach}}." },
         { "id": "late", "position": "system", "when": "state.bell >= 10", "text": "Time is short. Every exchange should cost the crew something." },
+        { "id": "twelfth", "position": "system", "when": "state.bell >= 12", "text": "The twelfth bell has rung and the harbor gates are shut. Bring the story to its end." },
+        { "id": "patrol", "when": "scene.location == 'rooftops'", "chance": 30, "text": "A guard patrol passes below the rooftops, close enough to hear." },
         { "id": "key_known", "when": "state.key_revealed", "text": "Elena has the surveyor's master key to the vault." },
-        { "id": "confess", "knownBy": ["kai"], "position": 2, "when": "state.trust.kai >= 0.8", "text": "Kai trusts {{user}} enough to confess the Duke's deal if asked directly." }
-      ],
-      "events": [
-        {
-          "id": "patrol", "on": "player", "when": "scene.location == 'rooftops' && turn > 2", "chance": 0.3, "cooldown": 3,
-          "outcomes": [
-            { "weight": 3, "direct": "A guard patrol passes below. Nobody spots the crew, but it is close." },
-            { "weight": 1, "direct": "A guard looks up and sees a shadow move. The crew must hide until the next bell.", "compute": { "bell": "state.bell + 1" } }
-          ]
-        },
-        {
-          "id": "twelfth_bell", "when": "state.bell >= 12", "once": true, "end": true,
-          "message": [{ "text": "The twelfth bell tolls across the harbor. Far below, the gates grind shut." }]
-        },
-        {
-          "id": "kai_confides", "when": "state.kai_confessed", "once": true,
-          "compute": { "trust.elena": "state.trust.elena - 0.1" },
-          "message": [{ "speaker": "elena", "text": "*Elena's jaw tightens.* You were going to let us walk into that." }]
-        }
+        { "id": "confess", "knownBy": ["kai"], "depth": 2, "when": "state.trust.kai >= 80", "text": "Kai trusts {{user}} enough to confess the Duke's deal if asked directly." }
       ],
       "openings": [
         {
@@ -144,7 +130,7 @@
         {
           "id": "caught",
           "title": "Already caught",
-          "set": { "scene.location": "vault", "bell": 11 },
+          "set": { "scene.location": "vault", "state.bell": 11 },
           "content": [
             { "text": "Water laps at your knees. The vault door has slammed shut behind you, and Kai is nowhere to be seen." },
             { "speaker": "elena", "text": "He was supposed to hold that door. *She doesn't look surprised.*" }

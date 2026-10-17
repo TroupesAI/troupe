@@ -1,7 +1,8 @@
 {
-  "description": "Format Appendix B: every checkable claim about The Lantern Heist and its session",
-  "bundleFile": "../../../examples/lantern-heist.troupe.json",
-  "sessionFile": "../../../examples/lantern-heist.troupe-session.jsonl",
+  "description": "Format Appendix B.2 and B.3: every checkable claim about The Lantern Heist and its session",
+  "note": "The session's mara fills the scenario's seat, so the cast is mara, elena and kai. trust is of the cast, with initial {\"*\": 50, \"elena\": 70, \"kai\": 40}. approach starts at its first value.",
+  "bundleFile": "../../../examples/lantern-heist/bundle.json",
+  "sessionFile": "../../../examples/lantern-heist/sessions/heist.troupe-session.jsonl",
   "tests": [
     {
       "type": "check",
@@ -14,9 +15,14 @@
       "type": "state",
       "name": "before the root: initial values, the whole cast present",
       "expect": {
-        "bell": 6,
-        "trust.kai": 0.4,
-        "trust.elena": 0.7,
+        "state.bell": 6,
+        "state.trust.mara": 50,
+        "state.trust.elena": 70,
+        "state.trust.kai": 40,
+        "state.approach": "quiet",
+        "state.kai.nerve": 0,
+        "state.key_revealed": false,
+        "state.kai_confessed": false,
         "scene.location": "",
         "scene.present": [
           "mara",
@@ -27,7 +33,7 @@
     },
     {
       "type": "state",
-      "name": "the root records the opening's values and the answer",
+      "name": "the root records the opening's set",
       "at": "1",
       "expect": {
         "scene.location": "rooftops",
@@ -36,21 +42,29 @@
           "elena",
           "kai"
         ],
-        "approach": "quiet",
-        "bell": 6
+        "state.bell": 6
       }
     },
     {
       "type": "state",
-      "name": "branch 3: Kai has left",
+      "name": "the player's choice",
+      "at": "2",
+      "expect": {
+        "state.approach": "quiet"
+      }
+    },
+    {
+      "type": "state",
+      "name": "branch 3: Kai has left, rattled",
       "at": "3",
       "expect": {
         "scene.present": [
           "mara",
           "elena"
         ],
-        "bell": 6,
-        "trust.kai": 0.4
+        "state.bell": 6,
+        "state.trust.kai": 40,
+        "state.kai.nerve": 1
       }
     },
     {
@@ -63,8 +77,9 @@
           "elena",
           "kai"
         ],
-        "bell": 7,
-        "trust.kai": 0.5
+        "state.bell": 7,
+        "state.trust.kai": 50,
+        "state.kai.nerve": 0
       }
     },
     {
@@ -75,12 +90,25 @@
       "expect": "The last bell to ring was the 7th. The plan: Slip in unseen."
     },
     {
-      "type": "state",
-      "name": "message 3 records Kai's own nerve",
+      "type": "cel",
+      "name": "the guards entry's condition on the rooftops",
       "at": "3",
-      "expect": {
-        "kai.nerve": 1
-      }
+      "expr": "'manor' in scene.within",
+      "expect": true
+    },
+    {
+      "type": "cel",
+      "name": "the patrol entry's condition",
+      "at": "4",
+      "expr": "scene.location == 'rooftops'",
+      "expect": true
+    },
+    {
+      "type": "cel",
+      "name": "the late entry's condition",
+      "at": "4",
+      "expr": "state.bell >= 10",
+      "expect": false
     }
   ]
 }

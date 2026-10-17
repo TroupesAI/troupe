@@ -1,5 +1,5 @@
 {
-  "description": "Reference checks on a session: an unknown cast member, player, location parent, opening, variable, event name or activated reference each report their code; a location cycle is UNKNOWN_LOCATION (Format 16.3)",
+  "description": "Reference checks on a session: an unknown cast member, player, location parent, opening, variable or activated reference each report their code; a location cycle is UNKNOWN_LOCATION (Format 15.3)",
   "bundle": {
     "kind": "bundle",
     "characters": [
@@ -48,18 +48,10 @@
           {
             "id": "g",
             "type": "int",
+            "by": [
+              "model"
+            ],
             "description": "d"
-          }
-        ],
-        "events": [
-          {
-            "id": "ev1",
-            "on": "player",
-            "when": "true",
-            "set": {
-              "nope": 1,
-              "g": 1
-            }
           }
         ]
       }
@@ -86,18 +78,7 @@
         "id": "1",
         "opening": "gone",
         "from": "system",
-        "content": [],
-        "changes": [
-          {
-            "by": "rules",
-            "set": {
-              "scene.present": [
-                "p",
-                "a"
-              ]
-            }
-          }
-        ]
+        "content": []
       },
       {
         "id": "2",
@@ -134,10 +115,10 @@
         ],
         "changes": [
           {
-            "by": "rules",
-            "event": "nowhere",
+            "by": "model",
             "set": {
-              "g": 2
+              "state.g": 2,
+              "state.nope": 1
             }
           }
         ]
@@ -194,11 +175,7 @@
           },
           {
             "code": "UNKNOWN_VARIABLE",
-            "at": "/scenarios/0/events/0/set/nope"
-          },
-          {
-            "code": "UNKNOWN_NAME",
-            "at": "message:3/changes/0/event"
+            "at": "message:3/changes/0/set/state.nope"
           },
           {
             "code": "UNKNOWN_NAME",

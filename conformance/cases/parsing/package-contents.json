@@ -1,11 +1,11 @@
 {
-  "description": "Package contents (Format 13.3, 16.3): an exact duplicate name is PARSE; an unreadable line in a session inside a valid package is PARSE, for a session reader (Format 16.2); compression methods other than store and deflate, and a referenced file with a path segment over 255 bytes, are PARSE; sessions belong to the package only in their folder",
+  "description": "Package contents and paths (Format 12.2, 12.3, 15.3): package paths appear only in a package, and every path a package's bundle or sessions reference is a file of the package, or it is PARSE; an exact duplicate name, compression methods other than store and deflate, and an unreadable line in a session inside a valid package, for a session reader (Format 15.2), are PARSE; a file with a path segment over 255 bytes isn't part of the package; sessions belong to the package only in their folder",
   "tests": [
     {
       "type": "parse",
       "name": "two entries with the same name",
       "kind": "package",
-      "base64": "UEsDBBQAAAAIAAAAS11m3axbIQAAACEAAAALAAAAYnVuZGxlLmpzb26rViopyi8tSFWyUjLQMzRS0lHKzsxLAfKSSvNSclKVagFQSwMEFAAAAAgAAABLXWbdrFshAAAAIQAAAAsAAABidW5kbGUuanNvbqtWKinKLy1IVbJSMtAzNFLSUcrOzEsB8pJK81JyUpVqAVBLAQIUAxQAAAAIAAAAS11m3axbIQAAACEAAAALAAAAAAAAAAAAAACAAQAAAABidW5kbGUuanNvblBLAQIUAxQAAAAIAAAAS11m3axbIQAAACEAAAALAAAAAAAAAAAAAACAAUoAAABidW5kbGUuanNvblBLBQYAAAAAAgACAHIAAACUAAAAAAA=",
+      "base64": "UEsDBBQAAAAIAAAAS10+XU6MIQAAACEAAAALAAAAYnVuZGxlLmpzb26rViopyi8tSFWyUjLQMzRW0lHKzsxLAfKSSvNSclKVagFQSwMEFAAAAAgAAABLXT5dTowhAAAAIQAAAAsAAABidW5kbGUuanNvbqtWKinKLy1IVbJSMtAzNFbSUcrOzEsB8pJK81JyUpVqAVBLAQIUAxQAAAAIAAAAS10+XU6MIQAAACEAAAALAAAAAAAAAAAAAACAgQAAAABidW5kbGUuanNvblBLAQIUAxQAAAAIAAAAS10+XU6MIQAAACEAAAALAAAAAAAAAAAAAACAgUoAAABidW5kbGUuanNvblBLBQYAAAAAAgACAHIAAACUAAAAAAA=",
       "expect": {
         "codes": [
           "PARSE"
@@ -17,7 +17,7 @@
       "name": "an unreadable session line inside a valid package",
       "level": "session",
       "kind": "package",
-      "base64": "UEsDBBQAAAAIAAAAS13aqb7tOgAAADoAAAALAAAAYnVuZGxlLmpzb26rViopyi8tSFWyUjLQMzRS0lHKzsxLUbJSSirNS8lJVdJRKk5OzUssyswvVrKKrlbKBMkVK9XG1gIAUEsDBBQAAAAIAAAAS12TT9A0dAAAALQAAAAjAAAAc2Vzc2lvbnMvZmlyc3QudHJvdXBlLXNlc3Npb24uanNvbmx1jUEKwjAURPce461DsS5zAu8gLkL7hdA0PyQRlNC7S5SCm25n5r1p1KzPJFjOw3jBsPg4YylSiteIoUwSXfbaQ7ZTw/d+xPDIumJJwb0lY5g0VokVe2tUeVUsVz+w3Xdqh/tPcvm7/TetOks4EEkI+nN9AFBLAQIUAxQAAAAIAAAAS13aqb7tOgAAADoAAAALAAAAAAAAAAAAAACAAQAAAABidW5kbGUuanNvblBLAQIUAxQAAAAIAAAAS12TT9A0dAAAALQAAAAjAAAAAAAAAAAAAACAAWMAAABzZXNzaW9ucy9maXJzdC50cm91cGUtc2Vzc2lvbi5qc29ubFBLBQYAAAAAAgACAIoAAAAYAQAAAAA=",
+      "base64": "UEsDBBQAAAAIAAAAS124kZbHNwAAADoAAAALAAAAYnVuZGxlLmpzb26rViopyi8tSFWyUjLQMzRW0lHKzsxLAfKSSvNSclKB/OLk1LzEosz8YiWr6GqlTJBcsVJtbC0AUEsDBBQAAAAIAAAAS12KK64bdAAAALQAAAAjAAAAc2Vzc2lvbnMvZmlyc3QudHJvdXBlLXNlc3Npb24uanNvbmx1jD0KwkAQhXuP8WoJiXY5gXcIKZZkhMHNzDK7grLk7k4iARu79/tVFNNnIvRom+6KMx4ss7tMObOKB3kiCca6hVhPFbz1nTd308VliuFN5n5SKSQF/VBR6OUCN26wjsfrOF98nILt21/SojPFPyCKUb+sD1BLAQIUAxQAAAAIAAAAS124kZbHNwAAADoAAAALAAAAAAAAAAAAAACAgQAAAABidW5kbGUuanNvblBLAQIUAxQAAAAIAAAAS12KK64bdAAAALQAAAAjAAAAAAAAAAAAAACAgWAAAABzZXNzaW9ucy9maXJzdC50cm91cGUtc2Vzc2lvbi5qc29ubFBLBQYAAAAAAgACAIoAAAAVAQAAAAA=",
       "expect": {
         "codes": [
           "PARSE"
@@ -28,7 +28,7 @@
       "type": "parse",
       "name": "a compression method other than store or deflate",
       "kind": "package",
-      "base64": "UEsDBBQAAAAIAAAAIVzlIAOiIwAAACQAAAALAAAAYnVuZGxlLmpzb26rViopyi8tSFWyUlAy0DM0UtJRUMrOzEsB8ZNK81JyUpVqAVBLAwQuAAAADAAAACFcgxbcjCUAAAABAAAACQAAAG5vdGVzLnR4dEJaaDkxQVkmU1l3S7AUAAAAAIAAQCAAIRhGgu5IpwoSDul2AoBQSwECFAMUAAAACAAAACFc5SADoiMAAAAkAAAACwAAAAAAAAAAAAAAgAEAAAAAYnVuZGxlLmpzb25QSwECLgMuAAAADAAAACFcgxbcjCUAAAABAAAACQAAAAAAAAAAAAAAgAFMAAAAbm90ZXMudHh0UEsFBgAAAAACAAIAcAAAAJgAAAAAAA==",
+      "base64": "UEsDBBQAAAAIAAAAS10+XU6MIQAAACEAAAALAAAAYnVuZGxlLmpzb26rViopyi8tSFWyUjLQMzRW0lHKzsxLAfKSSvNSclKVagFQSwMELgAAAAwAAABLXYMW3IwlAAAAAQAAAAkAAABub3Rlcy50eHRCWmg5MUFZJlNZd0uwFAAAAACAAEAgACEYRoLuSKcKEg7pdgKAUEsBAhQDFAAAAAgAAABLXT5dTowhAAAAIQAAAAsAAAAAAAAAAAAAAICBAAAAAGJ1bmRsZS5qc29uUEsBAi4DLgAAAAwAAABLXYMW3IwlAAAAAQAAAAkAAAAAAAAAAAAAAICBSgAAAG5vdGVzLnR4dFBLBQYAAAAAAgACAHAAAACWAAAAAAA=",
       "expect": {
         "codes": [
           "PARSE"
@@ -38,8 +38,9 @@
     {
       "type": "parse",
       "name": "a referenced file with a path segment over 255 bytes",
+      "note": "The 256-byte name is outside the path grammar, so the file isn't part of the package, and the cover names no file of it.",
       "kind": "package",
-      "base64": "UEsDBBQAAAAIAAAAS109GfqoNQAAADABAAALAAAAYnVuZGxlLmpzb26rViopyi8tSFWyUjLQMzRS0lHKzsxLUbJSSirNS8lJVdJRSs4vSy1SslJKHOFAryAvXakWAFBLAwQUAAAACAAAAEtdSeB6oUMAAABGAAAABAEAAGFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWEucG5n6wzwc+flkuJiYGDg9fRwCWJgYGAEYQ42BgYGedEjnWAJF8eQijnJCQkJCQwMDKwMjEu/uTowMDAweLr6uaxzSmgCAFBLAQIUAxQAAAAIAAAAS109GfqoNQAAADABAAALAAAAAAAAAAAAAACAAQAAAABidW5kbGUuanNvblBLAQIUAxQAAAAIAAAAS11J4HqhQwAAAEYAAAAEAQAAAAAAAAAAAACAAV4AAABhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhLnBuZ1BLBQYAAAAAAgACAGsBAADDAQAAAAA=",
+      "base64": "UEsDBBQAAAAIAAAAS12kEtwfMQAAACwBAAALAAAAYnVuZGxlLmpzb26rViopyi8tSFWyUjLQMzRW0lHKzsxLAfKSSvNSclKB/OT8stQioEDiCAZ6BXnpSrUAUEsDBBQAAAAIAAAAS11J4HqhPAAAAEYAAAAAAQAAYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhLnBuZ+sM8HPn5ZLiYmBg4PX0cAkC0owgzMEGJOVFj3SCJVwcQyrmJCcAAZDLysC49JurA5DF4Onq57LOKaEJAFBLAQIUAxQAAAAIAAAAS12kEtwfMQAAACwBAAALAAAAAAAAAAAAAACAgQAAAABidW5kbGUuanNvblBLAQIUAxQAAAAIAAAAS11J4HqhPAAAAEYAAAAAAQAAAAAAAAAAAACAgVoAAABhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWEucG5nUEsFBgAAAAACAAIAZwEAALQBAAAAAA==",
       "expect": {
         "codes": [
           "PARSE"
@@ -49,11 +50,92 @@
     {
       "type": "parse",
       "name": "a session outside sessions/ isn't part of the package",
-      "note": "The stray file isn't valid JSON, so it would be PARSE if it were part of the package.",
+      "note": "The stray files aren't valid JSON, so they would be PARSE if they were part of the package.",
       "kind": "package",
-      "base64": "UEsDBBQAAAAIAAAAIVzlIAOiIwAAACQAAAALAAAAYnVuZGxlLmpzb26rViopyi8tSFWyUlAy0DM0UtJRUMrOzEsB8ZNK81JyUpVqAVBLAwQUAAAACAAAACFcZsuMxgoAAAAIAAAAGgAAAHN0cmF5LnRyb3VwZS1zZXNzaW9uLmpzb25sy8svUcgqzs8DAFBLAwQUAAAACAAAACFcZsuMxgoAAAAIAAAAEgAAAHNlc3Npb25zL25vdGVzLnR4dMvLL1HIKs7PAwBQSwECFAMUAAAACAAAACFc5SADoiMAAAAkAAAACwAAAAAAAAAAAAAAgAEAAAAAYnVuZGxlLmpzb25QSwECFAMUAAAACAAAACFcZsuMxgoAAAAIAAAAGgAAAAAAAAAAAAAAgAFMAAAAc3RyYXkudHJvdXBlLXNlc3Npb24uanNvbmxQSwECFAMUAAAACAAAACFcZsuMxgoAAAAIAAAAEgAAAAAAAAAAAAAAgAGOAAAAc2Vzc2lvbnMvbm90ZXMudHh0UEsFBgAAAAADAAMAwQAAAMgAAAAAAA==",
+      "base64": "UEsDBBQAAAAIAAAAS10+XU6MIQAAACEAAAALAAAAYnVuZGxlLmpzb26rViopyi8tSFWyUjLQMzRW0lHKzsxLAfKSSvNSclKVagFQSwMEFAAAAAgAAABLXWbLjMYKAAAACAAAABoAAABzdHJheS50cm91cGUtc2Vzc2lvbi5qc29ubMvLL1HIKs7PAwBQSwMEFAAAAAgAAABLXWbLjMYKAAAACAAAABIAAABzZXNzaW9ucy9ub3Rlcy50eHTLyy9RyCrOzwMAUEsBAhQDFAAAAAgAAABLXT5dTowhAAAAIQAAAAsAAAAAAAAAAAAAAICBAAAAAGJ1bmRsZS5qc29uUEsBAhQDFAAAAAgAAABLXWbLjMYKAAAACAAAABoAAAAAAAAAAAAAAICBSgAAAHN0cmF5LnRyb3VwZS1zZXNzaW9uLmpzb25sUEsBAhQDFAAAAAgAAABLXWbLjMYKAAAACAAAABIAAAAAAAAAAAAAAICBjAAAAHNlc3Npb25zL25vdGVzLnR4dFBLBQYAAAAAAwADAMEAAADGAAAAAAA=",
       "expect": {
         "codes": []
+      }
+    },
+    {
+      "type": "parse",
+      "name": "a referenced file the package holds",
+      "kind": "package",
+      "base64": "UEsDBBQAAAAIAAAAS11zvED+NgAAADsAAAALAAAAYnVuZGxlLmpzb26rViopyi8tSFWyUjLQMzRW0lHKzsxLAfKSSvNSclKB/OT8stQioEBuakpmoj6Yp1eQl65UCwBQSwMEFAAAAAgAAABLXUngeqE8AAAARgAAAA8AAABtZWRpYS9jb3Zlci5wbmfrDPBz5+WS4mJgYOD19HAJAtKMIMzBBiTlRY90giVcHEMq5iQnAAGQy8rAuPSbqwOQxeDp6ueyzimhCQBQSwECFAMUAAAACAAAAEtdc7xA/jYAAAA7AAAACwAAAAAAAAAAAAAAgIEAAAAAYnVuZGxlLmpzb25QSwECFAMUAAAACAAAAEtdSeB6oTwAAABGAAAADwAAAAAAAAAAAAAAgIFfAAAAbWVkaWEvY292ZXIucG5nUEsFBgAAAAACAAIAdgAAAMgAAAAAAA==",
+      "expect": {
+        "codes": []
+      }
+    },
+    {
+      "type": "parse",
+      "name": "a referenced file the package lacks",
+      "kind": "package",
+      "base64": "UEsDBBQAAAAIAAAAS11zvED+NgAAADsAAAALAAAAYnVuZGxlLmpzb26rViopyi8tSFWyUjLQMzRW0lHKzsxLAfKSSvNSclKB/OT8stQioEBuakpmoj6Yp1eQl65UCwBQSwECFAMUAAAACAAAAEtdc7xA/jYAAAA7AAAACwAAAAAAAAAAAAAAgIEAAAAAYnVuZGxlLmpzb25QSwUGAAAAAAEAAQA5AAAAXwAAAAAA",
+      "expect": {
+        "codes": [
+          "PARSE"
+        ]
+      }
+    },
+    {
+      "type": "parse",
+      "name": "a file a session references, which the package lacks",
+      "level": "session",
+      "kind": "package",
+      "base64": "UEsDBBQAAAAIAAAAS124kZbHNwAAADoAAAALAAAAYnVuZGxlLmpzb26rViopyi8tSFWyUjLQMzRW0lHKzsxLAfKSSvNSclKB/OLk1LzEosz8YiWr6GqlTJBcsVJtbC0AUEsDBBQAAAAIAAAAS11G53h9ZgAAAHoAAAAjAAAAc2Vzc2lvbnMvZmlyc3QudHJvdXBlLXNlc3Npb24uanNvbmwdjDEKwzAQBHs/Y+tgYtL5KyGFkM/mSHQnTnJhhP7uU7qdHZiGanpmwornvLzwwJdlcypUCqv4USJJMNZxok8NPPziZjdNPvMvXGTOUaWSVKzvhnr9o5zCQSNi0SmFPGc50D99ugFQSwECFAMUAAAACAAAAEtduJGWxzcAAAA6AAAACwAAAAAAAAAAAAAAgIEAAAAAYnVuZGxlLmpzb25QSwECFAMUAAAACAAAAEtdRud4fWYAAAB6AAAAIwAAAAAAAAAAAAAAgIFgAAAAc2Vzc2lvbnMvZmlyc3QudHJvdXBlLXNlc3Npb24uanNvbmxQSwUGAAAAAAIAAgCKAAAABwEAAAAA",
+      "expect": {
+        "codes": [
+          "PARSE"
+        ]
+      }
+    },
+    {
+      "type": "parse",
+      "name": "a file a session references, in the package",
+      "kind": "package",
+      "base64": "UEsDBBQAAAAIAAAAS124kZbHNwAAADoAAAALAAAAYnVuZGxlLmpzb26rViopyi8tSFWyUjLQMzRW0lHKzsxLAfKSSvNSclKB/OLk1LzEosz8YiWr6GqlTJBcsVJtbC0AUEsDBBQAAAAIAAAAS11G53h9ZgAAAHoAAAAjAAAAc2Vzc2lvbnMvZmlyc3QudHJvdXBlLXNlc3Npb24uanNvbmwdjDEKwzAQBHs/Y+tgYtL5KyGFkM/mSHQnTnJhhP7uU7qdHZiGanpmwornvLzwwJdlcypUCqv4USJJMNZxok8NPPziZjdNPvMvXGTOUaWSVKzvhnr9o5zCQSNi0SmFPGc50D99ugFQSwMEFAAAAAgAAABLXUngeqE8AAAARgAAAAcAAABtYXAucG5n6wzwc+flkuJiYGDg9fRwCQLSjCDMwQYk5UWPdIIlXBxDKuYkJwABkMvKwLj0m6sDkMXg6ernss4poQkAUEsBAhQDFAAAAAgAAABLXbiRlsc3AAAAOgAAAAsAAAAAAAAAAAAAAICBAAAAAGJ1bmRsZS5qc29uUEsBAhQDFAAAAAgAAABLXUbneH1mAAAAegAAACMAAAAAAAAAAAAAAICBYAAAAHNlc3Npb25zL2ZpcnN0LnRyb3VwZS1zZXNzaW9uLmpzb25sUEsBAhQDFAAAAAgAAABLXUngeqE8AAAARgAAAAcAAAAAAAAAAAAAAICBBwEAAG1hcC5wbmdQSwUGAAAAAAMAAwC/AAAAaAEAAAAA",
+      "expect": {
+        "codes": []
+      }
+    },
+    {
+      "type": "parse",
+      "name": "a package path in a single file",
+      "kind": "bundle",
+      "text": "{\"troupe\":\"0.13\",\"kind\":\"bundle\",\"cover\":\"cover.webp\"}",
+      "expect": {
+        "codes": [
+          "PARSE"
+        ]
+      }
+    },
+    {
+      "type": "parse",
+      "name": "an https URL in a single file",
+      "kind": "bundle",
+      "text": "{\"troupe\":\"0.13\",\"kind\":\"bundle\",\"cover\":\"https://example.com/cover.webp\"}",
+      "expect": {
+        "codes": []
+      }
+    },
+    {
+      "type": "parse",
+      "name": "a data: URI in a single file",
+      "kind": "bundle",
+      "text": "{\"troupe\":\"0.13\",\"kind\":\"bundle\",\"cover\":\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGNgYGBgAAAABQABpfZFQAAAAABJRU5ErkJggg==\"}",
+      "expect": {
+        "codes": []
+      }
+    },
+    {
+      "type": "parse",
+      "name": "a package path in a session file",
+      "kind": "session",
+      "text": "{\"troupe\":\"0.13\",\"kind\":\"session\",\"scenario\":\"s\"}\n{\"id\":\"1\",\"from\":\"player\",\"content\":[{\"type\":\"image\",\"src\":\"map.png\"}]}\n",
+      "expect": {
+        "codes": [
+          "PARSE"
+        ]
       }
     }
   ]

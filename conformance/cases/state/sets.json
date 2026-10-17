@@ -1,5 +1,5 @@
 {
-  "description": "Sets and the scene (Format 8.4, 8.6, 10): initial and recorded sets lose duplicates, and a set with values orders its members as declared; a free-form set keeps its members' order; scene.present loses duplicates and IDs that name no cast character, and is ordered by cast order; sets render with their labels, joined by \", \"",
+  "description": "Sets and the scene (Format 8.4, 8.6, 9): initial and recorded sets lose duplicates, and a set with values orders its members as declared; a free-form set keeps its members' order; scene.present loses duplicates and IDs that name no cast character, and is ordered by cast order; sets render with their labels, joined by \", \", and scene.present as the names of those present",
   "bundle": {
     "kind": "bundle",
     "characters": [
@@ -126,13 +126,13 @@
           {
             "by": "model",
             "set": {
-              "inv": [
+              "state.inv": [
                 "key",
                 "rope",
                 "key",
                 "torch"
               ],
-              "bag": [
+              "state.bag": [
                 "z",
                 "z",
                 "a",
@@ -162,20 +162,20 @@
       "type": "state",
       "name": "initial sets lose duplicates; listed members in declared order",
       "expect": {
-        "tags": [
+        "state.tags": [
           "red",
           "blue"
         ],
-        "loot": [
+        "state.loot": [
           "b",
           "a"
         ],
-        "seen": [
+        "state.seen": [
           "x",
           "y"
         ],
-        "inv": [],
-        "bag": []
+        "state.inv": [],
+        "state.bag": []
       }
     },
     {
@@ -183,12 +183,12 @@
       "name": "recorded sets and scene.present are normalized",
       "at": "1",
       "expect": {
-        "inv": [
+        "state.inv": [
           "rope",
           "torch",
           "key"
         ],
-        "bag": [
+        "state.bag": [
           "z",
           "a",
           "m"
@@ -208,9 +208,9 @@
     },
     {
       "type": "macro",
-      "name": "a recorded set renders in its normalized order",
+      "name": "a recorded set renders in its normalized order; scene.present as names",
       "at": "1",
-      "text": "{{state.inv}} | {{@scene.present}}",
+      "text": "{{state.inv}} | {{scene.present}}",
       "expect": "a coil of rope, torch, key | Pat, Ann, Bea"
     }
   ]

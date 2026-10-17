@@ -1,14 +1,21 @@
 {
-  "description": "Schema failures (Format 16.3): an out-of-range chance or priority, oneWay on a string variable, an entry without text, an empty key, a knownBy item that isn't an ID, a duplicate in a uniqueItems list and a failing anyOf are each SCHEMA; every check runs on the document as written, so the knownBy item is also UNKNOWN_CHARACTER (Format 16.1)",
+  "description": "Schema failures (Format 15.3): a chance that isn't an integer from 0 to 100, an out-of-range priority, a position other than system or context, an entry with both position and depth, oneWay on a string variable, an entry without text, an empty key, a knownBy item that isn't an ID, a duplicate in a uniqueItems list and a failing anyOf are each SCHEMA; every check runs on the document as written, so the knownBy item is also UNKNOWN_CHARACTER (Format 15.3)",
   "bundle": {
     "kind": "bundle",
+    "characters": [
+      {
+        "id": "a",
+        "name": "Ann",
+        "description": "Ann."
+      }
+    ],
     "scenarios": [
       {
         "id": "s",
         "entries": [
           {
             "id": "lucky",
-            "chance": 1.5,
+            "chance": 0.5,
             "text": "Lucky."
           },
           {
@@ -33,6 +40,22 @@
               ""
             ],
             "text": "An empty key."
+          },
+          {
+            "id": "sure",
+            "chance": 101,
+            "text": "More than certain."
+          },
+          {
+            "id": "placed",
+            "position": "system",
+            "depth": 2,
+            "text": "Both."
+          },
+          {
+            "id": "fourth",
+            "position": 4,
+            "text": "A numbered position."
           }
         ],
         "cast": [
@@ -62,13 +85,6 @@
             "description": "d"
           }
         ]
-      }
-    ],
-    "characters": [
-      {
-        "id": "a",
-        "name": "Ann",
-        "description": "Ann."
       }
     ]
   },
@@ -133,6 +149,18 @@
           {
             "code": "SCHEMA",
             "at": "/scenarios/0/entries/4/keys/0"
+          },
+          {
+            "code": "SCHEMA",
+            "at": "/scenarios/0/entries/5/chance"
+          },
+          {
+            "code": "SCHEMA",
+            "at": "/scenarios/0/entries/6"
+          },
+          {
+            "code": "SCHEMA",
+            "at": "/scenarios/0/entries/7/position"
           },
           {
             "code": "SCHEMA",

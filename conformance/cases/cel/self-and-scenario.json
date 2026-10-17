@@ -1,5 +1,5 @@
 {
-  "description": "self, char and scenario (Format 11.1): self is the expression's owner and char the character a message is written for, so char == self holds on the owner's own turns; scenario is the session's scenario",
+  "description": "self, char and scenario (Format 10.1): self is the expression's owner and char the character a message is written for, so char == self holds on the owner's own turns; scenario is the session's scenario",
   "bundle": {
     "kind": "bundle",
     "characters": [
@@ -66,7 +66,6 @@
     {
       "type": "cel",
       "name": "Ann's entry on her own turn",
-      "kind": "entry",
       "self": "a",
       "char": "a",
       "at": "1",
@@ -76,7 +75,6 @@
     {
       "type": "cel",
       "name": "Ann's entry on Bea's turn",
-      "kind": "entry",
       "self": "a",
       "char": "b",
       "at": "1",

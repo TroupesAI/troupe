@@ -1,5 +1,5 @@
 {
-  "description": "Keyed and owned variables (Format 8.2, 8.3): of characters (non-player cast), cast, a list and \"*\" (open keys); character-owned variables read as state.<owner>.<id> and own.<id>; computed keys by brackets in CEL",
+  "description": "Keyed and owned variables (Format 8.2, 8.3, 9, 10.1): of cast (every cast character, players included), a list and \"*\" (open keys); character-owned variables read as state.<owner>.<id> and own.<id>; computed keys by brackets in CEL",
   "bundle": {
     "kind": "bundle",
     "characters": [
@@ -35,14 +35,14 @@
         "variables": [
           {
             "id": "trust",
-            "type": "number",
-            "of": "characters",
+            "type": "int",
+            "of": "cast",
             "initial": {
-              "*": 0.5,
-              "a": 0.7
+              "*": 50,
+              "a": 70
             },
             "min": 0,
-            "max": 1,
+            "max": 100,
             "by": [
               "model"
             ],
@@ -81,7 +81,7 @@
               "calm",
               "upset"
             ],
-            "of": "characters",
+            "of": "cast",
             "initial": "upset",
             "description": "one value for every key"
           }
@@ -118,17 +118,17 @@
           {
             "by": "model",
             "set": {
-              "trust.b": 0.9,
-              "rep.watch": 2,
-              "mood.a": "calm"
+              "state.trust.b": 90,
+              "state.rep.watch": 2,
+              "state.mood.a": "calm"
             }
           },
           {
-            "by": "rules",
+            "by": "player",
             "set": {
-              "hp.p": 7,
-              "inv.torch": 2,
-              "a.feelings.p": 5
+              "state.hp.p": 7,
+              "state.inv.torch": 2,
+              "state.a.feelings.p": 5
             }
           }
         ]
@@ -145,30 +145,35 @@
           "a",
           "b"
         ],
-        "trust.a": 0.7,
-        "trust.b": 0.5,
-        "hp.p": 10,
-        "hp.a": 10,
-        "hp.b": 10,
-        "rep.watch": 0,
-        "rep.guild": 3,
-        "mood.a": "upset",
-        "mood.b": "upset",
-        "a.feelings.p": 0,
-        "a.feelings.a": 0,
-        "a.feelings.b": 3
-      }
+        "state.trust.p": 50,
+        "state.trust.a": 70,
+        "state.trust.b": 50,
+        "state.hp.p": 10,
+        "state.hp.a": 10,
+        "state.hp.b": 10,
+        "state.rep.watch": 0,
+        "state.rep.guild": 3,
+        "state.mood.p": "upset",
+        "state.mood.a": "upset",
+        "state.mood.b": "upset",
+        "state.a.feelings.p": 0,
+        "state.a.feelings.a": 0,
+        "state.a.feelings.b": 3
+      },
+      "absent": [
+        "state.inv.torch"
+      ]
     },
     {
       "type": "state",
       "at": "1",
       "expect": {
-        "trust.b": 0.9,
-        "rep.watch": 2,
-        "mood.a": "calm",
-        "hp.p": 7,
-        "inv.torch": 2,
-        "a.feelings.p": 5
+        "state.trust.b": 90,
+        "state.rep.watch": 2,
+        "state.mood.a": "calm",
+        "state.hp.p": 7,
+        "state.inv.torch": 2,
+        "state.a.feelings.p": 5
       }
     },
     {
@@ -177,32 +182,30 @@
       "at": "1",
       "char": "a",
       "self": "a",
-      "kind": "entry",
-      "expr": "own.feelings[user] == 5 && state.a.feelings.b == 3 && state.trust[char] == 0.7 && state.hp[user] == 7 && 'torch' in state.inv && state.inv.torch == 2 && !('lamp' in state.inv)",
+      "expr": "own.feelings[user] == 5 && state.a.feelings.b == 3 && state.trust[char] == 70 && state.hp[user] == 7 && 'torch' in state.inv && state.inv.torch == 2 && !('lamp' in state.inv)",
       "expect": true
     },
     {
       "type": "cel",
-      "name": "CEL has no char/user aliases: .user selects the literal key \"user\"; the player has no trust key",
+      "name": "every cast character, the player too, is a key of a cast map",
       "at": "1",
       "char": "a",
-      "kind": "entry",
-      "expr": "!has(state.hp.user) && !(user in state.trust) && (user in state.hp)",
+      "expr": "user in state.trust && user in state.hp && char in state.trust",
       "expect": true
     },
     {
       "type": "cel",
-      "name": "no alias in CEL: .char is the literal key",
+      "name": "selecting char from a keyed variable is a CEL_ERROR; brackets are meant",
       "at": "1",
       "char": "a",
-      "kind": "entry",
-      "expr": "has(state.rep.char)",
-      "expect": false
+      "expr": "state.trust.char == 70",
+      "expect": {
+        "checkError": true
+      }
     },
     {
       "type": "cel",
       "name": "own is typed per owner: the scenario has no own.feelings",
-      "kind": "entry",
       "expr": "own.feelings.b == 3",
       "expect": {
         "checkError": true
@@ -210,11 +213,11 @@
     },
     {
       "type": "macro",
-      "name": "own and owner paths in macros; maps render with names",
+      "name": "owner paths and char and user segments in macros; maps render with names, in cast order",
       "at": "1",
       "char": "a",
       "text": "{{state.a.feelings.b}} {{state.trust.char}} {{state.hp.user}} | {{state.trust}} | {{state.inv}}",
-      "expect": "3 0.7 7 | Ann: 0.7, Bea: 0.9 | torch: 2"
+      "expect": "3 70 7 | Pat: 50, Ann: 70, Bea: 90 | torch: 2"
     },
     {
       "type": "check",

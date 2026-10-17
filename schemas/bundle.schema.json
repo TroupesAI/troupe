@@ -169,9 +169,9 @@
       "pattern": "^[a-z][a-z0-9_]{0,63}/[a-z][a-z0-9_]{0,63}$"
     },
     "stateKey": {
-      "description": "A variable ID, optionally preceded by an owner and followed by a key; or scene.location / scene.present.",
+      "description": "A full name: state. and a scenario variable's ID, or an owner and a variable ID, optionally followed by a key; or scene.location / scene.present.",
       "type": "string",
-      "pattern": "^[a-z][a-z0-9_]{0,63}(\\.[a-z][a-z0-9_]{0,63}){0,2}$"
+      "pattern": "^(state(\\.[a-z][a-z0-9_]{0,63}){1,3}|scene\\.location|scene\\.present)$"
     },
     "stateValues": {
       "description": "State keys with absolute values, validated against their declarations.",
@@ -192,7 +192,7 @@
     "timestamp": {
       "type": "string",
       "format": "date-time",
-      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-5][0-9](\\.[0-9]+)?Z$"
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-5][0-9](\\.[0-9]+)?(Z|[+-][0-9]{2}:[0-9]{2})$"
     },
     "httpsUrl": {
       "type": "string",
@@ -203,7 +203,7 @@
       "minLength": 1
     },
     "packagePath": {
-      "description": "A relative path inside a package (Format 13.3).",
+      "description": "A relative path inside a package (Format 12.3).",
       "type": "string",
       "pattern": "^[A-Za-z0-9_-][A-Za-z0-9._-]*(/[A-Za-z0-9_-][A-Za-z0-9._-]*)*$"
     },
@@ -232,11 +232,6 @@
       "propertyNames": {
         "$ref": "#/$defs/extName"
       }
-    },
-    "unit": {
-      "type": "number",
-      "minimum": 0,
-      "maximum": 1
     },
     "character": {
       "type": "object",
@@ -284,13 +279,6 @@
           "type": "array",
           "items": {
             "$ref": "#/$defs/variable"
-          },
-          "minItems": 1
-        },
-        "events": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/event"
           },
           "minItems": 1
         },
@@ -365,13 +353,6 @@
           "type": "array",
           "items": {
             "$ref": "#/$defs/variable"
-          },
-          "minItems": 1
-        },
-        "events": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/event"
           },
           "minItems": 1
         },
@@ -454,8 +435,10 @@
           "minimum": 1
         },
         "chance": {
-          "$ref": "#/$defs/unit",
-          "default": 1
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100,
+          "default": 100
         },
         "group": {
           "$ref": "#/$defs/id"
@@ -473,19 +456,15 @@
           "default": 50
         },
         "position": {
-          "anyOf": [
-            {
-              "enum": [
-                "system",
-                "context"
-              ]
-            },
-            {
-              "type": "integer",
-              "minimum": 0
-            }
+          "enum": [
+            "system",
+            "context"
           ],
           "default": "context"
+        },
+        "depth": {
+          "type": "integer",
+          "minimum": 0
         },
         "knownBy": {
           "$ref": "#/$defs/knownBy"
@@ -500,21 +479,34 @@
           "type": "boolean"
         }
       },
-      "if": {
-        "required": [
-          "pull"
-        ],
-        "properties": {
-          "pull": {
-            "const": true
+      "allOf": [
+        {
+          "if": {
+            "required": [
+              "pull"
+            ],
+            "properties": {
+              "pull": {
+                "const": true
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "title"
+            ]
+          }
+        },
+        {
+          "description": "An entry placed by depth has no position.",
+          "not": {
+            "required": [
+              "position",
+              "depth"
+            ]
           }
         }
-      },
-      "then": {
-        "required": [
-          "title"
-        ]
-      }
+      ]
     },
     "scenario": {
       "type": "object",
@@ -578,13 +570,6 @@
           "type": "array",
           "items": {
             "$ref": "#/$defs/variable"
-          },
-          "minItems": 1
-        },
-        "events": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/event"
           },
           "minItems": 1
         },
@@ -680,7 +665,6 @@
           "enum": [
             "bool",
             "int",
-            "number",
             "string",
             "enum",
             "set"
@@ -702,24 +686,10 @@
           "minProperties": 1
         },
         "min": {
-          "anyOf": [
-            {
-              "type": "number"
-            },
-            {
-              "$ref": "#/$defs/variableId"
-            }
-          ]
+          "type": "integer"
         },
         "max": {
-          "anyOf": [
-            {
-              "type": "number"
-            },
-            {
-              "$ref": "#/$defs/variableId"
-            }
-          ]
+          "type": "integer"
         },
         "initial": {
           "description": "Validity is checked against the declaration (INVALID_VALUE).",
@@ -741,9 +711,7 @@
           "anyOf": [
             {
               "enum": [
-                "characters",
                 "cast",
-                "others",
                 "*"
               ]
             },
@@ -752,7 +720,7 @@
               "minItems": 1,
               "uniqueItems": true,
               "items": {
-                "$ref": "#/$defs/id"
+                "$ref": "#/$defs/keyId"
               }
             }
           ]
@@ -772,23 +740,17 @@
           "minItems": 1
         },
         "maxStep": {
-          "type": "number",
-          "exclusiveMinimum": 0
+          "type": "integer",
+          "minimum": 1
         },
         "oneWay": {
           "type": "boolean"
-        },
-        "ask": {
-          "$ref": "#/$defs/nonEmpty"
         },
         "ext": {
           "$ref": "#/$defs/ext"
         },
         "spoiler": {
           "type": "boolean"
-        },
-        "derive": {
-          "$ref": "#/$defs/cel"
         }
       },
       "allOf": [
@@ -812,7 +774,6 @@
               "type": {
                 "enum": [
                   "int",
-                  "number",
                   "string",
                   "bool"
                 ]
@@ -831,7 +792,6 @@
               "type": {
                 "enum": [
                   "int",
-                  "number",
                   "string"
                 ]
               }
@@ -847,10 +807,7 @@
           "if": {
             "properties": {
               "type": {
-                "enum": [
-                  "int",
-                  "number"
-                ]
+                "const": "int"
               }
             }
           },
@@ -866,79 +823,12 @@
           "if": {
             "properties": {
               "type": {
-                "const": "int"
-              }
-            }
-          },
-          "then": {
-            "properties": {
-              "min": {
-                "anyOf": [
-                  {
-                    "type": "integer"
-                  },
-                  {
-                    "$ref": "#/$defs/variableId"
-                  }
-                ]
-              },
-              "max": {
-                "anyOf": [
-                  {
-                    "type": "integer"
-                  },
-                  {
-                    "$ref": "#/$defs/variableId"
-                  }
-                ]
-              },
-              "maxStep": {
-                "type": "integer"
-              }
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "type": {
                 "const": "string"
               }
             }
           },
           "then": {
             "properties": {
-              "oneWay": {
-                "const": false
-              }
-            }
-          }
-        },
-        {
-          "if": {
-            "required": [
-              "of"
-            ]
-          },
-          "then": {
-            "properties": {
-              "ask": false
-            }
-          }
-        },
-        {
-          "if": {
-            "required": [
-              "derive"
-            ]
-          },
-          "then": {
-            "properties": {
-              "initial": false,
-              "by": false,
-              "of": false,
-              "maxStep": false,
-              "ask": false,
               "oneWay": {
                 "const": false
               }
@@ -985,118 +875,8 @@
         }
       ]
     },
-    "event": {
-      "type": "object",
-      "required": [
-        "id",
-        "when"
-      ],
-      "additionalProperties": false,
-      "properties": {
-        "id": {
-          "$ref": "#/$defs/id"
-        },
-        "when": {
-          "$ref": "#/$defs/cel"
-        },
-        "on": {
-          "enum": [
-            "player",
-            "model"
-          ]
-        },
-        "once": {
-          "type": "boolean"
-        },
-        "cooldown": {
-          "type": "integer",
-          "minimum": 1
-        },
-        "chance": {
-          "$ref": "#/$defs/unit",
-          "default": 1
-        },
-        "set": {
-          "$ref": "#/$defs/nonEmptyStateValues"
-        },
-        "compute": {
-          "type": "object",
-          "propertyNames": {
-            "$ref": "#/$defs/stateKey"
-          },
-          "additionalProperties": {
-            "$ref": "#/$defs/cel"
-          },
-          "minProperties": 1
-        },
-        "message": {
-          "type": "array",
-          "minItems": 1,
-          "items": {
-            "$ref": "#/$defs/part"
-          }
-        },
-        "direct": {
-          "$ref": "#/$defs/nonEmpty"
-        },
-        "end": {
-          "type": "boolean"
-        },
-        "ext": {
-          "$ref": "#/$defs/ext"
-        },
-        "outcomes": {
-          "type": "array",
-          "minItems": 1,
-          "items": {
-            "$ref": "#/$defs/outcome"
-          }
-        }
-      }
-    },
-    "outcome": {
-      "type": "object",
-      "additionalProperties": false,
-      "properties": {
-        "weight": {
-          "type": "integer",
-          "minimum": 1,
-          "maximum": 1000000,
-          "default": 1
-        },
-        "set": {
-          "$ref": "#/$defs/nonEmptyStateValues"
-        },
-        "compute": {
-          "type": "object",
-          "propertyNames": {
-            "$ref": "#/$defs/stateKey"
-          },
-          "additionalProperties": {
-            "$ref": "#/$defs/cel"
-          },
-          "minProperties": 1
-        },
-        "message": {
-          "type": "array",
-          "minItems": 1,
-          "items": {
-            "$ref": "#/$defs/part"
-          }
-        },
-        "direct": {
-          "$ref": "#/$defs/nonEmpty"
-        },
-        "end": {
-          "type": "boolean"
-        },
-        "ext": {
-          "$ref": "#/$defs/ext"
-        }
-      }
-    },
     "part": {
-      "description": "A text part, or an image part with type image (Format 12).",
+      "description": "A text part, or an image part with type image (Format 11).",
       "if": {
         "required": [
           "type"
@@ -1160,11 +940,6 @@
         }
       }
     },
-    "eventName": {
-      "description": "A scenario event ID, or <owner>/<id> for a character's or world's event.",
-      "type": "string",
-      "pattern": "^([a-z][a-z0-9_]{0,63}/)?[a-z][a-z0-9_]{0,63}$"
-    },
     "limits": {
       "type": "object",
       "additionalProperties": false,
@@ -1204,6 +979,22 @@
         }
       ],
       "minProperties": 1
+    },
+    "keyId": {
+      "description": "A variable key: an author ID other than char and user.",
+      "allOf": [
+        {
+          "$ref": "#/$defs/id"
+        },
+        {
+          "not": {
+            "enum": [
+              "char",
+              "user"
+            ]
+          }
+        }
+      ]
     }
   }
 }

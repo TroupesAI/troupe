@@ -1,5 +1,5 @@
 {
-  "description": "Clamping (Format 8.5, 8.6): a numeric value outside min and max is valid; initial and recorded values are clamped in the state; clamping raises a value to min, then lowers it to max, so max wins when the bounds cross",
+  "description": "Clamping (Format 8.5, 8.6): an int outside min and max is valid; initial and recorded values are clamped in the state; clamping raises a value to min, then lowers it to max, so max wins when the bounds cross",
   "bundle": {
     "kind": "bundle",
     "scenarios": [
@@ -16,9 +16,9 @@
           },
           {
             "id": "luck",
-            "type": "number",
+            "type": "int",
             "min": 0,
-            "max": 1,
+            "max": 100,
             "description": "d"
           },
           {
@@ -59,10 +59,29 @@
         ],
         "changes": [
           {
-            "by": "rules",
+            "by": "player",
             "set": {
-              "hp": -4,
-              "luck": 1.5
+              "state.hp": -4,
+              "state.luck": 150
+            }
+          }
+        ]
+      },
+      {
+        "id": "2",
+        "parent": "1",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "Again."
+          }
+        ],
+        "changes": [
+          {
+            "by": "player",
+            "set": {
+              "state.odd": 7
             }
           }
         ]
@@ -81,8 +100,8 @@
       "type": "state",
       "name": "initial 15 is clamped to max",
       "expect": {
-        "hp": 10,
-        "luck": 0
+        "state.hp": 10,
+        "state.luck": 0
       }
     },
     {
@@ -90,15 +109,23 @@
       "name": "recorded values are clamped when read",
       "at": "1",
       "expect": {
-        "hp": 0,
-        "luck": 1
+        "state.hp": 0,
+        "state.luck": 100
       }
     },
     {
       "type": "state",
-      "name": "when the bounds cross, max wins",
+      "name": "when the bounds cross, max wins: the default 0 is raised to 10, then lowered to 5",
       "expect": {
-        "odd": 5
+        "state.odd": 5
+      }
+    },
+    {
+      "type": "state",
+      "name": "a recorded 7 is raised to 10, then lowered to 5",
+      "at": "2",
+      "expect": {
+        "state.odd": 5
       }
     }
   ]

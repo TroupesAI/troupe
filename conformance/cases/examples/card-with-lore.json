@@ -1,5 +1,5 @@
 {
-  "description": "Format Appendix B.1: valid; each opening played is a root that records who is present, and 'Shore leave' has no content, so its root is a records-only system message (Format 6.3, 12.1, 12.4)",
+  "description": "Format Appendix B.1: valid; each opening played starts a root, and 'Shore leave' has no content, so its root is a records-only system message; neither opening has set, so neither root records a change (Format 6.3, 11.1, 11.4)",
   "bundleFile": "../../../examples/mira-card.troupe.json",
   "session": {
     "header": {
@@ -26,35 +26,13 @@
             "speaker": "mira",
             "text": "*She doesn't look up from the reactor.* If you're here about the noise, it's supposed to sound like that."
           }
-        ],
-        "changes": [
-          {
-            "by": "rules",
-            "set": {
-              "scene.present": [
-                "you",
-                "mira"
-              ]
-            }
-          }
         ]
       },
       {
         "id": "4",
         "opening": "shore_leave",
         "from": "system",
-        "content": [],
-        "changes": [
-          {
-            "by": "rules",
-            "set": {
-              "scene.present": [
-                "you",
-                "mira"
-              ]
-            }
-          }
-        ]
+        "content": []
       }
     ]
   },
@@ -67,12 +45,14 @@
     },
     {
       "type": "state",
+      "name": "the whole cast is present from the start",
       "at": "1",
       "expect": {
         "scene.present": [
           "you",
           "mira"
-        ]
+        ],
+        "scene.location": ""
       }
     },
     {
@@ -84,6 +64,19 @@
           "mira"
         ]
       }
+    },
+    {
+      "type": "cel",
+      "name": "the shore entry's condition holds at the records-only root",
+      "at": "4",
+      "expr": "opening == 'shore_leave' && turn == 0",
+      "expect": true
+    },
+    {
+      "type": "cel",
+      "at": "1",
+      "expr": "opening == 'shore_leave'",
+      "expect": false
     }
   ]
 }

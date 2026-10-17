@@ -1,320 +1,242 @@
 {
-  "description": "The CEL environment (Format 11.1) at Format Appendix B's messages: turn, opening, scenario, self, last, scene.within, computed keys with brackets, count() and ago(), cross-type ordering and same-type equality, RE2, the function allowlist",
-  "bundleFile": "../../../examples/lantern-heist.troupe.json",
-  "sessionFile": "../../../examples/lantern-heist.troupe-session.jsonl",
+  "description": "The CEL environment (Format 10.1) at Format Appendix B's messages: turn, opening, scenario, players, char, self, own, user, scene.within, hour and weekday at a timestamp's offset, keyed variables read with brackets, equality within one type, runtime errors, and only the functions Format 10.2 lists",
+  "note": "State at 4: bell 7 and trust.kai 50 from its change; scene.location rooftops from the root. At 3, Kai has left and his nerve is 1. Message 2 is at 21:04 on Saturday 17 October 2026, at +02:00.",
+  "bundleFile": "../../../examples/lantern-heist/bundle.json",
+  "sessionFile": "../../../examples/lantern-heist/sessions/heist.troupe-session.jsonl",
   "tests": [
     {
       "type": "cel",
+      "name": "turn counts rounds: player messages on the path",
+      "at": "4",
       "expr": "turn == 1",
-      "at": "4",
-      "expect": true,
-      "name": "turn counts rounds: player messages on the path"
+      "expect": true
     },
     {
       "type": "cel",
-      "expr": "turn == 0",
+      "name": "an opening root is round 0",
       "at": "1",
-      "expect": true,
-      "name": "an opening root is round 0"
+      "expr": "turn == 0",
+      "expect": true
     },
     {
       "type": "cel",
+      "name": "opening is the path root's opening",
+      "at": "4",
       "expr": "opening == 'rooftop_briefing'",
-      "at": "4",
-      "expect": true,
-      "name": "opening is the path root's opening"
-    },
-    {
-      "type": "cel",
-      "expr": "scenario == 'heist'",
-      "at": "4",
       "expect": true
     },
     {
       "type": "cel",
-      "expr": "players == ['mara']",
       "at": "4",
+      "expr": "scenario == 'heist' && self == 'heist'",
       "expect": true
     },
     {
       "type": "cel",
+      "at": "4",
+      "expr": "players == ['mara'] && user == 'mara'",
+      "expect": true
+    },
+    {
+      "type": "cel",
+      "name": "char is \"\" for the narrator",
+      "at": "4",
       "expr": "char == ''",
+      "expect": true
+    },
+    {
+      "type": "cel",
+      "name": "self is the expression's owner, and own its variables",
+      "at": "3",
+      "self": "kai",
+      "expr": "self == 'kai' && own.nerve == 1 && state.kai.nerve == 1",
+      "expect": true
+    },
+    {
+      "type": "cel",
+      "name": "branch 4 has no nerve change",
       "at": "4",
-      "expect": true,
-      "name": "char is empty for events"
+      "self": "kai",
+      "expr": "own.nerve == 0",
+      "expect": true
     },
     {
       "type": "cel",
-      "expr": "self == 'kai'",
+      "name": "a scenario's own is its state",
       "at": "4",
-      "expect": true,
-      "name": "self is the expression's owner",
-      "self": "kai"
+      "expr": "own.bell == state.bell",
+      "expect": true
     },
     {
       "type": "cel",
-      "expr": "last.from == 'model' && last.char == 'kai'",
+      "name": "scene.within: the location, then its ancestors",
       "at": "4",
-      "expect": true,
-      "name": "last is the evaluation point message"
-    },
-    {
-      "type": "cel",
-      "expr": "last.from == 'player' && last.char == ''",
-      "at": "2",
-      "expect": true,
-      "name": "last.char is empty when the message has no char"
-    },
-    {
-      "type": "cel",
       "expr": "scene.within == ['rooftops', 'manor'] && 'manor' in scene.within",
-      "at": "4",
-      "expect": true,
-      "name": "scene.within: the location and its ancestors"
+      "expect": true
     },
     {
       "type": "cel",
-      "expr": "state.trust[char] == 0.5 && !has(state.trust.char)",
+      "name": "before the root: no location",
+      "expr": "scene.location == ''",
+      "expect": true
+    },
+    {
+      "type": "cel",
+      "at": "3",
+      "expr": "!('kai' in scene.present) && scene.present == ['mara', 'elena']",
+      "expect": true
+    },
+    {
+      "type": "cel",
+      "name": "a computed key is read with brackets",
       "at": "4",
-      "expect": true,
-      "name": "maps keyed by characters are read with brackets; .char is the literal key",
       "char": "kai",
-      "kind": "entry"
+      "expr": "state.trust[char] == 50 && state.trust.elena == 70 && state.trust.mara == 50",
+      "expect": true
     },
     {
       "type": "cel",
-      "expr": "state.trust.kai >= 0.5 && state.bell > 6.5",
+      "name": "selecting char from a keyed variable is a CEL_ERROR (Format 10.2)",
       "at": "4",
-      "expect": true,
-      "name": "cross-type ordering"
+      "char": "kai",
+      "expr": "state.trust.char == 50",
+      "expect": {
+        "checkError": true
+      }
     },
     {
       "type": "cel",
+      "expr": "state.trust.user == 50",
+      "expect": {
+        "checkError": true
+      }
+    },
+    {
+      "type": "cel",
+      "at": "4",
+      "expr": "state.bell == 7 && state.bell != 8 && state.trust.kai >= 50 && state.bell > 6",
+      "expect": true
+    },
+    {
+      "type": "cel",
+      "name": "the confess entry's condition",
+      "at": "4",
+      "expr": "state.trust.kai >= 80",
+      "expect": false
+    },
+    {
+      "type": "cel",
+      "name": "a double literal is a CEL_ERROR",
+      "at": "4",
       "expr": "state.bell == 7.0",
-      "at": "4",
       "expect": {
         "checkError": true
-      },
-      "name": "equality takes operands of one type (Format 11.2)"
+      }
     },
     {
       "type": "cel",
-      "name": "equality within one type",
-      "expr": "state.bell == 7 && state.bell != 8 && state.trust.kai == 0.5",
-      "at": "4",
+      "at": "2",
+      "expr": "state.approach == 'quiet' && !state.key_revealed",
       "expect": true
     },
     {
       "type": "cel",
-      "expr": "count('veyra/weather_rain') == 1 && ago('veyra/weather_rain') == 0",
-      "at": "4",
-      "expect": true,
-      "name": "count/ago of entries from activated"
-    },
-    {
-      "type": "cel",
-      "expr": "ago('heist/style') == 0 && count('heist/confess') == 0 && ago('heist/confess') == 1000000000",
-      "at": "4",
+      "name": "hour and weekday are local to the timestamp's offset",
+      "at": "2",
+      "expr": "hour == 21 && weekday == 6",
       "expect": true
     },
     {
       "type": "cel",
-      "expr": "ago('bell') == 0 && ago('trust.kai') == 0 && count('scene.present') == 1 && ago('scene.present') == 1",
-      "at": "4",
-      "expect": true,
-      "name": "change keys: the root's opening change counts; ago is in rounds"
-    },
-    {
-      "type": "cel",
-      "expr": "ago('scene.present') == 0 && count('scene.present') == 2 && ago('bell') == 1000000000",
-      "at": "3",
+      "name": "elapsed is 0 when the parent has no at",
+      "at": "2",
+      "expr": "elapsed == 0",
       "expect": true
     },
     {
       "type": "cel",
-      "expr": "count('approach') == 1 && ago('approach') == 1",
+      "name": "a message without at",
       "at": "4",
-      "expect": true,
-      "name": "the answer on the root is a change"
-    },
-    {
-      "type": "cel",
-      "expr": "count('patrol') == 0 && ago('patrol') == 1000000000",
-      "at": "4",
+      "expr": "hour == -1 && weekday == -1",
       "expect": true
     },
     {
       "type": "cel",
-      "expr": "count('nowhere' + '/x') == 0 && ago('nowhere' + '/x') == 1000000000",
+      "name": "|| absorbs a runtime error",
       "at": "4",
-      "expect": true,
-      "name": "a name that is no event, entry or key: 0 and 1000000000, no error"
-    },
-    {
-      "type": "cel",
-      "expr": "!('kai' in scene.present)",
-      "at": "3",
-      "expect": true
-    },
-    {
-      "type": "cel",
-      "expr": "'Kai'.matches('(?i)^kai$')",
-      "at": "4",
-      "expect": true,
-      "name": "matches() uses RE2 syntax"
-    },
-    {
-      "type": "cel",
       "expr": "{'a': 1}['b'] == 1 || true",
-      "at": "4",
-      "expect": true,
-      "name": "runtime errors: || absorbs them (CEL commutative logic)"
+      "expect": true
     },
     {
       "type": "cel",
+      "name": "a runtime error makes a condition false",
+      "at": "4",
       "expr": "{'a': 1}['b'] == 1",
+      "expect": false
+    },
+    {
+      "type": "cel",
       "at": "4",
-      "expect": false,
-      "name": "a runtime error makes a condition false"
-    },
-    {
-      "type": "cel",
       "expr": "state.trust.kai - 1 > 0",
-      "kind": "event",
-      "expect": {
-        "checkError": true
-      },
-      "name": "arithmetic does not mix int and double"
+      "expect": true
     },
     {
       "type": "cel",
-      "expr": "state.trust.kai - 0.1 > 0.0",
-      "kind": "event",
-      "expect": {
-        "checkError": false
-      }
-    },
-    {
-      "type": "cel",
+      "name": "conditions must be bool",
       "expr": "state.bell + 1",
-      "kind": "event",
       "expect": {
         "checkError": true
-      },
-      "name": "conditions must be bool"
+      }
     },
     {
       "type": "cel",
-      "expr": "roll(6) > 3",
-      "kind": "event",
-      "expect": {
-        "checkError": true
-      },
-      "name": "roll() is for compute only"
-    },
-    {
-      "type": "cel",
+      "name": "hit() is available in every expression",
       "expr": "hit('x')",
-      "kind": "event",
-      "expect": {
-        "checkError": true
-      },
-      "name": "hit() is for entries only"
-    },
-    {
-      "type": "cel",
-      "expr": "hit('x')",
-      "kind": "entry",
       "expect": {
         "checkError": false
       }
     },
     {
       "type": "cel",
+      "name": "undeclared variables fail the type check",
       "expr": "state.nope",
-      "kind": "event",
       "expect": {
         "checkError": true
-      },
-      "name": "undeclared variables fail the type check"
+      }
     },
     {
       "type": "cel",
-      "expr": "count(1) > 0",
-      "kind": "event",
-      "expect": {
-        "checkError": true
-      },
-      "name": "count() takes a string"
+      "expr": "'ab'.contains('a') && 'lantern'.startsWith('lan')",
+      "expect": true
     },
     {
       "type": "cel",
+      "name": "only the listed functions: no strings extension",
       "expr": "'abc'.indexOf('b') == 1",
-      "kind": "event",
-      "expect": {
-        "checkError": true
-      },
-      "name": "only the listed functions: no strings extension"
-    },
-    {
-      "type": "cel",
-      "expr": "timestamp('2026-01-01T00:00:00Z') < timestamp('2027-01-01T00:00:00Z')",
-      "kind": "event",
-      "expect": {
-        "checkError": true
-      },
-      "name": "no timestamps"
-    },
-    {
-      "type": "cel",
-      "expr": "b'ab' == b'ab'",
-      "kind": "event",
-      "expect": {
-        "checkError": true
-      },
-      "name": "no bytes"
-    },
-    {
-      "type": "cel",
-      "expr": "[1, 2, 3].exists(x, x > 2) && [1, 2].all(x, x > 0) && size([1].map(x, x * 2)) == 1 && [1, 2].filter(x, x > 1) == [2] && 'ab'.contains('a')",
-      "kind": "event",
-      "expect": {
-        "checkError": false
-      },
-      "name": "standard macros and functions"
-    },
-    {
-      "type": "cel",
-      "name": "comprehensions nest two deep",
-      "expr": "[[1, 2], [3]].all(a, a.all(b, b > 0))",
-      "expect": true
-    },
-    {
-      "type": "cel",
-      "name": "three deep is a CEL_ERROR (Format 11.2)",
-      "expr": "[[[1]]].all(a, a.all(b, b.all(c, c > 0)))",
       "expect": {
         "checkError": true
       }
     },
     {
       "type": "cel",
-      "name": "+ on numbers inside a comprehension is fine",
-      "expr": "[1, 2].map(x, x + 1) == [2, 3]",
-      "expect": true
-    },
-    {
-      "type": "cel",
-      "name": "+ joining strings inside a comprehension is a CEL_ERROR (Format 11.2)",
-      "expr": "size([1, 2].map(x, 'a' + 'b')) == 2",
+      "name": "no matches()",
+      "expr": "'Kai'.matches('^K')",
       "expect": {
         "checkError": true
       }
     },
     {
       "type": "cel",
-      "name": "matches() takes only a literal pattern (Format 11.2)",
-      "expr": "'kai'.matches(string(1))",
+      "name": "no count()",
+      "expr": "count('veyra/guards') > 0",
+      "expect": {
+        "checkError": true
+      }
+    },
+    {
+      "type": "cel",
+      "name": "no comprehensions",
+      "expr": "[1, 2].exists(x, x > 1)",
       "expect": {
         "checkError": true
       }

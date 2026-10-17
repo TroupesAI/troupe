@@ -1,5 +1,5 @@
 {
-  "description": "A bundle (Format 2.2, 13.1, 16.3): the input must be I-JSON and a Troupe document of the expected kind, or it is PARSE. An escaped surrogate pair is one character. A bundle nested 64 deep is within the limits (Format 15)",
+  "description": "A bundle (Format 2.2, 12.1, 15.3): the input must be I-JSON and a Troupe document of the expected kind, or it is PARSE. An escaped surrogate pair is one character. A bundle nested 64 deep is within the limits, and one nested 65 deep is PARSE (Format 14)",
   "tests": [
     {
       "type": "parse",
@@ -25,7 +25,7 @@
       "type": "parse",
       "name": "invalid UTF-8",
       "kind": "bundle",
-      "base64": "eyJ0cm91cGUiOiIwLjEyIiwia2luZCI6ImJ1bmRsZSIsInRhZ3MiOlsi/yJdfQ==",
+      "base64": "eyJ0cm91cGUiOiIwLjEzIiwia2luZCI6ImJ1bmRsZSIsInRhZ3MiOlsi/yJdfQ==",
       "expect": {
         "codes": [
           "PARSE"
@@ -48,6 +48,17 @@
       "text": "{\"troupe\":\"0.13\",\"kind\":\"bundle\",\"ext\":{\"a.b\":[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]}}",
       "expect": {
         "codes": []
+      }
+    },
+    {
+      "type": "parse",
+      "name": "depth 65",
+      "kind": "bundle",
+      "text": "{\"troupe\":\"0.13\",\"kind\":\"bundle\",\"ext\":{\"a.b\":[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]}}",
+      "expect": {
+        "codes": [
+          "PARSE"
+        ]
       }
     },
     {

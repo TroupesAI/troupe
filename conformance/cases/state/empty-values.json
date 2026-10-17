@@ -38,8 +38,8 @@
             "id": "o",
             "set": {
               "scene.location": "",
-              "inv": [],
-              "note": ""
+              "state.inv": [],
+              "state.note": ""
             }
           }
         ]
@@ -64,22 +64,19 @@
     "messages": [
       {
         "id": "1",
-        "opening": "o",
         "from": "system",
         "content": [],
         "changes": [
           {
-            "by": "rules",
+            "by": "opening",
             "set": {
               "scene.location": "",
-              "inv": [],
-              "note": "",
-              "scene.present": [
-                "p"
-              ]
+              "state.inv": [],
+              "state.note": ""
             }
           }
-        ]
+        ],
+        "opening": "o"
       },
       {
         "id": "2",
@@ -95,10 +92,10 @@
           {
             "by": "player",
             "set": {
-              "inv": [
+              "state.inv": [
                 "lamp"
               ],
-              "note": "taken"
+              "state.note": "taken"
             }
           }
         ]
@@ -117,8 +114,8 @@
           {
             "by": "player",
             "set": {
-              "inv": [],
-              "note": ""
+              "state.inv": [],
+              "state.note": ""
             }
           }
         ]
@@ -137,22 +134,22 @@
       "type": "state",
       "name": "no world is in use; empty initial values",
       "expect": {
-        "inv": [],
-        "note": "",
+        "state.inv": [],
+        "state.note": "",
         "scene.location": ""
       },
       "absent": [
-        "w.lamp"
+        "state.w.lamp"
       ]
     },
     {
       "type": "state",
       "at": "2",
       "expect": {
-        "inv": [
+        "state.inv": [
           "lamp"
         ],
-        "note": "taken"
+        "state.note": "taken"
       }
     },
     {
@@ -160,8 +157,8 @@
       "name": "[] and \"\" set values back to empty",
       "at": "3",
       "expect": {
-        "inv": [],
-        "note": "",
+        "state.inv": [],
+        "state.note": "",
         "scene.location": "",
         "scene.present": [
           "p"

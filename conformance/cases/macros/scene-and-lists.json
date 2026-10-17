@@ -1,5 +1,5 @@
 {
-  "description": "Macros (Format 10): {{scene.location}} (ID) and {{@scene.location}} (name), {{@scene.present}}, {{@players}}, bool labels, lists (empty renders as nothing), maps",
+  "description": "Macros (Format 9): {{scene.location}} renders the location's name and {{scene.present}} the names of those present; forms such as {{@scene.location}} are no macros; bool labels, lists of character IDs by name, an empty list as nothing, maps",
   "bundle": {
     "kind": "bundle",
     "characters": [
@@ -54,6 +54,15 @@
             "id": "crew",
             "type": "set",
             "description": "empty by default"
+          },
+          {
+            "id": "party",
+            "type": "set",
+            "initial": [
+              "b",
+              "a"
+            ],
+            "description": "character IDs"
           }
         ]
       }
@@ -95,7 +104,7 @@
         ],
         "changes": [
           {
-            "by": "rules",
+            "by": "player",
             "set": {
               "scene.location": "hall",
               "scene.present": [
@@ -111,16 +120,24 @@
   "tests": [
     {
       "type": "macro",
-      "name": "@ turns IDs into names",
+      "name": "the scene by name",
       "at": "2",
-      "text": "{{scene.location}} / {{@scene.location}}: {{@scene.present}} ({{@players}})",
-      "expect": "hall / The Great Hall: Pat, Bea (Pat)"
+      "text": "{{scene.location}}: {{scene.present}}",
+      "expect": "The Great Hall: Pat, Bea"
     },
     {
       "type": "macro",
+      "name": "{{@…}} is no macro",
+      "at": "2",
+      "text": "{{@scene.location}} {{@scene.present}} {{@players}}",
+      "expect": "{{@scene.location}} {{@scene.present}} {{@players}}"
+    },
+    {
+      "type": "macro",
+      "name": "no location renders as nothing; the whole cast is present",
       "at": "1",
-      "text": "[{{scene.location}}] [{{@scene.location}}] {{@scene.present}}",
-      "expect": "[] [] Pat, Ann, Bea"
+      "text": "[{{scene.location}}] {{scene.present}}",
+      "expect": "[] Pat, Ann, Bea"
     },
     {
       "type": "macro",
@@ -138,8 +155,15 @@
       "type": "macro",
       "name": "an empty list renders as nothing",
       "at": "1",
-      "text": "[{{state.crew}}] [{{@state.crew}}]",
-      "expect": "[] []"
+      "text": "[{{state.crew}}]",
+      "expect": "[]"
+    },
+    {
+      "type": "macro",
+      "name": "a set of character IDs renders their names, in its order",
+      "at": "1",
+      "text": "{{state.party}}",
+      "expect": "Bea, Ann"
     },
     {
       "type": "check",

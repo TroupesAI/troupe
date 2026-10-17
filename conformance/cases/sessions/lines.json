@@ -1,5 +1,5 @@
 {
-  "description": "Session lines (Format 12, 12.1): each line after the header is a message, in file order, and each parent names a message on an earlier line",
+  "description": "Session lines (Format 11, 11.1): each line after the header is a message, in file order, and each parent names a message on an earlier line",
   "bundle": {
     "kind": "bundle",
     "characters": [
@@ -80,7 +80,7 @@
       "type": "cel",
       "name": "the lines form one path: two player messages",
       "at": "3",
-      "expr": "turn == 2 && last.from == 'player'",
+      "expr": "turn == 2",
       "expect": true
     }
   ]

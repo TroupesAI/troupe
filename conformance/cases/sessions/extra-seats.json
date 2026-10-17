@@ -1,5 +1,5 @@
 {
-  "description": "Players beyond the seats (Format 12.2): a header character listed in players when every seat is filled adds a seat after the scenario cast, before the joiners; added players are in the cast, present from the start and keys of cast maps",
+  "description": "Players beyond the seats (Format 8.3, 11.2): a header character listed in players when every seat is filled gets a seat after the scenario cast, before the joiners; added players are in the cast, present from the start and keys of cast maps",
   "bundle": {
     "kind": "bundle",
     "characters": [
@@ -21,9 +21,9 @@
         "variables": [
           {
             "id": "trust",
-            "type": "number",
+            "type": "int",
             "of": "cast",
-            "initial": 0.5,
+            "initial": 50,
             "description": "d"
           }
         ]
@@ -74,10 +74,10 @@
           "a",
           "q"
         ],
-        "trust.p": 0.5,
-        "trust.a": 0.5,
-        "trust.q": 0.5,
-        "trust.j": 0.5
+        "state.trust.p": 50,
+        "state.trust.a": 50,
+        "state.trust.q": 50,
+        "state.trust.j": 50
       }
     },
     {

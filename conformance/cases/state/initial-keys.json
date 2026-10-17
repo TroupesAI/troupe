@@ -27,11 +27,11 @@
     {
       "type": "state",
       "expect": {
-        "rep.watch": 3,
-        "rep.guild": 0
+        "state.rep.watch": 3,
+        "state.rep.guild": 0
       },
       "absent": [
-        "rep.pirates"
+        "state.rep.pirates"
       ]
     },
     {

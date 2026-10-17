@@ -1,5 +1,5 @@
 {
-  "description": "Sessions (Format 12, 16.3): session lines end with LF or CRLF and the last newline is optional; an unreadable line is PARSE",
+  "description": "Sessions (Format 11, 15.3): session lines end with LF or CRLF and the last newline is optional; an unreadable line is PARSE",
   "tests": [
     {
       "type": "parse",

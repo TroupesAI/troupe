@@ -1,5 +1,5 @@
 {
-  "description": "Map rendering (Format 10): keys that are character IDs show the character's name, in any keyed variable; other keys show underscores as spaces, in declared order",
+  "description": "Map rendering (Format 9): keys that are character IDs show the character's name, in any keyed variable; other keys show underscores as spaces, in declared order",
   "bundle": {
     "kind": "bundle",
     "characters": [

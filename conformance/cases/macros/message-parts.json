@@ -1,6 +1,5 @@
 {
-  "description": "Macros in message parts (Format 10): {{char}} is the part's speaker, else the message's char, else it is left as written; {{user}} follows the path to the message; own means state; parts resolve against the state at their message",
-  "note": "Players' and models' text is stored escaped (Format 10), so message 4 holds macros only to test what a part's {{char}} means.",
+  "description": "Macros in message parts (Format 9, 11.1): only roots made from openings resolve. There {{char}} is the part's speaker, else it is left as written; {{user}} follows the path to the message; own means state; parts resolve against the state at their message. Player and model parts are used as written",
   "bundle": {
     "kind": "bundle",
     "characters": [
@@ -33,29 +32,17 @@
             "id": "bell",
             "type": "int",
             "initial": 6,
+            "by": [
+              "player"
+            ],
             "description": "The last bell."
-          }
-        ],
-        "events": [
-          {
-            "id": "greet",
-            "when": "true",
-            "message": [
-              {
-                "speaker": "b",
-                "text": "Hello, {{user}}. I'm {{char}}."
-              },
-              {
-                "text": "{{char}} nods at bell {{state.bell}}."
-              }
-            ]
           }
         ],
         "openings": [
           {
             "id": "o",
             "set": {
-              "bell": 7
+              "state.bell": 7
             },
             "content": [
               {
@@ -108,15 +95,9 @@
         ],
         "changes": [
           {
-            "by": "rules",
+            "by": "opening",
             "set": {
-              "bell": 7,
-              "scene.present": [
-                "p",
-                "q",
-                "a",
-                "b"
-              ]
+              "state.bell": 7
             }
           }
         ]
@@ -128,40 +109,21 @@
         "content": [
           {
             "speaker": "q",
-            "text": "Hi."
+            "text": "Hi, {{char}}. Bell {{state.bell}}?"
           }
         ],
         "changes": [
           {
-            "by": "rules",
+            "by": "player",
             "set": {
-              "bell": 8
+              "state.bell": 8
             }
-          },
-          {
-            "by": "rules",
-            "event": "greet",
-            "set": {}
           }
         ]
       },
       {
         "id": "3",
         "parent": "2",
-        "from": "system",
-        "content": [
-          {
-            "speaker": "b",
-            "text": "Hello, {{user}}. I'm {{char}}."
-          },
-          {
-            "text": "{{char}} nods at bell {{state.bell}}."
-          }
-        ]
-      },
-      {
-        "id": "4",
-        "parent": "3",
         "from": "model",
         "char": "a",
         "content": [
@@ -185,7 +147,7 @@
     },
     {
       "type": "macro",
-      "name": "an opening's narration on a system message: {{char}} is left as written; own means state, at the root",
+      "name": "a root's narration: no speaker and no char, so {{char}} is left as written; own means state, at the root",
       "part": {
         "message": "1",
         "index": 0
@@ -203,39 +165,37 @@
     },
     {
       "type": "macro",
-      "name": "an event message: the speaker; {{user}} from the latest player message on the path",
+      "name": "a player's part is used as written",
+      "part": {
+        "message": "2",
+        "index": 0
+      },
+      "expect": "Hi, {{char}}. Bell {{state.bell}}?"
+    },
+    {
+      "type": "macro",
+      "name": "a model's narration is used as written",
       "part": {
         "message": "3",
         "index": 0
       },
-      "expect": "Hello, Quin. I'm Bea."
+      "expect": "{{char}} shrugs at {{user}}."
     },
     {
       "type": "macro",
-      "name": "an event message's narration: no speaker and no char, so {{char}} is left as written; the state at the message",
+      "name": "so is a model's part with a speaker",
       "part": {
         "message": "3",
         "index": 1
       },
-      "expect": "{{char}} nods at bell 8."
+      "expect": "{{char}} again."
     },
     {
       "type": "macro",
-      "name": "a model message's narration: the message's char",
-      "part": {
-        "message": "4",
-        "index": 0
-      },
-      "expect": "Ann shrugs at Quin."
-    },
-    {
-      "type": "macro",
-      "name": "the speaker wins over the message's char",
-      "part": {
-        "message": "4",
-        "index": 1
-      },
-      "expect": "Bea again."
+      "name": "author text at message 3",
+      "at": "3",
+      "text": "Bell {{state.bell}} for {{user}}.",
+      "expect": "Bell 8 for Quin."
     }
   ]
 }

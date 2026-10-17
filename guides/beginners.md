@@ -97,7 +97,7 @@ Suppose the player has just written "Is the vault still where you drew it?":
 | `style` | yes | It has no keys, so it is always on. |
 | `survey` | yes | `vault` appears in the last 4 messages. |
 
-Four messages later, if nobody has said "vault" or "survey" again, `survey` is no longer active. **`position`** says what kind of text an entry is: `"system"` for standing direction, `"context"` (the default) for knowledge, or a number for text that belongs that many messages from the end of the conversation.
+Four messages later, if nobody has said "vault" or "survey" again, `survey` is no longer active. **`position`** says what kind of text an entry is: `"system"` for standing direction or `"context"` (the default) for knowledge. **`depth`** instead places an entry inside the conversation, that many messages from its end.
 
 A character's entries count only while the character is in the scene, or speaking. Elena's lore leaves with her.
 
@@ -162,7 +162,7 @@ A heist needs a city, a target and a crew. A **world** is a setting that scenari
             { "speaker": "kai", "text": "Or we go now, while they're drunk. *He grins at {{user}}.* Your call, boss." }
           ]
         },
-        { "id": "harbor", "title": "At the harbor", "set": { "scene.location": "manor" } }
+        { "id": "gates", "title": "At the manor gates", "set": { "scene.location": "manor" } }
       ]
     }
   ]
@@ -172,8 +172,8 @@ A heist needs a city, a target and a crew. A **world** is a setting that scenari
 - **The cast** lists who takes part. `{}` is a **seat** for a person; `notes` add context for this story only. A cast with two seats has room for two players.
 - **`premise`** is the situation. **`briefing`** is for the players, not the model.
 - **`set`** in an opening gives starting values, here the location. The location is state: text can name it, and conditions can test it (chapter 6).
-- **An opening without `content`**, like `harbor`, lets the model write the first message. A list of these works as a menu of starting points.
-- **Presence.** Who is present is state too: an opening's `set` can list `scene.present`, and the chat records who is present at its start. Everyone else is offstage, where a character's short `summary` stands for them.
+- **An opening without `content`**, like `gates`, lets the model write the first message. A list of these works as a menu of starting points.
+- **Presence.** Who is present is state too. The whole cast starts present, and an opening's `set` can list `scene.present` instead. Everyone else is offstage, where a character's short `summary` stands for them.
 
 The weather entries show the timing and competition options:
 
@@ -197,7 +197,7 @@ Stories depend on people not knowing things. Elena still has the surveyor's mast
 The first goes in Elena's `entries`, the second in Kai's. Without `knownBy`, everyone knows a character's entries, so a secret always needs it. An instruction for one character's turns works the same way: Kai's way of talking is an entry known only by Kai.
 
 ```json
-{ "id": "voice", "knownBy": ["kai"], "position": 4, "text": "{{char}} calls people 'boss' and talks in quick, joking bursts." }
+{ "id": "voice", "knownBy": ["kai"], "depth": 4, "text": "{{char}} calls people 'boss' and talks in quick, joking bursts." }
 ```
 
 By default, the scenario's `mode` is `characters`: each character's turns are written for that character alone, from what it knows. The conversation follows the **witness rule**: a line is known by its speaker and by everyone present when it is said. A character who has left the scene doesn't hear what is said next. A part of a message can also carry `knownBy`, for a whisper or a private thought:
@@ -220,23 +220,25 @@ The heist runs on a clock: the harbor bells. A **variable** holds state like thi
 ```
 
 ```json
-{ "id": "trust", "type": "number", "of": "characters", "initial": { "*": 0.5, "elena": 0.7, "kai": 0.4 }, "min": 0, "max": 1,
-  "by": ["model"], "maxStep": 0.2, "spoiler": true,
-  "description": "How much this character trusts {{user}}, from 0 to 1. Rises when promises are kept; falls on lies and reckless orders." }
+{ "id": "trust", "type": "int", "of": "cast", "initial": { "*": 50, "elena": 70, "kai": 40 }, "min": 0, "max": 100,
+  "by": ["model"], "maxStep": 20, "spoiler": true,
+  "description": "How much this character trusts {{user}}, from 0 to 100. Rises when promises are kept; falls on lies and reckless orders." }
 ```
 
 ```json
 { "id": "approach", "type": "enum", "values": ["quiet", "loud"], "labels": { "quiet": "Slip in unseen", "loud": "Make a scene and grab it" },
-  "ask": "How do you want to play this job?", "description": "How {{user}} wants the job done." }
+  "by": ["player"], "description": "How {{user}} wants the job done." }
 ```
 
-- **`type`** is `bool`, `int`, `number`, `string`, `enum` (one of `values`) or `set` (a list of distinct strings, such as an inventory).
+- **`type`** is `bool`, `int`, `string`, `enum` (one of `values`) or `set` (a list of distinct strings, such as an inventory). Numbers are whole numbers, so trust runs from 0 to 100.
 - **`description`** is written for authors and the model alike: what the value means and what moves it.
-- **`by: ["model"]`** lets a model change the value as the story goes. Without `by`, only openings and events (chapter 7) change a variable, and players can change one with `ask`.
-- **`min`, `max`, `maxStep` and `oneWay`** are guardrails: the bell stays between 6 and 12, moves at most 2 at a time, and never goes back.
-- **`of: "characters"`** keeps one value per character, read as `state.trust.kai`.
-- **`ask`** is a question for the player when the chat starts; `labels` name the choices.
-- **`spoiler`** marks the value as a spoiler until the story ends.
+- **`by`** says who changes the value: `["model"]` lets a model change it as the story goes, and `["player"]` leaves it to the people playing, like the plan for the job. Without `by`, only an opening sets it.
+- **`min` and `max`** keep the bell between 6 and 12. **`maxStep`** and **`oneWay`** tell a model that it moves at most 2 at a time and never goes back.
+- **`of: "cast"`** keeps one value per character in the cast, read as `state.trust.kai`. `initial` gives Elena and Kai their own starting values, and `*` everyone else's.
+- **`labels`** name the values for people.
+- **`spoiler`** marks the value and its changes as spoilers for the players.
+
+A value is written by the same name it is read by. An opening that starts late in the night sets `"set": { "scene.location": "vault", "state.bell": 11 }`, and a recorded change to Kai's trust is `"state.trust.kai": 60`.
 
 To put a value in front of the characters, write it into an entry. You choose the wording, and who knows it:
 
@@ -258,38 +260,42 @@ A character can carry its own variables into any story. Kai declares `nerve`, an
 | --- | --- |
 | `state.bell >= 10` | the tenth bell or later has rung |
 | `scene.location == 'vault'` | the scene is in the vault (strings use single quotes) |
-| `state.trust.kai >= 0.8 && hour >= 0 && hour < 6` | Kai trusts the player and it is before 6 a.m. where they are |
-| `opening == 'harbor' && turn == 0` | the chat started at the harbor and the player hasn't written yet |
+| `state.trust.kai >= 80 && hour >= 0 && hour < 6` | Kai trusts the player and it is before 6 a.m. where they are |
+| `opening == 'gates' && turn == 0` | the chat started at the manor gates and the player hasn't written yet |
 | `hit('glass') && !hit('guard')` | in an entry: "glass" was mentioned and "guard" wasn't |
-
-Some things are hard to test with a formula, like "Elena has told the crew about the key". Make that a `bool` variable with `by: ["model"]` and `oneWay`, with that sentence as its description. A model sets it when it happens, and from then on it is a recorded fact.
 
 ## 7. Making things happen
 
-An **event** is a story beat written as a rule: when a condition holds, change values, add narration, direct the next reply, or end the story. Add these to the scenario's `events`:
+A Troupe file holds no rules that run. The story moves when its state changes, and entries react to the state.
+
+A model changes a variable with `by: ["model"]` when its description says so: the bell goes up as story time passes, and trust rises and falls with what the player does. Some things are hard to test with a formula, like "Kai has confessed the Duke's deal". Make that a `bool` variable with `by: ["model"]` and `oneWay`, with that sentence as its description:
 
 ```json
-{ "id": "twelfth_bell", "when": "state.bell >= 12", "once": true, "end": true,
-  "message": [{ "text": "The twelfth bell tolls across the harbor. Far below, the gates grind shut." }] }
+{ "id": "kai_confessed", "type": "bool", "oneWay": true, "by": ["model"],
+  "description": "Kai has confessed the Duke's deal to {{user}}." }
+```
+
+A model sets it when it happens, and from then on it is a recorded fact. Entries with `when` turn such facts into story. Add these to the scenario's `entries`:
+
+```json
+{ "id": "twelfth", "position": "system", "when": "state.bell >= 12", "text": "The twelfth bell has rung and the harbor gates are shut. Bring the story to its end." }
 ```
 
 ```json
-{ "id": "patrol", "on": "player", "when": "scene.location == 'rooftops' && turn > 2", "chance": 0.3, "cooldown": 3,
-  "outcomes": [
-    { "weight": 3, "direct": "A guard patrol passes below. Nobody spots the crew, but it is close." },
-    { "weight": 1, "direct": "A guard looks up and sees a shadow move. The crew must hide until the next bell.", "compute": { "bell": "state.bell + 1" } }
-  ] }
+{ "id": "patrol", "when": "scene.location == 'rooftops'", "chance": 30, "text": "A guard patrol passes below the rooftops, close enough to hear." }
 ```
 
-- **`once`** fires at most once; **`end`** marks the story finished; **`message`** adds narration after the message that triggered it.
-- **`on: "player"`** lets the event fire only after a player's message, so its **`direct`** can tell the next reply what happens.
-- **`chance`** is a probability from 0 to 1, and **`cooldown`** keeps the patrol away for 3 rounds after it fires.
-- **`outcomes`** pick one weighted alternative each time the event fires: three times in four the patrol passes, once in four it costs the crew an hour.
-- **`set` takes plain values and `compute` takes formulas.** Write `"set": {"bell": 11}` but `"compute": {"bell": "state.bell + 1"}`.
+And this to Elena's:
 
-A dice roll works the same way: a model-set variable notes what the player is attempting, and an event `on: "player"` rolls for it with `roll()`. The result is recorded, so the model can't change it. The [authoring guide](authoring.md#dice-rolls) shows one.
+```json
+{ "id": "betrayed", "knownBy": ["elena"], "when": "state.kai_confessed", "text": "Elena knows Kai meant to lead the crew into the Duke's trap. She is furious with him." }
+```
 
-The full story, with its secrets, variables and events in place, is [Format Appendix B.2](../spec/format.md#b2-a-story-the-lantern-heist), also in [`examples/lantern-heist.troupe.json`](../examples/lantern-heist.troupe.json).
+- **`twelfth`** is direction: once the twelfth bell rings, it tells the model to end the story.
+- **`chance`** is a percentage: while the crew is on the rooftops, the patrol comes up 30 times in 100, so it passes now and then.
+- **`betrayed`** changes how Elena plays from the moment Kai confesses.
+
+The full story, with its secrets, variables and entries in place, is [Format Appendix B.2](../spec/format.md#b2-a-story-the-lantern-heist), also in [`examples/lantern-heist/bundle.json`](../examples/lantern-heist/bundle.json).
 
 ## 8. Sessions
 
@@ -300,12 +306,12 @@ flowchart TD
   O1["Opening: rooftop briefing"] --> P2["Mara: We wait for the eighth bell."]
   P2 --> K3["Kai: East stair. Sure. (fog)"]
   P2 --> K4["Kai: Fine. Your plan, boss. (rain)"]
-  O2["Opening: at the harbor"]
+  O2["Opening: at the manor gates"]
 ```
 
-Every outcome is written into the message where it happened: which entries activated, which values changed and who changed them, which events fired. Branches never share state: time lost on one branch is still there to spend on the other. Because every outcome is recorded, a saved chat reopens with the same history and state, without replaying anything. [Format Appendix B.3](../spec/format.md#b3-session) shows this chat as a file.
+Every change is written into the message where it happened: which values changed and who changed them, and which entries activated. Branches never share state: time lost on one branch is still there to spend on the other. Because every change is recorded, a saved chat reopens with the same history and state, without replaying anything. [Format Appendix B.3](../spec/format.md#b3-session) shows this chat as a file.
 
-The player's character usually lives in the session, not the bundle. A session can also carry its own version of a bundle character, which replaces it for that chat. Text that names other characters with `{{@kai}}` instead of writing "Kai" keeps working after such a recast.
+The player's character usually lives in the session, not the bundle, and so does anyone new who joins during the chat. What players and models write is stored as written, so a `{{user}}` typed in the chat stays as typed.
 
 The people playing can set **limits**: `lines`, things never to show, and `veils`, things that may happen only offscreen. They hold for the whole chat.
 
@@ -320,7 +326,7 @@ A variable for closeness goes in the character's own `variables`, so it travels 
   "description": "How close {{char}} feels to {{user}}." }
 ```
 
-During a chat, a model can add memories as entries on a message, with `pull` and a `title` so each is retrieved only when it matters:
+Her entries can react to it, such as `"when": "own.closeness >= 60"` for an entry in which she teases the player gently. During a chat, memories are added as entries on a message, with `pull` and a `title` so each is retrieved only when it matters:
 
 ```json
 { "id": "lake", "title": "The promise about the lake", "pull": true, "knownBy": ["mira"],
@@ -335,9 +341,9 @@ A V2/V3 card becomes a bundle with one character and a scenario: greetings becom
 
 ## 11. Where next
 
-- [The authoring guide](authoring.md) has patterns for goals and arcs, relationships, clocks, inventories, mysteries, whereabouts and group chats.
+- [The authoring guide](authoring.md) has patterns for goals and arcs, relationships, inventories, companions, time awareness and group chats.
 - [The authoring brief](authoring-brief.md) is one page to give an LLM that writes Troupe files.
 - [Troupe Format](../spec/format.md) lists every field. Part I is all an author needs.
 - [`examples/`](../examples/) holds the spec's examples as files, and [`schemas/bundle.schema.json`](../schemas/bundle.schema.json) lets editors check a bundle as you write it.
 
-Files hold data and sandboxed conditions, never scripts. Text is Markdown, and anything a player or the model writes is stored escaped, so macros in it never take effect.
+Files hold data and sandboxed conditions, never scripts. Text is Markdown, and anything a player or the model writes is used as written, so macros in it never take effect.

@@ -1,5 +1,5 @@
 {
-  "description": "Owned mechanics (Format 2.3, 6.4, 8.2): each variable and event keeps its owner, so a character, a world and a scenario can each declare a variable and an event with the same ID",
+  "description": "Owned variables (Format 2.3, 6.4, 8.2): each variable keeps its owner, so a character, a world and a scenario can each declare a variable with the same ID, and an owner's entry may share its variable's ID",
   "bundle": {
     "kind": "bundle",
     "characters": [
@@ -14,15 +14,6 @@
             "initial": 9,
             "description": "Ann's own time"
           }
-        ],
-        "events": [
-          {
-            "id": "tick",
-            "when": "true",
-            "compute": {
-              "a.time": "own.time + 1"
-            }
-          }
         ]
       }
     ],
@@ -36,15 +27,6 @@
             "type": "int",
             "initial": 1,
             "description": "the world's clock"
-          }
-        ],
-        "events": [
-          {
-            "id": "tick",
-            "when": "true",
-            "compute": {
-              "w.time": "own.time + 10"
-            }
           }
         ]
       }
@@ -66,13 +48,10 @@
             "description": "the scenario's own time"
           }
         ],
-        "events": [
+        "entries": [
           {
-            "id": "tick",
-            "when": "true",
-            "compute": {
-              "time": "state.time + state.w.time"
-            }
+            "id": "time",
+            "text": "It is hour {{state.time}}."
           }
         ]
       }
@@ -102,6 +81,16 @@
             "speaker": "p",
             "text": "x"
           }
+        ],
+        "changes": [
+          {
+            "by": "player",
+            "set": {
+              "state.time": 101,
+              "state.w.time": 2,
+              "state.a.time": 10
+            }
+          }
         ]
       }
     ]
@@ -110,23 +99,46 @@
     {
       "type": "state",
       "expect": {
-        "time": 100,
-        "w.time": 1,
-        "a.time": 9
+        "state.time": 100,
+        "state.w.time": 1,
+        "state.a.time": 9
+      }
+    },
+    {
+      "type": "state",
+      "at": "1",
+      "expect": {
+        "state.time": 101,
+        "state.w.time": 2,
+        "state.a.time": 10
       }
     },
     {
       "type": "cel",
-      "expr": "count('w/tick') == 0 && ago('a.time') == 1000000000",
       "at": "1",
+      "self": "a",
+      "expr": "own.time == 10 && state.a.time == 10 && state.w.time == 2 && state.time == 101",
+      "expect": true
+    },
+    {
+      "type": "cel",
+      "at": "1",
+      "self": "w",
+      "expr": "own.time == 2",
+      "expect": true
+    },
+    {
+      "type": "cel",
+      "at": "1",
+      "expr": "own.time == 101",
       "expect": true
     },
     {
       "type": "check",
+      "name": "owners can share a variable ID, and an entry can share its owner's variable ID",
       "expect": {
         "codes": []
-      },
-      "name": "two owners can share a variable ID"
+      }
     }
   ]
 }

@@ -1,5 +1,5 @@
 {
-  "description": "A cast member that names no bundle character is UNKNOWN_CHARACTER (Format 6.1, 16.3)",
+  "description": "A cast member that names no bundle character is UNKNOWN_CHARACTER (Format 6.1, 15.3)",
   "bundle": {
     "kind": "bundle",
     "scenarios": [

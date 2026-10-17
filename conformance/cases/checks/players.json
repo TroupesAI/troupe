@@ -1,0 +1,63 @@
+{
+  "description": "players lists every cast member marked player (Format 11.2, 15.3): one left out is INVALID_PLAYER, while listing another cast character is valid",
+  "bundle": {
+    "kind": "bundle",
+    "characters": [
+      {
+        "id": "a",
+        "name": "Ann",
+        "description": "Ann."
+      },
+      {
+        "id": "b",
+        "name": "Bea",
+        "description": "Bea."
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s",
+        "cast": [
+          {
+            "character": "a",
+            "player": true
+          },
+          {
+            "character": "b"
+          }
+        ]
+      }
+    ]
+  },
+  "session": {
+    "header": {
+      "kind": "session",
+      "scenario": "s",
+      "players": [
+        "b"
+      ]
+    },
+    "messages": [
+      {
+        "id": "1",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "b",
+            "text": "Hi."
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "check",
+      "expect": {
+        "codes": [
+          "INVALID_PLAYER"
+        ]
+      }
+    }
+  ]
+}

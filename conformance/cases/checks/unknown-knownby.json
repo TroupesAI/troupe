@@ -1,5 +1,5 @@
 {
-  "description": "A knownBy ID that names no character is UNKNOWN_CHARACTER (Format 7.4, 16.3)",
+  "description": "A knownBy ID that names no character is UNKNOWN_CHARACTER (Format 7.4, 15.3)",
   "bundle": {
     "kind": "bundle",
     "scenarios": [

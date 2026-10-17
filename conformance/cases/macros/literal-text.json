@@ -1,5 +1,5 @@
 {
-  "description": "Player and model text is stored escaped, so its macros never take effect (Format 10); {{user}} is the speaker of the first speaking part of the latest player message on the path that has one (multiplayer)",
+  "description": "Player and model text is used as written (Format 9): its macros never resolve and it holds no escapes. {{user}} is the speaker of the first speaking part of the latest player message on the path that has one (multiplayer)",
   "bundle": {
     "kind": "bundle",
     "characters": [
@@ -58,7 +58,7 @@
         "content": [
           {
             "speaker": "p",
-            "text": "I type \\{{char}} on purpose."
+            "text": "I type {{char}} on purpose."
           }
         ]
       },
@@ -69,7 +69,7 @@
         "content": [
           {
             "speaker": "q",
-            "text": "Me too!"
+            "text": "Me too! \\{{user}} {{nope}}"
           }
         ]
       },
@@ -82,18 +82,48 @@
             "text": "*A long pause.*"
           }
         ]
+      },
+      {
+        "id": "4",
+        "parent": "3",
+        "from": "model",
+        "char": "a",
+        "content": [
+          {
+            "speaker": "a",
+            "text": "{{char}} smiles at {{user}}."
+          }
+        ]
       }
     ]
   },
   "tests": [
     {
       "type": "macro",
-      "name": "an escaped {{ in a player's part renders as written",
+      "name": "a player's {{char}} renders as written",
       "part": {
         "message": "1",
         "index": 0
       },
       "expect": "I type {{char}} on purpose."
+    },
+    {
+      "type": "macro",
+      "name": "a backslash is no escape there, and {{nope}} no UNKNOWN_MACRO",
+      "part": {
+        "message": "2",
+        "index": 0
+      },
+      "expect": "Me too! \\{{user}} {{nope}}"
+    },
+    {
+      "type": "macro",
+      "name": "a model's text renders as written",
+      "part": {
+        "message": "4",
+        "index": 0
+      },
+      "expect": "{{char}} smiles at {{user}}."
     },
     {
       "type": "macro",
@@ -131,7 +161,6 @@
       "name": "players lists both, in seat order; user follows the latest player message",
       "at": "3",
       "char": "a",
-      "kind": "entry",
       "expr": "players == ['p', 'q'] && user == 'q'",
       "expect": true
     },

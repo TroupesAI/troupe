@@ -1,5 +1,5 @@
 {
-  "description": "Macro resolution and rendering (Format 10): undeclared variables are left as written, while absent keys, paths below non-maps and owners not in use render as nothing; map keys in declared order, and \"*\" keys in code point order; a non-macro {{ keeps only its first {",
+  "description": "Macro resolution and rendering (Format 9): undeclared variables are left as written, while absent keys, paths below non-maps and owners not in use render as nothing; map keys in declared order, cast order for characters, and \"*\" keys in code point order; a non-macro {{ keeps only its first {",
   "bundle": {
     "kind": "bundle",
     "characters": [
@@ -42,8 +42,8 @@
         "variables": [
           {
             "id": "trust",
-            "type": "number",
-            "of": "characters",
+            "type": "int",
+            "of": "cast",
             "description": "d"
           },
           {
@@ -99,14 +99,14 @@
         ],
         "changes": [
           {
-            "by": "rules",
+            "by": "player",
             "set": {
-              "trust.b": 0.4,
-              "trust.a": 0.9,
-              "rep.crown": 3,
-              "rep.watch": 1,
-              "inv.rope": 1,
-              "inv.axe": 2
+              "state.trust.b": 40,
+              "state.trust.a": 90,
+              "state.rep.crown": 3,
+              "state.rep.watch": 1,
+              "state.inv.rope": 1,
+              "state.inv.axe": 2
             }
           }
         ]
@@ -123,9 +123,9 @@
         ],
         "changes": [
           {
-            "by": "rules",
+            "by": "player",
             "set": {
-              "inv.cup": 1
+              "state.inv.cup": 1
             }
           }
         ]
@@ -144,8 +144,8 @@
       "type": "macro",
       "name": "undeclared: left as written",
       "at": "1",
-      "text": "[{{state.nothing_here}}] [{{own.nope}}]",
       "owner": "s",
+      "text": "[{{state.nothing_here}}] [{{own.nope}}]",
       "expect": "[{{state.nothing_here}}] [{{own.nope}}]"
     },
     {
@@ -157,10 +157,10 @@
     },
     {
       "type": "macro",
-      "name": "character keys in cast order, list keys in declared order, whatever order the changes used",
+      "name": "character keys in cast order, by name; list keys in declared order, whatever order the changes used",
       "at": "1",
       "text": "{{state.trust}} | {{state.rep}}",
-      "expect": "Ann: 0.9, Bea: 0.4 | watch: 1, guild: 0, crown: 3"
+      "expect": "Pat: 0, Ann: 90, Bea: 40 | watch: 1, guild: 0, crown: 3"
     },
     {
       "type": "macro",
