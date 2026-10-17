@@ -46,7 +46,7 @@ These are informative.
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md).
+Troupe is in early development, and breaking changes are welcome. Checks need [Bun](https://bun.sh): `bun install`, then `bun run check` runs what CI runs. The site in `site/` has its own packages: there, `bun install`, then `bun run dev` previews it.
 
 ## License
 

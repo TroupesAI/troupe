@@ -145,5 +145,5 @@ The runner parses the bytes, checks the version and validates against the schema
 - Prefer small inline bundles.
 - Test failed checks in separate cases, with `check` and `parse` tests; other tests need conforming inputs (section 2).
 - Keep inputs to what the tests read.
-- When an expectation depends on ambiguous spec text, fix the spec text (see [CONTRIBUTING.md](../CONTRIBUTING.md#changing-the-spec)).
+- When an expectation depends on ambiguous spec text, fix the spec text.
 - Cite current sections in `description`, as `Format 7.2`.

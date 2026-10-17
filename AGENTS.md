@@ -1,9 +1,10 @@
 # AGENTS.md
 
-Guidance for coding agents. Follow [CONTRIBUTING.md](CONTRIBUTING.md): it says what belongs in Format and the guides, and what a normative change touches. `bun run check` must pass before a change is done.
+Guidance for coding agents. `bun run check` must pass before a change is done.
 
 - This repository is the spec only: a schema for files. Don't add implementation code, library-specific notes, or how apps play files, such as prompt assembly, entry selection, rules engines, random number generation, model calls, UI or app actions.
-- Troupe is in early development: normative changes are welcome without a proposal first. Make each one completely, as CONTRIBUTING.md lists, and say in the commit message what it makes valid or invalid.
+- Troupe is in early development: breaking changes are welcome, with no proposal or migration needed.
+- Before a minor version bump, tag the last commit of the old version and push the tag, such as `v0.12`: the site serves each version's schemas from its tag.
 
 ## Writing the spec
 
