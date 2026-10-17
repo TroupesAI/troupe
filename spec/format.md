@@ -341,7 +341,7 @@ interface Entry {
 ### 7.2 Activation
 
 - An entry **without `keys` or `pull`** is always on, subject to `when`.
-- An entry **with `keys`** activates when one appears in its **scanned text**: the last `scanDepth` messages on the path that aren't hidden and have content, each text part known to whoever the message being written is for (section 11.5), each scanned separately as its speaker's name, `: ` and its text as shown, or as its text alone when it has no speaker.
+- An entry **with `keys`** activates when one appears in its **scanned text**: the last `scanDepth` messages on the path that aren't hidden and have content, each text part known to whoever the message being written is for (section 11.5), each scanned separately as its speaker's name, `: ` and its text as shown, or as its text alone when it has no speaker. In the scanned text every line break, `\r\n`, a lone `\r`, U+2028 and U+2029, is written as `\n`, so `\r`, U+2028 and U+2029 in a regex key match nothing.
 - **Matching.** Keys match whole words, ignoring case: no letter, mark or number (Unicode categories L, M and N) comes right before or after a match, and case is compared by Unicode simple case folding. A key containing Han, Hiragana, Katakana, Hangul, Thai, Lao, Khmer, Myanmar or Tibetan characters matches anywhere. A key that matches `^/.+/[a-z]*$` is a **regex key** (section 14), written `/pattern/flags`: its pattern is the text between the first and the last `/`, and its flags the letters after. It matches anywhere, and ignores case only with the flag `i`: `/dragons?/i`, `/\bKai\b/`.
 - An entry **with `pull`** is retrieved when it is relevant, by its `title` or its text, such as on a model's request or by a search.
 - **`when`** narrows any kind. `hit("word")` checks the scanned text as keys do, so `"when": "hit('glass') && !hit('guard')"` expresses AND and NOT; `hit('')` is false.
@@ -654,7 +654,7 @@ Files hold data and sandboxed expressions (section 10), never scripts, and their
   - the class escapes `\d`, `\D`, `\w`, `\W`, `\s`, `\S`, and `\p{…}` and `\P{…}` with the abbreviation of a Unicode general category other than `Cn` and `LC`, such as `L` or `Lu`;
   - after a character, `.`, class, class escape or group, a quantifier `*`, `+`, `?`, `{n}`, `{n,}` or `{n,m}`, with n ≤ m and no `{0}` or `{0,0}`, optionally followed by `?`.
 
-  The pattern means what it means in ECMAScript with the `u` flag. It nests groups at most 100 deep, and written out in full, with each counted repetition replaced by its copies (`x{2,3}` as `xxx`, `x{2,}` as `xxx*`), it is at most 1000 bytes, so `(a{10}){200}` is too long. Such a pattern also compiles in RE2, though RE2 reads `.`, `\s` and `m` slightly differently. It is regular, so it can run in linear time on an automaton engine.
+  The pattern means what it means in ECMAScript with the `u` flag. It nests groups at most 100 deep, and written out in full, with each counted repetition replaced by its copies (`x{2,3}` as `xxx`, `x{2,}` as `xxx*`), it is at most 1000 bytes, so `(a{10}){200}` is too long. Such a pattern also compiles in RE2, though RE2 reads `\s` slightly differently; on the scanned text, whose line breaks are all `\n` (section 7.2), it reads `.` and `m` as ECMAScript does. It is regular, so it can run in linear time on an automaton engine.
 - **Limits.** Files stay within these limits:
 
 | Item | Size limit |
@@ -968,6 +968,7 @@ Two thieves hired by the player to steal a duke's storm lantern before the twelf
 | Numbers within a double's range, rounded to the nearest; integer fields bounded by the schemas | RFC 7493's limit on precision; integer ranges checked while reading | Few JSON parsers can tell whether a number such as `0.1` has more precision than a double, and only the schemas know which fields are integers. |
 | A document that fails `PARSE` or `UNSUPPORTED_VERSION` reported with those codes only | Running every check on it | Other checks judge it against this version's rules, which mean nothing for a file that can't be read or is of another version. |
 | Regex keys written `/pattern/flags`, in forms ECMAScript and RE2 share | RE2 syntax, or whatever an engine accepts | Most SillyTavern regex keys work as written, every app can compile them, and a key is valid or `REGEX_ERROR` alike everywhere. |
+| Every line break in the scanned text written as `\n` | ECMAScript's line terminators for `^`, `$` and `.`; `REGEX_ERROR` for a key naming `\r`, U+2028 or U+2029 | Under `m`, ECMAScript's `^` and `$` also match at `\r`, U+2028 and U+2029, which engines without lookbehind, such as RE2 in Go and Rust, can't express. With one line break, `^`, `$` and `.` agree across engines, and nothing a reader sees changes. A key naming `\r`, U+2028 or U+2029 simply never matches, like any key for text that isn't there. |
 
 ---
 
