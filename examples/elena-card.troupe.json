@@ -1,5 +1,5 @@
 {
-  "troupe": "0.12",
+  "troupe": "0.13",
   "kind": "bundle",
   "characters": [
     { "id": "elena", "name": "Elena Voss", "description": "A meticulous thief and mapmaker. Calm, exacting, dry humor." }
