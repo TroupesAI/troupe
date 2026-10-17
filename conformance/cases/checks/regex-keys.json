@@ -1,5 +1,5 @@
 {
-  "description": "A regex key that isn't valid is REGEX_ERROR (Format 14, 15.3): one that doesn't compile, one nesting groups more than 100 deep, and one longer than 1000 bytes written out in full",
+  "description": "A regex key that isn't valid is REGEX_ERROR (Format 7.2, 14, 15.3): one that doesn't compile, one with a form outside the shared syntax, such as an inline flag, a lookahead or a backreference, one with a flag other than i, m and s or a repeated flag, one nesting groups more than 100 deep, and one longer than 1000 bytes written out in full. A key with text after its last slash that isn't flags is a plain key",
   "note": "Written out, (a{10}){n} is (aaaaaaaaaa) n times, 12n bytes: 996 for n = 83, 1008 for 84 and 2400 for 200. a{n,} is n copies of a then a*, n + 2 bytes: 1000 for n = 998, 1001 for 999. The slashes around a key aren't part of its pattern.",
   "bundle": {
     "kind": "bundle",
@@ -70,6 +70,69 @@
               "/(((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((a)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))/"
             ],
             "text": "groups nested 101 deep"
+          },
+          {
+            "id": "inline_flag",
+            "keys": [
+              "/(?i)lamp/"
+            ],
+            "text": "an inline flag"
+          },
+          {
+            "id": "lookahead",
+            "keys": [
+              "/lamp(?=s)/"
+            ],
+            "text": "a lookahead"
+          },
+          {
+            "id": "backreference",
+            "keys": [
+              "/(a)\\1/"
+            ],
+            "text": "a backreference"
+          },
+          {
+            "id": "lone_bracket",
+            "keys": [
+              "/a]/"
+            ],
+            "text": "an unescaped ]"
+          },
+          {
+            "id": "unknown_flag",
+            "keys": [
+              "/lamp/x"
+            ],
+            "text": "a flag other than i, m and s"
+          },
+          {
+            "id": "repeated_flag",
+            "keys": [
+              "/lamp/ii"
+            ],
+            "text": "a repeated flag"
+          },
+          {
+            "id": "flags",
+            "keys": [
+              "/lamp/ims"
+            ],
+            "text": "every flag"
+          },
+          {
+            "id": "forms",
+            "keys": [
+              "/\\p{Lu}\\w+[-a-z\\-.]+?\\/\\b/"
+            ],
+            "text": "a category, class escapes, a class with a literal -, a lazy quantifier, an escaped slash and a word boundary"
+          },
+          {
+            "id": "plain",
+            "keys": [
+              "/r/ fans"
+            ],
+            "text": "a plain key"
           }
         ]
       }
@@ -106,6 +169,30 @@
           {
             "code": "REGEX_ERROR",
             "at": "/scenarios/0/entries/8/keys/0"
+          },
+          {
+            "code": "REGEX_ERROR",
+            "at": "/scenarios/0/entries/9/keys/0"
+          },
+          {
+            "code": "REGEX_ERROR",
+            "at": "/scenarios/0/entries/10/keys/0"
+          },
+          {
+            "code": "REGEX_ERROR",
+            "at": "/scenarios/0/entries/11/keys/0"
+          },
+          {
+            "code": "REGEX_ERROR",
+            "at": "/scenarios/0/entries/12/keys/0"
+          },
+          {
+            "code": "REGEX_ERROR",
+            "at": "/scenarios/0/entries/13/keys/0"
+          },
+          {
+            "code": "REGEX_ERROR",
+            "at": "/scenarios/0/entries/14/keys/0"
           }
         ]
       }

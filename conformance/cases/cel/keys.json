@@ -307,17 +307,24 @@
     },
     {
       "type": "cel",
-      "name": "a regex key ignores case and matches anywhere",
+      "name": "a regex key matches anywhere",
       "at": "r9",
-      "expr": "hit('/dragons?/')",
+      "expr": "hit('/ragon/')",
       "expect": true
     },
     {
       "type": "cel",
-      "name": "a regex key can clear the case flag",
+      "name": "and case-sensitively without i",
       "at": "r9",
-      "expr": "hit('/(?-i)dragons/')",
+      "expr": "hit('/dragons?/')",
       "expect": false
+    },
+    {
+      "type": "cel",
+      "name": "the flag i ignores case",
+      "at": "r9",
+      "expr": "hit('/dragons?/i')",
+      "expect": true
     },
     {
       "type": "cel",

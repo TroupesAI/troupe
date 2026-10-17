@@ -342,7 +342,7 @@ interface Entry {
 
 - An entry **without `keys` or `pull`** is always on, subject to `when`.
 - An entry **with `keys`** activates when one appears in its **scanned text**: the last `scanDepth` messages on the path that aren't hidden and have content, each text part known to whoever the message being written is for (section 11.5), as its speaker's name and its text as shown.
-- **Matching.** Keys match whole words, ignoring case: no letter, mark or number (Unicode categories L, M and N) comes right before or after a match, and case is compared by Unicode simple case folding. A key containing Han, Hiragana, Katakana, Hangul, Thai, Lao, Khmer, Myanmar or Tibetan characters matches anywhere. A key of at least three characters that starts and ends with `/` is a regex (section 14), case-insensitive unless it clears the flag, that matches anywhere: `/dragons?/`, `/(?-i)Kai/`.
+- **Matching.** Keys match whole words, ignoring case: no letter, mark or number (Unicode categories L, M and N) comes right before or after a match, and case is compared by Unicode simple case folding. A key containing Han, Hiragana, Katakana, Hangul, Thai, Lao, Khmer, Myanmar or Tibetan characters matches anywhere. A key written `/pattern/flags`, matching `^/.+/[a-z]*$`, is a **regex key** (section 14). It matches anywhere, and ignores case only with the flag `i`: `/dragons?/i`, `/\bKai\b/`.
 - An entry **with `pull`** is retrieved when it is relevant, by its `title` or its text, such as on a model's request or by a search.
 - **`when`** narrows any kind. `hit("word")` checks the scanned text as keys do, so `"when": "hit('glass') && !hit('guard')"` expresses AND and NOT; `hit('')` is false.
 - **Timing.** `once`, `sticky` and `cooldown` count from the messages that record the entry in `activated` (section 11.4). `chance` is the percent probability that the entry activates when it otherwise would.
@@ -638,7 +638,13 @@ Fields that hold a file (`cover`, `avatar`, location `image` and image parts) ho
 
 Files hold data and sandboxed expressions (section 10), never scripts, and their size and the work they ask for are bounded. Their text is Markdown, which can hold raw HTML, links and images; how they are shown is the app's.
 
-- **Regexes.** A regex key's pattern, the text between its slashes, is RE2 syntax without `\C`. It nests groups at most 100 deep, and written out in full, with each counted repetition replaced by its copies (`x{2,3}` as `xxx`, `x{2,}` as `xxx*`), it is at most 1000 bytes, so `(a{10}){200}` is too long. Every such regex compiles on RE2 engines and runs in linear time.
+- **Regexes.** A regex key is valid when its flags are distinct, from `i` (ignore case), `m` (`^` and `$` also match at line breaks) and `s` (`.` also matches line breaks), and its pattern is built only from:
+  - characters, with a `\` before any of ``^$\.*+?()[]{}|/`` that stands for itself; in a class, only `\`, `]` and a `-` that isn't first or last need one;
+  - `.`, `^`, `$`, `|`, groups `(…)` and `(?:…)`, and classes `[…]` and `[^…]` of characters, ranges such as `a-z` and class escapes;
+  - the class escapes `\d`, `\D`, `\w`, `\W`, `\s`, `\S`, `\t`, `\n`, `\r`, `\f`, `\v`, and `\p{…}` and `\P{…}` with a Unicode general category abbreviation such as `L` or `Lu`; outside classes, also `\b` and `\B`;
+  - after a character, `.`, class, class escape or group, one of the quantifiers `*`, `+`, `?`, `{n}`, `{n,}` and `{n,m}` with n ≤ m, optionally followed by `?`.
+
+  The pattern means what it means in ECMAScript with the `u` flag. It nests groups at most 100 deep, and written out in full, with each counted repetition replaced by its copies (`x{2,3}` as `xxx`, `x{2,}` as `xxx*`), it is at most 1000 bytes, so `(a{10}){200}` is too long. Such a pattern compiles in ECMAScript and RE2 alike, and is regular, so it runs in linear time on an automaton engine such as RE2.
 - **Limits.** Files stay within these limits:
 
 | Item | Size limit |
@@ -947,7 +953,7 @@ Two thieves hired by the player to steal a duke's storm lantern before the twelf
 | Sessions as an exchange snapshot | Prescribing storage, or an append-only log of edits | Apps keep their own databases; chats still move intact between session readers. |
 | Writers leave out empty optional fields | Allowing `""` and `[]` anywhere | Two writers of the same story produce the same fields. |
 | Limits on files, on CEL and on values | Only a file size cap, or each app's own | Every conforming file is bounded in size and in the work it asks for. |
-| Regexes limited to what every RE2 engine compiles | Whatever an engine accepts | A key is valid or `REGEX_ERROR` alike everywhere, and runs in linear time. |
+| Regex keys written `/pattern/flags`, in forms ECMAScript and RE2 share | RE2 syntax, or whatever an engine accepts | SillyTavern's regex keys work as written, every app can compile them, and a key is valid or `REGEX_ERROR` alike everywhere. |
 
 ---
 
@@ -966,5 +972,5 @@ These draft extensions use the `troupe.` prefix (section 13) and may join the co
 - [RFC 8259](https://www.rfc-editor.org/rfc/rfc8259), [RFC 7493](https://www.rfc-editor.org/rfc/rfc7493): JSON and I-JSON; [JSON Lines](https://jsonlines.org/)
 - [RFC 3339](https://www.rfc-editor.org/rfc/rfc3339): timestamps; [BCP 47](https://www.rfc-editor.org/info/bcp47)
 - [JSON Schema 2020-12](https://json-schema.org/draft/2020-12); [CommonMark 0.31.2](https://spec.commonmark.org/0.31.2/)
-- [CEL](https://github.com/google/cel-spec/blob/master/doc/langdef.md); [RE2 syntax](https://github.com/google/re2/wiki/Syntax)
+- [CEL](https://github.com/google/cel-spec/blob/master/doc/langdef.md); [ECMAScript regular expressions](https://tc39.es/ecma262/#sec-regexp-regular-expression-objects); [RE2 syntax](https://github.com/google/re2/wiki/Syntax)
 - [PKWARE APPNOTE](https://pkware.cachefly.net/webdocs/casestudies/APPNOTE.TXT)
