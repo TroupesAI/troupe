@@ -1,5 +1,5 @@
 {
-  "description": "A session's characters and worlds share the ID namespace with the bundle's, compared after them, and its locations are unique with the bundle's (Format 2.3, 15.3): a header character or world reusing a bundle ID, or a session location reusing a bundle location's, is DUPLICATE_ID",
+  "description": "A session's characters and worlds share the ID namespace with the bundle's characters, worlds and scenarios, compared after them, and its locations are unique with the bundle's (Format 2.3, 15.3): a header character or world reusing a bundle ID of any kind, or a session location reusing a bundle location's, is DUPLICATE_ID, located at the session's ID",
   "bundle": {
     "kind": "bundle",
     "characters": [
@@ -66,6 +66,10 @@
               "name": "Another hall"
             }
           ]
+        },
+        {
+          "id": "s",
+          "name": "S"
         }
       ]
     },
@@ -101,6 +105,10 @@
           {
             "code": "DUPLICATE_ID",
             "at": "header/worlds/1/locations/0/id"
+          },
+          {
+            "code": "DUPLICATE_ID",
+            "at": "header/worlds/2/id"
           }
         ]
       }

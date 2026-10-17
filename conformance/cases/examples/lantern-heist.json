@@ -1,5 +1,5 @@
 {
-  "description": "Format Appendix B.2 and B.3: every checkable claim about The Lantern Heist and its session",
+  "description": "Format Appendix B.2 and B.3: every checkable claim about The Lantern Heist and its session (Format 7.4, 8.6, 9, 10, 11.5)",
   "note": "The session's mara fills the scenario's seat, so the cast is mara, elena and kai. trust is of the cast, with initial {\"*\": 50, \"elena\": 70, \"kai\": 40}. approach starts at its first value.",
   "bundleFile": "../../../examples/lantern-heist/bundle.json",
   "sessionFile": "../../../examples/lantern-heist/sessions/heist.troupe-session.jsonl",
@@ -109,6 +109,46 @@
       "at": "4",
       "expr": "state.bell >= 10",
       "expect": false
+    },
+    {
+      "type": "state",
+      "name": "trust is of the cast",
+      "at": "4",
+      "expect": {
+        "state.trust.mara": 50,
+        "state.trust.elena": 70,
+        "state.trust.kai": 50
+      }
+    },
+    {
+      "type": "macro",
+      "name": "{{user}} in the opening's part is the first player's character",
+      "part": {
+        "message": "1",
+        "index": 2
+      },
+      "expect": "Or we go now, while they're drunk. *He grins at Mara.* Your call, boss."
+    },
+    {
+      "type": "knows",
+      "name": "Kai's thought is his alone",
+      "message": "4",
+      "part": 2,
+      "expect": [
+        "kai"
+      ]
+    },
+    {
+      "type": "knows",
+      "name": "the seventh bell: everyone present, and the narrator",
+      "message": "4",
+      "part": 0,
+      "expect": [
+        "elena",
+        "kai",
+        "mara",
+        "narrator"
+      ]
     }
   ]
 }

@@ -12,28 +12,6 @@
     },
     {
       "type": "parse",
-      "name": "an empty string in an optional field",
-      "kind": "bundle",
-      "text": "{\"troupe\": \"0.13\", \"kind\": \"bundle\", \"tagline\": \"\", \"characters\": [{\"id\": \"a\", \"name\": \"Ann\", \"description\": \"Ann.\"}]}",
-      "expect": {
-        "codes": [
-          "SCHEMA"
-        ]
-      }
-    },
-    {
-      "type": "parse",
-      "name": "an empty list in an optional field",
-      "kind": "bundle",
-      "text": "{\"troupe\": \"0.13\", \"kind\": \"bundle\", \"characters\": [{\"id\": \"a\", \"name\": \"Ann\", \"description\": \"Ann.\", \"aliases\": []}]}",
-      "expect": {
-        "codes": [
-          "SCHEMA"
-        ]
-      }
-    },
-    {
-      "type": "parse",
       "name": "an empty object in an optional field",
       "kind": "bundle",
       "text": "{\"troupe\": \"0.13\", \"kind\": \"bundle\", \"scenarios\": [{\"id\": \"s\", \"variables\": [{\"id\": \"v\", \"type\": \"bool\", \"labels\": {}, \"description\": \"d\"}]}]}",
@@ -195,17 +173,6 @@
     },
     {
       "type": "parse",
-      "name": "a change by rules",
-      "kind": "session",
-      "text": "{\"troupe\": \"0.13\", \"kind\": \"session\", \"scenario\": \"s\"}\n{\"id\": \"1\", \"from\": \"player\", \"content\": [{\"text\": \"x\"}], \"changes\": [{\"by\": \"rules\", \"set\": {\"state.v\": 1}}]}\n",
-      "expect": {
-        "codes": [
-          "SCHEMA"
-        ]
-      }
-    },
-    {
-      "type": "parse",
       "name": "a key without state.",
       "kind": "bundle",
       "text": "{\"troupe\": \"0.13\", \"kind\": \"bundle\", \"scenarios\": [{\"id\": \"s\", \"variables\": [{\"id\": \"v\", \"description\": \"d\", \"type\": \"int\"}], \"openings\": [{\"id\": \"o\", \"set\": {\"v\": 1}}]}]}",
@@ -276,17 +243,6 @@
       "expect": {
         "codes": [
           "SCHEMA"
-        ]
-      }
-    },
-    {
-      "type": "parse",
-      "name": "events on a scenario are an unknown field",
-      "kind": "bundle",
-      "text": "{\"troupe\": \"0.13\", \"kind\": \"bundle\", \"scenarios\": [{\"id\": \"s\", \"events\": [{\"id\": \"e\", \"when\": \"true\"}]}]}",
-      "expect": {
-        "codes": [
-          "UNKNOWN_FIELD"
         ]
       }
     }

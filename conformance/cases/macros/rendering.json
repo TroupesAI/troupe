@@ -1,5 +1,5 @@
 {
-  "description": "Macro resolution and rendering (Format 9): undeclared variables are left as written, while absent keys, paths below non-maps and owners not in use render as nothing; map keys in declared order, cast order for characters, and \"*\" keys in code point order; a non-macro {{ keeps only its first {",
+  "description": "Macro resolution and rendering (Format 9): undeclared variables are left as written, while absent keys, paths below non-maps and owners not in use render as nothing; map keys in declared order, cast order for characters, and \"*\" keys in code point order",
   "bundle": {
     "kind": "bundle",
     "characters": [
@@ -168,14 +168,6 @@
       "at": "3",
       "text": "{{state.inv}}",
       "expect": "axe: 2, cup: 1, rope: 1"
-    },
-    {
-      "type": "macro",
-      "name": "a non-macro {{ keeps its first { and scanning resumes at the next character",
-      "at": "1",
-      "char": "a",
-      "text": "{{{char}} and {{ char}} and {{{{user}}}}",
-      "expect": "{Ann and {{ char}} and {{Pat}}"
     },
     {
       "type": "check",

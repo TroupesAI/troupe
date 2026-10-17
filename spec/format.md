@@ -639,7 +639,7 @@ Fields that hold a file (`cover`, `avatar`, location `image` and image parts) ho
 
 Files hold data and sandboxed expressions (section 10), never scripts, and their size and the work they ask for are bounded. Their text is Markdown, which can hold raw HTML, links and images; how they are shown is the app's.
 
-- **Regexes.** A regex key is RE2 syntax without `\C`. It nests groups at most 100 deep, and written out in full, with each counted repetition replaced by its copies (`x{2,3}` as `xxx`, `x{2,}` as `xxx*`), it is at most 1000 bytes, so `(a{10}){200}` is too long. Every such regex compiles on RE2 engines and runs in linear time.
+- **Regexes.** A regex key's pattern, the text between its slashes, is RE2 syntax without `\C`. It nests groups at most 100 deep, and written out in full, with each counted repetition replaced by its copies (`x{2,3}` as `xxx`, `x{2,}` as `xxx*`), it is at most 1000 bytes, so `(a{10}){200}` is too long. Every such regex compiles on RE2 engines and runs in linear time.
 - **Limits.** Files stay within these limits:
 
 | Item | Size limit |

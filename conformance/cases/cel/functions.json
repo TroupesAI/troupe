@@ -1,5 +1,5 @@
 {
-  "description": "CEL functions (Format 10.2): only size, has, in, contains, startsWith, endsWith and hit() are available; the comprehension macros, conversions, min, max, abs, matches(), count(), ago(), roll() and last are a CEL_ERROR",
+  "description": "CEL functions (Format 10.2): only size, has, in, contains, startsWith, endsWith and hit() are available; the comprehension macros, conversions, min, max, abs, matches() and the strings extension are a CEL_ERROR",
   "bundle": {
     "kind": "bundle",
     "scenarios": [
@@ -150,28 +150,7 @@
     },
     {
       "type": "cel",
-      "expr": "count('s/x') == 0",
-      "expect": {
-        "checkError": true
-      }
-    },
-    {
-      "type": "cel",
-      "expr": "ago('s/x') > 0",
-      "expect": {
-        "checkError": true
-      }
-    },
-    {
-      "type": "cel",
-      "expr": "roll(6) > 3",
-      "expect": {
-        "checkError": true
-      }
-    },
-    {
-      "type": "cel",
-      "expr": "last.from == 'player'",
+      "expr": "'abc'.indexOf('b') == 1",
       "expect": {
         "checkError": true
       }

@@ -1,5 +1,5 @@
 {
-  "description": "In text where macros resolve, text between {{ and }} that is no macro, such as {{@char}}, and a macro naming an undeclared variable are UNKNOWN_MACRO (Format 9, 15.3); a pick needs at least two options, none empty. Names, taglines and titles are used as written, so they hold no UNKNOWN_MACRO",
+  "description": "In text where macros resolve, text between {{ and }} that is no macro, such as {{original}}, and a macro naming an undeclared variable are UNKNOWN_MACRO (Format 9, 15.3); a pick needs at least two options, none empty. Names, taglines and titles are used as written, so they hold no UNKNOWN_MACRO",
   "bundle": {
     "kind": "bundle",
     "tagline": "Into the {{dark}}.",
@@ -28,7 +28,7 @@
           },
           {
             "id": "at",
-            "text": "{{@char}} waves."
+            "text": "{{original}} waves."
           }
         ]
       }

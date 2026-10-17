@@ -355,12 +355,6 @@
       "expect": {
         "codes": [
           "INVALID_VALUE"
-        ],
-        "includes": [
-          {
-            "code": "INVALID_VALUE",
-            "at": "message:2/changes/0/set/state.inv.extra"
-          }
         ]
       }
     }

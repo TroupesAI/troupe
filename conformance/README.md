@@ -88,7 +88,7 @@ The state is flattened to an object with these keys:
 | `self` | The expression's owner, a character, world or scenario ID or `session`, which also types `own`; the scenario by default. |
 | `scanDepth` | The `scanDepth` of the entry `hit()` scans for; 4 by default. |
 
-`players` is as section 2 says. `hit()` checks the scanned text (Format 7.2) of a message written as a child of `at`, for `char`, or for the narrator or the single voice when `char` is `""`; without `at` nothing is scanned, so it is false. In CEL, `char` and `user` are plain variables: a computed key is read with brackets (`state.trust[char]`), and selecting `char` or `user` from a keyed variable (`state.trust.char`) fails to check. Only `bool`, `int`, `string`, list and map values and the functions Format 10.2 lists are allowed; `double`, `null`, `bytes` and `uint` literals and other functions fail to check. If `expect` is a boolean, the expression must type-check and evaluate to it; a runtime error counts as `false`. If `expect` is `{"checkError": b}`, `b` says whether parsing or type-checking fails.
+`players` is as section 2 says. `hit()` checks the scanned text (Format 7.2) of a message written as a child of `at`, for `char`, or for the narrator or the single voice when `char` is `""`; without `at` nothing is scanned, so it is false. If `expect` is a boolean, the expression must type-check and evaluate to it; a runtime error counts as `false`. If `expect` is `{"checkError": b}`, `b` says whether parsing or type-checking fails.
 
 ### 3.4 `check`: checks (Format 15.3)
 
@@ -109,7 +109,7 @@ Locations:
 | In a session header | `header/<pointer>` | `header/players` |
 | In a message (its schema failures included) | `message:<id>/<pointer within the message>` | `message:3/changes/0/set/state.hp` |
 
-A diagnostic about one value points at that value: a list item at its index (`/scenarios/0/worlds/1`), a duplicate ID at the duplicate's `id` (`/characters/1/id`), a reference at the field holding it (`/scenarios/0/cast/2/character`). For keys inside `set`, the pointer segment is the key as written (`/set/scene.present`). Something missing from a list points at the list, or where it would be: a player-marked cast member left out of `players` is at `header/players`.
+A diagnostic about one value points at that value: a list item at its index (`/scenarios/0/worlds/1`), a duplicate ID at the duplicate's `id` (`/characters/1/id`), a reference at the field holding it (`/scenarios/0/cast/2/character`), and a location cycle at the `parent` of each location on it. For keys inside `set`, the pointer segment is the key as written (`/set/scene.present`). Something missing from a list points at the list, or where it would be: a player-marked cast member left out of `players` is at `header/players`.
 
 ### 3.5 `knows`: who knows a part (Format 7.4, 11.5)
 

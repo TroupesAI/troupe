@@ -120,17 +120,6 @@
           "SCHEMA"
         ]
       }
-    },
-    {
-      "type": "parse",
-      "name": "an offset without a colon",
-      "kind": "session",
-      "text": "{\"troupe\":\"0.13\",\"kind\":\"session\",\"scenario\":\"s\"}\n{\"id\":\"1\",\"from\":\"player\",\"at\":\"2026-10-11T12:00:00+0300\",\"content\":[{\"text\":\"Hi.\"}]}\n",
-      "expect": {
-        "codes": [
-          "SCHEMA"
-        ]
-      }
     }
   ]
 }

@@ -1,6 +1,6 @@
 {
   "description": "A regex key that isn't valid is REGEX_ERROR (Format 14, 15.3): one that doesn't compile, one nesting groups more than 100 deep, and one longer than 1000 bytes written out in full",
-  "note": "Written out, (a{10}){n} is (aaaaaaaaaa) n times, 12n bytes: 996 for n = 83, 1008 for 84 and 2400 for 200. a{n,} is n copies of a then a*, n + 2 bytes: 1000 for n = 998, 1001 for 999. The slashes around a key add 2 bytes, which changes none of these results.",
+  "note": "Written out, (a{10}){n} is (aaaaaaaaaa) n times, 12n bytes: 996 for n = 83, 1008 for 84 and 2400 for 200. a{n,} is n copies of a then a*, n + 2 bytes: 1000 for n = 998, 1001 for 999. The slashes around a key aren't part of its pattern.",
   "bundle": {
     "kind": "bundle",
     "scenarios": [

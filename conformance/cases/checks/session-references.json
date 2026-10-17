@@ -1,5 +1,5 @@
 {
-  "description": "Reference checks on a session: an unknown cast member, player, location parent, opening, variable or activated reference each report their code; a location cycle is UNKNOWN_LOCATION (Format 15.3)",
+  "description": "References in a session's messages that checks/session.json leaves out (Format 6.4, 15.3): a recorded location that no world has is UNKNOWN_LOCATION, and an activated entry of a character outside the cast, whose entries aren't in use, is UNKNOWN_NAME",
   "bundle": {
     "kind": "bundle",
     "characters": [
@@ -7,6 +7,17 @@
         "id": "a",
         "name": "Ann",
         "description": "Ann."
+      },
+      {
+        "id": "b",
+        "name": "Bea",
+        "description": "Bea.",
+        "entries": [
+          {
+            "id": "note",
+            "text": "Bea's note."
+          }
+        ]
       }
     ],
     "worlds": [
@@ -15,19 +26,8 @@
         "name": "W",
         "locations": [
           {
-            "id": "l1",
-            "name": "L1",
-            "parent": "l2"
-          },
-          {
-            "id": "l2",
-            "name": "L2",
-            "parent": "l1"
-          },
-          {
-            "id": "l3",
-            "name": "L3",
-            "parent": "nowhere"
+            "id": "hall",
+            "name": "Hall"
           }
         ]
       }
@@ -39,19 +39,6 @@
           {},
           {
             "character": "a"
-          },
-          {
-            "character": "ghost"
-          }
-        ],
-        "variables": [
-          {
-            "id": "g",
-            "type": "int",
-            "by": [
-              "model"
-            ],
-            "description": "d"
           }
         ]
       }
@@ -69,76 +56,40 @@
         }
       ],
       "players": [
-        "p",
-        "zed"
+        "p"
       ]
     },
     "messages": [
       {
         "id": "1",
-        "opening": "gone",
-        "from": "system",
-        "content": []
+        "from": "player",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "Upstairs."
+          }
+        ],
+        "changes": [
+          {
+            "by": "player",
+            "set": {
+              "scene.location": "attic"
+            }
+          }
+        ]
       },
       {
         "id": "2",
         "parent": "1",
-        "from": "player",
-        "content": [
-          {
-            "speaker": "p",
-            "text": "Up."
-          }
-        ],
-        "changes": [
-          {
-            "by": "player",
-            "set": {
-              "scene.location": "l2"
-            }
-          }
-        ]
-      },
-      {
-        "id": "3",
-        "parent": "2",
         "from": "model",
         "char": "a",
         "activated": [
-          "s/nothing"
+          "b/note"
         ],
         "content": [
           {
             "speaker": "a",
-            "text": "Up."
-          }
-        ],
-        "changes": [
-          {
-            "by": "model",
-            "set": {
-              "state.g": 2,
-              "state.nope": 1
-            }
-          }
-        ]
-      },
-      {
-        "id": "4",
-        "parent": "3",
-        "from": "player",
-        "content": [
-          {
-            "speaker": "p",
-            "text": "Down."
-          }
-        ],
-        "changes": [
-          {
-            "by": "player",
-            "set": {
-              "scene.location": "l3"
-            }
+            "text": "There is no attic."
           }
         ]
       }
@@ -149,37 +100,17 @@
       "type": "check",
       "expect": {
         "codes": [
-          "INVALID_PLAYER",
-          "UNKNOWN_CHARACTER",
           "UNKNOWN_LOCATION",
-          "UNKNOWN_NAME",
-          "UNKNOWN_OPENING",
-          "UNKNOWN_VARIABLE"
+          "UNKNOWN_NAME"
         ],
         "includes": [
           {
-            "code": "UNKNOWN_CHARACTER",
-            "at": "/scenarios/0/cast/2/character"
-          },
-          {
-            "code": "INVALID_PLAYER",
-            "at": "header/players/1"
-          },
-          {
             "code": "UNKNOWN_LOCATION",
-            "at": "/worlds/0/locations/2/parent"
-          },
-          {
-            "code": "UNKNOWN_OPENING",
-            "at": "message:1/opening"
-          },
-          {
-            "code": "UNKNOWN_VARIABLE",
-            "at": "message:3/changes/0/set/state.nope"
+            "at": "message:1/changes/0/set/scene.location"
           },
           {
             "code": "UNKNOWN_NAME",
-            "at": "message:3/activated/0"
+            "at": "message:2/activated/0"
           }
         ]
       }

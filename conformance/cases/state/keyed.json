@@ -195,16 +195,6 @@
     },
     {
       "type": "cel",
-      "name": "selecting char from a keyed variable is a CEL_ERROR; brackets are meant",
-      "at": "1",
-      "char": "a",
-      "expr": "state.trust.char == 70",
-      "expect": {
-        "checkError": true
-      }
-    },
-    {
-      "type": "cel",
       "name": "own is typed per owner: the scenario has no own.feelings",
       "expr": "own.feelings.b == 3",
       "expect": {

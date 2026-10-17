@@ -1,5 +1,5 @@
 {
-  "description": "Macro parsing and context (Format 9): \\\\ and \\{{ escapes, forms with spaces kept, a third brace kept, comments removed, own in a scenario's text, a location ID rendered as the location's name, and {{user}} from the latest player message",
+  "description": "Macro parsing and context (Format 9): \\ and \\{{ escapes, a { before a macro kept, one at a time, comments removed, own in a scenario's text, {{user}} from the first speaking part of the latest player message, and a location ID rendered as the location's name",
   "bundle": {
     "kind": "bundle",
     "worlds": [
@@ -140,30 +140,11 @@
     },
     {
       "type": "macro",
-      "name": "spaces outside comments make it not a macro; comments vanish",
-      "at": "1",
-      "text": "{{ user }}{{// note: keep it short }}!",
-      "expect": "{{ user }}!"
-    },
-    {
-      "type": "macro",
       "name": "{{{char}}: not a macro at the first {{, so one { is kept and scanning resumes",
       "char": "a",
-      "text": "{{{char}}",
-      "expect": "{Ann"
-    },
-    {
-      "type": "macro",
-      "name": "{{user}}: the first part with a speaker in the latest player message",
-      "at": "4",
-      "text": "{{user}}",
-      "expect": "Quin"
-    },
-    {
-      "type": "macro",
-      "name": "before any player message: the first player",
-      "text": "{{user}}",
-      "expect": "Pat"
+      "text": "{{{char}} and {{{{user}}}}",
+      "expect": "{Ann and {{Pat}}",
+      "at": "1"
     },
     {
       "type": "macro",
@@ -174,9 +155,16 @@
     },
     {
       "type": "macro",
-      "name": "a string that is a location ID renders as the location's name; {{@…}} is no macro",
-      "text": "{{state.hideout}} = {{@state.hideout}}",
-      "expect": "The Old Mill = {{@state.hideout}}"
+      "name": "a string that is a location ID renders as the location's name",
+      "text": "{{state.hideout}}",
+      "expect": "The Old Mill"
+    },
+    {
+      "type": "macro",
+      "name": "{{user}}: the first part with a speaker in the latest player message",
+      "at": "4",
+      "text": "{{user}}",
+      "expect": "Quin"
     },
     {
       "type": "check",

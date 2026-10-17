@@ -1,5 +1,5 @@
 {
-  "description": "Timestamps with offsets (Format 2.5, 10.1): an at may carry Z or a numeric offset, and elapsed compares the instants; an offset that isn't +hh:mm or -hh:mm with hours 00-23 and minutes 00-59 is SCHEMA",
+  "description": "Timestamps with offsets (Format 2.5): an at may carry Z or a numeric offset; an offset that isn't +hh:mm or -hh:mm with hours 00-23 and minutes 00-59 is SCHEMA",
   "bundle": {
     "kind": "bundle",
     "characters": [
@@ -82,20 +82,6 @@
       "expect": {
         "codes": []
       }
-    },
-    {
-      "type": "cel",
-      "at": "2",
-      "note": "19:04:00Z to 20:35:30Z",
-      "expr": "elapsed == 5490",
-      "expect": true
-    },
-    {
-      "type": "cel",
-      "name": "the same instant at another offset",
-      "at": "3",
-      "expr": "elapsed == 0",
-      "expect": true
     },
     {
       "type": "parse",

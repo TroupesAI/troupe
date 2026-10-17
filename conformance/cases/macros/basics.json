@@ -1,5 +1,5 @@
 {
-  "description": "Macro parsing (Format 9): {{char}}, {{user}}, comments, escapes, picks; unknown forms, such as {{@b}}, are left as written and rescanned from the next character",
+  "description": "Macro parsing (Format 9): {{char}}, {{user}}, comments, escapes, picks; unknown forms, such as {{foo}}, are left as written and rescanned from the next character",
   "bundle": {
     "kind": "bundle",
     "characters": [
@@ -62,19 +62,6 @@
     },
     {
       "type": "macro",
-      "text": "{{@b}} and {{@zed}}",
-      "name": "{{@…}} is no macro",
-      "expect": "{{@b}} and {{@zed}}"
-    },
-    {
-      "type": "macro",
-      "name": "no spaces outside comments and options",
-      "text": "{{ char }}",
-      "char": "a",
-      "expect": "{{ char }}"
-    },
-    {
-      "type": "macro",
       "name": "escape",
       "text": "\\{{char}} is {{char}}",
       "char": "a",
@@ -95,17 +82,10 @@
     },
     {
       "type": "macro",
-      "name": "a stray brace before a macro",
-      "text": "{{{char}}}",
-      "char": "a",
-      "expect": "{Ann}"
-    },
-    {
-      "type": "macro",
       "name": "macro names are case-sensitive",
-      "text": "{{Char}} {{@A}}",
+      "text": "{{Char}} {{USER}}",
       "char": "a",
-      "expect": "{{Char}} {{@A}}"
+      "expect": "{{Char}} {{USER}}"
     },
     {
       "type": "macro",
