@@ -456,7 +456,7 @@ Macros are the only substitution in text.
 | `{{user}}` | The player's character being answered (below) |
 | `{{state.<path>}}`, `{{own.<path>}}` | A state value, e.g. `{{state.bell}}`, `{{own.nerve}}`, `{{state.trust.char}}` |
 | `{{scene.location}}`, `{{scene.present}}` | The current location, or the characters present |
-| `{{pick::<a>::<b>…}}` | One of the options, chosen at random each time the text resolves |
+| `{{pick::<a>::<b>…}}` | One of the options, chosen at random each time the text resolves, or once in a root (section 11.1) |
 | `{{// <comment>}}` | Nothing; a note for authors |
 
 - **`{{char}}`** in a message part is the part's `speaker`, else it is left as written; in a character's other text, that character; in a cast member's `notes`, its character or the character filling its seat; in other text, the character a message is written for, or the scenario's `narrator` for the narrator and the single voice. In a state path, a `char` segment after the variable's name means the same character.
@@ -575,7 +575,10 @@ interface Change {
 ### 11.1 Messages
 
 - Every `parent` names a message on an earlier line.
-- A **root** is a system message made from an opening, or a player message. Every other system message is records-only (section 11.4). A root made from an opening has `opening` set, holds the opening's `content` as written, or none, and records the opening's `set`, if any, as its first change, `by: "opening"`, with the players' characters added to a `scene.present` it sets. Only such a root has changes `by: "opening"`.
+- A **root** is a system message made from an opening, or a player message. Every other system message is records-only (section 11.4).
+- A root made from an opening has `opening` set, and:
+  - holds the opening's `content` as written, with each `{{pick}}` replaced by the option chosen, or no content when the opening has none;
+  - records the opening's `set`, if any, as its first change, `by: "opening"`, with the players' characters added to a `scene.present` it sets. Only such a root has changes `by: "opening"`.
 - **Rounds** count player messages on a path: a message's `turn` is the number of player messages from the root to it, inclusive, and a message being written has its parent's. `turn`, `sticky` and `cooldown` count rounds, as differences of `turn`.
 
 ### 11.2 Players and cast
