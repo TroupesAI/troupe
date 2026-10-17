@@ -3,7 +3,7 @@
 Guidance for coding agents. Follow [CONTRIBUTING.md](CONTRIBUTING.md): it says what belongs in Format and the guides, and what a normative change touches. `bun run check` must pass before a change is done.
 
 - This repository is the spec only: a schema for files. Don't add implementation code, library-specific notes, or how apps play files, such as prompt assembly, entry selection, rules engines, random number generation, model calls, UI or app actions.
-- Don't change normative behavior as part of editorial or repository work. Propose it instead, with the reason.
+- Troupe is in early development: normative changes are welcome without a proposal first. Make each one completely, as CONTRIBUTING.md lists, and say in the commit message what it makes valid or invalid.
 
 ## Writing the spec
 
