@@ -17,7 +17,7 @@ export const sectionNumber = (heading: string): string | undefined =>
 export const sections = (markdown: string) =>
   new Set([...markdown.matchAll(/^#{2,3} (.+)$/gm)].map((m) => sectionNumber(m[1])).filter((n) => n !== undefined));
 
-// Citations: "Format 7.2", "Format Appendix B.2" and lists such as "Format 2.2, 14 and 16" anywhere, and "section 7.2"
+// Citations: "Format 7.2", "Format Appendix B.2" and lists such as "Format 2.2, 13 and 15" anywhere, and "section 7.2"
 // within the spec.
 const num = String.raw`(?:\d+(?:\.\d+)*|[A-Z](?![a-z])(?:\.\d+)*)(?![\w.]*\d)`;
 const list = String.raw`${num}(?:(?:,| and) ${num})*`;

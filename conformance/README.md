@@ -17,7 +17,7 @@ Cases live in `cases/<area>/<topic>.json`, one folder per area of the spec:
 | `roots` | Roots made from openings (Format 6.3, 11.1) |
 | `sessions` | Session lines, the head, players and the cast (Format 11) |
 | `checks` | Checks and unknown fields (Format 13, 15.3) |
-| `parsing` | Raw files (Format 2.2, 12, 14) |
+| `parsing` | Raw files (Format 2.2, 11, 12, 13, 14) |
 | `examples` | The spec's worked examples |
 
 The order of cases doesn't matter. A case file is one JSON object, described by [`case.schema.json`](case.schema.json), which `bun run check` applies:
@@ -28,7 +28,7 @@ The order of cases doesn't matter. A case file is one JSON object, described by 
 | `note` | string | Optional. How an expected value was derived, such as how a value is clamped. Informative. |
 | `bundle` | object | The bundle, as a JSON document. |
 | `bundleFile` | string | Instead of `bundle`: a path to a bundle JSON file, relative to the case file. A `bundle.json` is a package's (Format 12.3), and a `sessionFile` beside it in `sessions/` is one of that package's sessions. |
-| `session` | object | Optional. `{"header": SessionHeader, "messages": [Message, …]}`. `messages` lists the session's lines after the header, in file order (Format 11.1). |
+| `session` | object | Optional. `{"header": SessionHeader, "messages": [Message, …]}`. `messages` lists the session's lines after the header, in file order (Format 11). |
 | `sessionFile` | string | Instead of `session`: a path to a `.jsonl` session file, relative to the case file. |
 | `tests` | array | The tests (section 3). |
 
@@ -40,7 +40,7 @@ Every test starts from a fresh copy of the case's inputs. Tests don't affect eac
 
 - **Levels.** An implementation that reads only bundles (Format 15.2) skips the tests of reading sessions: `parse` tests of `kind: "session"`, `check` tests of cases with a `session` or `sessionFile`, and `parse` tests marked `"level": "session"`. Other tests use a case's session only as the chat they run on.
 - **Conforming inputs.** `state`, `macro`, `cel` and `knows` tests run only on inputs that conform (Format 15.1), since the spec gives files that fail a check no meaning to test. Every case with such tests also has a `check` test that expects no codes, which a runner that doesn't skip it uses to confirm them.
-- **The story.** The session's `scenario` names the scenario, and its header's `players` lists every player (Format 11.2). Without a session, use the bundle's first scenario, whose seats are then unfilled and left out of the cast (Format 6.1), so the players are the cast members marked `player`. A `check` test without a session checks the bundle once for each scenario (Format 10.2).
+- **The story.** The session's `scenario` names the scenario, and its header's `players` lists every player (Format 11.2). Without a session, use the bundle's first scenario, whose seats are then unfilled and left out of the cast (Format 6.1), so the players are the cast members marked `player`. A `check` test without a session checks the bundle once for each scenario (Format 6.4, 10.2).
 
 ## 3. Tests
 

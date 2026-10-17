@@ -20,7 +20,7 @@ const link = (href: string, text: string): Element => ({
   children: [{ type: "text", value: text }],
 });
 
-// "Format 2.2, 14 and 16" becomes [Format 2.2], [14] and [16].
+// "Format 2.2, 13 and 15" becomes [Format 2.2], [13] and [15].
 const cite = (text: string, pattern: RegExp, page: string): ElementContent[] | undefined => {
   const out: ElementContent[] = [];
   let at = 0;

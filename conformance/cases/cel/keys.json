@@ -1,5 +1,5 @@
 {
-  "description": "Key matching through hit() (Format 7.2, 10.1): whole words, so no letter, mark or number (Unicode L, M, N) right before or after a match; case compared by Unicode simple case folding; keys in Han, Hiragana and the other listed scripts match anywhere; regex keys; the speaker's name; knowledge, hidden messages and scanDepth decide what is scanned",
+  "description": "Key matching through hit() (Format 7.2, 10.1, 11.4, 11.5): whole words, so no letter, mark or number (Unicode L, M, N) right before or after a match; case compared by Unicode simple case folding; keys in Han, Hiragana and the other listed scripts match anywhere; regex keys; the speaker's name; knowledge, hidden messages and scanDepth decide what is scanned",
   "note": "Each root is its own path, so each test scans one message unless it says otherwise. r4 writes café as e followed by U+0301. In r6, Ί (U+038A) folds to ί (U+03AF) and Σ and ς both fold to σ; ß and İ have no simple folding.",
   "bundle": {
     "kind": "bundle",

@@ -188,7 +188,7 @@ for (const f of cases) {
 }
 
 // A case's expected codes agree with the schemas: SCHEMA is expected exactly when an input fails them, apart from
-// unknown properties (Format 14). Covers check tests and parse tests of a single JSON document or session.
+// unknown properties (Format 13). Covers check tests and parse tests of a single JSON document or session.
 function schemaFails(name: string, value: unknown): boolean {
   const v = validator(name);
   return !v(value) && (v.errors ?? []).some((e) => e.keyword !== "additionalProperties" && e.keyword !== "if");

@@ -1,5 +1,5 @@
 {
-  "description": "Rules in the schemas (Format 2.2, 2.3, 8.1, 8.5, 11, 13): booleans written as false are defaults; empty optional fields, including {}, and null state values are SCHEMA; reserved IDs and variable keys; bool labels; integers, with a zero fraction allowed (Format 2.2); integer weights of at least 1; state keys start with state. or scene.; a change is by opening, player or model, sets at least one key, and is by opening only on a root made from an opening; an initial object has members; parts of an unknown type are SCHEMA; unknown properties are UNKNOWN_FIELD, not SCHEMA; message shapes",
+  "description": "Rules in the schemas (Format 2.2, 2.3, 8, 8.1, 8.5, 11, 13): booleans written as false are defaults; empty optional fields, including {}, and null state values are SCHEMA; reserved IDs and variable keys; bool labels; integers, with a zero fraction allowed (Format 2.2); integer weights of at least 1; state keys start with state. or scene.; a change is by opening, player or model, sets at least one key, and is by opening only on a root made from an opening; an initial object has members; parts of an unknown type are SCHEMA; unknown properties are UNKNOWN_FIELD, not SCHEMA; message shapes",
   "tests": [
     {
       "type": "parse",

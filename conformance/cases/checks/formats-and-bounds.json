@@ -1,5 +1,5 @@
 {
-  "description": "Validators assert format, so a malformed timestamp is SCHEMA (Format 15.3); a timestamp has an uppercase T, and an uppercase Z or a numeric offset (Format 2.5); an unknown message field is UNKNOWN_FIELD; min and max are integers, so one naming a variable is SCHEMA (Format 8.1)",
+  "description": "Validators assert format, so a malformed timestamp is SCHEMA (Format 15.3); a timestamp has an uppercase T, and an uppercase Z or a numeric offset (Format 2.5); an unknown message field is UNKNOWN_FIELD; min and max are integers, so one naming a variable is SCHEMA (Format 8)",
   "bundle": {
     "kind": "bundle",
     "scenarios": [

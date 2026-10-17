@@ -136,7 +136,7 @@ MUST, MUST NOT, SHOULD, SHOULD NOT and MAY are used as described in RFC 2119 and
 
 - Objects refer to each other by plain ID.
 - Entries are named `<owner>/<id>`, such as `veyra/late_bells`. Entries added by messages have the owner `session`.
-- State uses dots instead (section 8): `state.bell`, `state.trust.kai`, `state.kai.nerve`.
+- State uses dots instead (section 8.2): `state.bell`, `state.trust.kai`, `state.kai.nerve`.
 
 ### 2.5 Text
 
