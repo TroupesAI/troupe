@@ -1,5 +1,5 @@
 {
-  "description": "Raw input (Format 2.2, 11, 13, 15.3): a leading byte order mark and an empty session line aren't I-JSON lines, so they are PARSE; a troupe value that isn't major.minor fails the schema; a session of another major version is UNSUPPORTED_VERSION",
+  "description": "Raw input (Format 2.2, 11, 13, 15.3): a leading byte order mark and an empty session line aren't I-JSON lines, so they are PARSE",
   "tests": [
     {
       "type": "parse",
@@ -31,39 +31,6 @@
       "expect": {
         "codes": [
           "PARSE"
-        ]
-      }
-    },
-    {
-      "type": "parse",
-      "name": "troupe with three parts",
-      "kind": "bundle",
-      "text": "{\"troupe\":\"0.13.0\",\"kind\":\"bundle\"}",
-      "expect": {
-        "codes": [
-          "SCHEMA"
-        ]
-      }
-    },
-    {
-      "type": "parse",
-      "name": "troupe as a number",
-      "kind": "bundle",
-      "text": "{\"troupe\":0.13,\"kind\":\"bundle\"}",
-      "expect": {
-        "codes": [
-          "SCHEMA"
-        ]
-      }
-    },
-    {
-      "type": "parse",
-      "name": "a session of another major version",
-      "kind": "session",
-      "text": "{\"troupe\":\"1.0\",\"kind\":\"session\",\"scenario\":\"s\"}\n{\"id\":\"1\",\"from\":\"player\",\"content\":[{\"text\":\"Hi.\"}]}\n",
-      "expect": {
-        "codes": [
-          "UNSUPPORTED_VERSION"
         ]
       }
     }

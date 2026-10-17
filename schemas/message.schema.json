@@ -229,6 +229,25 @@
           }
         }
       }
+    },
+    {
+      "description": "Only a message's first change can be by opening.",
+      "properties": {
+        "changes": {
+          "prefixItems": [
+            true
+          ],
+          "items": {
+            "properties": {
+              "by": {
+                "not": {
+                  "const": "opening"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   ],
   "$defs": {
@@ -248,7 +267,7 @@
           ]
         },
         "set": {
-          "$ref": "bundle.schema.json#/$defs/nonEmptyStateValues"
+          "$ref": "bundle.schema.json#/$defs/stateValues"
         },
         "ext": {
           "$ref": "bundle.schema.json#/$defs/ext"

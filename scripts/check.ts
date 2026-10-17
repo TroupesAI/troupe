@@ -1,10 +1,10 @@
 // Checks the repository's documents and data:
 //   - the schemas compile, and the examples and every complete bundle and session header in a Markdown document validate;
-//   - examples/ and the first example of the README and the beginner's guide match the examples in spec/format.md (--write-examples rewrites examples/);
+//   - examples/ and the first example of the README and the beginner's guide match the examples in spec/format.md, and examples/ holds no others (--write-examples rewrites examples/);
 //   - every TypeScript interface in the spec lists exactly its schema's properties;
 //   - the spec version agrees across the spec, the README, schema URLs, examples, documents in Markdown and cases;
 //   - every conformance case is named <area>/<topic>.json, matches conformance/case.schema.json, and the files it names exist,
-//     and its check and parse tests expect SCHEMA exactly when the schemas reject their input;
+//     its check and parse tests list codes sorted and distinct, and expect SCHEMA exactly when the schemas reject their input;
 //   - cases with state, macro, cel or knows tests have inputs that pass the schemas, unknown properties included, and a
 //     check test that expects no codes, so a runner confirms the inputs conform;
 //   - relative Markdown links and #anchors resolve, and every "Format N.N" names a section.
@@ -223,6 +223,7 @@ function schemaCodes(path: string, c: Record<string, any>) {
   (c.tests as Record<string, any>[]).forEach((t, i) => {
     const where = `${path}: test ${i + 1}${t.name ? ` (${t.name})` : ""}`;
     const codes: string[] | undefined = t.expect?.codes;
+    if (codes && codes.some((code, j) => j > 0 && codes[j - 1] >= code)) fail(`${where}: codes aren't sorted and distinct`);
     let fails: boolean | undefined;
     if (t.type === "check" && codes && (session !== undefined || !c.sessionFile))
       fails = schemaFails("bundle.schema.json", bundle) || (session ? sessionFails(session) : false);

@@ -32,13 +32,6 @@
     },
     {
       "type": "cel",
-      "name": "char is \"\" for the narrator",
-      "at": "4",
-      "expr": "char == ''",
-      "expect": true
-    },
-    {
-      "type": "cel",
       "name": "self is the expression's owner, and own its variables",
       "at": "3",
       "self": "kai",

@@ -1,5 +1,5 @@
 {
-  "description": "self, char and scenario (Format 10.1): self is the expression's owner and char the character a message is written for, so char == self holds on the owner's own turns; scenario is the session's scenario",
+  "description": "self is the expression's owner, and the scenario's own expression has self equal to scenario (Format 10.1)",
   "bundle": {
     "kind": "bundle",
     "characters": [
@@ -62,24 +62,6 @@
       "name": "the scenario's own expression",
       "expr": "scenario == 's' && self == 's'",
       "expect": true
-    },
-    {
-      "type": "cel",
-      "name": "Ann's entry on her own turn",
-      "self": "a",
-      "char": "a",
-      "at": "1",
-      "expr": "char == self && self == 'a' && scenario == 's'",
-      "expect": true
-    },
-    {
-      "type": "cel",
-      "name": "Ann's entry on Bea's turn",
-      "self": "a",
-      "char": "b",
-      "at": "1",
-      "expr": "char == self",
-      "expect": false
     },
     {
       "type": "check",

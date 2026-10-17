@@ -1,5 +1,5 @@
 {
-  "description": "Schema failures (Format 15.3): a chance that isn't an integer from 0 to 100, an out-of-range priority, a position other than system or context, an entry with both position and depth, oneWay on a string variable, an entry without text, an empty key, a knownBy item that isn't an ID, a duplicate in a uniqueItems list and a failing anyOf are each SCHEMA; every check runs on the document as written, so the knownBy item is also UNKNOWN_CHARACTER (Format 15.3)",
+  "description": "Schema failures (Format 8, 15.3): a chance that isn't an integer from 0 to 100, an out-of-range priority, a position other than system or context, an entry with both position and depth, oneWay on a string variable, an entry without text, an empty key, a knownBy item that isn't an ID, an of list item that isn't a key, a duplicate in by, and a max naming a variable are each SCHEMA; every check runs on the document as written, so the knownBy item is also UNKNOWN_CHARACTER (Format 15.3)",
   "bundle": {
     "kind": "bundle",
     "characters": [
@@ -69,10 +69,6 @@
             "id": "label",
             "type": "string",
             "oneWay": true,
-            "initial": "b",
-            "by": [
-              "player"
-            ],
             "description": "d"
           },
           {
@@ -83,35 +79,21 @@
               "guild"
             ],
             "description": "d"
-          }
-        ]
-      }
-    ]
-  },
-  "session": {
-    "header": {
-      "kind": "session",
-      "scenario": "s",
-      "characters": [
-        {
-          "id": "p",
-          "name": "Pat",
-          "description": "Pat."
-        }
-      ],
-      "players": [
-        "p",
-        "p"
-      ]
-    },
-    "messages": [
-      {
-        "id": "1",
-        "from": "player",
-        "content": [
+          },
           {
-            "speaker": "p",
-            "text": "x"
+            "id": "dup",
+            "type": "int",
+            "by": [
+              "model",
+              "model"
+            ],
+            "description": "d"
+          },
+          {
+            "id": "bound",
+            "type": "int",
+            "max": "rep",
+            "description": "a bound naming a variable"
           }
         ]
       }
@@ -168,7 +150,15 @@
           },
           {
             "code": "SCHEMA",
-            "at": "header/players"
+            "at": "/scenarios/0/variables/1/of"
+          },
+          {
+            "code": "SCHEMA",
+            "at": "/scenarios/0/variables/2/by"
+          },
+          {
+            "code": "SCHEMA",
+            "at": "/scenarios/0/variables/3/max"
           }
         ]
       }

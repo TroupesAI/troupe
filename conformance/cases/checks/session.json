@@ -163,8 +163,8 @@
           "INVALID_PLAYER",
           "INVALID_VALUE",
           "UNKNOWN_CHARACTER",
-          "UNKNOWN_MESSAGE",
           "UNKNOWN_ENTRY",
+          "UNKNOWN_MESSAGE",
           "UNKNOWN_OPENING",
           "UNKNOWN_VARIABLE"
         ],

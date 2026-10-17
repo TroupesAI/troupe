@@ -1,5 +1,5 @@
 {
-  "description": "Rules in the schemas (Format 2.2, 2.3, 8, 8.1, 8.5, 11, 13): booleans written as false are defaults; empty optional fields, including {}, and null state values are SCHEMA; reserved IDs and variable keys; bool labels; integers, with a zero fraction allowed (Format 2.2); integer weights of at least 1; state keys start with state. or scene.; a change is by opening, player or model, sets at least one key, and is by opening only on a root made from an opening; an initial object has members; parts of an unknown type are SCHEMA; unknown properties are UNKNOWN_FIELD, not SCHEMA; message shapes",
+  "description": "Rules in the schemas (Format 2.2, 2.3, 8, 8.1, 8.5, 11, 13): booleans written as false are defaults; empty optional fields, including {}, and null state values are SCHEMA; reserved IDs; bool labels; integers, with a zero fraction allowed (Format 2.2); integer weights of at least 1; state keys start with state. or scene.; a change is by opening, player or model, sets at least one key, and is by opening only on a root made from an opening; an initial object has members; parts of an unknown type are SCHEMA; unknown properties are UNKNOWN_FIELD, not SCHEMA; message shapes",
   "tests": [
     {
       "type": "parse",
@@ -100,7 +100,7 @@
       "type": "parse",
       "name": "an unknown property on an image part is UNKNOWN_FIELD",
       "kind": "bundle",
-      "text": "{\"troupe\": \"0.13\", \"kind\": \"bundle\", \"scenarios\": [{\"id\": \"s\", \"openings\": [{\"id\": \"o\", \"content\": [{\"type\": \"image\", \"src\": \"a.png\", \"alt\": \"A map.\", \"caption\": \"x\"}]}]}]}",
+      "text": "{\"troupe\": \"0.13\", \"kind\": \"bundle\", \"scenarios\": [{\"id\": \"s\", \"openings\": [{\"id\": \"o\", \"content\": [{\"type\": \"image\", \"src\": \"https://example.com/a.png\", \"alt\": \"A map.\", \"caption\": \"x\"}]}]}]}",
       "expect": {
         "codes": [
           "UNKNOWN_FIELD"
@@ -144,7 +144,7 @@
       "type": "parse",
       "name": "a records-only message with entries, other than a root",
       "kind": "session",
-      "text": "{\"troupe\": \"0.13\", \"kind\": \"session\", \"scenario\": \"s\"}\n{\"id\": \"1\", \"from\": \"player\", \"content\": [{\"text\": \"x\"}]}\n{\"id\": \"2\", \"parent\": \"1\", \"from\": \"system\", \"content\": [], \"changes\": [{\"by\": \"player\", \"set\": {}}], \"entries\": [{\"id\": \"e\", \"text\": \"t\"}]}\n",
+      "text": "{\"troupe\": \"0.13\", \"kind\": \"session\", \"scenario\": \"s\"}\n{\"id\": \"1\", \"from\": \"player\", \"content\": [{\"text\": \"x\"}]}\n{\"id\": \"2\", \"parent\": \"1\", \"from\": \"system\", \"content\": [], \"changes\": [{\"by\": \"player\", \"set\": {\"state.v\": true}}], \"entries\": [{\"id\": \"e\", \"text\": \"t\"}]}\n",
       "expect": {
         "codes": [
           "SCHEMA"
@@ -237,17 +237,6 @@
     },
     {
       "type": "parse",
-      "name": "a variable key named char",
-      "kind": "bundle",
-      "text": "{\"troupe\": \"0.13\", \"kind\": \"bundle\", \"scenarios\": [{\"id\": \"s\", \"variables\": [{\"id\": \"v\", \"description\": \"d\", \"type\": \"int\", \"of\": [\"char\", \"watch\"]}]}]}",
-      "expect": {
-        "codes": [
-          "SCHEMA"
-        ]
-      }
-    },
-    {
-      "type": "parse",
       "name": "a change by system",
       "kind": "session",
       "text": "{\"troupe\": \"0.13\", \"kind\": \"session\", \"scenario\": \"s\"}\n{\"id\": \"1\", \"from\": \"player\", \"content\": [{\"text\": \"Hi.\"}], \"changes\": [{\"by\": \"system\", \"set\": {\"state.v\": true}}]}\n",
@@ -295,6 +284,17 @@
       "name": "an ID that is a CEL reserved word",
       "kind": "bundle",
       "text": "{\"troupe\": \"0.13\", \"kind\": \"bundle\", \"scenarios\": [{\"id\": \"s\", \"entries\": [{\"id\": \"loop\", \"text\": \"x\"}]}]}",
+      "expect": {
+        "codes": [
+          "SCHEMA"
+        ]
+      }
+    },
+    {
+      "type": "parse",
+      "name": "a player listed twice",
+      "kind": "session",
+      "text": "{\"troupe\": \"0.13\", \"kind\": \"session\", \"scenario\": \"s\", \"players\": [\"p\", \"p\"]}\n",
       "expect": {
         "codes": [
           "SCHEMA"

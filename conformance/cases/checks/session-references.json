@@ -100,8 +100,8 @@
       "type": "check",
       "expect": {
         "codes": [
-          "UNKNOWN_LOCATION",
-          "UNKNOWN_ENTRY"
+          "UNKNOWN_ENTRY",
+          "UNKNOWN_LOCATION"
         ],
         "includes": [
           {

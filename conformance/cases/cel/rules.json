@@ -28,9 +28,8 @@
             "id": "order",
             "type": "int",
             "of": [
-              "zeta",
               "alpha",
-              "mid"
+              "zeta"
             ],
             "initial": 1,
             "description": "d"

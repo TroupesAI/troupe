@@ -98,9 +98,9 @@
   "tests": [
     {
       "type": "cel",
-      "name": "23:40 at +02:00 is hour 23 on a Saturday",
+      "name": "23:40 at +02:00 is hour 23 on a Saturday, and elapsed is 0 at a root",
       "at": "1",
-      "expr": "hour == 23 && weekday == 6",
+      "expr": "hour == 23 && weekday == 6 && elapsed == 0",
       "expect": true
     },
     {

@@ -79,7 +79,9 @@
         ],
         "state.bell": 7,
         "state.trust.kai": 50,
-        "state.kai.nerve": 0
+        "state.kai.nerve": 0,
+        "state.trust.mara": 50,
+        "state.trust.elena": 70
       }
     },
     {
@@ -109,16 +111,6 @@
       "at": "4",
       "expr": "state.bell >= 10",
       "expect": false
-    },
-    {
-      "type": "state",
-      "name": "trust is of the cast",
-      "at": "4",
-      "expect": {
-        "state.trust.mara": 50,
-        "state.trust.elena": 70,
-        "state.trust.kai": 50
-      }
     },
     {
       "type": "macro",

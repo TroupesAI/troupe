@@ -7,6 +7,15 @@
       "expect": {
         "codes": []
       }
+    },
+    {
+      "type": "state",
+      "name": "the default cast: the unfilled seat is left out, so Elena alone is present",
+      "expect": {
+        "scene.present": [
+          "elena"
+        ]
+      }
     }
   ]
 }

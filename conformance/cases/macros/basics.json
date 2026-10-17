@@ -7,11 +7,6 @@
         "id": "a",
         "name": "Ann",
         "description": "Ann."
-      },
-      {
-        "id": "b",
-        "name": "Bea",
-        "description": "Bea."
       }
     ],
     "scenarios": [
@@ -35,17 +30,7 @@
         "p"
       ]
     },
-    "messages": [
-      {
-        "id": "1",
-        "from": "player",
-        "content": [
-          {
-            "text": "x"
-          }
-        ]
-      }
-    ]
+    "messages": []
   },
   "tests": [
     {

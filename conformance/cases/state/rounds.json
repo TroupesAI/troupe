@@ -1,5 +1,5 @@
 {
-  "description": "Rounds and elapsed time (Format 10.1, 11.1): turn counts player messages on the path, so a group chat counts like a one-on-one; elapsed is the whole seconds between the evaluation point's at and its parent's",
+  "description": "Rounds (Format 11.1): turn counts player messages on the path, so a group chat counts like a one-on-one",
   "bundle": {
     "kind": "bundle",
     "characters": [
@@ -48,7 +48,6 @@
       {
         "id": "1",
         "from": "player",
-        "at": "2026-10-09T12:00:00Z",
         "content": [
           {
             "speaker": "p",
@@ -61,7 +60,6 @@
         "parent": "1",
         "from": "model",
         "char": "a",
-        "at": "2026-10-09T12:00:30Z",
         "content": [
           {
             "speaker": "a",
@@ -74,7 +72,6 @@
         "parent": "2",
         "from": "model",
         "char": "b",
-        "at": "2026-10-09T12:01:00Z",
         "content": [
           {
             "speaker": "b",
@@ -86,7 +83,6 @@
         "id": "4",
         "parent": "3",
         "from": "player",
-        "at": "2026-10-10T14:01:00+02:00",
         "content": [
           {
             "speaker": "p",
@@ -115,27 +111,6 @@
       "type": "cel",
       "at": "4",
       "expr": "turn == 2",
-      "expect": true
-    },
-    {
-      "type": "cel",
-      "name": "elapsed: seconds since the parent's at",
-      "at": "3",
-      "expr": "elapsed == 30",
-      "expect": true
-    },
-    {
-      "type": "cel",
-      "name": "a day later, written at another offset",
-      "at": "4",
-      "expr": "elapsed == 86400",
-      "expect": true
-    },
-    {
-      "type": "cel",
-      "name": "elapsed is 0 without a parent",
-      "at": "1",
-      "expr": "elapsed == 0",
       "expect": true
     },
     {

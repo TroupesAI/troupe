@@ -158,7 +158,7 @@
     },
     {
       "type": "cel",
-      "name": "players lists both, in seat order; user follows the latest player message",
+      "name": "players lists both, in its order; user follows the latest player message",
       "at": "3",
       "char": "a",
       "expr": "players == ['p', 'q'] && user == 'q'",

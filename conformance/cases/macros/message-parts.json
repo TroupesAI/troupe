@@ -1,5 +1,5 @@
 {
-  "description": "Macros in message parts (Format 9, 11.1): only roots made from openings resolve. There {{char}} is the part's speaker, else it is left as written; {{user}} follows the path to the message; own means state; parts resolve against the state at their message. Player and model parts are used as written",
+  "description": "Macros in message parts (Format 9, 11.1): only roots made from openings resolve. There {{char}} is the part's speaker, else it is left as written; {{user}} follows the path to the message; own means state; parts resolve against the state at their message.",
   "bundle": {
     "kind": "bundle",
     "characters": [
@@ -162,33 +162,6 @@
         "index": 1
       },
       "expect": "I'm Ann, and you are Pat."
-    },
-    {
-      "type": "macro",
-      "name": "a player's part is used as written",
-      "part": {
-        "message": "2",
-        "index": 0
-      },
-      "expect": "Hi, {{char}}. Bell {{state.bell}}?"
-    },
-    {
-      "type": "macro",
-      "name": "a model's narration is used as written",
-      "part": {
-        "message": "3",
-        "index": 0
-      },
-      "expect": "{{char}} shrugs at {{user}}."
-    },
-    {
-      "type": "macro",
-      "name": "so is a model's part with a speaker",
-      "part": {
-        "message": "3",
-        "index": 1
-      },
-      "expect": "{{char}} again."
     },
     {
       "type": "macro",

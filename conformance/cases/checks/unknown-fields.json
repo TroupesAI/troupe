@@ -56,35 +56,6 @@
       }
     ]
   },
-  "session": {
-    "header": {
-      "kind": "session",
-      "scenario": "s",
-      "characters": [
-        {
-          "id": "p",
-          "name": "Pat",
-          "description": "Pat."
-        }
-      ],
-      "players": [
-        "p"
-      ]
-    },
-    "messages": [
-      {
-        "id": "1",
-        "opening": "o",
-        "from": "system",
-        "content": [
-          {
-            "speaker": "ann",
-            "text": "Hello."
-          }
-        ]
-      }
-    ]
-  },
   "tests": [
     {
       "type": "check",

@@ -39,7 +39,9 @@
       "$ref": "#/$defs/nonEmpty"
     },
     "language": {
-      "$ref": "#/$defs/nonEmpty"
+      "description": "A BCP 47 language tag (Format 2.5).",
+      "type": "string",
+      "pattern": "^[A-Za-z]{1,8}(-[A-Za-z0-9]{1,8})*$"
     },
     "tags": {
       "$ref": "#/$defs/list"
@@ -183,7 +185,8 @@
         "not": {
           "type": "null"
         }
-      }
+      },
+      "minProperties": 1
     },
     "nonEmpty": {
       "type": "string",
@@ -196,7 +199,7 @@
     },
     "httpsUrl": {
       "type": "string",
-      "pattern": "^https://."
+      "pattern": "^https://\\S+$"
     },
     "cel": {
       "type": "string",
@@ -218,7 +221,7 @@
         },
         {
           "type": "string",
-          "pattern": "^data:image/(png|jpeg|webp|avif|gif);base64,[A-Za-z0-9+/=]+$"
+          "pattern": "^data:image/(png|jpeg|webp|avif|gif);base64,([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{4})$"
         }
       ]
     },
@@ -635,7 +638,7 @@
           "$ref": "#/$defs/nonEmpty"
         },
         "set": {
-          "$ref": "#/$defs/nonEmptyStateValues"
+          "$ref": "#/$defs/stateValues"
         },
         "content": {
           "type": "array",
@@ -675,7 +678,7 @@
           "minItems": 1,
           "uniqueItems": true,
           "items": {
-            "type": "string"
+            "$ref": "#/$defs/nonEmpty"
           }
         },
         "labels": {
@@ -891,14 +894,11 @@
       "then": {
         "type": "object",
         "required": [
-          "type",
           "src"
         ],
         "additionalProperties": false,
         "properties": {
-          "type": {
-            "const": "image"
-          },
+          "type": true,
           "src": {
             "$ref": "#/$defs/image"
           },
@@ -972,10 +972,6 @@
       "items": {
         "$ref": "#/$defs/id"
       }
-    },
-    "nonEmptyStateValues": {
-      "$ref": "#/$defs/stateValues",
-      "minProperties": 1
     },
     "keyId": {
       "description": "A variable key: an author ID other than char and user.",

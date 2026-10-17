@@ -61,7 +61,7 @@
   "tests": [
     {
       "type": "cel",
-      "name": "both are players, in seat order",
+      "name": "both are players, in the order players lists them",
       "expr": "players == ['p', 'q']",
       "expect": true
     },

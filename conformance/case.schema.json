@@ -226,7 +226,7 @@
                       ],
                       "properties": {
                         "checkError": {
-                          "type": "boolean"
+                          "const": true
                         }
                       }
                     }

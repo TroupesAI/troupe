@@ -88,7 +88,7 @@ The state is flattened to an object with these keys:
 | `self` | The expression's owner, a character, world or scenario ID or `session`, which also types `own`; the scenario by default. |
 | `scanDepth` | The `scanDepth` of the entry `hit()` scans for; 4 by default. |
 
-`players` is as section 2 says. `hit()` checks the scanned text (Format 7.2) of a message written as a child of `at`, for `char`, or for the narrator when `char` is `""`; without `at` nothing is scanned, so it is false. If `expect` is a boolean, the expression must type-check and evaluate to it; a runtime error counts as `false`. If `expect` is `{"checkError": b}`, `b` says whether parsing or type-checking fails.
+`players` is as section 2 says. `hit()` checks the scanned text (Format 7.2) of a message written as a child of `at`, for `char`, or for the narrator when `char` is `""`; without `at` nothing is scanned, so it is false. If `expect` is a boolean, the expression must type-check and evaluate to it; a runtime error counts as `false`. If `expect` is `{"checkError": true}`, the expression is a `CEL_ERROR` (Format 10.2).
 
 ### 3.4 `check`: checks (Format 15.3)
 
@@ -108,7 +108,7 @@ Locations:
 | In a session header | `header/<pointer>` | `header/players` |
 | In a message (its schema failures included) | `message:<id>/<pointer within the message>` | `message:3/changes/0/set/state.hp` |
 
-A diagnostic about one value points at that value: a list item at its index (`/scenarios/0/worlds/1`), a reference at the field holding it (`/scenarios/0/cast/2/character`), an unknown property at the property (`/characters/0/mystery`), and a location cycle at the `parent` of each location on it. For keys inside `set`, the pointer segment is the key as written (`/set/scene.present`).
+A diagnostic about one value points at that value: a list item at its index (`/scenarios/0/worlds/1`), a reference at the field holding it (`/scenarios/0/cast/2/character`), an unknown property at the property (`/characters/0/mystery`), and a location cycle at the `parent` of each location on it. For keys inside `set`, the pointer segment is the key as written (`/set/scene.present`). A schema failure is at the instance location of the keyword that fails: a missing property, or a combination forbidden with `not`, at its object (`/scenarios/0/entries/1`); a property forbidden for its type at the property; and a duplicate list item at the list.
 
 A duplicate ID is at the `id` of each one after the first (`/characters/1/id`), in this order: the bundle's characters, worlds and scenarios, then the session's characters and worlds; locations in world order, the bundle's before the session's. A scenario variable with a character's or world's ID is at the variable's `id`, and a character or world a scenario names twice is at its later `character` or list item.
 

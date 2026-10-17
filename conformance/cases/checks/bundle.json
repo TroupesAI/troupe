@@ -34,7 +34,7 @@
           },
           {
             "id": "e3",
-            "when": "state.trust + 1",
+            "when": "state.n + 1",
             "text": "not a bool"
           },
           {
