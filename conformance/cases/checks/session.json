@@ -164,7 +164,7 @@
           "INVALID_VALUE",
           "UNKNOWN_CHARACTER",
           "UNKNOWN_MESSAGE",
-          "UNKNOWN_NAME",
+          "UNKNOWN_ENTRY",
           "UNKNOWN_OPENING",
           "UNKNOWN_VARIABLE"
         ],
@@ -206,11 +206,11 @@
             "at": "message:3/content/0/speaker"
           },
           {
-            "code": "UNKNOWN_NAME",
+            "code": "UNKNOWN_ENTRY",
             "at": "message:3/activated/1"
           },
           {
-            "code": "UNKNOWN_NAME",
+            "code": "UNKNOWN_ENTRY",
             "at": "message:3/activated/2"
           }
         ]

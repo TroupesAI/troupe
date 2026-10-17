@@ -1,5 +1,5 @@
 {
-  "description": "Session entries (Format 6.4, 11.3, 15.3): an entry disabled by a later message is no longer in use, so a message after that can't list it in activated (UNKNOWN_NAME); one message can't add two entries with one ID (DUPLICATE_ID)",
+  "description": "Session entries (Format 6.4, 11.3, 15.3): an entry disabled by a later message is no longer in use, so a message after that can't list it in activated (UNKNOWN_ENTRY); one message can't add two entries with one ID (DUPLICATE_ID)",
   "bundle": {
     "kind": "bundle",
     "characters": [
@@ -130,11 +130,11 @@
       "expect": {
         "codes": [
           "DUPLICATE_ID",
-          "UNKNOWN_NAME"
+          "UNKNOWN_ENTRY"
         ],
         "includes": [
           {
-            "code": "UNKNOWN_NAME",
+            "code": "UNKNOWN_ENTRY",
             "at": "message:4/activated/0"
           },
           {

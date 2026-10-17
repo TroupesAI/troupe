@@ -40,7 +40,7 @@ Every test starts from a fresh copy of the case's inputs. Tests don't affect eac
 
 - **Levels.** An implementation that reads only bundles (Format 15.2) skips the tests of reading sessions: `parse` tests of `kind: "session"`, `check` tests of cases with a `session` or `sessionFile`, and `parse` tests marked `"level": "session"`. Other tests use a case's session only as the chat they run on.
 - **Conforming inputs.** `state`, `macro`, `cel` and `knows` tests run only on inputs that conform (Format 15.1), since the spec gives files that fail a check no meaning to test. Every case with such tests also has a `check` test that expects no codes, which a runner that doesn't skip it uses to confirm them.
-- **The story.** The session's `scenario` names the scenario, and its header's `players` lists every player (Format 11.2). Without a session, use the bundle's first scenario, whose seats are then unfilled and left out of the cast (Format 6.1), so the players are the cast members marked `player`. A `check` test without a session checks the bundle once for each scenario (Format 6.4, 10.2).
+- **The story.** The session's `scenario` names the scenario, and its header's `players` lists every player (Format 11.2). Without a session, use the bundle's first scenario, whose seats, those marked `player` included, are then unfilled and left out of the cast (Format 6.1), so there are no players. A `check` test without a session checks the bundle once for each scenario (Format 6.4, 10.2).
 
 ## 3. Tests
 
@@ -97,7 +97,6 @@ The runner validates the bundle and the session's lines against the schemas, the
 - `expect.codes` is the sorted list of distinct diagnostic codes reported. It is compared exactly.
 - Each session line after the header is validated against `message.schema.json`. Validators assert `format`, so a malformed timestamp is `SCHEMA`.
 - `SCHEMA` covers schema failures, such as `null`, `""` or `[]` in an optional field (Format 2.2).
-- `UNKNOWN_FIELD` (Format 13) is located at the property itself (`/characters/0/mystery`).
 - `check` tests don't use `PARSE` or `UNSUPPORTED_VERSION`; `parse` tests (section 3.6) cover them.
 - `expect.includes` lists `{code, at}` pairs that must each appear, compared on both fields.
 
@@ -109,7 +108,7 @@ Locations:
 | In a session header | `header/<pointer>` | `header/players` |
 | In a message (its schema failures included) | `message:<id>/<pointer within the message>` | `message:3/changes/0/set/state.hp` |
 
-A diagnostic about one value points at that value: a list item at its index (`/scenarios/0/worlds/1`), a duplicate ID at the duplicate's `id` (`/characters/1/id`), a reference at the field holding it (`/scenarios/0/cast/2/character`), and a location cycle at the `parent` of each location on it. For keys inside `set`, the pointer segment is the key as written (`/set/scene.present`). Something missing from a list points at the list, or where it would be: a player-marked cast member left out of `players` is at `header/players`.
+A diagnostic about one value points at that value: a list item at its index (`/scenarios/0/worlds/1`), a duplicate ID at the `id` of each later one (`/characters/1/id`), comparing the bundle's characters, worlds and scenarios, then the session's characters and worlds, and locations in world order, the bundle's before the session's, a reference at the field holding it (`/scenarios/0/cast/2/character`), and a location cycle at the `parent` of each location on it. For keys inside `set`, the pointer segment is the key as written (`/set/scene.present`). An unknown property is located at the property itself (`/characters/0/mystery`).
 
 ### 3.5 `knows`: who knows a part (Format 7.4, 11.5)
 

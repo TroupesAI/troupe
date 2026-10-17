@@ -1,5 +1,5 @@
 {
-  "description": "players lists every cast member marked player (Format 11.2, 15.3): one left out is INVALID_PLAYER, while listing another cast character is valid",
+  "description": "A cast member marked player that players doesn't list is a seat no player fills, left out of the cast (Format 6.1, 8.6, 11.2): here a person plays b instead, which is valid",
   "bundle": {
     "kind": "bundle",
     "characters": [
@@ -54,16 +54,22 @@
     {
       "type": "check",
       "expect": {
-        "codes": [
-          "INVALID_PLAYER"
-        ],
-        "includes": [
-          {
-            "code": "INVALID_PLAYER",
-            "at": "header/players"
-          }
+        "codes": []
+      }
+    },
+    {
+      "type": "state",
+      "name": "a isn't in the cast, so only b is present",
+      "expect": {
+        "scene.present": [
+          "b"
         ]
       }
+    },
+    {
+      "type": "cel",
+      "expr": "players == ['b'] && user == 'b'",
+      "expect": true
     }
   ]
 }

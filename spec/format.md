@@ -123,11 +123,11 @@ MUST, MUST NOT, SHOULD, SHOULD NOT and MAY are used as described in RFC 2119 and
 
 | IDs | Unique among |
 | --- | --- |
-| Characters, worlds, scenarios | All of them, compared in this order: the bundle's characters, worlds and scenarios, then the session's characters and worlds |
+| Characters, worlds, scenarios | All of them, in the bundle and the session |
 | Scenario variables | Also every character and world ID in the bundle or session |
 | Entries | The same owner; session entries, the same message (section 11.3) |
 | Variables | The same owner |
-| Locations | The bundle and the session, compared in world order: the bundle's worlds in array order, then the session's |
+| Locations | The bundle and the session |
 | A scenario's cast members and `worlds` | The scenario: each names a character or world once |
 | Openings | The same scenario |
 | Messages | The session |
@@ -583,7 +583,6 @@ interface Change {
 - `players` lists, in order, every character people control:
   - Each listed header character fills the next seat without a character; when none is left, it gets a new seat after the scenario cast.
   - A listed cast character is played by a person instead of a model.
-  - Every cast member marked `player` is listed.
 - The session's **cast** is the scenario cast with seats filled, then the added seats, then the **joiners**: header `characters` that aren't players, who joined or appeared during the session.
 - Header characters and `players` hold for the whole session, on every branch; presence is recorded on each path (section 8.4).
 
@@ -630,7 +629,7 @@ Fields that hold a file (`cover`, `avatar`, location `image` and image parts) ho
 ## 13. Extensions and versioning
 
 - **Extensions.** Every object of a bundle or session that this document defines with an interface MAY carry `ext`, keyed by an extension name matching `^[a-z0-9][a-z0-9.-]{0,63}$`, such as `risu.regex`. The `troupe.` prefix is reserved for the draft extensions of Appendix D. Writers MUST NOT add fields anywhere else, and MUST keep every `ext` of a file they rewrite unchanged, as a JSON value.
-- **Unknown fields.** A property is unknown when its object's interface doesn't define it; for a part, the interface its `type` selects. An unknown property carries no meaning, and is an `UNKNOWN_FIELD` located at the property; `SCHEMA` is judged with unknown properties removed.
+- **Unknown fields.** A property is unknown when its object's interface doesn't define it; for a part, the interface its `type` selects. An unknown property carries no meaning, and is an `UNKNOWN_FIELD`; `SCHEMA` is judged with unknown properties removed.
 - **Versions** are `major.minor`, compared as two integers, so `0.10` is newer than `0.9`. From 1.0, minor versions only add what files of an older minor can do without; before 1.0, any minor version may break. A file of a version other than this document's is `UNSUPPORTED_VERSION`.
 
 ---
@@ -647,7 +646,6 @@ Files hold data and sandboxed expressions (section 10), never scripts, and their
 | Bundle JSON | 32 MiB |
 | Session file / messages | 256 MiB / 100,000 |
 | ZIP entries in a package / unpacked size | 10,000 / 512 MiB |
-| An image in a package or a `data:` URI, in each dimension | 8,192 pixels |
 | JSON nesting depth | 64 |
 | Entries / variables in a bundle, all owners, and separately in the characters and worlds a session adds | 10,000 / 1,000 |
 | A text value: a part's `text`, an entry's `text` or a description, in UTF-8 | 1 MiB |
@@ -692,11 +690,11 @@ Each check has a code, for validators to report it with. Every check runs on the
 | `UNKNOWN_WORLD` | `scenario.worlds` names bundle worlds |
 | `UNKNOWN_LOCATION` | Locations in values and `parent` exist, without cycles |
 | `UNKNOWN_OPENING` | A root's `opening` exists |
-| `UNKNOWN_NAME` | `activated` names entries in use |
+| `UNKNOWN_ENTRY` | `activated` names entries in use |
 | `UNKNOWN_VARIABLE` | Keys in openings and changes are valid keys (section 8.5) |
 | `INVALID_VALUE` | `initial` values, and the values of valid keys in opening `set` and recorded changes, are valid for their variables (section 8.5); unknown locations and characters in values are reported only as `UNKNOWN_LOCATION` and `UNKNOWN_CHARACTER` |
 | `UNKNOWN_MESSAGE` | `parent` names a message on an earlier line, and the header's `head` names a message |
-| `INVALID_PLAYER` | `players` names header characters or cast members, and lists every cast member marked `player` |
+| `INVALID_PLAYER` | `players` names header characters or cast members |
 | `CEL_ERROR` | Every expression parses, type-checks and follows section 10.2 |
 | `REGEX_ERROR` | Every regex key is valid (section 14) |
 | `UNKNOWN_MACRO` | In text where macros resolve, macros are valid and name declared variables (section 9) |
