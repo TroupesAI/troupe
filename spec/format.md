@@ -358,7 +358,7 @@ interface Entry {
 
 ### 7.4 Knowledge
 
-`knownBy` lists the characters who know an entry, and `narrator` in it names the narrator. Without it, everyone knows the entry; `["narrator"]` makes it narrator-only. In `characters` mode the narrator knows everything except content whose `knownBy` leaves it out; in `narrator` mode, where it writes every character's lines, it knows everything but hidden messages' parts (section 11.4). Section 11.5 says who knows a message's parts.
+`knownBy` lists the characters who know an entry, and `narrator` in it names the narrator. Without it, everyone knows the entry; `["narrator"]` makes it narrator-only. In `characters` mode the narrator knows everything except content whose `knownBy` leaves it out; in `narrator` mode, where it writes every character's lines, it knows everything. Section 11.5 says who knows a message's parts, and nobody knows a hidden message's (section 11.4).
 
 ---
 
@@ -646,11 +646,11 @@ Fields that hold a file (`cover`, `avatar`, location `image` and image parts) ho
 Files hold data and sandboxed expressions (section 10), never scripts, and their size and the work they ask for are bounded. Their text is Markdown, which can hold raw HTML, links and images; how they are shown is the app's.
 
 - **Regexes.** A regex key is valid when its flags are distinct, from `i` (ignore case), `m` (`^` and `$` also match at line breaks) and `s` (`.` also matches line breaks), and its pattern is built only from:
-  - characters, including `\t`, `\n`, `\r`, `\f` and `\v`, with a `\` before any of ``^$\.*+?()[]{}|/`` that stands for itself; in a class, a `\` before `\`, `[`, `]` and a `-` that isn't first or last;
+  - characters, including `\t`, `\n`, `\r`, `\f` and `\v`, with a `\` before any of ``^$\.*+?()[]{}|/`` that stands for itself; in a class, only `\`, `[`, `]` and a `-` that isn't first or last need it, though the others and `-` may have it;
   - `.`, `^`, `$`, `\b`, `\B`, `|`, groups `(…)` and `(?:…)`;
-  - classes `[…]` and `[^…]` of at least one character, class escape or range `x-y`, with `x` not after `y`;
+  - classes `[…]` and `[^…]` of at least one character, class escape or range `x-y`, with `x` not after `y`; a `^` first in a class makes it `[^…]`;
   - the class escapes `\d`, `\D`, `\w`, `\W`, `\s`, `\S`, and `\p{…}` and `\P{…}` with the abbreviation of a Unicode general category other than `Cn` and `LC`, such as `L` or `Lu`;
-  - after a character, `.`, class, class escape or group, a quantifier `*`, `+`, `?`, `{n}`, `{n,}` or `{n,m}`, with n ≤ m ≤ 1000, optionally followed by `?`.
+  - after a character, `.`, class, class escape or group, a quantifier `*`, `+`, `?`, `{n}`, `{n,}` or `{n,m}`, with n ≤ m and no `{0}` or `{0,0}`, optionally followed by `?`.
 
   The pattern means what it means in ECMAScript with the `u` flag. It nests groups at most 100 deep, and written out in full, with each counted repetition replaced by its copies (`x{2,3}` as `xxx`, `x{2,}` as `xxx*`), it is at most 1000 bytes, so `(a{10}){200}` is too long. Such a pattern compiles in ECMAScript and RE2 alike, and is regular, so it can run in linear time on an automaton engine.
 - **Limits.** Files stay within these limits:

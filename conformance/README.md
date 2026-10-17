@@ -110,7 +110,7 @@ Locations:
 
 A diagnostic about one value points at that value: a list item at its index (`/scenarios/0/worlds/1`), a reference at the field holding it (`/scenarios/0/cast/2/character`), an unknown property at the property (`/characters/0/mystery`), and a location cycle at the `parent` of each location on it. For keys inside `set`, the pointer segment is the key as written (`/set/scene.present`).
 
-A duplicate ID is at the `id` of each one after the first (`/characters/1/id`), in this order: the bundle's characters, worlds and scenarios, then the session's characters and worlds; locations in world order, the bundle's before the session's. A scenario variable with a character's or world's ID is at the variable's `id`.
+A duplicate ID is at the `id` of each one after the first (`/characters/1/id`), in this order: the bundle's characters, worlds and scenarios, then the session's characters and worlds; locations in world order, the bundle's before the session's. A scenario variable with a character's or world's ID is at the variable's `id`, and a character or world a scenario names twice is at its later `character` or list item.
 
 ### 3.5 `knows`: who knows a part (Format 7.4, 11.5)
 
