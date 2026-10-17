@@ -107,7 +107,7 @@ MUST, MUST NOT, SHOULD, SHOULD NOT and MAY are used as described in RFC 2119 and
 
 ### 2.2 Values
 
-- Documents are I-JSON (RFC 7493): UTF-8 without a byte order mark, no duplicate member names, no surrogate or noncharacter code points, written or escaped, numbers that fit an IEEE 754 double, and integer fields within ±(2^53 − 1). Writers write integers without a fraction or exponent, but a number with a zero fraction, such as `8.0`, is still an integer.
+- Documents are I-JSON (RFC 7493): UTF-8 without a byte order mark, no duplicate member names, no surrogate or noncharacter code points, written or escaped, and numbers within the range of an IEEE 754 double. Unlike RFC 7493, a number may have more precision than a double holds, and is rounded to the nearest double. Integer fields are within ±(2^53 − 1), which the schemas require, so a value outside it is `SCHEMA` (section 15.3). Writers write integers without a fraction or exponent, but a number with a zero fraction, such as `8.0`, is still an integer.
 - **Empty values.** `null` never appears in a field this spec defines or in a state value, and `""`, `[]` and `{}` never appear in an optional field other than `ext`: an optional field without a value is left out. State values and `scenario.worlds` are the exception: there `""`, `[]` and `{}` are values. Names, variable descriptions and the strings in lists such as `tags`, `keys` and `values` are never empty, and an example exchange has at least one line.
 - **Defaults are normative.** Every default stated in this document or its TypeScript comments applies when a field is absent. Every boolean defaults to `false`, and one written `false` is the same as an absent one.
 
@@ -630,7 +630,7 @@ Fields that hold a file (`cover`, `avatar`, location `image` and image parts) ho
 ### 12.3 Packages
 
 - `bundle.json` is at the root. Sessions are stored under `sessions/` with the `.troupe-session.jsonl` extension. Every path the bundle or sessions reference is a file of the package. A package may also hold files nothing in this document references, such as files an extension uses (section 13), and a writer that rewrites a package keeps them.
-- Every file under `sessions/` with that extension is a session of the package. The package's files have paths matching `^[A-Za-z0-9_-][A-Za-z0-9._-]*(/[A-Za-z0-9_-][A-Za-z0-9._-]*)*$`, with segments of at most 255 bytes. Every other entry, such as a directory (a name ending in `/`) or a file an archiver adds, isn't part of the package.
+- Every file anywhere under `sessions/`, subfolders included, with that extension is a session of the package. The package's files have paths matching `^[A-Za-z0-9_-][A-Za-z0-9._-]*(/[A-Za-z0-9_-][A-Za-z0-9._-]*)*$`, with segments of at most 255 bytes. Every other entry, such as a directory (a name ending in `/`) or a file an archiver adds, isn't part of the package.
 - No ZIP entry has an absolute path, a `..` segment or a backslash, is a symbolic link, is encrypted, uses a compression method other than store and deflate, or has the name of another entry compared ASCII case-insensitively.
 
 ---
@@ -667,7 +667,7 @@ Files hold data and sandboxed expressions (section 10), never scripts, and their
 | A text value: a part's `text`, an entry's `text` or a description, in UTF-8 | 1 MiB |
 | Session entries on a path, the latest per ID | 10,000 |
 | One CEL expression | 4 KiB |
-| Characters in a session's cast | 256 |
+| Members of a scenario's `cast`, and separately the characters a session adds | 256 |
 | A string state value, in UTF-8 | 4 KiB |
 | Distinct members of a set value, or keys of a `"*"` map after a change | 256 |
 
@@ -692,11 +692,11 @@ From 1.0, a reader also accepts the conforming files of an older minor version o
 
 ### 15.3 Checks
 
-Each check has a code, for validators to report it with. Every check runs on the document as written, so one value can fail several.
+Each check has a code, for validators to report it with. Every check runs on the document as written, so one value can fail several. A document that fails `PARSE` or `UNSUPPORTED_VERSION` is reported with those codes only.
 
 | Code | Check |
 | --- | --- |
-| `PARSE` | The input is I-JSON (section 2.2), or session lines of I-JSON (section 11), a Troupe document of the `kind` its form holds (section 12.1), within the limits table of section 14 other than the value limits, with package paths only in a package (section 12.2), and a package follows section 12.3 |
+| `PARSE` | The input is I-JSON (section 2.2), or session lines of I-JSON (section 11), a Troupe document with the `kind` its form holds, not a missing or other one (section 12.1), within the limits table of section 14 other than the value limits, with package paths only in a package (section 12.2), and a package follows section 12.3 |
 | `UNSUPPORTED_VERSION` | `troupe`, when present, is this document's version (section 13); a missing `troupe`, or one that isn't `major.minor`, is only `SCHEMA` |
 | `SCHEMA` | The document validates against its schema, with `format` asserted, apart from unknown properties (section 13) |
 | `UNKNOWN_FIELD` | Every property is one this document defines (section 13) |
@@ -963,6 +963,9 @@ Two thieves hired by the player to steal a duke's storm lantern before the twelf
 | Sessions as an exchange snapshot | Prescribing storage, or an append-only log of edits | Apps keep their own databases; chats still move intact between session readers. |
 | Writers leave out empty optional fields | Allowing `""` and `[]` anywhere | Two writers of the same story produce the same fields. |
 | Limits on files, on CEL and on values | Only a file size cap, or each app's own | Every conforming file is bounded in size and in the work it asks for. |
+| Limits checked on each document alone, such as a scenario's cast and the characters a session adds | Limits on what a session and its bundle make together | `PARSE` is judged while reading one file, and a session file can be read without its bundle. |
+| Numbers within a double's range, rounded to the nearest; integer fields bounded by the schemas | RFC 7493's limit on precision; integer ranges checked while reading | Few JSON parsers can tell whether a number such as `0.1` has more precision than a double, and only the schemas know which fields are integers. |
+| A document that fails `PARSE` or `UNSUPPORTED_VERSION` reported with those codes only | Running every check on it | Other checks judge it against this version's rules, which mean nothing for a file that can't be read or is of another version. |
 | Regex keys written `/pattern/flags`, in forms ECMAScript and RE2 share | RE2 syntax, or whatever an engine accepts | Most SillyTavern regex keys work as written, every app can compile them, and a key is valid or `REGEX_ERROR` alike everywhere. |
 
 ---
