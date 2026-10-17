@@ -1,5 +1,6 @@
 {
-  "description": "A regex key that isn't valid is REGEX_ERROR (Format 15, 16.3)",
+  "description": "A regex key that isn't valid is REGEX_ERROR (Format 14, 15.3): one that doesn't compile, one nesting groups more than 100 deep, and one longer than 1000 bytes written out in full",
+  "note": "Written out, (a{10}){n} is (aaaaaaaaaa) n times, 12n bytes: 996 for n = 83, 1008 for 84 and 2400 for 200. a{n,} is n copies of a then a*, n + 2 bytes: 1000 for n = 998, 1001 for 999. The slashes around a key add 2 bytes, which changes none of these results.",
   "bundle": {
     "kind": "bundle",
     "scenarios": [
@@ -11,14 +12,14 @@
             "keys": [
               "/[/"
             ],
-            "text": "bad"
+            "text": "doesn't compile"
           },
           {
             "id": "big",
             "keys": [
               "/(a{10}){200}/"
             ],
-            "text": "too many repetitions"
+            "text": "2400 bytes written out"
           },
           {
             "id": "mixed",
@@ -27,6 +28,48 @@
               "lamp"
             ],
             "text": "one good key"
+          },
+          {
+            "id": "under",
+            "keys": [
+              "/(a{10}){83}/"
+            ],
+            "text": "996 bytes written out"
+          },
+          {
+            "id": "over",
+            "keys": [
+              "/(a{10}){84}/"
+            ],
+            "text": "1008 bytes written out"
+          },
+          {
+            "id": "open_under",
+            "keys": [
+              "/a{998,}/"
+            ],
+            "text": "1000 bytes written out"
+          },
+          {
+            "id": "open_over",
+            "keys": [
+              "/a{999,}/"
+            ],
+            "text": "1001 bytes written out"
+          },
+          {
+            "id": "deep",
+            "keys": [
+              "/((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((a))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))/"
+            ],
+            "text": "groups nested 100 deep"
+          },
+          {
+            "id": "deeper",
+            "keys": [
+              "/(((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((a)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))/"
+            ],
+            "text": "groups nested 101 deep"
           }
         ]
       }
@@ -51,6 +94,18 @@
           {
             "code": "REGEX_ERROR",
             "at": "/scenarios/0/entries/2/keys/0"
+          },
+          {
+            "code": "REGEX_ERROR",
+            "at": "/scenarios/0/entries/4/keys/0"
+          },
+          {
+            "code": "REGEX_ERROR",
+            "at": "/scenarios/0/entries/6/keys/0"
+          },
+          {
+            "code": "REGEX_ERROR",
+            "at": "/scenarios/0/entries/8/keys/0"
           }
         ]
       }

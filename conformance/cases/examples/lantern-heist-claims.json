@@ -1,7 +1,7 @@
 {
-  "description": "Format Appendix B.2 and B.3, beyond the claims of the lantern-heist case: trust is per character; {{user}} in the opening",
-  "bundleFile": "../../../examples/lantern-heist.troupe.json",
-  "sessionFile": "../../../examples/lantern-heist.troupe-session.jsonl",
+  "description": "Format Appendix B.2 and B.3, beyond the claims of the lantern-heist case: trust is per cast member, the player's mara included; {{user}} and {{char}} in the root made from the opening; knowledge of Kai's private thought (Format 7.4, 9, 11.5)",
+  "bundleFile": "../../../examples/lantern-heist/bundle.json",
+  "sessionFile": "../../../examples/lantern-heist/sessions/heist.troupe-session.jsonl",
   "tests": [
     {
       "type": "check",
@@ -12,24 +12,43 @@
     },
     {
       "type": "state",
-      "name": "trust is per character, not for the player's mara",
+      "name": "trust is of the cast",
       "at": "4",
-      "absent": [
-        "trust.mara"
-      ],
       "expect": {
-        "trust.elena": 0.7,
-        "trust.kai": 0.5
+        "state.trust.mara": 50,
+        "state.trust.elena": 70,
+        "state.trust.kai": 50
       }
     },
     {
       "type": "macro",
-      "name": "{{user}} in the opening's part is the first player's character, and {{char}} the speaker",
+      "name": "{{user}} in the opening's part is the first player's character",
       "part": {
         "message": "1",
         "index": 2
       },
       "expect": "Or we go now, while they're drunk. *He grins at Mara.* Your call, boss."
+    },
+    {
+      "type": "knows",
+      "name": "Kai's thought is his alone",
+      "message": "4",
+      "part": 2,
+      "expect": [
+        "kai"
+      ]
+    },
+    {
+      "type": "knows",
+      "name": "the seventh bell: everyone present, and the narrator",
+      "message": "4",
+      "part": 0,
+      "expect": [
+        "elena",
+        "kai",
+        "mara",
+        "narrator"
+      ]
     }
   ]
 }

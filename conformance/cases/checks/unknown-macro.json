@@ -1,10 +1,13 @@
 {
-  "description": "Text between {{ and }} that is no macro, and a macro naming an undeclared variable, are UNKNOWN_MACRO (Format 10, 16.3); a pick needs at least two options, none empty",
+  "description": "In text where macros resolve, text between {{ and }} that is no macro, such as {{@char}}, and a macro naming an undeclared variable are UNKNOWN_MACRO (Format 9, 15.3); a pick needs at least two options, none empty. Names, taglines and titles are used as written, so they hold no UNKNOWN_MACRO",
   "bundle": {
     "kind": "bundle",
+    "tagline": "Into the {{dark}}.",
     "scenarios": [
       {
         "id": "s",
+        "name": "The {{dark}}",
+        "tagline": "{{nothing}} waits.",
         "entries": [
           {
             "id": "e",
@@ -20,7 +23,12 @@
           },
           {
             "id": "fine",
+            "title": "{{not_a_macro}}",
             "text": "{{pick::a::b}} and {{pick::x::x}}."
+          },
+          {
+            "id": "at",
+            "text": "{{@char}} waves."
           }
         ]
       }
@@ -45,6 +53,10 @@
           {
             "code": "UNKNOWN_MACRO",
             "at": "/scenarios/0/entries/2/text"
+          },
+          {
+            "code": "UNKNOWN_MACRO",
+            "at": "/scenarios/0/entries/4/text"
           }
         ]
       }

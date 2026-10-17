@@ -1,5 +1,5 @@
 {
-  "description": "Characters who join during the session (Format 8.3, 8.6, 12.2): in the cast after the scenario cast, not present until a change adds them",
+  "description": "Characters who join during the session (Format 8.3, 8.6, 11.2): in the cast after the scenario cast, keys of cast maps, not present until a change adds them",
   "bundle": {
     "kind": "bundle",
     "characters": [
@@ -21,9 +21,9 @@
         "variables": [
           {
             "id": "trust",
-            "type": "number",
-            "of": "characters",
-            "initial": 0.5,
+            "type": "int",
+            "of": "cast",
+            "initial": 50,
             "description": "d"
           }
         ]
@@ -104,12 +104,13 @@
           "p",
           "a"
         ],
-        "trust.j": 0.5,
-        "j.jo_mood": "wary"
+        "state.trust.j": 50,
+        "state.j.jo_mood": "wary"
       }
     },
     {
       "type": "state",
+      "name": "present after a change adds Jo, in cast order",
       "at": "2",
       "expect": {
         "scene.present": [

@@ -1,5 +1,5 @@
 {
-  "description": "Session worlds (Format 6.4, 12): a world added to the session is in use with the scenario's worlds; its locations are valid scene locations",
+  "description": "Session worlds (Format 6.4, 11): a world added to the session is in use with the scenario's worlds; its locations are valid scene locations",
   "bundle": {
     "kind": "bundle",
     "worlds": [
@@ -74,9 +74,10 @@
         ],
         "changes": [
           {
-            "by": "rules",
+            "by": "player",
             "set": {
-              "scene.location": "crypt"
+              "scene.location": "crypt",
+              "state.pack.n": 2
             }
           }
         ]
@@ -95,9 +96,9 @@
       "at": "1",
       "expect": {
         "scene.location": "crypt",
-        "pack.n": 0,
-        "w.k": 0,
-        "g": 0
+        "state.pack.n": 2,
+        "state.w.k": 0,
+        "state.g": 0
       }
     }
   ]

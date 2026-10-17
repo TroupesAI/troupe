@@ -1,5 +1,5 @@
 {
-  "description": "Macro parsing (Format 10): {{char}}, {{user}}, {{@id}}, comments, escapes, picks, unknown forms left as written and rescanned from the next character",
+  "description": "Macro parsing (Format 9): {{char}}, {{user}}, comments, escapes, picks; unknown forms, such as {{@b}}, are left as written and rescanned from the next character",
   "bundle": {
     "kind": "bundle",
     "characters": [
@@ -63,7 +63,8 @@
     {
       "type": "macro",
       "text": "{{@b}} and {{@zed}}",
-      "expect": "Bea and {{@zed}}"
+      "name": "{{@…}} is no macro",
+      "expect": "{{@b}} and {{@zed}}"
     },
     {
       "type": "macro",
@@ -101,7 +102,7 @@
     },
     {
       "type": "macro",
-      "name": "state paths are case-sensitive IDs",
+      "name": "macro names are case-sensitive",
       "text": "{{Char}} {{@A}}",
       "char": "a",
       "expect": "{{Char}} {{@A}}"

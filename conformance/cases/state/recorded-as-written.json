@@ -1,5 +1,5 @@
 {
-  "description": "Recorded changes apply as written (Format 8.1, 8.6): by, maxStep and oneWay aren't checked, so a step beyond maxStep, a oneWay variable moving back, and a change by someone by doesn't list all apply; values are then normalized: clamped, rounded and deduplicated",
+  "description": "Recorded changes apply as written (Format 8.1, 8.6): by, maxStep and oneWay aren't checked, so a step beyond maxStep, a oneWay variable moving back, and a change by someone by doesn't list all apply; values are then normalized: clamped and deduplicated",
   "bundle": {
     "kind": "bundle",
     "characters": [
@@ -34,14 +34,14 @@
           },
           {
             "id": "trust",
-            "type": "number",
+            "type": "int",
             "min": 0,
-            "max": 1,
-            "initial": 0.5,
+            "max": 100,
+            "initial": 50,
             "by": [
               "model"
             ],
-            "maxStep": 0.2,
+            "maxStep": 20,
             "description": "d"
           },
           {
@@ -79,7 +79,7 @@
           {
             "id": "secret",
             "type": "int",
-            "description": "Nobody besides the rules is meant to change it."
+            "description": "Nobody is meant to change it."
           }
         ]
       }
@@ -126,8 +126,8 @@
           {
             "by": "model",
             "set": {
-              "bell": 20,
-              "trust": 0.91234567
+              "state.bell": 20,
+              "state.trust": 91
             }
           }
         ]
@@ -147,9 +147,9 @@
           {
             "by": "model",
             "set": {
-              "bell": 8,
-              "phase": "one",
-              "tags": [
+              "state.bell": 8,
+              "state.phase": "one",
+              "state.tags": [
                 "kind",
                 "brave",
                 "kind"
@@ -173,13 +173,13 @@
           {
             "by": "model",
             "set": {
-              "secret": 4
+              "state.secret": 4
             }
           },
           {
             "by": "player",
             "set": {
-              "bell": 9
+              "state.bell": 9
             }
           }
         ]
@@ -196,11 +196,11 @@
     },
     {
       "type": "state",
-      "name": "a step beyond maxStep applies: 20 is clamped to max, 0.91234567 rounded",
+      "name": "steps beyond maxStep apply: 20 is clamped to max, and trust moves by 41",
       "at": "2",
       "expect": {
-        "bell": 12,
-        "trust": 0.912346
+        "state.bell": 12,
+        "state.trust": 91
       }
     },
     {
@@ -208,9 +208,9 @@
       "name": "oneWay variables moving back apply; the set loses shy and its duplicate",
       "at": "3",
       "expect": {
-        "bell": 8,
-        "phase": "one",
-        "tags": [
+        "state.bell": 8,
+        "state.phase": "one",
+        "state.tags": [
           "brave",
           "kind"
         ]
@@ -221,8 +221,8 @@
       "name": "changes by someone by doesn't list apply",
       "at": "4",
       "expect": {
-        "secret": 4,
-        "bell": 9
+        "state.secret": 4,
+        "state.bell": 9
       }
     }
   ]

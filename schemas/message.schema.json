@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://docs.troupes.ai/schema/0.12/message.schema.json",
+  "$id": "https://docs.troupes.ai/schema/0.13/message.schema.json",
   "title": "Troupe message",
   "description": "Every line after the first in a Troupe session file: a message.",
   "type": "object",
@@ -47,7 +47,7 @@
       "minItems": 1
     },
     "activated": {
-      "description": "The entries that reached the model for this message, as distinct references (Format 12.4).",
+      "description": "The entries that reached the model for this message, as distinct references (Format 11.4).",
       "type": "array",
       "uniqueItems": true,
       "items": {
@@ -61,31 +61,6 @@
         "$ref": "bundle.schema.json#/$defs/entry"
       },
       "minItems": 1
-    },
-    "summary": {
-      "type": "object",
-      "required": [
-        "text",
-        "from"
-      ],
-      "additionalProperties": false,
-      "properties": {
-        "text": {
-          "type": "string"
-        },
-        "from": {
-          "$ref": "bundle.schema.json#/$defs/opaqueId"
-        },
-        "knownBy": {
-          "$ref": "bundle.schema.json#/$defs/knownBy"
-        },
-        "ext": {
-          "$ref": "bundle.schema.json#/$defs/ext"
-        }
-      }
-    },
-    "pinned": {
-      "type": "boolean"
     },
     "hidden": {
       "type": "boolean"
@@ -115,7 +90,27 @@
       }
     },
     {
-      "description": "A records-only message carries changes, and on a root an opening and entries, and no content.",
+      "description": "A system message after the root is records-only: it has no content.",
+      "if": {
+        "required": [
+          "parent"
+        ],
+        "properties": {
+          "from": {
+            "const": "system"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "content": {
+            "maxItems": 0
+          }
+        }
+      }
+    },
+    {
+      "description": "A records-only message is a system message without activated or char; after the root it carries changes and no entries.",
       "if": {
         "properties": {
           "content": {
@@ -124,19 +119,12 @@
         }
       },
       "then": {
-        "required": [
-          "changes"
-        ],
         "properties": {
           "from": {
             "const": "system"
           },
-          "summary": false,
           "activated": false,
-          "char": false,
-          "pinned": {
-            "const": false
-          }
+          "char": false
         },
         "if": {
           "required": [
@@ -144,6 +132,9 @@
           ]
         },
         "then": {
+          "required": [
+            "changes"
+          ],
           "properties": {
             "entries": false
           }
@@ -237,7 +228,7 @@
       "properties": {
         "by": {
           "enum": [
-            "rules",
+            "opening",
             "player",
             "model"
           ]
@@ -245,37 +236,8 @@
         "set": {
           "$ref": "bundle.schema.json#/$defs/stateValues"
         },
-        "event": {
-          "$ref": "bundle.schema.json#/$defs/eventName"
-        },
-        "outcome": {
-          "type": "integer",
-          "minimum": 0
-        },
         "ext": {
           "$ref": "bundle.schema.json#/$defs/ext"
-        }
-      },
-      "dependentRequired": {
-        "outcome": [
-          "event"
-        ]
-      },
-      "if": {
-        "required": [
-          "by"
-        ],
-        "properties": {
-          "by": {
-            "not": {
-              "const": "rules"
-            }
-          }
-        }
-      },
-      "then": {
-        "properties": {
-          "event": false
         }
       }
     }

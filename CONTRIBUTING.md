@@ -2,7 +2,7 @@
 
 ## Where things belong
 
-- **[Troupe Format](spec/format.md)**: what a file contains, what each field means and when a file is valid. It is a schema: it never says how an app plays files, such as how it builds prompts, chooses entries, runs events, calls models or shows things to people.
+- **[Troupe Format](spec/format.md)**: what a file contains, what each field means and when a file is valid. It is a schema: it never says how an app plays files, such as how it builds prompts, chooses entries, decides when state changes, calls models or shows things to people.
 - **Guides** ([authoring](guides/authoring.md), [authoring brief](guides/authoring-brief.md), [Character Card V2/V3](guides/character-cards.md), [beginner's](guides/beginners.md)): patterns and mappings for people who write and convert files. They are informative and don't use RFC 2119 keywords.
 
 Libraries, apps and advice on playing files live in their own repositories. This one holds no implementation code; `scripts/` only checks the repository, and `site/` only renders it as the website at docs.troupes.ai.

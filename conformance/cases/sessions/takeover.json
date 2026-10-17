@@ -1,5 +1,5 @@
 {
-  "description": "A takeover (Format 8.3, 12.2): a person who takes over a cast member makes it a player, but an of: \"characters\" variable keeps its key, so recorded values stay valid",
+  "description": "A takeover (Format 8.3, 11.2): a cast character listed in players is played by a person, and stays a key of cast maps, so recorded values stay valid",
   "bundle": {
     "kind": "bundle",
     "characters": [
@@ -29,9 +29,9 @@
         "variables": [
           {
             "id": "trust",
-            "type": "number",
-            "of": "characters",
-            "initial": 0.5,
+            "type": "int",
+            "of": "cast",
+            "initial": 50,
             "by": [
               "model"
             ],
@@ -71,7 +71,7 @@
           {
             "by": "model",
             "set": {
-              "trust.b": 0.9
+              "state.trust.b": 90
             }
           }
         ]
@@ -90,8 +90,14 @@
       "name": "trust keeps b's key and its recorded value",
       "at": "1",
       "expect": {
-        "trust.a": 0.5,
-        "trust.b": 0.9
+        "state.trust.p": 50,
+        "state.trust.a": 50,
+        "state.trust.b": 90,
+        "scene.present": [
+          "p",
+          "a",
+          "b"
+        ]
       }
     },
     {

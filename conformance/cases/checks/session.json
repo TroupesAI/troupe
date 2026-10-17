@@ -1,5 +1,5 @@
 {
-  "description": "Reference checks on a session (Format 12, 16.3): openings on roots, the message forest, players, recorded values, events, activations and summaries",
+  "description": "Reference checks on a session (Format 11, 15.3): openings on roots, the message forest, players, recorded values and activations",
   "bundle": {
     "kind": "bundle",
     "characters": [
@@ -39,16 +39,6 @@
             "min": 0,
             "max": 10,
             "description": "d"
-          }
-        ],
-        "events": [
-          {
-            "id": "ev",
-            "when": "true",
-            "outcomes": [
-              {},
-              {}
-            ]
           }
         ]
       }
@@ -90,10 +80,10 @@
         "opening": "missing",
         "changes": [
           {
-            "by": "rules",
+            "by": "opening",
             "set": {
-              "hp": 2.5,
-              "mp": 3
+              "state.hp": 2.5,
+              "state.mp": 3
             }
           }
         ]
@@ -128,23 +118,12 @@
           {
             "by": "model",
             "set": {
-              "hp": "lots",
+              "state.hp": "lots",
               "scene.present": [
                 "a",
                 "zed"
               ]
             }
-          },
-          {
-            "by": "rules",
-            "event": "gone",
-            "set": {}
-          },
-          {
-            "by": "rules",
-            "event": "ev",
-            "outcome": 5,
-            "set": {}
           }
         ]
       },
@@ -162,11 +141,7 @@
             "id": "later",
             "text": "added here"
           }
-        ],
-        "summary": {
-          "text": "s",
-          "from": "2"
-        }
+        ]
       },
       {
         "id": "r2",
@@ -211,20 +186,16 @@
             "at": "header/head"
           },
           {
-            "code": "UNKNOWN_MESSAGE",
-            "at": "message:4/summary/from"
-          },
-          {
             "code": "INVALID_VALUE",
-            "at": "message:1/changes/0/set/hp"
+            "at": "message:1/changes/0/set/state.hp"
           },
           {
             "code": "UNKNOWN_VARIABLE",
-            "at": "message:1/changes/0/set/mp"
+            "at": "message:1/changes/0/set/state.mp"
           },
           {
             "code": "INVALID_VALUE",
-            "at": "message:3/changes/0/set/hp"
+            "at": "message:3/changes/0/set/state.hp"
           },
           {
             "code": "UNKNOWN_CHARACTER",
@@ -233,14 +204,6 @@
           {
             "code": "UNKNOWN_CHARACTER",
             "at": "message:3/content/0/speaker"
-          },
-          {
-            "code": "UNKNOWN_NAME",
-            "at": "message:3/changes/1/event"
-          },
-          {
-            "code": "INVALID_VALUE",
-            "at": "message:3/changes/2/outcome"
           },
           {
             "code": "UNKNOWN_NAME",

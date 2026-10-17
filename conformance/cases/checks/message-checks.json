@@ -1,5 +1,5 @@
 {
-  "description": "Checks on messages (Format 12.1, 16.3): a message's char and a part's knownBy name characters (UNKNOWN_CHARACTER); a parent names a message on an earlier line (UNKNOWN_MESSAGE); a firing records outcome exactly when its event has outcomes (INVALID_VALUE)",
+  "description": "Checks on messages (Format 11.1, 15.3): a message's char and a part's knownBy name characters (UNKNOWN_CHARACTER); a parent names a message on an earlier line (UNKNOWN_MESSAGE); a recorded value has its variable's type (INVALID_VALUE)",
   "bundle": {
     "kind": "bundle",
     "characters": [
@@ -18,18 +18,14 @@
             "character": "a"
           }
         ],
-        "events": [
+        "variables": [
           {
-            "id": "fate",
-            "when": "true",
-            "outcomes": [
-              {},
-              {}
-            ]
-          },
-          {
-            "id": "plain",
-            "when": "true"
+            "id": "n",
+            "type": "int",
+            "by": [
+              "player"
+            ],
+            "description": "d"
           }
         ]
       }
@@ -94,20 +90,15 @@
         "content": [
           {
             "speaker": "p",
-            "text": "Roll."
+            "text": "Count."
           }
         ],
         "changes": [
           {
-            "by": "rules",
-            "event": "fate",
-            "set": {}
-          },
-          {
-            "by": "rules",
-            "event": "plain",
-            "outcome": 0,
-            "set": {}
+            "by": "player",
+            "set": {
+              "state.n": "x"
+            }
           }
         ]
       }
@@ -137,7 +128,7 @@
           },
           {
             "code": "INVALID_VALUE",
-            "at": "message:4/changes/1/outcome"
+            "at": "message:4/changes/0/set/state.n"
           }
         ]
       }

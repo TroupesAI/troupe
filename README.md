@@ -1,8 +1,8 @@
 # Troupe
 
-An open file format for AI roleplay: characters, the worlds they live in, the scenarios that bring them together, the mechanics that drive a story, and sessions: the chats people play, with every outcome recorded.
+An open file format for AI roleplay: characters, the worlds they live in, the scenarios that bring them together, the state a story tracks, and sessions: the chats people play, with every change recorded.
 
-**Status:** v0.12 draft. Breaking changes are allowed until 1.0, which is tagged once none is pending and the conformance suite covers the spec.
+**Status:** v0.13 draft. Breaking changes are allowed until 1.0, which is tagged once none is pending and the conformance suite covers the spec.
 
 ## A first look
 
@@ -10,7 +10,7 @@ A complete Troupe file: one character, and a scenario that starts a chat with he
 
 ```json
 {
-  "troupe": "0.12",
+  "troupe": "0.13",
   "kind": "bundle",
   "characters": [
     { "id": "elena", "name": "Elena Voss", "description": "A meticulous thief and mapmaker. Calm, exacting, dry humor." }
@@ -26,11 +26,11 @@ A complete Troupe file: one character, and a scenario that starts a chat with he
 }
 ```
 
-The [beginner's guide](guides/beginners.md) grows this card into a full story, with lore, secrets, state and events.
+The [beginner's guide](guides/beginners.md) grows this card into a full story, with lore, secrets and state.
 
 ## Specification
 
-- [Troupe Format](spec/format.md): the files and what every field means: bundles, characters, worlds, scenarios, entries, variables, events and sessions.
+- [Troupe Format](spec/format.md): the files and what every field means: bundles, characters, worlds, scenarios, entries, variables and sessions.
 - [Schemas](schemas/): JSON Schemas, normative for structure (Format Appendix A).
 - [Conformance suite](conformance/): language-neutral test cases and the [protocol](conformance/README.md) a test runner follows.
 - [Examples](examples/): the spec's worked examples as files.

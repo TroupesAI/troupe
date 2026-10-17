@@ -1,5 +1,5 @@
 {
-  "description": "Validators assert format, so a malformed timestamp is SCHEMA (Format 16.3); an unknown message field is UNKNOWN_FIELD; named bounds must name non-keyed numeric variables of the same owner (Format 8.1); a timestamp with an offset instead of Z is SCHEMA (Format 2.5)",
+  "description": "Validators assert format, so a malformed timestamp is SCHEMA (Format 15.3); a timestamp has an uppercase T, and an uppercase Z or a numeric offset (Format 2.5); an unknown message field is UNKNOWN_FIELD; min and max are integers, so one naming a variable is SCHEMA (Format 8.1)",
   "bundle": {
     "kind": "bundle",
     "scenarios": [
@@ -23,13 +23,13 @@
             "id": "x",
             "type": "int",
             "max": "rep",
-            "description": "a keyed bound"
+            "description": "a bound naming a variable"
           },
           {
             "id": "y",
             "type": "int",
             "min": "name",
-            "description": "a string bound"
+            "description": "a bound naming a variable"
           }
         ]
       }
@@ -70,8 +70,7 @@
       "expect": {
         "codes": [
           "SCHEMA",
-          "UNKNOWN_FIELD",
-          "UNKNOWN_VARIABLE"
+          "UNKNOWN_FIELD"
         ],
         "includes": [
           {
@@ -83,11 +82,11 @@
             "at": "message:1/mood"
           },
           {
-            "code": "UNKNOWN_VARIABLE",
+            "code": "SCHEMA",
             "at": "/scenarios/0/variables/2/max"
           },
           {
-            "code": "UNKNOWN_VARIABLE",
+            "code": "SCHEMA",
             "at": "/scenarios/0/variables/3/min"
           }
         ]
@@ -97,7 +96,7 @@
       "type": "parse",
       "name": "a timestamp in UTC",
       "kind": "session",
-      "text": "{\"troupe\":\"0.12\",\"kind\":\"session\",\"scenario\":\"s\"}\n{\"id\":\"1\",\"from\":\"player\",\"at\":\"2026-10-11T09:00:00Z\",\"content\":[{\"text\":\"Hi.\"}]}\n",
+      "text": "{\"troupe\":\"0.13\",\"kind\":\"session\",\"scenario\":\"s\"}\n{\"id\":\"1\",\"from\":\"player\",\"at\":\"2026-10-11T09:00:00Z\",\"content\":[{\"text\":\"Hi.\"}]}\n",
       "expect": {
         "codes": []
       }
@@ -106,7 +105,27 @@
       "type": "parse",
       "name": "a timestamp with an offset",
       "kind": "session",
-      "text": "{\"troupe\":\"0.12\",\"kind\":\"session\",\"scenario\":\"s\"}\n{\"id\":\"1\",\"from\":\"player\",\"at\":\"2026-10-11T12:00:00+03:00\",\"content\":[{\"text\":\"Hi.\"}]}\n",
+      "text": "{\"troupe\":\"0.13\",\"kind\":\"session\",\"scenario\":\"s\"}\n{\"id\":\"1\",\"from\":\"player\",\"at\":\"2026-10-11T12:00:00.250+03:00\",\"content\":[{\"text\":\"Hi.\"}]}\n",
+      "expect": {
+        "codes": []
+      }
+    },
+    {
+      "type": "parse",
+      "name": "a lowercase z",
+      "kind": "session",
+      "text": "{\"troupe\":\"0.13\",\"kind\":\"session\",\"scenario\":\"s\"}\n{\"id\":\"1\",\"from\":\"player\",\"at\":\"2026-10-11T09:00:00z\",\"content\":[{\"text\":\"Hi.\"}]}\n",
+      "expect": {
+        "codes": [
+          "SCHEMA"
+        ]
+      }
+    },
+    {
+      "type": "parse",
+      "name": "an offset without a colon",
+      "kind": "session",
+      "text": "{\"troupe\":\"0.13\",\"kind\":\"session\",\"scenario\":\"s\"}\n{\"id\":\"1\",\"from\":\"player\",\"at\":\"2026-10-11T12:00:00+0300\",\"content\":[{\"text\":\"Hi.\"}]}\n",
       "expect": {
         "codes": [
           "SCHEMA"

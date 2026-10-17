@@ -6,7 +6,7 @@ One page for people and for LLMs asked to write Troupe files. Give it to a model
 
 ```json
 {
-  "troupe": "0.12",
+  "troupe": "0.13",
   "kind": "bundle",
   "characters": [{
     "id": "mira",
@@ -24,31 +24,26 @@ One page for people and for LLMs asked to write Troupe files. Give it to a model
 }
 ```
 
-**Shapes.** IDs start with a lowercase letter and use only `a–z`, `0–9` and `_`, at most 64 characters. Openings belong to scenarios and are `{"id", "content"}`, or `{"id", "title"}` for one the model writes; `content` and event `message` are arrays of parts, `[{"speaker": "mira", "text": "…"}]`, never strings. `examples` is an array of exchanges, each an array of `{"speaker": "char" | "user" | id, "text"}`. Text is Markdown, never HTML; put a character's actions in italics in the speaker's own part.
+**Shapes.** IDs start with a lowercase letter and use only `a–z`, `0–9` and `_`, at most 64 characters. Openings belong to scenarios and are `{"id", "content"}`, or `{"id", "title"}` for one the model writes; `content` is an array of parts, `[{"speaker": "mira", "text": "…"}]`, never a string. `examples` is an array of exchanges, each an array of `{"speaker": "char" | "user" | id, "text"}`. Text is Markdown, never HTML; put a character's actions in italics in the speaker's own part.
 
-**Macros.** `{{char}}` is the character the text belongs to and `{{user}}` the player's character. `{{state.bell}}` and `{{own.nerve}}` show values; `{{@kai}}` shows a name. Name other characters with `{{@kai}}` rather than writing "Kai", so renames and recasts keep working.
+**Macros.** `{{char}}` is the character the text belongs to and `{{user}}` the player's character. `{{state.bell}}` and `{{own.nerve}}` show values: a value with a label shows its label, and a character or location ID shows its name. `{{scene.location}}` and `{{scene.present}}` show where the scene is and who is there, and `{{pick::a::b}}` picks one option at random. Macros work in the bundle's text, never in what players and models write.
 
-**Entries:** `{"id", "text"}` is always on. Add `keys` to activate on words, `position: "system"` for rules, `knownBy: ["id"]` for secrets or one character's instructions, `when` for conditions, `priority` (0–100, 100 never left out).
+**Entries:** `{"id", "text"}` is always on. Add `keys` to activate on words, `position: "system"` for rules, or `depth: N` to place the text N messages from the end of the history instead; `knownBy: ["id"]` for secrets or one character's instructions, `when` for conditions, `chance` (a percent, 0–100), `priority` (0–100, 100 never left out). `sticky`, `cooldown` and `turn` count rounds: one player message and the replies to it.
 
-**Scenarios** hold `openings` and, for stories, `cast` (an object without `character` is a player seat; the default is one seat and every character), `premise`, `entries`, `variables` and `events`.
+**Scenarios** hold `openings` and, for stories, `cast` (an object without `character` is a player seat; the default is one seat and every character), `premise`, `entries` and `variables`. An opening's `set` gives starting values: `{"scene.location": "vault", "state.bell": 11}`.
 
-**Variables** need `id`, `type` (`bool`, `int`, `number`, `string`, `enum` with `values`, or `set`) and `description`. Give `by: ["model"]` for values the story should update, and `of: "characters"` for one value per character. Read a scenario's variable as `state.bell`, a character's own as `own.nerve`, and another character's as `state.kai.nerve`.
-
-**Events** need `id` and `when`. `set` takes plain values; `compute` takes CEL strings. Durations count rounds: one player message and the replies to it. An event `on: "player"` fires only after a player's message, so it can roll for what the player attempted and `direct` the next reply.
+**Variables** need `id`, `type` (`bool`, `int`, `string`, `enum` with `values`, or `set`) and `description`. Numbers are integers, so use a scale such as 0–100. Give `by: ["model"]` for values the story should update and `by: ["player"]` for choices the players make, and `of: "cast"` for one value per character. Read a scenario's variable as `state.bell`, a character's own as `own.nerve`, another character's as `state.kai.nerve`, and one key as `state.trust.kai`.
 
 **Traps:**
 
-1. `set` takes plain values: `"set": {"hp": 10}`. Expressions go in `compute`: `"compute": {"hp": "state.hp - 1"}`.
-2. Everyone knows a character's entries unless `knownBy` is set. Put secrets in `knownBy` entries.
-3. Inside CEL, strings use single quotes: `"when": "state.phase == 'escape'"`. Look up a computed key with brackets: `state.trust[char]`.
-4. Numbers in CEL arithmetic match the variable's type: `state.trust.kai - 0.1` for a `number`, `state.hp - 1` for an `int`.
-5. `chance` is 0–1, not a percentage. `weight` and `priority` are integers.
-6. A numeric `position` is a depth in history, not an order; write `4`, not `"4"`.
-7. Without `by`, only openings and events can change a variable, and players can change one with `ask`.
-8. An entry, a variable and an event of the same owner can't share an ID.
-9. `knownBy: ["narrator"]` is for the narrator alone; an explicit `knownBy` hides an entry from the narrator unless it lists `narrator`. Narrator-only clues belong to the scenario, because a character's entries only count while they are present.
-10. Characters, worlds and scenarios can't be called `char`, `user`, `narrator`, `session`, `state`, `scene`, `players` or `own`, and a variable can't be called `scene` or `own`; no ID can be a CEL word such as `var`, `loop`, `function` or `package`.
-11. Leave the player's character out unless the story defines it; then mark its cast member `player`.
-12. Don't write `null`. Leave fields out.
+1. Everyone knows a character's entries unless `knownBy` is set. Put secrets in `knownBy` entries.
+2. CEL uses `&&`, `||` and `!`, never `and`, `or` or `not`, and strings inside it use single quotes: `"when": "state.phase == 'escape' && !hit('guard')"`. Look up a computed key with brackets: `state.trust[char]`.
+3. Keys in `set` are written as they are read: `"state.bell"`, `"state.kai.nerve"`, never `"bell"` or `"own.nerve"`.
+4. A variable's value reaches the model only through text that shows it, such as an entry with `{{state.bell}}`.
+5. `speaker`, `knownBy`, cast `character` and `players` take character IDs, not names: `"speaker": "elena"`, not `"Elena Voss"`.
+6. `knownBy: ["narrator"]` is for the narrator alone; an explicit `knownBy` hides an entry from the narrator unless it lists `narrator`. Narrator-only clues belong to the scenario, because a character's entries only count while they are present.
+7. Characters, worlds and scenarios can't be called `char`, `user`, `narrator`, `session`, `state`, `scene`, `players` or `own`, a variable can't be called `scene` or `own`, and no variable key can be `char` or `user`; no ID can be a CEL word such as `var`, `loop`, `function` or `package`.
+8. Leave the player's character out unless the story defines it; then mark its cast member `player`.
+9. Don't write `null`, and don't write `""` or `[]` for a field without a value: leave it out.
 
-Validate the result against `bundle.schema.json` and fix every error before returning it.
+Validate the result against `bundle.schema.json` and fix every error before returning it. The schema doesn't check conditions or references, so check by hand that every `when` and macro names declared variables and that every ID named exists.

@@ -1,5 +1,5 @@
 {
-  "description": "Seats (Format 12.2): unlisted player cast members come after the listed players in cast order; scene.location takes a location of any bundle world, even one the scenario doesn't use (Format 8.5)",
+  "description": "Players and seats (Format 6.1, 8.3, 8.6, 11.2): each listed header character fills the next seat without a character, in the order players lists them; one left over gets a seat after the scenario cast; a listed cast character is played by a person; other header characters are joiners after the added seats; scene.location takes a location of any bundle world, even one the scenario doesn't use (Format 8.5)",
   "bundle": {
     "kind": "bundle",
     "worlds": [
@@ -53,12 +53,21 @@
             "character": "a",
             "player": true
           },
+          {},
           {
             "character": "b"
           },
           {
-            "character": "c",
-            "player": true
+            "character": "c"
+          }
+        ],
+        "variables": [
+          {
+            "id": "trust",
+            "type": "int",
+            "of": "cast",
+            "initial": 50,
+            "description": "d"
           }
         ]
       }
@@ -70,6 +79,21 @@
       "scenario": "s",
       "characters": [
         {
+          "id": "r",
+          "name": "Rae",
+          "description": "Rae."
+        },
+        {
+          "id": "j",
+          "name": "Jo",
+          "description": "A stranger."
+        },
+        {
+          "id": "q",
+          "name": "Quinn",
+          "description": "Quinn."
+        },
+        {
           "id": "p",
           "name": "Pat",
           "description": "Pat."
@@ -77,7 +101,10 @@
       ],
       "players": [
         "p",
-        "b"
+        "a",
+        "q",
+        "b",
+        "r"
       ]
     },
     "messages": [
@@ -87,7 +114,7 @@
         "content": [
           {
             "speaker": "p",
-            "text": "a"
+            "text": "Ready?"
           }
         ]
       },
@@ -115,9 +142,26 @@
   "tests": [
     {
       "type": "cel",
-      "name": "players: listed p and b, then the unlisted player members a and c in cast order",
-      "expr": "players == ['p', 'b', 'a', 'c']",
+      "name": "every character people control, as listed",
+      "expr": "players == ['p', 'a', 'q', 'b', 'r']",
       "expect": true
+    },
+    {
+      "type": "state",
+      "name": "p fills the first seat and q the second, in players order, not header order; r gets a seat after the scenario cast; the joiner j comes last and isn't present",
+      "expect": {
+        "scene.present": [
+          "p",
+          "a",
+          "q",
+          "b",
+          "c",
+          "r"
+        ],
+        "state.trust.p": 50,
+        "state.trust.r": 50,
+        "state.trust.j": 50
+      }
     },
     {
       "type": "state",

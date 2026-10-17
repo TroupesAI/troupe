@@ -1,5 +1,5 @@
 {
-  "description": "turn counts player messages on the path, inclusive; count() and ago() read an event's firings, ago() from its latest (Format 11.1, 12.1)",
+  "description": "turn counts player messages on the path, inclusive (Format 10.1, 11.1): an opening root is round 0, a system message adds none, and a hidden player message still counts (Format 11.4)",
   "bundle": {
     "kind": "bundle",
     "characters": [
@@ -22,16 +22,10 @@
           {
             "id": "n",
             "type": "int",
+            "by": [
+              "player"
+            ],
             "description": "d"
-          }
-        ],
-        "events": [
-          {
-            "id": "any",
-            "when": "true",
-            "compute": {
-              "n": "state.n + 1"
-            }
           }
         ],
         "openings": [
@@ -71,23 +65,6 @@
           {
             "text": "Begin."
           }
-        ],
-        "changes": [
-          {
-            "by": "rules",
-            "set": {
-              "scene.present": [
-                "p"
-              ]
-            }
-          },
-          {
-            "by": "rules",
-            "event": "any",
-            "set": {
-              "n": 1
-            }
-          }
         ]
       },
       {
@@ -96,16 +73,8 @@
         "from": "player",
         "content": [
           {
+            "speaker": "p",
             "text": "x"
-          }
-        ],
-        "changes": [
-          {
-            "by": "rules",
-            "event": "any",
-            "set": {
-              "n": 2
-            }
           }
         ]
       },
@@ -116,6 +85,7 @@
         "char": "a",
         "content": [
           {
+            "speaker": "a",
             "text": "y"
           }
         ]
@@ -128,7 +98,21 @@
         "changes": [
           {
             "by": "player",
-            "set": {}
+            "set": {
+              "state.n": 1
+            }
+          }
+        ]
+      },
+      {
+        "id": "5",
+        "parent": "4",
+        "from": "player",
+        "hidden": true,
+        "content": [
+          {
+            "speaker": "p",
+            "text": "z"
           }
         ]
       }
@@ -137,16 +121,36 @@
   "tests": [
     {
       "type": "cel",
-      "name": "an opening root is round 0, and the event fired there",
+      "name": "an opening root is round 0",
       "at": "r",
-      "expr": "turn == 0 && count('any') == 1 && ago('any') == 0",
+      "expr": "turn == 0",
       "expect": true
     },
     {
       "type": "cel",
-      "name": "turn: player messages on the path, inclusive; ago() from the latest firing",
+      "at": "2",
+      "expr": "turn == 1",
+      "expect": true
+    },
+    {
+      "type": "cel",
+      "name": "a model message has its parent's round",
+      "at": "3",
+      "expr": "turn == 1",
+      "expect": true
+    },
+    {
+      "type": "cel",
+      "name": "a records-only system message adds no round",
       "at": "4",
-      "expr": "turn == 1 && count('any') == 2 && ago('any') == 0",
+      "expr": "turn == 1 && state.n == 1",
+      "expect": true
+    },
+    {
+      "type": "cel",
+      "name": "a hidden player message counts",
+      "at": "5",
+      "expr": "turn == 2",
       "expect": true
     },
     {

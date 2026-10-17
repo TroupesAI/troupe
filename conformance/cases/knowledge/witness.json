@@ -1,5 +1,5 @@
 {
-  "description": "Who knows a message part (Format 7.4, 12.4, 12.5): its speaker and the characters present after its message's changes and, except on a root, before them; a part's knownBy replaces the witness rule with exactly the listed characters; the narrator knows a part unless its knownBy leaves the narrator out",
+  "description": "Who knows a message part (Format 7.4, 11.5): its speaker and the characters present after its message's changes and, except on a root, before them; a part's knownBy replaces the witness rule with exactly the listed characters; the narrator knows a part unless its knownBy leaves the narrator out",
   "bundle": {
     "kind": "bundle",
     "characters": [
@@ -37,6 +37,11 @@
         "openings": [
           {
             "id": "o",
+            "set": {
+              "scene.present": [
+                "a"
+              ]
+            },
             "content": [
               {
                 "text": "The hall is quiet."
@@ -69,7 +74,6 @@
     "messages": [
       {
         "id": "1",
-        "opening": "o",
         "from": "system",
         "content": [
           {
@@ -82,15 +86,16 @@
         ],
         "changes": [
           {
-            "by": "rules",
+            "by": "opening",
             "set": {
               "scene.present": [
-                "p",
-                "a"
+                "a",
+                "p"
               ]
             }
           }
-        ]
+        ],
+        "opening": "o"
       },
       {
         "id": "2",
@@ -159,18 +164,18 @@
         "content": [
           {
             "speaker": "b",
+            "text": "Psst. The key is under the mat.",
             "knownBy": [
               "p"
-            ],
-            "text": "Psst. The key is under the mat."
+            ]
           },
           {
             "speaker": "b",
+            "text": "*She doesn't trust Cy.*",
             "knownBy": [
               "b",
               "narrator"
-            ],
-            "text": "*She doesn't trust Cy.*"
+            ]
           },
           {
             "text": "*Bea taps the mat with her foot.*"
@@ -184,17 +189,17 @@
         "char": "b",
         "content": [
           {
+            "text": "The mat hides a trapdoor too.",
             "knownBy": [
               "narrator"
-            ],
-            "text": "The mat hides a trapdoor too."
+            ]
           },
           {
             "speaker": "b",
+            "text": "*She mouths a word to the wall.*",
             "knownBy": [
               "c"
-            ],
-            "text": "*She mouths a word to the wall.*"
+            ]
           }
         ]
       }
@@ -209,7 +214,7 @@
     },
     {
       "type": "knows",
-      "name": "a root's part: those present after its changes, not before, and the narrator",
+      "name": "a root's part: those present after its changes, not before, and the narrator; the root's change adds the player to the opening's scene.present",
       "message": "1",
       "part": 0,
       "expect": [

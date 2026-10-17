@@ -5,10 +5,10 @@
 //   - the spec version agrees across the spec, the README, schema URLs, examples, documents in Markdown and cases;
 //   - every conformance case is named <area>/<topic>.json, matches conformance/case.schema.json, and the files it names exist,
 //     and its check and parse tests expect SCHEMA exactly when the schemas reject their input;
-//   - cases with state, macro, cel, ended or knows tests have inputs that pass the schemas, unknown properties included, and a
+//   - cases with state, macro, cel or knows tests have inputs that pass the schemas, unknown properties included, and a
 //     check test that expects no codes, so a runner confirms the inputs conform;
 //   - relative Markdown links and #anchors resolve, and every "Format N.N" names a section.
-import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import Ajv2020 from "ajv/dist/2020.js";
 import addFormats from "ajv-formats";
@@ -52,15 +52,18 @@ const block = (heading: string, lang: string): string => {
 const examples: Record<string, string> = {
   "elena-card.troupe.json": block("### 1.4 A first example", "json"),
   "mira-card.troupe.json": block("### B.1 A card with lore", "json"),
-  "lantern-heist.troupe.json": block("### B.2 A story", "json"),
-  "lantern-heist.troupe-session.jsonl": block("### B.3 Session", "text"),
+  "lantern-heist/bundle.json": block("### B.2 A story", "json"),
+  "lantern-heist/sessions/heist.troupe-session.jsonl": block("### B.3 Session", "text"),
 };
 const writeExamples = process.argv.includes("--write-examples");
 for (const [name, text] of Object.entries(examples)) {
   const path = `examples/${name}`;
-  if (writeExamples) writeFileSync(join(root, path), text);
+  if (writeExamples) {
+    mkdirSync(dirname(join(root, path)), { recursive: true });
+    writeFileSync(join(root, path), text);
+  }
   else if (!existsSync(join(root, path)) || read(path) !== text) fail(`${path} differs from spec/format.md (bun run examples)`);
-  if (name.endsWith(".troupe.json")) validate("bundle.schema.json", JSON.parse(text), path);
+  if (name.endsWith(".json")) validate("bundle.schema.json", JSON.parse(text), path);
   else {
     const lines = text.trimEnd().split("\n").map((l) => JSON.parse(l));
     lines.forEach((line, i) => validate(i === 0 ? "session-header.schema.json" : "message.schema.json", line, `${path}:${i + 1}`));
@@ -70,7 +73,9 @@ for (const doc of ["README.md", "guides/beginners.md"]) {
   const card = read(doc).match(/```json\n([\s\S]*?\n)```/)?.[1];
   if (card !== examples["elena-card.troupe.json"]) fail(`${doc}: the first example differs from Format 1.4's`);
 }
-const extra = readdirSync(join(root, "examples")).filter((f) => !(f in examples));
+const extra = (readdirSync(join(root, "examples"), { recursive: true }) as string[]).filter(
+  (f) => /\.jsonl?$/.test(f) && !(f in examples),
+);
 if (extra.length) fail(`examples/ has files the spec doesn't define: ${extra.join(", ")}`);
 
 // Every complete bundle written as a json block in a Markdown document; sessions there too, for their version
@@ -82,7 +87,7 @@ for (const doc of markdown) {
     try {
       value = JSON.parse(m[1]);
     } catch (e) {
-      // fragments such as a single entry or event aren't JSON documents; a document that fails to parse is an error
+      // fragments such as a single entry or variable aren't JSON documents; a document that fails to parse is an error
       if (/"kind":\s*"(bundle|session)"/.test(m[1]))
         fail(`${doc}:${text.slice(0, m.index).split("\n").length}: ${(e as Error).message}`);
       continue;
@@ -127,13 +132,10 @@ const interfaces: Record<string, ReturnType<typeof schemaOf>> = {
   Opening: schemaOf("bundle.schema.json", "$defs", "opening"),
   Entry: schemaOf("bundle.schema.json", "$defs", "entry"),
   Variable: schemaOf("bundle.schema.json", "$defs", "variable"),
-  Event: schemaOf("bundle.schema.json", "$defs", "event"),
-  Outcome: schemaOf("bundle.schema.json", "$defs", "outcome"),
   Limits: schemaOf("bundle.schema.json", "$defs", "limits"),
   SessionHeader: schemaOf("session-header.schema.json"),
   Message: schemaOf("message.schema.json"),
   Change: schemaOf("message.schema.json", "$defs", "change"),
-  Summary: schemaOf("message.schema.json", "properties", "summary"),
 };
 for (const [name, schema] of Object.entries(interfaces)) {
   const body = format.match(new RegExp(`^interface ${name} \\{\n([\\s\\S]*?)\n\\}`, "m"))?.[1];
@@ -204,19 +206,19 @@ function schemaCodes(path: string, c: Record<string, any>) {
   const session = c.sessionFile ? lines(read(join(dirname(path), c.sessionFile))) : c.session && [withVersion(c.session.header), ...c.session.messages];
   const sessionFails = (lines: unknown[]) =>
     schemaFails("session-header.schema.json", lines[0]) || lines.slice(1).some((m) => schemaFails("message.schema.json", m));
-  // state, macro, cel, ended and knows tests need conforming inputs (conformance/README.md section 2)
-  if ((c.tests as Record<string, any>[]).some((t) => ["state", "macro", "cel", "ended", "knows"].includes(t.type))) {
+  // state, macro, cel and knows tests need conforming inputs (conformance/README.md section 2)
+  if ((c.tests as Record<string, any>[]).some((t) => ["state", "macro", "cel", "knows"].includes(t.type))) {
     const invalid = (name: string, value: unknown) => !validator(name)(value);
     if (c.sessionFile && session === undefined) fail(`${path}: ${c.sessionFile} has unreadable lines`);
     if (
       invalid("bundle.schema.json", bundle) ||
       (session && (invalid("session-header.schema.json", session[0]) || session.slice(1).some((m) => invalid("message.schema.json", m))))
     )
-      fail(`${path}: state, macro, cel, ended and knows tests need inputs that pass the schemas, unknown properties included`);
+      fail(`${path}: state, macro, cel and knows tests need inputs that pass the schemas, unknown properties included`);
     const checks = (c.tests as Record<string, any>[]).filter((t) => t.type === "check");
-    if (!checks.length) fail(`${path}: state, macro, cel, ended and knows tests need a check test that expects no codes`);
+    if (!checks.length) fail(`${path}: state, macro, cel and knows tests need a check test that expects no codes`);
     for (const t of checks)
-      if (t.expect.codes.length) fail(`${path}: a check expects ${t.expect.codes.join(", ")}, so its state, macro, cel, ended and knows tests have invalid inputs`);
+      if (t.expect.codes.length) fail(`${path}: a check expects ${t.expect.codes.join(", ")}, so its state, macro, cel and knows tests have invalid inputs`);
   }
   (c.tests as Record<string, any>[]).forEach((t, i) => {
     const where = `${path}: test ${i + 1}${t.name ? ` (${t.name})` : ""}`;

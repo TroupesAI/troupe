@@ -1,11 +1,11 @@
 {
-  "description": "Versions (Format 14, 16.3), against this 0.12 document: a file of any other version, minor or major, is UNSUPPORTED_VERSION",
+  "description": "Versions (Format 13, 15.3), against this 0.13 document: a file of any other version, minor or major, is UNSUPPORTED_VERSION",
   "tests": [
     {
       "type": "parse",
       "name": "a newer minor",
       "kind": "bundle",
-      "text": "{\"troupe\":\"0.13\",\"kind\":\"bundle\"}",
+      "text": "{\"troupe\":\"0.14\",\"kind\":\"bundle\"}",
       "expect": {
         "codes": [
           "UNSUPPORTED_VERSION"
@@ -16,7 +16,7 @@
       "type": "parse",
       "name": "an older minor",
       "kind": "bundle",
-      "text": "{\"troupe\":\"0.11\",\"kind\":\"bundle\"}",
+      "text": "{\"troupe\":\"0.12\",\"kind\":\"bundle\"}",
       "expect": {
         "codes": [
           "UNSUPPORTED_VERSION"
@@ -49,7 +49,7 @@
       "type": "parse",
       "name": "another major with the same minor",
       "kind": "bundle",
-      "text": "{\"troupe\":\"1.12\",\"kind\":\"bundle\"}",
+      "text": "{\"troupe\":\"1.13\",\"kind\":\"bundle\"}",
       "expect": {
         "codes": [
           "UNSUPPORTED_VERSION"
@@ -60,7 +60,7 @@
       "type": "parse",
       "name": "a session of another minor",
       "kind": "session",
-      "text": "{\"troupe\":\"0.13\",\"kind\":\"session\",\"scenario\":\"s\"}\n{\"id\":\"1\",\"from\":\"player\",\"content\":[{\"text\":\"Hi.\"}]}\n",
+      "text": "{\"troupe\":\"0.14\",\"kind\":\"session\",\"scenario\":\"s\"}\n{\"id\":\"1\",\"from\":\"player\",\"content\":[{\"text\":\"Hi.\"}]}\n",
       "expect": {
         "codes": [
           "UNSUPPORTED_VERSION"

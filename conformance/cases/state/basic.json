@@ -1,5 +1,5 @@
 {
-  "description": "State (Format 8.6): defaults, initial, changes in path order and array order, branches, the scene",
+  "description": "State (Format 8.1, 8.6): defaults, initial, changes in path order and array order, branches, the scene",
   "bundle": {
     "kind": "bundle",
     "characters": [
@@ -48,7 +48,7 @@
           },
           {
             "id": "debt",
-            "type": "number",
+            "type": "int",
             "max": -1,
             "description": "default 0 lowered to max"
           },
@@ -80,15 +80,6 @@
             ],
             "description": "d"
           }
-        ],
-        "events": [
-          {
-            "id": "go",
-            "when": "true",
-            "set": {
-              "phase": "heist"
-            }
-          }
         ]
       }
     ]
@@ -119,16 +110,16 @@
         ],
         "changes": [
           {
-            "by": "rules",
+            "by": "player",
             "set": {
-              "gold": 6,
+              "state.gold": 6,
               "scene.location": "hall"
             }
           },
           {
             "by": "player",
             "set": {
-              "gold": 7
+              "state.gold": 7
             }
           }
         ]
@@ -147,17 +138,16 @@
           {
             "by": "model",
             "set": {
-              "inv": [
+              "state.inv": [
                 "rope"
               ],
               "scene.location": "yard"
             }
           },
           {
-            "by": "rules",
-            "event": "go",
+            "by": "model",
             "set": {
-              "phase": "heist"
+              "state.phase": "heist"
             }
           }
         ]
@@ -175,13 +165,13 @@
           {
             "by": "player",
             "set": {
-              "gold": 8
+              "state.gold": 8
             }
           },
           {
             "by": "player",
             "set": {
-              "gold": 9
+              "state.gold": 9
             }
           }
         ]
@@ -214,13 +204,13 @@
       "type": "state",
       "name": "initial state, before any message",
       "expect": {
-        "flag": false,
-        "lvl": 3,
-        "debt": -1,
-        "name": "",
-        "phase": "setup",
-        "inv": [],
-        "gold": 5,
+        "state.flag": false,
+        "state.lvl": 3,
+        "state.debt": -1,
+        "state.name": "",
+        "state.phase": "setup",
+        "state.inv": [],
+        "state.gold": 5,
         "scene.location": "",
         "scene.present": [
           "p",
@@ -233,7 +223,7 @@
       "name": "a message's state includes its own changes",
       "at": "1",
       "expect": {
-        "gold": 7,
+        "state.gold": 7,
         "scene.location": "hall"
       }
     },
@@ -242,11 +232,11 @@
       "name": "changes apply in path order and array order",
       "at": "3",
       "expect": {
-        "gold": 9,
-        "inv": [
+        "state.gold": 9,
+        "state.inv": [
           "rope"
         ],
-        "phase": "heist",
+        "state.phase": "heist",
         "scene.location": "yard",
         "scene.present": [
           "p",
@@ -259,9 +249,9 @@
       "name": "branches never share state",
       "at": "2b",
       "expect": {
-        "gold": 7,
-        "inv": [],
-        "phase": "setup",
+        "state.gold": 7,
+        "state.inv": [],
+        "state.phase": "setup",
         "scene.location": "hall",
         "scene.present": [
           "a"
