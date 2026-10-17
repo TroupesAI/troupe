@@ -172,6 +172,12 @@
     },
     {
       "type": "cel",
+      "name": "the conditional operator",
+      "expr": "(state.bell > 100 ? 1 : 2) == 2",
+      "expect": true
+    },
+    {
+      "type": "cel",
       "name": "an absent key of a \"*\" map is absent",
       "expr": "!has(state.inv.torch) && !('torch' in state.inv)",
       "expect": true

@@ -1,5 +1,5 @@
 {
-  "description": "In text where macros resolve, text between {{ and }} that is no macro, such as {{original}}, and a macro naming an undeclared variable are UNKNOWN_MACRO (Format 9, 15.3); a pick needs at least two options, none empty. Names, taglines and titles are used as written, so they hold no UNKNOWN_MACRO",
+  "description": "In text where macros resolve, text between {{ and }} that is no macro, such as {{original}}, and a macro naming an undeclared variable are UNKNOWN_MACRO (Format 9, 15.3), in every text where macros resolve, such as a briefing, cast notes, a variable's description and an image's alt; a pick needs at least two options, none empty. Names, taglines and titles are used as written, so they hold no UNKNOWN_MACRO",
   "bundle": {
     "kind": "bundle",
     "tagline": "Into the {{dark}}.",
@@ -8,6 +8,12 @@
         "id": "s",
         "name": "The {{dark}}",
         "tagline": "{{nothing}} waits.",
+        "briefing": "Bring {{a_lamp}}.",
+        "cast": [
+          {
+            "notes": "{{nobody}} sits here."
+          }
+        ],
         "entries": [
           {
             "id": "e",
@@ -29,6 +35,25 @@
           {
             "id": "at",
             "text": "{{original}} waves."
+          }
+        ],
+        "openings": [
+          {
+            "id": "o",
+            "content": [
+              {
+                "type": "image",
+                "src": "https://example.com/door.webp",
+                "alt": "A door to {{nowhere}}."
+              }
+            ]
+          }
+        ],
+        "variables": [
+          {
+            "id": "v",
+            "type": "int",
+            "description": "How {{nowhere}} feels."
           }
         ]
       }
@@ -57,6 +82,22 @@
           {
             "code": "UNKNOWN_MACRO",
             "at": "/scenarios/0/entries/4/text"
+          },
+          {
+            "code": "UNKNOWN_MACRO",
+            "at": "/scenarios/0/briefing"
+          },
+          {
+            "code": "UNKNOWN_MACRO",
+            "at": "/scenarios/0/cast/0/notes"
+          },
+          {
+            "code": "UNKNOWN_MACRO",
+            "at": "/scenarios/0/openings/0/content/0/alt"
+          },
+          {
+            "code": "UNKNOWN_MACRO",
+            "at": "/scenarios/0/variables/0/description"
           }
         ]
       }

@@ -129,6 +129,17 @@
     },
     {
       "type": "parse",
+      "name": "a data: URI with an uppercase media type",
+      "kind": "bundle",
+      "text": "{\"troupe\":\"0.13\",\"kind\":\"bundle\",\"cover\":\"data:image/PNG;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGNgYGBgAAAABQABpfZFQAAAAABJRU5ErkJggg==\"}",
+      "expect": {
+        "codes": [
+          "SCHEMA"
+        ]
+      }
+    },
+    {
+      "type": "parse",
       "name": "a package path in a session file",
       "kind": "session",
       "text": "{\"troupe\":\"0.13\",\"kind\":\"session\",\"scenario\":\"s\"}\n{\"id\":\"1\",\"from\":\"player\",\"content\":[{\"type\":\"image\",\"src\":\"map.png\"}]}\n",

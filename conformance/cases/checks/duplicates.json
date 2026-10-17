@@ -23,6 +23,11 @@
             "id": "mood",
             "type": "int",
             "description": "d"
+          },
+          {
+            "id": "mood",
+            "type": "bool",
+            "description": "d"
           }
         ]
       }
@@ -126,6 +131,10 @@
           {
             "code": "DUPLICATE_ID",
             "at": "/scenarios/1/worlds/1"
+          },
+          {
+            "code": "DUPLICATE_ID",
+            "at": "/characters/1/variables/1/id"
           }
         ]
       }

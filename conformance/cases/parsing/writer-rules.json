@@ -278,6 +278,17 @@
           "SCHEMA"
         ]
       }
+    },
+    {
+      "type": "parse",
+      "name": "an ID that is a CEL reserved word",
+      "kind": "bundle",
+      "text": "{\"troupe\": \"0.13\", \"kind\": \"bundle\", \"scenarios\": [{\"id\": \"s\", \"entries\": [{\"id\": \"loop\", \"text\": \"x\"}]}]}",
+      "expect": {
+        "codes": [
+          "SCHEMA"
+        ]
+      }
     }
   ]
 }

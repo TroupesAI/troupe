@@ -1,0 +1,105 @@
+{
+  "description": "The single voice of narrator mode (Format 6.2, 7.2, 7.4, 11.4): it knows every part but hidden messages', so hit() scans for it a part whose knownBy leaves out everyone else; nobody knows a hidden message's parts",
+  "bundle": {
+    "kind": "bundle",
+    "characters": [
+      {
+        "id": "a",
+        "name": "Ann",
+        "description": "Ann."
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "s",
+        "mode": "narrator"
+      }
+    ]
+  },
+  "session": {
+    "header": {
+      "kind": "session",
+      "scenario": "s",
+      "characters": [
+        {
+          "id": "p",
+          "name": "Pat",
+          "description": "Pat."
+        }
+      ],
+      "players": [
+        "p"
+      ]
+    },
+    "messages": [
+      {
+        "id": "1",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "Hello."
+          }
+        ]
+      },
+      {
+        "id": "2",
+        "parent": "1",
+        "from": "model",
+        "content": [
+          {
+            "speaker": "a",
+            "knownBy": [
+              "a"
+            ],
+            "text": "Psst, the vault."
+          },
+          {
+            "text": "The lamp flickers."
+          }
+        ]
+      },
+      {
+        "id": "3",
+        "parent": "2",
+        "from": "player",
+        "hidden": true,
+        "content": [
+          {
+            "speaker": "p",
+            "text": "I pocket the key."
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    {
+      "type": "check",
+      "expect": {
+        "codes": []
+      }
+    },
+    {
+      "type": "cel",
+      "name": "the single voice knows a part only Ann knows",
+      "at": "2",
+      "expr": "hit('vault')",
+      "expect": true
+    },
+    {
+      "type": "cel",
+      "name": "but not a hidden message's",
+      "at": "3",
+      "expr": "hit('pocket')",
+      "expect": false
+    },
+    {
+      "type": "knows",
+      "name": "nobody knows a hidden message's part",
+      "message": "3",
+      "part": 0,
+      "expect": []
+    }
+  ]
+}

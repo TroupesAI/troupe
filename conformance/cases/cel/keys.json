@@ -191,6 +191,39 @@
             "text": "Anyone?"
           }
         ]
+      },
+      {
+        "id": "h1",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "The beacon is lit."
+          }
+        ]
+      },
+      {
+        "id": "h2",
+        "parent": "h1",
+        "from": "player",
+        "hidden": true,
+        "content": [
+          {
+            "speaker": "p",
+            "text": "I hide."
+          }
+        ]
+      },
+      {
+        "id": "h3",
+        "parent": "h2",
+        "from": "player",
+        "content": [
+          {
+            "speaker": "p",
+            "text": "Now what?"
+          }
+        ]
       }
     ]
   },
@@ -337,6 +370,14 @@
       "expr": "hit('lantern')",
       "expect": false,
       "scanDepth": 2
+    },
+    {
+      "type": "cel",
+      "name": "hidden messages don't count toward scanDepth",
+      "at": "h3",
+      "expr": "hit('beacon')",
+      "scanDepth": 2,
+      "expect": true
     },
     {
       "type": "cel",
