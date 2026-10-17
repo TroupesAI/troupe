@@ -88,7 +88,7 @@ The state is flattened to an object with these keys:
 | `self` | The expression's owner, a character, world or scenario ID or `session`, which also types `own`; the scenario by default. |
 | `scanDepth` | The `scanDepth` of the entry `hit()` scans for; 4 by default. |
 
-`players` is as section 2 says. `hit()` checks the scanned text (Format 7.2) of a message written as a child of `at`, for `char`, or for the narrator or the single voice when `char` is `""`; without `at` nothing is scanned, so it is false. If `expect` is a boolean, the expression must type-check and evaluate to it; a runtime error counts as `false`. If `expect` is `{"checkError": b}`, `b` says whether parsing or type-checking fails.
+`players` is as section 2 says. `hit()` checks the scanned text (Format 7.2) of a message written as a child of `at`, for `char`, or for the narrator when `char` is `""`; without `at` nothing is scanned, so it is false. If `expect` is a boolean, the expression must type-check and evaluate to it; a runtime error counts as `false`. If `expect` is `{"checkError": b}`, `b` says whether parsing or type-checking fails.
 
 ### 3.4 `check`: checks (Format 15.3)
 
@@ -117,7 +117,7 @@ A diagnostic about one value points at that value: a list item at its index (`/s
 | `message` | A message ID. |
 | `part` | The index of one of its parts. |
 
-`expect` is who knows it: the IDs of the characters who know it, and `narrator` when the narrator knows it, in code point order. The single voice knows everything but hidden messages' parts, and isn't listed.
+`expect` is who knows it: the IDs of the characters who know it, and `narrator` when the narrator knows it, in code point order.
 
 ### 3.6 `parse`: raw input (Format 2.2, 11, 12, 13, 14, 15.2)
 

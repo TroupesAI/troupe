@@ -67,7 +67,7 @@
     },
     {
       "type": "state",
-      "name": "the whole cast but the joiner is present at first, in cast order: p's seat, a, q's added seat; every cast character, the joiner too, is a key of a cast map",
+      "name": "the whole cast but the joiner is present at first, in cast order: p's seat, a, q's new seat; every cast character, the joiner too, is a key of a cast map",
       "expect": {
         "scene.present": [
           "p",

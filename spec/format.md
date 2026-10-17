@@ -277,10 +277,10 @@ interface Opening {
 
 ### 6.2 Modes
 
-- **`characters`**: each model-played character speaks in its own messages, written for that character alone. A narrator may also take turns describing the scene.
-- **`narrator`**: one voice, the **single voice**, writes the whole scene, including every character's lines.
+- **`characters`**: each model-played character speaks in its own messages, written for that character alone. The **narrator** may also take turns describing the scene.
+- **`narrator`**: the narrator writes the whole scene, including every character's lines.
 
-Every model message is **written for** one character, the narrator or the single voice; its `char` names the character (section 11).
+Every model message is **written for** one character or the narrator; its `char` names the character (section 11).
 
 ### 6.3 Openings
 
@@ -358,7 +358,7 @@ interface Entry {
 
 ### 7.4 Knowledge
 
-`knownBy` lists the characters who know an entry, and `narrator` in it names the narrator. Without it, everyone knows the entry; `["narrator"]` makes it narrator-only. The narrator knows everything except content whose `knownBy` leaves it out, and the single voice of `narrator` mode knows everything. Section 11.5 says who knows a message's parts.
+`knownBy` lists the characters who know an entry, and `narrator` in it names the narrator. Without it, everyone knows the entry; `["narrator"]` makes it narrator-only. In `characters` mode the narrator knows everything except content whose `knownBy` leaves it out; in `narrator` mode, where it plays every character, it knows everything. Section 11.5 says who knows a message's parts.
 
 ---
 
@@ -415,7 +415,7 @@ Session entries have no `own`: in their text `{{own.…}}` is left as written, a
 | `"*"` | any author ID other than `char` and `user`; keys appear when a change sets them, such as `"state.inventory.torch": 2` |
 
 - Read and change a key as `state.trust.kai`, or read it as `own.feelings.elena` in its owner's text and conditions. In CEL, look up a computed key with brackets: `state.trust[char]`, `own.feelings[user]`.
-- `initial` is one value for every key, or an object, with at least one member, of values by key with `*` as an optional default; keys outside the key set are ignored, and a key without a value or `*` takes the type's default. Every key of the key set, a joiner's included, holds its initial value until a change sets it.
+- `initial` is one value for every key, or an object of values by key, with at least one member. In the object, `*` gives the value of every key it doesn't list, and without `*` those keys take the type's default; members for keys the variable doesn't have are ignored. Every key, a joiner's included, holds its initial value until a change sets it.
 - Keys of `"*"` maps start absent, and `"*"` takes no `initial`. For bounds, `maxStep` and `oneWay`, an absent key counts as the type's default (section 8.1), and a key whose normalized value is the default is removed; in CEL an absent key is absent, so test it with `has()` or `in`. Their keys are in code point order.
 
 ### 8.4 The scene
@@ -459,9 +459,13 @@ Macros are the only substitution in text.
 | `{{pick::<a>::<b>…}}` | One of the options, chosen at random each time the text resolves, or once in a root (section 11.1) |
 | `{{// <comment>}}` | Nothing; a note for authors |
 
-- **`{{char}}`** in a message part is the part's `speaker`, else it is left as written; in a character's other text, that character; in a cast member's `notes`, its character or the character filling its seat; in other text, the character a message is written for, or the scenario's `narrator` for the narrator and the single voice. In a state path, a `char` segment after the variable's name means the same character.
-- **`{{user}}`** is the speaker of the first speaking part of the latest player message on the path that has a speaking part, else the first player's character, else it is left as written. In a state path, a `user` segment after the variable's name means the same character.
-- A `char` or `user` path segment that means no character names no key, so the macro renders as nothing.
+- **`{{char}}`** is:
+  - in a message part, the part's `speaker`; without one, it is left as written;
+  - in a character's other text, that character;
+  - in a cast member's `notes`, its character, or the character filling its seat;
+  - in other text, the character the message is written for, or the scenario's `narrator` when it is written for the narrator.
+- **`{{user}}`** is the speaker of the first speaking part in the latest player message on the path that has one, else the first player's character; with neither, it is left as written.
+- In a state path, a `char` or `user` segment after the variable's name means the same character as the macro. When that is no character, the segment names no key, so the macro renders as nothing.
 - **Rendering.** A value with a label renders as its label, a string that is a character ID as that character's name, else one that is a location ID as that location's name. Numbers render as decimal integers, booleans as `true` or `false`, lists as items joined by `, ` (an empty list as nothing), and maps as `Name: value` pairs joined by `, `, each item and value rendered as above, with keys that are character IDs shown by name and other keys with underscores as spaces. Map keys render in the order of `of`: cast order for `"cast"`, list order for a list, and code point order for `"*"`. `{{scene.location}}` always renders as its location's name. A substituted value is never scanned for macros again.
 - **Unresolved.** Text between `{{` and `}}` that is no macro, such as `{{unknown}}`, and a macro naming a variable that isn't declared, as section 10.2 counts declarations, are left as written (`UNKNOWN_MACRO`); an absent key of a declared variable, a path below a value that isn't a map, or a variable whose owner isn't in use renders as nothing.
 - **Which state.** Macros in a message resolve at that message: against its state, with `{{user}}` from the path to it. Elsewhere they resolve at the evaluation point (section 10.1). In a scenario's text and in roots made from its openings, `own` means `state`.
@@ -492,7 +496,7 @@ A condition is evaluated at its **evaluation point**: the parent of the message 
 | `hour`, `weekday` | The local hour (0–23) and ISO weekday (1–7) of the evaluation point's `at`, at its offset; −1 if it has no `at` |
 | `opening` | The path's opening ID, or `""` |
 | `scenario` | The scenario being played |
-| `char` | The character the message is written for (section 6.2); `""` for the narrator and the single voice |
+| `char` | The character the message is written for (section 6.2); `""` for the narrator |
 | `user` | The player's character `{{user}}` means, or `""` |
 | `self` | The owner of the expression: a character, world or scenario ID, or `session` |
 | `players` | The players' character IDs, in the order `players` lists them |
@@ -551,7 +555,7 @@ interface Message {
   parent?: string;                 // absent on roots
   opening?: string;                // on roots made from an opening, which are system messages
   from: "player" | "model" | "system";
-  char?: string;                   // model messages only: the character it was written for; absent for the narrator and the single voice
+  char?: string;                   // model messages only: the character it was written for; absent for the narrator
   content: Part[];                 // empty only for a records-only message (section 11.4)
   at?: string;                     // when the message was written
   changes?: Change[];
@@ -583,11 +587,11 @@ interface Change {
 
 ### 11.2 Players and cast
 
-- `players` lists, in order, every character people control:
-  - Each listed header character fills the next seat without a character; when none is left, it gets a new seat after the scenario cast.
-  - A listed cast character is played by a person instead of a model.
-- The session's **cast** is the scenario cast with seats filled, then the added seats, then the **joiners**: header `characters` that aren't players, who joined or appeared during the session.
-- Header characters and `players` hold for the whole session, on every branch; presence is recorded on each path (section 8.4).
+- `players` lists, in order, every character a person plays:
+  - a header character, which fills the next seat without a character, or a new seat after the scenario cast when none is left;
+  - a cast character, which a person plays instead of a model, such as one marked `player`.
+- The session's **cast** is the scenario cast with its seats filled, then the new seats, then the **joiners**: header `characters` that aren't players, who join or appear during the session. Seats no player fills are left out (section 6.1).
+- Header characters and `players` hold for the whole session, on every branch; who is present is recorded on each path (section 8.4).
 
 ### 11.3 Session entries
 
@@ -596,12 +600,12 @@ A message may add entries, owned by `session`. They apply from that message onwa
 ### 11.4 Other message fields
 
 - **`activated`** lists, on a model message, the entries that reached the model for it, those retrieved by `pull` included. An entry kept active by `sticky` isn't listed again.
-- **`hidden`** messages stay on the path, and their changes, activations and rounds count, but no character, the narrator or the single voice knows their parts, and keys don't match them.
+- **`hidden`** messages stay on the path, and their changes, activations and rounds count, but no character or the narrator knows their parts, and keys don't match them.
 - **Records-only messages.** A system message with empty `content` is a root made from an opening without `content`, or carries `changes`, such as a player's edits to state. It has no `activated` or `char`, and has `entries` only on a root.
 
 ### 11.5 Knowledge
 
-A message part is known by its speaker, by the characters present after its message's changes and, except on a root, by those present before them: the **witness rule**. A part's `knownBy` replaces this with exactly the listed characters. The narrator and the single voice know parts as they know entries (section 7.4). Knowledge is about characters; secrets between the people playing are out of scope.
+A message part is known by its speaker, by the characters present after its message's changes and, except on a root, by those present before them: the **witness rule**. A part's `knownBy` replaces this with exactly the listed characters. The narrator knows parts as it knows entries (section 7.4). Knowledge is about characters; secrets between the people playing are out of scope.
 
 ---
 
@@ -935,7 +939,7 @@ Two thieves hired by the player to steal a duke's storm lantern before the twelf
 | Declared, typed variables | Free-form state | Every app knows what values mean. |
 | Integers only | Decimals too | Integer arithmetic and display agree in every language; a scale such as 0–100 covers fractions. |
 | Absolute changes, recorded | JSON Patch, or recomputing | Replay needs no evaluation, from any channel. |
-| Keys written as state is read | A separate spelling for writes | One name for each value, in conditions, macros, openings and changes. |
+| Keys written as state is read | A separate spelling for writes | Each value has one full name, the same in conditions, macros, openings and changes. |
 | A schema of files, not of how apps play them | A second document fixing prompt assembly, entry selection, context strategy and model output | Sessions record every change, so a reader needs only the meaning of what is stored; how an app writes prompts and calls models is its own, and can improve without a new version. |
 | No message summaries or pinned messages | Fields for an app's context strategy | Apps fit long chats into a model's context their own way; a memory is a session entry. |
 | Valid files, not repair | Rules for reading broken files leniently | A file either conforms or fails a check with a code; what an app does with a broken file is its own. |

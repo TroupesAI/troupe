@@ -1,5 +1,5 @@
 {
-  "description": "The single voice of narrator mode (Format 6.2, 7.2, 7.4, 11.4): it knows every part but hidden messages', so hit() scans for it a part whose knownBy leaves out everyone else; nobody knows a hidden message's parts",
+  "description": "In narrator mode the narrator writes every character's lines and knows everything (Format 6.2, 7.2, 7.4, 11.4, 11.5): it knows a part whose knownBy leaves it out, so hit() scans that part for it, but nobody knows a hidden message's parts",
   "bundle": {
     "kind": "bundle",
     "characters": [
@@ -81,8 +81,18 @@
       }
     },
     {
+      "type": "knows",
+      "name": "the narrator knows a part whose knownBy leaves it out",
+      "message": "2",
+      "part": 0,
+      "expect": [
+        "a",
+        "narrator"
+      ]
+    },
+    {
       "type": "cel",
-      "name": "the single voice knows a part only Ann knows",
+      "name": "the narrator scans a part only Ann knows",
       "at": "2",
       "expr": "hit('vault')",
       "expect": true

@@ -112,7 +112,7 @@
     },
     {
       "type": "state",
-      "name": "the opening names only Ann; the root adds Pat's filled seat and Quinn's added seat, in cast order",
+      "name": "the opening names only Ann; the root adds Pat's filled seat and Quinn's new seat, in cast order",
       "at": "1",
       "expect": {
         "scene.present": [

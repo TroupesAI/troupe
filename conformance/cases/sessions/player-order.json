@@ -1,5 +1,5 @@
 {
-  "description": "Players and seats (Format 6.1, 8.3, 8.6, 11.2): each listed header character fills the next seat without a character, in the order players lists them; one left over gets a seat after the scenario cast; a listed cast character is played by a person; other header characters are joiners after the added seats; scene.location takes a location of any bundle world, even one the scenario doesn't use (Format 8.5)",
+  "description": "Players and seats (Format 6.1, 8.3, 8.6, 11.2): each listed header character fills the next seat without a character, in the order players lists them; one left over gets a seat after the scenario cast; a listed cast character is played by a person; other header characters are joiners after the new seats; scene.location takes a location of any bundle world, even one the scenario doesn't use (Format 8.5)",
   "bundle": {
     "kind": "bundle",
     "worlds": [
