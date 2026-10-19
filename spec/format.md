@@ -285,7 +285,7 @@ Every model message is **written for** one character or the narrator; its `char`
 ### 6.3 Openings
 
 - Each opening that is played starts its own root message (section 11.1); conditions see the chosen one as `opening`.
-- `set` gives starting values, written like a change (section 8.5): `{"scene.location": "vault", "state.bell": 11, "state.kai.nerve": 2}`.
+- `set` gives starting values, written like a change (section 8.5): `{"scene.location": "vault", "state.bell": 11, "state.kai.nerve": 2}`. It may set the variables of a character that a cast member marked `player` names, and that character's key of `"cast"` variables; these apply only in sessions where a player fills the seat (section 11.1).
 - **Without `content`**, a model writes the first message.
 
 ### 6.4 What a session uses
@@ -429,7 +429,7 @@ Opening `set` and recorded changes write state by key:
 
 - **Keys** are full names (section 8.2), followed by a key for keyed variables: `state.bell`, `state.trust.kai`, `state.kai.nerve`, `state.kai.feelings.elena`, and `scene.location` and `scene.present`.
 - **Values** are absolute.
-- **Validity.** A key is valid when it is `scene.location` or `scene.present`, or names a variable in use and, for a keyed variable, a key the variable allows. A value is valid when it has the variable's type, uses only listed members, is an integer within ±(2^53 − 1) for `int`, and is within the value limits of section 14; a change that leaves a `"*"` map with more than 256 keys is invalid too. An `int` outside `min` and `max` is still valid; it is clamped (section 8.6). A set with duplicate members is valid too; it is normalized. `scene.location` is a location ID of the bundle or session, or `""`; `scene.present` is a list of strings (section 8.6).
+- **Validity.** A key is valid when it is `scene.location` or `scene.present`, or names a variable in use and, for a keyed variable, a key the variable allows. In an opening's `set`, a `"cast"` variable also allows the character of each cast member marked `player` (section 6.3); this doesn't extend to changes, including the one a root records from the opening (section 11.1). A value is valid when it has the variable's type, uses only listed members, is an integer within ±(2^53 − 1) for `int`, and is within the value limits of section 14; a change that leaves a `"*"` map with more than 256 keys is invalid too. An `int` outside `min` and `max` is still valid; it is clamped (section 8.6). A set with duplicate members is valid too; it is normalized. `scene.location` is a location ID of the bundle or session, or `""`; `scene.present` is a list of strings (section 8.6).
 
 ### 8.6 State at a message
 
@@ -584,7 +584,7 @@ interface Change {
 - A **root** is a system message made from an opening, or a player message. Every other system message is records-only (section 11.4).
 - A root made from an opening has `opening` set, and:
   - holds the opening's `content` as written, with each `{{pick}}` replaced by the option chosen, that option's `\` and `{{` escaped as section 9 says, or no content when the opening has none;
-  - records the opening's `set`, if any, as its first change, `by: "opening"`, with the players' characters added to a `scene.present` it sets. No other change is `by: "opening"`.
+  - records the opening's `set`, if any, as its first change, `by: "opening"`. For each cast member marked `player` that `players` doesn't list, it leaves out that character's variables and its key of `"cast"` variables, and it adds the players' characters to a `scene.present` it sets. When no key is left, it records no change. No other change is `by: "opening"`.
 - **Rounds** count player messages on a path: a message's `turn` is the number of player messages from the root to it, inclusive, and a message being written has its parent's. `turn`, `sticky` and `cooldown` count rounds, as differences of `turn`.
 
 ### 11.2 Players and cast
@@ -939,6 +939,7 @@ Two thieves hired by the player to steal a duke's storm lantern before the twelf
 | Owner-scoped variables, `own` | One shared namespace | Characters and worlds stay self-contained when combined. |
 | Openings only in scenarios | Openings on characters too | Characters stay reusable in any story; a companion costs one small scenario, and there is one place to look. |
 | Openings as roots | A single root and header start values | Alternative first messages, and starting values recorded like any change. |
+| Openings may set a `player` seat's keys, and a root leaves them out when no player fills the seat | Openings limited to the keys every session has | An opening can say how a played character starts, and every root made as section 11.1 says is valid. |
 | Declared, typed variables | Free-form state | Every app knows what values mean. |
 | Integers only | Decimals too | Integer arithmetic and display agree in every language; a scale such as 0–100 covers fractions. |
 | Absolute changes, recorded | JSON Patch, or recomputing | Replay needs no evaluation, from any channel. |
