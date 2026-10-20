@@ -6,7 +6,7 @@ Troupe is an open file format for AI roleplay: characters, the worlds they live 
 
 This document defines the files and what every field means.
 
-> **Status.** This is a draft. Breaking changes are allowed until 1.0. A conformance suite accompanies this draft.
+> **Status.** Breaking changes are allowed until 1.0. A conformance suite accompanies this draft.
 
 ## Contents
 
@@ -35,7 +35,7 @@ This document defines the files and what every field means.
 14. [Security and limits](#14-security-and-limits)
 15. [Conformance](#15-conformance)
 
-**Appendices:** [A Schemas](#appendix-a-json-schemas) · [B Examples](#appendix-b-examples) · [C Design decisions](#appendix-c-design-decisions) · [D Future work](#appendix-d-future-work) · [E References](#appendix-e-references)
+**Appendices:** [A Schemas](#appendix-a-json-schemas) · [B Examples](#appendix-b-examples) · [C Design decisions](#appendix-c-design-decisions) · [D References](#appendix-d-references)
 
 ---
 
@@ -53,7 +53,7 @@ Non-goals: how apps play files (prompt assembly, entry selection, deciding when 
 
 ### 1.2 Documents
 
-This document and its JSON Schemas (Appendix A) are the normative parts of Troupe: the files, their fields and what they mean, identifiers and references, packaging, versioning, limits, and the checks a valid file passes. The schemas are normative for structure, the prose for meaning. Appendices B to D and the [guides](../README.md#guides) are informative; Appendix E lists references. "Format 7.2" means section 7.2 of this document, as the guides and the conformance suite cite it.
+This document and its JSON Schemas (Appendix A) are the normative parts of Troupe. The schemas are normative for structure, the prose for meaning. Appendices B and C and the [guides](../README.md#guides) are informative; Appendix D lists references. "Format 7.2" means section 7.2 of this document, as the guides and the conformance suite cite it.
 
 ### 1.3 Object model
 
@@ -69,9 +69,9 @@ Session  (.troupe-session.jsonl)  a header and a forest of messages
 Four ideas carry the format:
 
 1. **Entries** are all conditional text for the model: lore, instructions, secrets, goals, notes and memories (section 7).
-2. **Variables** hold typed state. Players or a model change them, and every change is recorded (section 8).
+2. **Variables** hold typed state. Players or a model change them (section 8).
 3. **Conditions** in CEL gate entries (section 10).
-4. **Sessions** are message trees that record every change (section 11).
+4. **Sessions** are forests of messages that record every change (section 11).
 
 ### 1.4 A first example
 
@@ -257,7 +257,7 @@ interface CastMember {
   character?: string;              // absent = a seat (section 6.1)
   player?: boolean;                // with character: a seat a person plays as written
   notes?: string;                  // scenario-specific context
-  spoiler?: boolean;               // a spoiler for players until first present (section 6.1)
+  spoiler?: boolean;               // a spoiler for players until present on the path (section 6.1)
   ext?: Ext;
 }
 
@@ -297,7 +297,7 @@ In a scenario, the worlds **in use** are its `worlds`, and the characters in use
 
 ## 7. Entries
 
-An entry is a piece of text that reaches the model when its conditions hold: lore, a standing instruction, a style reminder, a secret, a goal, a note, a memory. Every entry has the same shape wherever it lives, and an owner's entries are in the order they are meant to be read.
+An entry is a piece of text for the model, active when its conditions hold: lore, a standing instruction, a style reminder, a secret, a goal, a note, a memory. Every entry has the same shape wherever it lives, and an owner's entries are in the order they are meant to be read.
 
 ```ts
 interface Entry {
@@ -344,11 +344,11 @@ interface Entry {
 - An entry **without `keys` or `pull`** is always on, subject to `when`.
 - An entry **with `keys`** activates when one appears in its **scanned text**: the last `scanDepth` messages on the path that aren't hidden and have content, each text part known to whoever the message being written is for (section 11.5), each scanned separately as its speaker's name, `: ` and its text as shown, or as its text alone when it has no speaker. In the scanned text every line break, `\r\n`, a lone `\r`, U+2028 and U+2029, is written as `\n`, so `\r`, U+2028 and U+2029 in a regex key match nothing.
 - **Matching.** Keys match whole words, ignoring case: no letter, mark or number (Unicode categories L, M and N) comes right before or after a match, and case is compared by Unicode simple case folding. A key containing Han, Hiragana, Katakana, Hangul, Thai, Lao, Khmer, Myanmar or Tibetan characters matches anywhere. A key that matches `^/.+/[a-z]*$` is a **regex key** (section 14), written `/pattern/flags`: its pattern is the text between the first and the last `/`, and its flags the letters after. It matches anywhere, and ignores case only with the flag `i`: `/dragons?/i`, `/\bKai\b/`.
-- An entry **with `pull`** is retrieved when it is relevant, by its `title` or its text, such as on a model's request or by a search.
+- An entry **with `pull`** is retrieved when it is relevant, by its `title` or its text.
 - **`when`** narrows any kind. `hit("word")` checks the scanned text as keys do, so `"when": "hit('glass') && !hit('guard')"` expresses AND and NOT; `hit('')` is false.
 - A **`disabled`** entry never activates.
 - An entry activates only when whoever the message being written is for knows it (section 7.4), so one it doesn't know never takes its group's place.
-- **Timing.** `once`, `sticky` and `cooldown` count from the messages that record the entry in `activated` (section 11.4), by their `turn` (section 11.1). An entry recorded at a message of round *t* with `sticky` *s* stays active through round *t* + *s*, and with `cooldown` *c* can't activate again through round *t* + *s* + *c*, where *s* is 0 without `sticky`. `chance` is the percent probability that the entry activates when it otherwise would. An entry kept active by `sticky` stays active only while it applies (section 7.1); its `keys`, `when` and `chance` aren't checked again. Timing follows an entry's reference (section 2.4), so a session entry that replaces another with the same ID, or is added again after `disabled` removed it, continues its `once`, `sticky` and `cooldown`.
+- **Timing.** `once`, `sticky` and `cooldown` count from the messages that record the entry in `activated` (section 11.4), by their `turn` (section 11.1). An entry recorded at a message of round *t* with `sticky` *s* stays active through round *t* + *s*, and with `cooldown` *c* can't activate again through round *t* + *s* + *c*, where *s* is 0 without `sticky`. `chance` is the percent probability that the entry activates when it otherwise would. An entry kept active by `sticky` stays active only while it applies (section 7.1) and whoever the message being written is for knows it (section 7.4); its `keys`, `when` and `chance` aren't checked again. Timing follows an entry's reference (section 2.4), so a session entry that replaces another with the same ID, or is added again after `disabled` removed it, continues its `once`, `sticky` and `cooldown`.
 - **`group`** lets at most one entry of the same owner's group be active at a time, the one of highest `priority`, chosen by `weight` among equals, where an entry kept active by `sticky` wins against equals that aren't kept.
 - **`priority`** is importance: when not every entry can be used, the least important give way first, and an entry of priority 100 never does.
 - **Choosing.** An app decides which entries reach the model; activation, timing, `group` and `priority` say what the author intends.
@@ -405,7 +405,7 @@ A variable belongs to the scenario, world or character that declares it. Text, c
 | a scenario | `state.bell` | `state.bell` or `own.bell` |
 | a character or world | `state.kai.nerve` | `own.nerve` |
 
-Session entries have no `own`: in their text `{{own.…}}` is left as written, and in their conditions `own` is a `CEL_ERROR`.
+Roots made from a scenario's openings use `own` as the scenario does. Session entries have no `own`: in their text `{{own.…}}` is left as written, and in their conditions `own` is a `CEL_ERROR`.
 
 ### 8.3 Keyed variables
 
@@ -423,7 +423,7 @@ Session entries have no `own`: in their text `{{own.…}}` is left as written, a
 
 ### 8.4 The scene
 
-The scene is built-in state: `scene.location`, a location ID or `""`, and `scene.present`, the characters who are there, kept in cast order (section 8.6). Every change may set it. Characters who aren't present are offstage.
+The scene is built-in state: `scene.location`, a location ID or `""`, and `scene.present`, the characters who are there, kept in cast order (section 8.6). Characters who aren't present are offstage.
 
 ### 8.5 Keys and values
 
@@ -470,11 +470,11 @@ Macros are the only substitution in text.
 - **`{{user}}`** is the speaker of the first speaking part in the latest player message on the path that has a speaking part, else the first player's character; with neither, it is left as written.
 - In a state path, a `char` or `user` segment after the variable's name means the same character as the macro. When that is no character, the segment names no key, so the macro renders as nothing.
 - **Rendering.** A value with a label renders as its label, a string that is a character ID as that character's name, else one that is a location ID as that location's name. Numbers render as decimal integers, booleans as `true` or `false`, lists as items joined by `, ` (an empty list as nothing), and maps as `Name: value` pairs joined by `, `, each item and value rendered as above, with keys that are character IDs shown by name and other keys with underscores as spaces. Map keys render in the order of `of`: cast order for `"cast"`, list order for a list, and code point order for `"*"`. `{{scene.location}}` always renders as its location's name. A substituted value is never scanned for macros again.
-- **Unresolved.** A `{{` that starts no macro is left as written (see Parsing below), and is `UNKNOWN_MACRO` when the text from it to the next `}}` holds no macro the scan finds, such as `{{unknown}}`. In `{{{char}}` and `{{a{{char}}` the scan finds `{{char}}`, so they aren't. A macro naming a variable that isn't declared, as section 10.2 counts declarations, is also left as written (`UNKNOWN_MACRO`); an absent key of a declared variable, a path below a value that isn't a map, or a variable whose owner isn't in use renders as nothing.
-- **Which state.** Macros in a message resolve at that message: against its state, with `{{user}}` from the path to it. Elsewhere they resolve at the evaluation point (section 10.1), or, with no message being written, at the session's head, or at the initial state (section 8.6) when there is no head. In a scenario's text and in roots made from its openings, `own` names the scenario's variables (section 8.2).
+- **Parsing** is one left-to-right scan. At each `{{`, the longest form in the table, with no spaces outside comments and options, is a macro; otherwise the first `{` is kept and scanning resumes at the next character. A comment runs from `{{//` to the next `}}`. A pick ends at the first `}}`, and has at least two options, none empty or containing `::`. `\{{` produces a literal `{{`, and `\\` a literal `\`.
+- **Unresolved.** A `{{` that starts no macro is left as written, and is `UNKNOWN_MACRO` when the text from it to the next `}}` holds no macro the scan finds, such as `{{unknown}}`. In `{{{char}}` and `{{a{{char}}` the scan finds `{{char}}`, so they aren't. A macro naming a variable that isn't declared, as section 10.2 counts declarations, is also left as written (`UNKNOWN_MACRO`); an absent key of a declared variable, a path below a value that isn't a map, or a variable whose owner isn't in use renders as nothing.
+- **Which state.** Macros in a message resolve at that message: against its state, with `{{user}}` from the path to it. Elsewhere they resolve at the evaluation point (section 10.1), or, with no message being written, at the session's head, or at the initial state (section 8.6) when there is no head.
 - **Where.** Macros resolve in descriptions, summaries, dialogue examples, premises, briefings, notes, entry texts, variable descriptions, openings' `content` and the roots made from it, and image `alt`, in the bundle and in a session's characters, worlds and entries. Player and model messages are used as written, and so is every other string, such as names, aliases, titles, labels, taglines, warnings, keys, `limits` and expressions.
 - **Escaping.** A writer that puts a player's or a model's words in a session's characters, worlds or entries MUST write each `\` as `\\` and each `{{` as `\{{`, in one left-to-right pass, so that they resolve to exactly what was written.
-- **Parsing** is one left-to-right scan. At each `{{`, the longest form in the table, with no spaces outside comments and options, is a macro; otherwise the first `{` is kept and scanning resumes at the next character. A comment runs from `{{//` to the next `}}`. A pick ends at the first `}}`, and has at least two options, none empty or containing `::`. `\{{` produces a literal `{{`, and `\\` a literal `\`.
 - **Stored text keeps its macros**, except picks in roots (section 11.1). They resolve when text is shown or sent.
 
 ---
@@ -491,7 +491,7 @@ A condition is evaluated at its **evaluation point**: the parent of the message 
 | --- | --- |
 | `state.<id>` | Each scenario variable at the evaluation point: `bool`, `int`, `string` and `enum` (string), `set` (list of strings); keyed variables are maps |
 | `state.<owner>.<id>` | Each variable of a character or world in use |
-| `own.<id>` | The variables of the expression's owner; for a scenario, its own |
+| `own.<id>` | The variables of the expression's owner (section 8.2) |
 | `scene.location`, `scene.present` | The scene |
 | `scene.within` | The current location, then its ancestors, innermost first; `[]` with no location |
 | `turn` | Rounds so far (section 11.1) |
@@ -530,7 +530,7 @@ state.trust[char] >= 80 && hour < 6
 
 ## 11. Session format
 
-A session is a JSON Lines file: a header line, then one message per line. Messages form a forest: each opening tried, and each first message a player writes without one, is a root; alternative replies and branches are siblings, and the transcript is the path from a root to the head. Lines end with `\n` or `\r\n`, the last line may end without one, and no line is empty.
+A session is a JSON Lines file: a header line, then one message per line. Messages form a forest: each opening tried, and each first message a player writes without one, is a root; alternative replies and branches are siblings, and a message's **path** runs from its root down to it. Lines end with `\n` or `\r\n`, the last line may end without one, and no line is empty.
 
 ```ts
 interface SessionHeader {
@@ -538,7 +538,7 @@ interface SessionHeader {
   troupe: string;
   kind: "session";
   name?: string;                   // the chat's title, for people, not models
-  bundle?: string;                 // the bundle's id; inside a package, its bundle.json is played
+  bundle?: string;                 // the bundle's id; inside a package, the session's bundle is bundle.json
   limits?: Limits;                 // the players' lines and veils
   scenario: string;                // scenario ID
   characters?: Character[];        // players' and joiners' (section 11.2)
@@ -569,9 +569,9 @@ interface Message {
   ext?: Ext;
 }
 
-type Part =                         // every part MAY also carry ext; no speaker = narration
-  | { type?: "text"; text: string; speaker?: string; knownBy?: string[] }
-  | { type: "image"; src: string; alt?: string; speaker?: string; knownBy?: string[] };
+type Part =                         // no speaker = narration
+  | { type?: "text"; text: string; speaker?: string; knownBy?: string[]; ext?: Ext }
+  | { type: "image"; src: string; alt?: string; speaker?: string; knownBy?: string[]; ext?: Ext };
 
 interface Change {
   by: "opening" | "player" | "model";   // an opening's start; the people playing; a model's output
@@ -587,14 +587,14 @@ interface Change {
 - A root made from an opening has `opening` set, and:
   - holds the opening's `content` as written, with each `{{pick}}` replaced by the option chosen, that option's `\` and `{{` escaped as section 9 says, or no content when the opening has none;
   - records the opening's `set`, if any, as its first change, `by: "opening"`. For each cast member marked `player` that `players` doesn't list, it leaves out that character's variables and its key of `"cast"` variables, and it adds the players' characters to a `scene.present` it sets. When no key is left, it records no change. No other change is `by: "opening"`.
-- **Rounds** count player messages on a path: a message's `turn` is the number of player messages from the root to it, inclusive, and a message being written has its parent's. `turn`, `sticky` and `cooldown` count rounds, as differences of `turn`.
+- **Rounds** count player messages on a path: a message's `turn` is the number of player messages from the root to it, inclusive, and a message being written has its parent's.
 
 ### 11.2 Players and cast
 
 - `players` lists, in order, every character a person plays:
   - a header character, which fills the next seat without a character, or a new seat after the scenario cast when none is left;
   - a cast character, which a person plays instead of a model, such as one marked `player`.
-- The session's **cast** is the scenario cast with its seats filled, then the new seats, then the **joiners**: header `characters` that aren't players, who join or appear during the session. Seats no player fills are left out (section 6.1).
+- The session's **cast** is the scenario cast with its seats filled, then the new seats, then the **joiners**: header `characters` that aren't players, who join or appear during the session.
 - Header characters and `players` hold for the whole session, on every branch; who is present is recorded on each path (section 8.4).
 
 ### 11.3 Session entries
@@ -604,7 +604,7 @@ A message may add entries, owned by `session`. They apply from that message onwa
 ### 11.4 Other message fields
 
 - **`activated`** lists, on a model message, the entries that reached the model for it, those retrieved by `pull` included. An entry whose text renders as nothing or only whitespace (section 9) reaches nothing and isn't listed. An entry kept active by `sticky` isn't listed again. It names entries in use at the message's evaluation point (section 10.1): not those its own `entries` add, but still those they remove. It may name a `disabled` bundle entry, but not a session entry removed by then (section 11.3), which is no longer in use.
-- **`hidden`** messages stay on the path, and their changes, activations and rounds count, but no character or the narrator knows their parts, and keys don't match them.
+- **`hidden`** messages stay on the path, and their changes, activations and rounds count, but no character or the narrator knows their parts.
 - **Records-only messages.** A system message with empty `content` is a root made from an opening without `content`, or carries `changes`, such as a player's edits to state. It has no `activated` or `char`, and has `entries` only on a root.
 
 ### 11.5 Knowledge
@@ -639,15 +639,15 @@ Fields that hold a file (`cover`, `avatar`, location `image` and image parts) ho
 
 ## 13. Extensions and versioning
 
-- **Extensions.** Every object of a bundle or session that this document defines with an interface MAY carry `ext`, keyed by an extension name matching `^[a-z0-9][a-z0-9.-]{0,63}$`, such as `risu.regex`. The `troupe.` prefix is reserved for the draft extensions of Appendix D. Writers MUST NOT add fields anywhere else, and MUST keep every `ext` of a file they rewrite unchanged, as a JSON value.
+- **Extensions.** Every object of a bundle or session that this document defines with an interface MAY carry `ext`, keyed by an extension name matching `^[a-z0-9][a-z0-9.-]{0,63}$`, such as `risu.regex`. The `troupe.` prefix is reserved for this specification. Writers MUST NOT add fields anywhere else, and MUST keep every `ext` of a file they rewrite unchanged, as a JSON value.
 - **Unknown fields.** A property is unknown when its object's interface doesn't define it; for a part, the interface its `type` selects; a part of an unknown `type` is only `SCHEMA`. An unknown property carries no meaning, and is an `UNKNOWN_FIELD`; `SCHEMA` is judged with unknown properties removed.
-- **Versions** are `major.minor`, compared as two integers, so `0.10` is newer than `0.9`. From 1.0, minor versions only add what files of an older minor can do without; before 1.0, any minor version may break. A file of a version other than this document's is `UNSUPPORTED_VERSION`.
+- **Versions** are `major.minor`, compared as two integers, so `0.10` is newer than `0.9`. From 1.0, minor versions only add what files of an older minor can do without; before 1.0, any minor version may break. A file of a version other than this document's is `UNSUPPORTED_VERSION`, except that from 1.0 a file of an older minor version of the same major is checked as one of this version.
 
 ---
 
 ## 14. Security and limits
 
-Files hold data and sandboxed expressions (section 10), never scripts, and their size and the work they ask for are bounded. Their text is Markdown, which can hold raw HTML, links and images; how they are shown is the app's.
+A file's size and the work it asks for are bounded. Its text is Markdown, which can hold raw HTML, links and images; how it is shown is the app's.
 
 - **Regexes.** A regex key is valid when its flags are distinct, from `i` (ignore case), `m` (`^` and `$` also match at line breaks) and `s` (`.` also matches line breaks), and its pattern is built only from:
   - characters, including `\t`, `\n`, `\r`, `\f` and `\v`, with a `\` before any of ``^$\.*+?()[]{}|/`` that stands for itself; in a class, only `\`, `[`, `]` and a `-` that isn't first or last need it, though the others and `-` may have it;
@@ -656,7 +656,7 @@ Files hold data and sandboxed expressions (section 10), never scripts, and their
   - the class escapes `\d`, `\D`, `\w`, `\W`, `\s`, `\S`, and `\p{…}` and `\P{…}` with the abbreviation of a Unicode general category other than `Cn` and `LC`, such as `L` or `Lu`;
   - after a character, `.`, class, class escape or group, a quantifier `*`, `+`, `?`, `{n}`, `{n,}` or `{n,m}`, with n ≤ m and no `{0}` or `{0,0}`, optionally followed by `?`.
 
-  The pattern means what it means in ECMAScript with the `u` flag. It nests groups at most 100 deep, and written out in full, with each counted repetition replaced by its copies (`x{2,3}` as `xxx`, `x{2,}` as `xxx*`), it is at most 1000 bytes, so `(a{10}){200}` is too long. Such a pattern also compiles in RE2, though RE2 reads `\s` slightly differently; on the scanned text, whose line breaks are all `\n` (section 7.2), it reads `.` and `m` as ECMAScript does. It is regular, so it can run in linear time on an automaton engine.
+  The pattern means what it means in ECMAScript with the `u` flag. It nests groups at most 100 deep, and written out in full, with each counted repetition replaced by its copies (`x{2,3}` as `xxx`, `x{2,}` as `xxx*`), it is at most 1000 bytes, so `(a{10}){200}` is too long.
 - **Limits.** Files stay within these limits:
 
 | Item | Size limit |
@@ -681,7 +681,7 @@ The last two are **value limits**: a value past them is invalid (section 8.5).
 
 ### 15.1 Requirements
 
-A **conforming file** validates against the schemas, passes the checks of section 15.3, stays within the limits of section 14, and follows section 13. A conforming **writer** writes only conforming files, and follows every rule this document gives writers.
+A **conforming file** passes every check of section 15.3. A conforming **writer** writes only conforming files, and follows every rule this document gives writers.
 
 ### 15.2 Readers
 
@@ -690,7 +690,7 @@ A conforming **reader** reads at one of two levels:
 - A **bundle reader** accepts every conforming single file and package of its version and gives their fields the meaning this document defines. It MAY leave a package's sessions unread.
 - A **session reader** is a bundle reader that also accepts every conforming session of its version, in a package or as a file, and gives its fields their meaning.
 
-From 1.0, a reader also accepts the conforming files of an older minor version of its major version, at its level.
+From 1.0, a reader also accepts the conforming files of older minor versions (section 13), at its level.
 
 ### 15.3 Checks
 
@@ -699,7 +699,7 @@ Each check has a code, for validators to report it with. Every check runs on the
 | Code | Check |
 | --- | --- |
 | `PARSE` | The input is I-JSON (section 2.2), or session lines of I-JSON (section 11), a Troupe document with the `kind` its form holds, not a missing or other one (section 12.1), within the limits table of section 14 other than the value limits, with package paths only in a package (section 12.2), and a package follows section 12.3 |
-| `UNSUPPORTED_VERSION` | `troupe`, when present, is this document's version (section 13); a missing `troupe`, or one that isn't `major.minor`, is only `SCHEMA` |
+| `UNSUPPORTED_VERSION` | `troupe`, when present, is a version section 13 accepts; a missing `troupe`, or one that isn't `major.minor`, is only `SCHEMA` |
 | `SCHEMA` | The document validates against its schema, with `format` asserted, apart from unknown properties (section 13) |
 | `UNKNOWN_FIELD` | Every property is one this document defines (section 13) |
 | `DUPLICATE_ID` | IDs are unique as section 2.3 requires |
@@ -714,7 +714,7 @@ Each check has a code, for validators to report it with. Every check runs on the
 | `UNKNOWN_MESSAGE` | `parent` names a message on an earlier line, and the header's `head` names a message |
 | `INVALID_PLAYER` | `players` names header characters or cast members |
 | `CEL_ERROR` | Every expression parses, type-checks and follows section 10.2 |
-| `REGEX_ERROR` | Every regex key in `keys` is valid (section 14); an invalid regex key in `hit()` is a `CEL_ERROR` (section 10.2) |
+| `REGEX_ERROR` | Every regex key in `keys` is valid (section 14) |
 | `UNKNOWN_MACRO` | In text where macros resolve, macros are valid and name declared variables (section 9) |
 
 ---
@@ -946,7 +946,7 @@ Two thieves hired by the player to steal a duke's storm lantern before the twelf
 | Integers only | Decimals too | Integer arithmetic and display agree in every language; a scale such as 0–100 covers fractions. |
 | Absolute changes, recorded | JSON Patch, or recomputing | Replay needs no evaluation, from any channel. |
 | Keys written as state is read | A separate spelling for writes | Each value has one full name, the same in conditions, macros, openings and changes. |
-| A schema of files, not of how apps play them | A second document fixing prompt assembly, entry selection, context strategy and model output | Sessions record every change, so a reader needs only the meaning of what is stored; how an app writes prompts and calls models is its own, and can improve without a new version. |
+| A schema of files, not of how apps play them | A second document fixing prompt assembly, entry selection, context strategy and model output | A reader needs only the meaning of what is stored; how an app writes prompts and calls models is its own, and can improve without a new version. |
 | No message summaries or pinned messages | Fields for an app's context strategy | Apps fit long chats into a model's context their own way; a memory is a session entry. |
 | Valid files, not repair | Rules for reading broken files leniently | A file either conforms or fails a check with a code; what an app does with a broken file is its own. |
 | Readers accept every conforming file of their level and read it as defined, at one of two levels | No duty on readers; every reader reading sessions | A file that conforms opens with the same meaning in every app that reads its kind; an app that only edits or plays bundles conforms without reading another app's chats. |
@@ -955,7 +955,7 @@ Two thieves hired by the player to steal a duke's storm lantern before the twelf
 | Witness knowledge; `["narrator"]` for narrator-only | Everyone knows everything; `[]` | Offstage characters miss what happens, and no list is empty. |
 | Player and model messages used as written | Resolving macros in them, or escaping them | Chat text moves between apps unchanged, and no hidden state leaks through model output or prompt attacks. |
 | Session characters can't reuse a bundle character's ID | Replacing the bundle character | A persona never takes over a story's character by accident; an edited character travels in the package's bundle. |
-| A `sticky` entry stays active without its `keys`, `when` or `chance`, and wins its `group` against equal priority | Checking them again each round; a fresh `weight` draw each round | `sticky` keeps an entry for as long as it says, and an entry of higher priority still takes the group. |
+| A `sticky` entry stays active without its `keys`, `when` or `chance`, while it applies and is known, and wins its `group` against equal priority | Checking them again each round; keeping it for characters who don't know it; a fresh `weight` draw each round | `sticky` keeps an entry for as long as it says, without showing a secret to a character who doesn't know it, and an entry of higher priority still takes the group. |
 | Timing follows an entry's reference | Restarting it when a session entry is replaced, or removed and added again | Editing a memory doesn't reset its `once`, `sticky` or `cooldown`. |
 | Durations in rounds | Messages | The same file behaves the same in solo and group chats. |
 | Timestamps keep their offset | UTC only, or a time zone name | `hour` and `weekday` read the writer's local time without a time zone database. |
@@ -968,31 +968,21 @@ Two thieves hired by the player to steal a duke's storm lantern before the twelf
 | No image-embedded form | Bundles hidden in PNG chunks for image hosts | Hosts strip the chunks, and a package or single file already carries a story with its images. |
 | No executable code; display is the app's | Scripts in cards; rules for showing Markdown, links and media | Scripts in shared cards can steal API keys, and a schema can't constrain how text is shown. |
 | No text transforms | Regex scripts that rewrite text | Most build HTML, fix one model's quirks, or display stats that state now covers. |
-| No sprites, audio, voices or UI grouping in the core | Media and presentation fields | They belong to apps, and expression images to the `troupe.media` extension; the core keeps only what authors say about their story. |
+| No sprites, audio, voices or UI grouping in the core | Media and presentation fields | They belong to apps; the core keeps only what authors say about their story. |
 | Sessions as an exchange snapshot | Prescribing storage, or an append-only log of edits | Apps keep their own databases; chats still move intact between session readers. |
 | Writers leave out empty optional fields | Allowing `""` and `[]` anywhere | Two writers of the same story produce the same fields. |
 | Limits on files, on CEL and on values | Only a file size cap, or each app's own | Every conforming file is bounded in size and in the work it asks for. |
 | Limits checked on each document alone, such as a scenario's cast and the characters a session adds | Limits on what a session and its bundle make together | `PARSE` is judged while reading one file, and a session file can be read without its bundle. |
 | Numbers within a double's range, rounded to the nearest; integer fields bounded by the schemas | RFC 7493's limit on precision; integer ranges checked while reading | Few JSON parsers can tell whether a number such as `0.1` has more precision than a double, and only the schemas know which fields are integers. |
 | An input that fails `PARSE` or `UNSUPPORTED_VERSION` reported with those codes only | Running every check on it | Other checks judge it against this version's rules, which mean nothing for a file that can't be read or is of another version. |
+| From 1.0, a file of an older minor version checked as one of this version | `UNSUPPORTED_VERSION` for every other version | A minor version only adds, so an older file means the same under the newer rules, and one validator covers its whole major version. |
 | A session with an unknown or missing `scenario` reported with `UNKNOWN_SCENARIO`, `SCHEMA` and `UNKNOWN_FIELD` only | Running its other checks against no scenario | Without a scenario the cast, variables and openings a session refers to are undefined, so most other checks would report noise that implementations couldn't agree on; an unknown one usually means the wrong bundle. One short list keeps the result the same everywhere, and the rest is checked once the session names a scenario. |
-| Regex keys written `/pattern/flags`, in forms ECMAScript and RE2 share | RE2 syntax, or whatever an engine accepts | Most SillyTavern regex keys work as written, every app can compile them, and a key is valid or `REGEX_ERROR` alike everywhere. |
+| Regex keys written `/pattern/flags`, in forms ECMAScript and RE2 share | RE2 syntax, or whatever an engine accepts | Most SillyTavern regex keys work as written, every app can compile them and match them in linear time, and a key is valid or `REGEX_ERROR` alike everywhere. |
 | Every line break in the scanned text written as `\n` | ECMAScript's line terminators for `^`, `$` and `.`; `REGEX_ERROR` for a key naming `\r`, U+2028 or U+2029 | Under `m`, ECMAScript's `^` and `$` also match at `\r`, U+2028 and U+2029, which engines without lookbehind, such as RE2 in Go and Rust, can't express. With one line break, `^`, `$` and `.` agree across engines, and nothing a reader sees changes. A key naming `\r`, U+2028 or U+2029 simply never matches, like any key for text that isn't there. |
 
 ---
 
-## Appendix D: Future work
-
-These draft extensions use the `troupe.` prefix (section 13) and may join the core once proven:
-
-- **`troupe.overlay`:** a bundle that patches another by ID, for translations and mods.
-- **`troupe.media`:** expression images: a character's images by label, such as `angry`, and the label a message part shows. Voices and audio stay out: voices belong to a provider, and audio to an app's interface.
-
-An extension joins this repository with its own document, a schema for its `ext` value and conformance cases, and shares the spec's version.
-
----
-
-## Appendix E: References
+## Appendix D: References
 
 - [RFC 2119](https://www.rfc-editor.org/rfc/rfc2119), [RFC 8174](https://www.rfc-editor.org/rfc/rfc8174): requirement keywords
 - [RFC 8259](https://www.rfc-editor.org/rfc/rfc8259), [RFC 7493](https://www.rfc-editor.org/rfc/rfc7493): JSON and I-JSON; [JSON Lines](https://jsonlines.org/)
