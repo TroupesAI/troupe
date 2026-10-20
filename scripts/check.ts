@@ -7,7 +7,8 @@
 //     its check and parse tests list codes sorted and distinct, and expect SCHEMA exactly when the schemas reject their input;
 //   - cases with state, macro, cel or knows tests have inputs that pass the schemas, unknown properties included, and a
 //     check test that expects no codes, so a runner confirms the inputs conform;
-//   - relative Markdown links and #anchors resolve, and every "Format N.N" names a section.
+//   - relative Markdown links and #anchors resolve, and every "Format 7.2" in the documents, cases, schemas, scripts and
+//     site/src, and every "section 7.2" in the spec, names a section.
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import Ajv2020 from "ajv/dist/2020.js";
@@ -283,6 +284,9 @@ const cite = (where: string, text: string, own = false) => {
 for (const doc of markdown) cite(doc, read(doc), doc === "spec/format.md");
 for (const f of cases) cite(`conformance/cases/${f}`, read(`conformance/cases/${f}`));
 for (const f of [...schemaFiles.map((f) => `schemas/${f}`), "conformance/case.schema.json"]) cite(f, read(f));
+for (const dir of ["scripts", "site/src"])
+  for (const f of readdirSync(join(root, dir), { recursive: true }) as string[])
+    if (/\.(ts|astro)$/.test(f)) cite(`${dir}/${f}`, read(`${dir}/${f}`));
 
 if (problems.length) {
   console.error(problems.join("\n"));
