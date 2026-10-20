@@ -603,7 +603,7 @@ A message may add entries, owned by `session`. They apply from that message onwa
 
 ### 11.4 Other message fields
 
-- **`activated`** lists, on a model message, the entries that reached the model for it, those retrieved by `pull` included. An entry whose text renders as nothing or only whitespace (section 9) reaches nothing and isn't listed. An entry kept active by `sticky` isn't listed again. It may name a `disabled` bundle entry, but not a session entry after a message removed it (section 11.3), which is no longer in use.
+- **`activated`** lists, on a model message, the entries that reached the model for it, those retrieved by `pull` included. An entry whose text renders as nothing or only whitespace (section 9) reaches nothing and isn't listed. An entry kept active by `sticky` isn't listed again. It names entries in use at the message's evaluation point (section 10.1): not those its own `entries` add, but still those they remove. It may name a `disabled` bundle entry, but not a session entry removed by then (section 11.3), which is no longer in use.
 - **`hidden`** messages stay on the path, and their changes, activations and rounds count, but no character or the narrator knows their parts, and keys don't match them.
 - **Records-only messages.** A system message with empty `content` is a root made from an opening without `content`, or carries `changes`, such as a player's edits to state. It has no `activated` or `char`, and has `entries` only on a root.
 
@@ -694,7 +694,7 @@ From 1.0, a reader also accepts the conforming files of an older minor version o
 
 ### 15.3 Checks
 
-Each check has a code, for validators to report it with. Every check runs on the document as written, so one value can fail several. An input that fails `PARSE` or `UNSUPPORTED_VERSION`, a whole file or package, is reported with those codes only.
+Each check has a code, for validators to report it with. Every check runs on the document as written, so one value can fail several. An input that fails `PARSE` or `UNSUPPORTED_VERSION`, a whole file or package, is reported with those codes only. Otherwise, a session whose `scenario` names no scenario is reported with `UNKNOWN_SCENARIO`, `SCHEMA` and `UNKNOWN_FIELD` only, since most of its other checks need its scenario; its bundle is checked as usual.
 
 | Code | Check |
 | --- | --- |
@@ -708,7 +708,7 @@ Each check has a code, for validators to report it with. Every check runs on the
 | `UNKNOWN_WORLD` | `scenario.worlds` names bundle worlds |
 | `UNKNOWN_LOCATION` | `scene.location` values and `parent` name locations, without cycles |
 | `UNKNOWN_OPENING` | A root's `opening` exists |
-| `UNKNOWN_ENTRY` | `activated` names entries in use, `disabled` bundle entries included (section 11.4) |
+| `UNKNOWN_ENTRY` | `activated` names entries in use at its message's evaluation point, `disabled` bundle entries included (section 11.4) |
 | `UNKNOWN_VARIABLE` | Keys in openings and changes are valid keys (section 8.5) |
 | `INVALID_VALUE` | `initial` values, and the values of valid keys in opening `set` and recorded changes, are valid for their variables (section 8.5); unknown locations and characters in values are reported only as `UNKNOWN_LOCATION` and `UNKNOWN_CHARACTER` |
 | `UNKNOWN_MESSAGE` | `parent` names a message on an earlier line, and the header's `head` names a message |
@@ -960,6 +960,7 @@ Two thieves hired by the player to steal a duke's storm lantern before the twelf
 | Durations in rounds | Messages | The same file behaves the same in solo and group chats. |
 | Timestamps keep their offset | UTC only, or a time zone name | `hour` and `weekday` read the writer's local time without a time zone database. |
 | `activated` may name a `disabled` bundle entry | `UNKNOWN_ENTRY` for it, as for a session entry a message removed | Sessions aren't pinned to a version of their bundle, so disabling an entry later doesn't invalidate a chat that recorded it. A session entry's removal is part of the chat, so recording it afterwards is an error. |
+| `activated` judged at the message's evaluation point | Judging it at the message, with its own `entries` | The entries that reached the model were chosen before it wrote, so a reply that retires a memory it used still records it, and a reply can't record an entry it adds. |
 | `activated` leaves out an entry whose text renders as nothing or only whitespace | Every entry an app chose | Nothing reached the model, so `once`, `sticky` and `cooldown` don't start, and text gated by macros behaves like text gated by `when`. Whitespace counts as nothing so that the layout around a macro doesn't change timing. |
 | Copies with `credits` | Live cross-bundle references, structured provenance | People write attribution as they like. |
 | `id` only links sessions to their bundle | Rules for forks, translations, release order, version pins or hashes | Nothing could check them. A session that must keep the exact story it was played with travels in a package with that bundle. |
@@ -974,6 +975,7 @@ Two thieves hired by the player to steal a duke's storm lantern before the twelf
 | Limits checked on each document alone, such as a scenario's cast and the characters a session adds | Limits on what a session and its bundle make together | `PARSE` is judged while reading one file, and a session file can be read without its bundle. |
 | Numbers within a double's range, rounded to the nearest; integer fields bounded by the schemas | RFC 7493's limit on precision; integer ranges checked while reading | Few JSON parsers can tell whether a number such as `0.1` has more precision than a double, and only the schemas know which fields are integers. |
 | An input that fails `PARSE` or `UNSUPPORTED_VERSION` reported with those codes only | Running every check on it | Other checks judge it against this version's rules, which mean nothing for a file that can't be read or is of another version. |
+| A session with an unknown `scenario` reported with `UNKNOWN_SCENARIO`, `SCHEMA` and `UNKNOWN_FIELD` only | Running its other checks against no scenario | The usual cause is a session opened with the wrong bundle. Without a scenario the cast, variables and openings it refers to are undefined, so most other checks would report noise that implementations couldn't agree on. One short list keeps the result the same everywhere; the rest is checked once it names one. |
 | Regex keys written `/pattern/flags`, in forms ECMAScript and RE2 share | RE2 syntax, or whatever an engine accepts | Most SillyTavern regex keys work as written, every app can compile them, and a key is valid or `REGEX_ERROR` alike everywhere. |
 | Every line break in the scanned text written as `\n` | ECMAScript's line terminators for `^`, `$` and `.`; `REGEX_ERROR` for a key naming `\r`, U+2028 or U+2029 | Under `m`, ECMAScript's `^` and `$` also match at `\r`, U+2028 and U+2029, which engines without lookbehind, such as RE2 in Go and Rust, can't express. With one line break, `^`, `$` and `.` agree across engines, and nothing a reader sees changes. A key naming `\r`, U+2028 or U+2029 simply never matches, like any key for text that isn't there. |
 
