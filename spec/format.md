@@ -257,7 +257,7 @@ interface CastMember {
   character?: string;              // absent = a seat (section 6.1)
   player?: boolean;                // with character: a seat a person plays as written
   notes?: string;                  // scenario-specific context
-  spoiler?: boolean;               // a spoiler for players until first present
+  spoiler?: boolean;               // a spoiler for players until first present (section 6.1)
   ext?: Ext;
 }
 
@@ -274,6 +274,7 @@ interface Opening {
 
 - The default cast is one player seat followed by every bundle character, in bundle order. A cast may hold only seats. Characters outside the cast take no part in the scenario.
 - **Seats** are cast members without `character`, filled by a character the person brings, and members with `player`, which a person plays as written, filled when `players` lists their character (section 11.2). A seat that no player fills is left out of the cast.
+- A **`spoiler`** cast member is a spoiler for players on a path until the state at a message on it, the root included, has the character in `scene.present` (section 8.6). The cast starts present, so it stays a spoiler only when the root's changes leave it out, such as through an opening's `set`.
 
 ### 6.2 Modes
 
@@ -949,6 +950,7 @@ Two thieves hired by the player to steal a duke's storm lantern before the twelf
 | Valid files, not repair | Rules for reading broken files leniently | A file either conforms or fails a check with a code; what an app does with a broken file is its own. |
 | Readers accept every conforming file of their level and read it as defined, at one of two levels | No duty on readers; every reader reading sessions | A file that conforms opens with the same meaning in every app that reads its kind; an app that only edits or plays bundles conforms without reading another app's chats. |
 | Recorded changes apply as written; `by`, `maxStep` and `oneWay` aren't checked | A check that replays every change against its variable | Readers never second-guess a recorded change, so a session reads the same everywhere; the fields still tell writers and models what is meant. |
+| A spoiler cast member is one until present on the path, and starts present like the rest of the cast | A spoiler on every branch until present on any; spoiler members starting offstage | Presence is state, recorded on each path. A mark for players changes no state, so the opening that keeps a character offstage decides when it appears. |
 | Witness knowledge; `["narrator"]` for narrator-only | Everyone knows everything; `[]` | Offstage characters miss what happens, and no list is empty. |
 | Player and model messages used as written | Resolving macros in them, or escaping them | Chat text moves between apps unchanged, and no hidden state leaks through model output or prompt attacks. |
 | Session characters can't reuse a bundle character's ID | Replacing the bundle character | A persona never takes over a story's character by accident; an edited character travels in the package's bundle. |
