@@ -694,7 +694,7 @@ From 1.0, a reader also accepts the conforming files of an older minor version o
 
 ### 15.3 Checks
 
-Each check has a code, for validators to report it with. Every check runs on the document as written, so one value can fail several. An input that fails `PARSE` or `UNSUPPORTED_VERSION`, a whole file or package, is reported with those codes only. Otherwise, a session whose `scenario` names no scenario is reported with `UNKNOWN_SCENARIO`, `SCHEMA` and `UNKNOWN_FIELD` only, since most of its other checks need its scenario; its bundle is checked as usual.
+Each check has a code, for validators to report it with. Every check runs on the document as written, so one value can fail several. An input that fails `PARSE` or `UNSUPPORTED_VERSION`, a whole file or package, is reported with those codes only. Otherwise, a session whose `scenario` is missing or names no scenario is reported with `UNKNOWN_SCENARIO`, `SCHEMA` and `UNKNOWN_FIELD` only, since most of its other checks need its scenario; its bundle is checked as usual.
 
 | Code | Check |
 | --- | --- |
@@ -703,7 +703,7 @@ Each check has a code, for validators to report it with. Every check runs on the
 | `SCHEMA` | The document validates against its schema, with `format` asserted, apart from unknown properties (section 13) |
 | `UNKNOWN_FIELD` | Every property is one this document defines (section 13) |
 | `DUPLICATE_ID` | IDs are unique as section 2.3 requires |
-| `UNKNOWN_SCENARIO` | The header's `scenario` names a scenario |
+| `UNKNOWN_SCENARIO` | The header's `scenario` names a scenario; a missing `scenario`, or one that isn't a string, is only `SCHEMA` |
 | `UNKNOWN_CHARACTER` | Cast members name bundle characters; `knownBy` (where `narrator` is also allowed), speakers, example speakers (or `char`, `user`), message `char`, members of `scene.present` values and members other than `*` of `"cast"` variables' `initial` objects name characters in the bundle or session |
 | `UNKNOWN_WORLD` | `scenario.worlds` names bundle worlds |
 | `UNKNOWN_LOCATION` | `scene.location` values and `parent` name locations, without cycles |
@@ -975,7 +975,7 @@ Two thieves hired by the player to steal a duke's storm lantern before the twelf
 | Limits checked on each document alone, such as a scenario's cast and the characters a session adds | Limits on what a session and its bundle make together | `PARSE` is judged while reading one file, and a session file can be read without its bundle. |
 | Numbers within a double's range, rounded to the nearest; integer fields bounded by the schemas | RFC 7493's limit on precision; integer ranges checked while reading | Few JSON parsers can tell whether a number such as `0.1` has more precision than a double, and only the schemas know which fields are integers. |
 | An input that fails `PARSE` or `UNSUPPORTED_VERSION` reported with those codes only | Running every check on it | Other checks judge it against this version's rules, which mean nothing for a file that can't be read or is of another version. |
-| A session with an unknown `scenario` reported with `UNKNOWN_SCENARIO`, `SCHEMA` and `UNKNOWN_FIELD` only | Running its other checks against no scenario | The usual cause is a session opened with the wrong bundle. Without a scenario the cast, variables and openings it refers to are undefined, so most other checks would report noise that implementations couldn't agree on. One short list keeps the result the same everywhere; the rest is checked once it names one. |
+| A session with an unknown or missing `scenario` reported with `UNKNOWN_SCENARIO`, `SCHEMA` and `UNKNOWN_FIELD` only | Running its other checks against no scenario | Without a scenario the cast, variables and openings a session refers to are undefined, so most other checks would report noise that implementations couldn't agree on; an unknown one usually means the wrong bundle. One short list keeps the result the same everywhere, and the rest is checked once the session names a scenario. |
 | Regex keys written `/pattern/flags`, in forms ECMAScript and RE2 share | RE2 syntax, or whatever an engine accepts | Most SillyTavern regex keys work as written, every app can compile them, and a key is valid or `REGEX_ERROR` alike everywhere. |
 | Every line break in the scanned text written as `\n` | ECMAScript's line terminators for `^`, `$` and `.`; `REGEX_ERROR` for a key naming `\r`, U+2028 or U+2029 | Under `m`, ECMAScript's `^` and `$` also match at `\r`, U+2028 and U+2029, which engines without lookbehind, such as RE2 in Go and Rust, can't express. With one line break, `^`, `$` and `.` agree across engines, and nothing a reader sees changes. A key naming `\r`, U+2028 or U+2029 simply never matches, like any key for text that isn't there. |
 
