@@ -2,7 +2,7 @@
 
 This guide teaches Troupe by building one story: a heist with two thieves, a storm in a lantern, and a clock that runs out at the twelfth bell. It is for people writing their first Troupe files, including people who have written character cards before. No programming is needed.
 
-The guide is informative. [Troupe Format](../spec/format.md) is the normative document; "Format 7.2" means its section 7.2.
+The guide is informative; [Troupe Format](../spec/format.md) is the normative document.
 
 1. [How AI roleplay works](#1-how-ai-roleplay-works)
 2. [A first card](#2-a-first-card)
@@ -99,7 +99,7 @@ Suppose the player has just written "Is the vault still where you drew it?":
 
 Four messages later, if nobody has said "vault" or "survey" again, `survey` is no longer active. **`position`** says what kind of text an entry is: `"system"` for standing direction or `"context"` (the default) for knowledge. **`depth`** instead places an entry inside the conversation, that many messages from its end.
 
-A character's entries count only while the character is in the scene, or speaking. Elena's lore leaves with her.
+A character's entries count only while the character is in the scene, or while a message is being written for them. Elena's lore leaves with her.
 
 ## 4. A world and a second character
 
@@ -232,7 +232,7 @@ The heist runs on a clock: the harbor bells. A **variable** holds state like thi
 
 - **`type`** is `bool`, `int`, `string`, `enum` (one of `values`) or `set` (a list of distinct strings, such as an inventory). Numbers are whole numbers, so trust runs from 0 to 100.
 - **`description`** is written for authors and the model alike: what the value means and what moves it.
-- **`by`** says who changes the value: `["model"]` lets a model change it as the story goes, and `["player"]` leaves it to the people playing, like the plan for the job. Without `by`, only an opening sets it.
+- **`by`** says who changes the value: `["model"]` lets a model change it as the story goes, and `["player"]` leaves it to the people playing, like the plan for the job. Without `by`, only an opening is meant to set it.
 - **`min` and `max`** keep the bell between 6 and 12. **`maxStep`** and **`oneWay`** tell a model that it moves at most 2 at a time and never goes back.
 - **`of: "cast"`** keeps one value per character in the cast, read as `state.trust.kai`. `initial` gives Elena and Kai their own starting values, and `*` everyone else's.
 - **`labels`** name the values for people.
@@ -343,7 +343,5 @@ A V2/V3 card becomes a bundle with one character and a scenario: greetings becom
 
 - [The authoring guide](authoring.md) has patterns for goals and arcs, relationships, inventories, companions, time awareness and group chats.
 - [The authoring brief](authoring-brief.md) is one page to give an LLM that writes Troupe files.
-- [Troupe Format](../spec/format.md) lists every field. Part I is all an author needs.
+- [Troupe Format](../spec/format.md) lists every field: Part I covers bundles, and Part II sessions.
 - [`examples/`](../examples/) holds the spec's examples as files, and [`schemas/bundle.schema.json`](../schemas/bundle.schema.json) lets editors check a bundle as you write it.
-
-Files hold data and sandboxed conditions, never scripts. Text is Markdown, and anything a player or the model writes is used as written, so macros in it never take effect.

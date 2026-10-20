@@ -1,6 +1,6 @@
 # Troupe authoring guide
 
-This guide is informative. It shows how to build common stories from Troupe's primitives. The [authoring brief](authoring-brief.md) is a one-page summary for people and for LLMs asked to write Troupe files. [Troupe Format](../spec/format.md) is the normative document; "Format 7.2" means its section 7.2.
+This guide shows how to build common stories from Troupe's primitives. It is informative; [Troupe Format](../spec/format.md) is the normative document, and "Format 7.2" means its section 7.2.
 
 ## Patterns
 
