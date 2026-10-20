@@ -347,8 +347,9 @@ interface Entry {
 - An entry **with `pull`** is retrieved when it is relevant, by its `title` or its text, such as on a model's request or by a search.
 - **`when`** narrows any kind. `hit("word")` checks the scanned text as keys do, so `"when": "hit('glass') && !hit('guard')"` expresses AND and NOT; `hit('')` is false.
 - A **`disabled`** entry never activates.
-- **Timing.** `once`, `sticky` and `cooldown` count from the messages that record the entry in `activated` (section 11.4), by their `turn` (section 11.1). An entry recorded at a message of round *t* with `sticky` *s* stays active through round *t* + *s*, and with `cooldown` *c* can't activate again through round *t* + *s* + *c*, where *s* is 0 without `sticky`. `chance` is the percent probability that the entry activates when it otherwise would.
-- **`group`** lets at most one entry of the same owner's group be active at a time, the one of highest `priority`, chosen by `weight` among equals.
+- An entry activates only when whoever the message being written is for knows it (section 7.4), so one it doesn't know never takes its group's place.
+- **Timing.** `once`, `sticky` and `cooldown` count from the messages that record the entry in `activated` (section 11.4), by their `turn` (section 11.1). An entry recorded at a message of round *t* with `sticky` *s* stays active through round *t* + *s*, and with `cooldown` *c* can't activate again through round *t* + *s* + *c*, where *s* is 0 without `sticky`. `chance` is the percent probability that the entry activates when it otherwise would. An entry kept active by `sticky` stays active only while it applies (section 7.1); its `keys`, `when` and `chance` aren't checked again. Timing follows an entry's reference (section 2.4), so a session entry that replaces another with the same ID, or is added again after `disabled` removed it, continues its `once`, `sticky` and `cooldown`.
+- **`group`** lets at most one entry of the same owner's group be active at a time, the one of highest `priority`, chosen by `weight` among equals, where an entry kept active by `sticky` wins against equals that aren't kept.
 - **`priority`** is importance: when not every entry can be used, the least important give way first, and an entry of priority 100 never does.
 - **Choosing.** An app decides which entries reach the model; activation, timing, `group` and `priority` say what the author intends.
 
@@ -954,6 +955,8 @@ Two thieves hired by the player to steal a duke's storm lantern before the twelf
 | Witness knowledge; `["narrator"]` for narrator-only | Everyone knows everything; `[]` | Offstage characters miss what happens, and no list is empty. |
 | Player and model messages used as written | Resolving macros in them, or escaping them | Chat text moves between apps unchanged, and no hidden state leaks through model output or prompt attacks. |
 | Session characters can't reuse a bundle character's ID | Replacing the bundle character | A persona never takes over a story's character by accident; an edited character travels in the package's bundle. |
+| A `sticky` entry stays active without its `keys`, `when` or `chance`, and wins its `group` against equal priority | Checking them again each round; a fresh `weight` draw each round | `sticky` keeps an entry for as long as it says, and an entry of higher priority still takes the group. |
+| Timing follows an entry's reference | Restarting it when a session entry is replaced, or removed and added again | Editing a memory doesn't reset its `once`, `sticky` or `cooldown`. |
 | Durations in rounds | Messages | The same file behaves the same in solo and group chats. |
 | Timestamps keep their offset | UTC only, or a time zone name | `hour` and `weekday` read the writer's local time without a time zone database. |
 | `activated` may name a `disabled` bundle entry | `UNKNOWN_ENTRY` for it, as for a session entry a message removed | Sessions aren't pinned to a version of their bundle, so disabling an entry later doesn't invalidate a chat that recorded it. A session entry's removal is part of the chat, so recording it afterwards is an error. |
