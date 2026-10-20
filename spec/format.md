@@ -602,7 +602,7 @@ A message may add entries, owned by `session`. They apply from that message onwa
 
 ### 11.4 Other message fields
 
-- **`activated`** lists, on a model message, the entries that reached the model for it, those retrieved by `pull` included. An entry kept active by `sticky` isn't listed again. It may name a `disabled` bundle entry, but not a session entry after a message removed it (section 11.3), which is no longer in use.
+- **`activated`** lists, on a model message, the entries that reached the model for it, those retrieved by `pull` included. An entry whose text renders as nothing or only whitespace (section 9) reaches nothing and isn't listed. An entry kept active by `sticky` isn't listed again. It may name a `disabled` bundle entry, but not a session entry after a message removed it (section 11.3), which is no longer in use.
 - **`hidden`** messages stay on the path, and their changes, activations and rounds count, but no character or the narrator knows their parts, and keys don't match them.
 - **Records-only messages.** A system message with empty `content` is a root made from an opening without `content`, or carries `changes`, such as a player's edits to state. It has no `activated` or `char`, and has `entries` only on a root.
 
@@ -957,6 +957,7 @@ Two thieves hired by the player to steal a duke's storm lantern before the twelf
 | Durations in rounds | Messages | The same file behaves the same in solo and group chats. |
 | Timestamps keep their offset | UTC only, or a time zone name | `hour` and `weekday` read the writer's local time without a time zone database. |
 | `activated` may name a `disabled` bundle entry | `UNKNOWN_ENTRY` for it, as for a session entry a message removed | Sessions aren't pinned to a version of their bundle, so disabling an entry later doesn't invalidate a chat that recorded it. A session entry's removal is part of the chat, so recording it afterwards is an error. |
+| `activated` leaves out an entry whose text renders as nothing or only whitespace | Every entry an app chose | Nothing reached the model, so `once`, `sticky` and `cooldown` don't start, and text gated by macros behaves like text gated by `when`. Whitespace counts as nothing so that the layout around a macro doesn't change timing. |
 | Copies with `credits` | Live cross-bundle references, structured provenance | People write attribution as they like. |
 | `id` only links sessions to their bundle | Rules for forks, translations, release order, version pins or hashes | Nothing could check them. A session that must keep the exact story it was played with travels in a package with that bundle. |
 | No authorship, model, reasoning or tool fields | Message `author` and `model`, provider transcripts | No rule reads them; apps keep such data in `ext`. |
