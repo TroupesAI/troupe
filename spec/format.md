@@ -470,10 +470,10 @@ Macros are the only substitution in text.
 - In a state path, a `char` or `user` segment after the variable's name means the same character as the macro. When that is no character, the segment names no key, so the macro renders as nothing.
 - **Rendering.** A value with a label renders as its label, a string that is a character ID as that character's name, else one that is a location ID as that location's name. Numbers render as decimal integers, booleans as `true` or `false`, lists as items joined by `, ` (an empty list as nothing), and maps as `Name: value` pairs joined by `, `, each item and value rendered as above, with keys that are character IDs shown by name and other keys with underscores as spaces. Map keys render in the order of `of`: cast order for `"cast"`, list order for a list, and code point order for `"*"`. `{{scene.location}}` always renders as its location's name. A substituted value is never scanned for macros again.
 - **Unresolved.** A `{{` that starts no macro is left as written (see Parsing below), and is `UNKNOWN_MACRO` when the text from it to the next `}}` holds no macro the scan finds, such as `{{unknown}}`. In `{{{char}}` and `{{a{{char}}` the scan finds `{{char}}`, so they aren't. A macro naming a variable that isn't declared, as section 10.2 counts declarations, is also left as written (`UNKNOWN_MACRO`); an absent key of a declared variable, a path below a value that isn't a map, or a variable whose owner isn't in use renders as nothing.
-- **Which state.** Macros in a message resolve at that message: against its state, with `{{user}}` from the path to it. Elsewhere they resolve at the evaluation point (section 10.1), or, with no message being written, at the session's head, or at the initial state (section 8.6) when there is no head. In a scenario's text and in roots made from its openings, `own` means `state`.
+- **Which state.** Macros in a message resolve at that message: against its state, with `{{user}}` from the path to it. Elsewhere they resolve at the evaluation point (section 10.1), or, with no message being written, at the session's head, or at the initial state (section 8.6) when there is no head. In a scenario's text and in roots made from its openings, `own` names the scenario's variables (section 8.2).
 - **Where.** Macros resolve in descriptions, summaries, dialogue examples, premises, briefings, notes, entry texts, variable descriptions, openings' `content` and the roots made from it, and image `alt`, in the bundle and in a session's characters, worlds and entries. Player and model messages are used as written, and so is every other string, such as names, aliases, titles, labels, taglines, warnings, keys, `limits` and expressions.
 - **Escaping.** A writer that puts a player's or a model's words in a session's characters, worlds or entries MUST write each `\` as `\\` and each `{{` as `\{{`, in one left-to-right pass, so that they resolve to exactly what was written.
-- **Parsing** is one left-to-right scan. At each `{{`, the longest form in the table, with no spaces outside comments and options, is a macro; otherwise the first `{` is kept and scanning resumes at the next character. A comment runs from `{{//` to the next `}}`. A pick has at least two options, none empty, and options can't contain `::` or `}}`. `\{{` produces a literal `{{`, and `\\` a literal `\`.
+- **Parsing** is one left-to-right scan. At each `{{`, the longest form in the table, with no spaces outside comments and options, is a macro; otherwise the first `{` is kept and scanning resumes at the next character. A comment runs from `{{//` to the next `}}`. A pick ends at the first `}}`, and has at least two options, none empty or containing `::`. `\{{` produces a literal `{{`, and `\\` a literal `\`.
 - **Stored text keeps its macros**, except picks in roots (section 11.1). They resolve when text is shown or sent.
 
 ---
@@ -669,7 +669,7 @@ Files hold data and sandboxed expressions (section 10), never scripts, and their
 | Session entries on a path, the latest per ID | 10,000 |
 | One CEL expression | 4 KiB |
 | Members of a scenario's `cast`, and separately the characters a session adds | 256 |
-| A string state value, in UTF-8 | 4 KiB |
+| A string in a state value, a set's member included, in UTF-8 | 4 KiB |
 | Distinct members of a set value, or keys of a `"*"` map after a change | 256 |
 
 The last two are **value limits**: a value past them is invalid (section 8.5).
@@ -693,7 +693,7 @@ From 1.0, a reader also accepts the conforming files of an older minor version o
 
 ### 15.3 Checks
 
-Each check has a code, for validators to report it with. Every check runs on the document as written, so one value can fail several. A document that fails `PARSE` or `UNSUPPORTED_VERSION` is reported with those codes only.
+Each check has a code, for validators to report it with. Every check runs on the document as written, so one value can fail several. An input that fails `PARSE` or `UNSUPPORTED_VERSION`, a whole file or package, is reported with those codes only.
 
 | Code | Check |
 | --- | --- |
@@ -970,7 +970,7 @@ Two thieves hired by the player to steal a duke's storm lantern before the twelf
 | Limits on files, on CEL and on values | Only a file size cap, or each app's own | Every conforming file is bounded in size and in the work it asks for. |
 | Limits checked on each document alone, such as a scenario's cast and the characters a session adds | Limits on what a session and its bundle make together | `PARSE` is judged while reading one file, and a session file can be read without its bundle. |
 | Numbers within a double's range, rounded to the nearest; integer fields bounded by the schemas | RFC 7493's limit on precision; integer ranges checked while reading | Few JSON parsers can tell whether a number such as `0.1` has more precision than a double, and only the schemas know which fields are integers. |
-| A document that fails `PARSE` or `UNSUPPORTED_VERSION` reported with those codes only | Running every check on it | Other checks judge it against this version's rules, which mean nothing for a file that can't be read or is of another version. |
+| An input that fails `PARSE` or `UNSUPPORTED_VERSION` reported with those codes only | Running every check on it | Other checks judge it against this version's rules, which mean nothing for a file that can't be read or is of another version. |
 | Regex keys written `/pattern/flags`, in forms ECMAScript and RE2 share | RE2 syntax, or whatever an engine accepts | Most SillyTavern regex keys work as written, every app can compile them, and a key is valid or `REGEX_ERROR` alike everywhere. |
 | Every line break in the scanned text written as `\n` | ECMAScript's line terminators for `^`, `$` and `.`; `REGEX_ERROR` for a key naming `\r`, U+2028 or U+2029 | Under `m`, ECMAScript's `^` and `$` also match at `\r`, U+2028 and U+2029, which engines without lookbehind, such as RE2 in Go and Rust, can't express. With one line break, `^`, `$` and `.` agree across engines, and nothing a reader sees changes. A key naming `\r`, U+2028 or U+2029 simply never matches, like any key for text that isn't there. |
 
