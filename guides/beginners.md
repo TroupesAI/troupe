@@ -233,7 +233,7 @@ The heist runs on a clock: the harbor bells. A **variable** holds state like thi
 - **`type`** is `bool`, `int`, `string`, `enum` (one of `values`) or `set` (a list of distinct strings, such as an inventory). Numbers are whole numbers, so trust runs from 0 to 100.
 - **`description`** is written for authors and the model alike: what the value means and what moves it.
 - **`by`** says who changes the value: `["model"]` lets a model change it as the story goes, and `["player"]` leaves it to the people playing, like the plan for the job. Without `by`, only an opening is meant to set it.
-- **`min` and `max`** keep the bell between 6 and 12. **`maxStep`** and **`oneWay`** tell a model that it moves at most 2 at a time and never goes back.
+- **`min` and `max`** keep the bell between 6 and 12. **`maxStep`** and **`oneWay`** tell a model that it moves at most 2 in a message and never goes back.
 - **`of: "cast"`** keeps one value per character in the cast, read as `state.trust.kai`. `initial` gives Elena and Kai their own starting values, and `*` everyone else's.
 - **`labels`** name the values for people.
 - **`spoiler`** marks the value and its changes as spoilers for the players.

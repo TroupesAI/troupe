@@ -392,9 +392,9 @@ interface Variable {
 
 - **Types.** `bool`, `int` and `string` hold one JSON value. `enum` holds one of `values`, which it requires. `set` holds distinct strings: members of `values` when given, otherwise any strings. Only `enum` and `set` take `values`, and only `int` takes `min`, `max` and `maxStep`. `string` variables can't be `oneWay`.
 - **Defaults.** Without `initial`: `false`; `0` raised to `min` or lowered to `max`; `""`; the first of `values`; `[]`.
-- **`by`** says who is meant to change the variable: `player`, the people playing, and `model`, a model's output. An opening's `set` may change any variable.
-- **`maxStep`** is the largest step one change `by: "model"` is meant to take; **`oneWay`** means numbers only rise, a bool only turns true, a set only gains members, and an enum only moves later in `values`. Both apply to each key of a keyed variable.
-- **Recorded changes apply as written** (section 8.6): no check compares them with `by`, `maxStep` or `oneWay`, which guide whoever records a change.
+- **`by`** says who is meant to change the variable: `player`, the people playing, and `model`, a model's output.
+- **`maxStep`** is the most one message's changes `by: "model"` are meant to move the variable, from its value before the first of them to its value after the last; **`oneWay`** means numbers only rise, a bool only turns true, a set only gains members, and an enum only moves later in `values`. Both apply to each key of a keyed variable.
+- **Recorded changes apply as written** (section 8.6): no check compares them with `by`, `maxStep` or `oneWay`, which guide whoever records a change. An opening's `set` isn't held to these fields.
 
 ### 8.2 Ownership
 
@@ -951,6 +951,8 @@ Two thieves hired by the player to steal a duke's storm lantern before the twelf
 | Valid files, not repair | Rules for reading broken files leniently | A file either conforms or fails a check with a code; what an app does with a broken file is its own. |
 | Readers accept every conforming file of their level and read it as defined, at one of two levels | No duty on readers; every reader reading sessions | A file that conforms opens with the same meaning in every app that reads its kind; an app that only edits or plays bundles conforms without reading another app's chats. |
 | Recorded changes apply as written; `by`, `maxStep` and `oneWay` aren't checked | A check that replays every change against its variable | Readers never second-guess a recorded change, so a session reads the same everywhere; the fields still tell writers and models what is meant. |
+| An opening's `set` isn't held to `by`, `maxStep` or `oneWay` | Holding it to them like a change | Each opening may start the story from its own values, such as trust below its `initial`. |
+| `maxStep` bounds the changes `by: "model"` in one message together | Each change alone; each round | Splitting a model's output into several changes doesn't let it step further, and a model writing a reply controls only that message. |
 | A spoiler cast member is one until present on the path, and starts present like the rest of the cast | A spoiler on every branch until present on any; spoiler members starting offstage | Presence is state, recorded on each path. A mark for players changes no state, so the opening that keeps a character offstage decides when it appears. |
 | Witness knowledge; `["narrator"]` for narrator-only | Everyone knows everything; `[]` | Offstage characters miss what happens, and no list is empty. |
 | Player and model messages used as written | Resolving macros in them, or escaping them | Chat text moves between apps unchanged, and no hidden state leaks through model output or prompt attacks. |
