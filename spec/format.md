@@ -108,7 +108,7 @@ MUST, MUST NOT, SHOULD, SHOULD NOT and MAY are used as described in RFC 2119 and
 ### 2.2 Values
 
 - Documents are I-JSON (RFC 7493): UTF-8 without a byte order mark, no duplicate member names, no surrogate or noncharacter code points, written or escaped, and numbers within the range of an IEEE 754 double. Unlike RFC 7493, a number may have more precision than a double holds, and is rounded to the nearest double. Integer fields are within ±(2^53 − 1), which the schemas require, so a value outside it is `SCHEMA` (section 15.3). Writers write integers without a fraction or exponent, but a number with a zero fraction, such as `8.0`, is still an integer.
-- **Empty values.** `null` never appears in a field this spec defines or in a state value, and `""`, `[]` and `{}` never appear in an optional field other than `ext`: an optional field without a value is left out. State values and `scenario.worlds` are the exception: there `""`, `[]` and `{}` are values. Names, variable descriptions and the strings in lists such as `tags`, `keys` and `values` are never empty, and an example exchange has at least one line.
+- **Empty values.** `null` never appears in a field this spec defines or in a state value, and `""`, `[]` and `{}` never appear in an optional field other than `ext`: an optional field without a value is left out. State values are the exception: there `""`, `[]` and `{}` are values, and so is `[]` in `scenario.worlds` and a bundle's `warnings`. Names, variable descriptions and the strings in lists such as `tags`, `keys` and `values` are never empty, and an example exchange has at least one line.
 - **Defaults are normative.** Every default stated in this document or its TypeScript comments applies when a field is absent. Every boolean defaults to `false`, and one written `false` is the same as an absent one.
 
 ### 2.3 Identifiers
@@ -164,7 +164,7 @@ interface Bundle {
   language?: string;               // BCP 47
   tags?: string[];
   rating?: "general" | "mature" | "explicit";
-  warnings?: string[];             // content warnings, free text
+  warnings?: string[];             // content warnings, free text; [] for none
   cover?: string;                  // image (section 12.2)
   characters?: Character[];
   worlds?: World[];
@@ -172,6 +172,8 @@ interface Bundle {
   ext?: Ext;
 }
 ```
+
+- **`rating`** and **`warnings`** say nothing about the content when absent: an unrated bundle may be explicit, and one without `warnings` may hold anything.
 
 ---
 
@@ -788,6 +790,7 @@ Two thieves hired by the player to steal a duke's storm lantern before the twelf
   "language": "en",
   "tags": ["heist", "fantasy", "ensemble"],
   "rating": "general",
+  "warnings": [],
   "cover": "cover.webp",
 
   "characters": [
@@ -967,6 +970,7 @@ Two thieves hired by the player to steal a duke's storm lantern before the twelf
 | `activated` may name a `disabled` bundle entry | `UNKNOWN_ENTRY` for it, as for a session entry a message removed | Sessions aren't pinned to a version of their bundle, so disabling an entry later doesn't invalidate a chat that recorded it. A session entry's removal is part of the chat, so recording it afterwards is an error. |
 | `activated` judged at the message's evaluation point | Judging it at the message, with its own `entries` | The entries that reached the model were chosen before it wrote, so a reply that retires a memory it used still records it, and a reply can't record an entry it adds. |
 | `activated` leaves out an entry whose text renders as nothing or only whitespace | Every entry an app chose | Nothing reached the model, so `once`, `sticky` and `cooldown` don't start, and text gated by macros behaves like text gated by `when`. Whitespace counts as nothing so that the layout around a macro doesn't change timing. |
+| An absent `rating` or `warnings` says nothing; `warnings: []` says no warning applies | Absent meaning `general` or no warnings; `"None"` as a warning | A missing label can't vouch for a story, and apps can't read "none" reliably from free text. AO3 likewise keeps Not Rated and Creator Chose Not To Use Archive Warnings apart from No Archive Warnings Apply, and shows its adult-content notice before Not Rated works. |
 | Copies with `credits` | Live cross-bundle references, structured provenance | People write attribution as they like. |
 | `id` only links sessions to their bundle | Rules for forks, translations, release order, version pins or hashes | Nothing could check them. A session that must keep the exact story it was played with travels in a package with that bundle. |
 | No authorship, model, reasoning or tool fields | Message `author` and `model`, provider transcripts | No rule reads them; apps keep such data in `ext`. |
