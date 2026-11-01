@@ -22,8 +22,8 @@ Each card becomes a story with one character and a scenario `main` that holds it
 | `source` | Links in `credits` |
 | `assets` icon / background | `avatar` / a location `image`; other assets in `ext` |
 | Lorebook entries | Character entries, or a world named after the book |
-| `keys`, `constant`, `enabled` | `keywords`, no keywords, `disabled`; an entry with no keys that is neither constant nor vectorized never activates, so it becomes `disabled` |
-| SillyTavern regex keys `/p/flags`; with V3's `use_regex`, every key | The same keyword, keeping only the flags `i`, `m` and `s`; a `use_regex` key not in that form never matches, so it is dropped; a keyword with other forms (Format 14), such as a lookahead or a backreference, is rewritten or kept in `ext` |
+| `keys`, `constant`, `enabled` | `keywords`, no keywords, `disabled`; an entry with no keys that is neither constant, vectorized nor marked `@@activate` never activates, so it becomes `disabled` |
+| SillyTavern regex keys `/p/flags` | The same keyword, keeping only the flags `i`, `m` and `s`; a keyword with other forms (Format 14), such as a lookahead or a backreference, is rewritten or kept in `ext` |
 | `case_sensitive`, `match_whole_words: false` | A regex keyword of the escaped key: `/key/` when case-sensitive, else `/key/i`, with `\b` before and after it for whole words, which suits keys in ASCII letters |
 | `secondary_keys` AND ANY / NOT ANY / AND ALL / NOT ALL, `@@additional_keys`, `@@exclude_keys` | `when` with `hit()`: `hit('a') \|\| hit('b')`, `!hit('a') && !hit('b')`, `hit('a') && hit('b')`, `!(hit('a') && hit('b'))` |
 | `insertion_order` | the entry's place in `entries` |
@@ -39,7 +39,7 @@ Each card becomes a story with one character and a scenario `main` that holds it
 | `@@is_greeting N` (0 is `first_mes`) | `when: "opening == 'greeting_<N+1>'"` |
 | `@@ignore_on_max_context` | `priority: 0` |
 | `{{char}}`, `{{user}}` in any case, such as `{{Char}}`; `{{// …}}` | `{{char}}`, `{{player}}`, `{{// …}}`, since SillyTavern macros ignore case |
-| `<char>`, `<bot>`, `<user>` | `{{char}}`, `{{char}}`, `{{player}}` |
+| `<char>`, `<bot>`, `<user>` in any case | `{{char}}`, `{{char}}`, `{{player}}` |
 | `{{pick:…}}`, `{{random:…}}`, with `:` or `::` | `{{pick::a::b}}`, split at `::`, or at unescaped commas when there is no `::`; outside roots it picks again each time the text resolves, unlike SillyTavern's stable `pick` |
 | Other macros, such as `{{time}}` and `{{roll:…}}` | Escaped as `\{{…}}`, or rewritten as plain text; the source is kept in `ext` |
 | Recursion, other decorators, regex scripts | Not mapped; the source is kept in `ext`. To replace recursion, add to an entry the keywords of the entries whose text mentions one of its keywords. |
@@ -57,4 +57,4 @@ A story's first character exports with a lossy mapping, the import table in reve
 | Its own entry with `position: "system"`, known only by it | `system_prompt` |
 | Its own entry with `depth: 0`, known only by it | `post_history_instructions` |
 | Its other entries without `when` | `character_book` entries: keys, constant, position, and `enabled: false` for `disabled`; in the entry's `extensions`, as SillyTavern reads them, `depth` with `position: 4`, `probability`, `sticky` and `cooldown` in messages (about double the rounds), and `vectorized` for `retrievable` |
-| Its entries whose `when` is one of the `hit()` forms above | `character_book` entries likewise, with secondary keys, `selective: true` and the matching `selectiveLogic` in `extensions` |
+| Its entries whose `when` is one of the `hit()` forms above | `character_book` entries likewise, with `secondary_keys` and `selective: true`, and the matching `selectiveLogic` in `extensions` |
