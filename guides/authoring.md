@@ -4,7 +4,7 @@ This guide shows how to build common stories from Troupe's primitives. It is inf
 
 ## Patterns
 
-Most needs compose from entries, variables and conditions.
+Most patterns are built from entries, variables and conditions.
 
 ### Author's notes and player boundaries
 
@@ -22,7 +22,7 @@ A scenario `enum` `phase` tracks where play stands, and a model moves it on when
 
 ```json
 { "id": "phase", "type": "enum", "values": ["setup", "heist", "escape"], "by": ["model"], "oneWay": true,
-  "description": "The story's phase: setup until the crew enters the manor, heist until they hold the lantern, then escape." }
+  "description": "The heist's phase: setup until the crew enters the manor, heist until they hold the lantern, then escape." }
 ```
 
 Entries gated on it give each phase its goals and direction:
@@ -63,7 +63,7 @@ The [beginner's guide](beginners.md#9-companions-who-remember) builds one: a `cl
 
 ### Point-in-time canon
 
-A one-way `enum` `chapter`, with entries gated on it, keeps a canon character from knowing events after their moment in the story.
+A one-way `enum` `chapter`, with entries gated on it, keeps a canon character from knowing events after their moment in the canon.
 
 ### Casts from several stories
 

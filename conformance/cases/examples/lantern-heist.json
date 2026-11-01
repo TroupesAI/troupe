@@ -1,6 +1,6 @@
 {
   "description": "Format Appendix B.2 and B.3: every checkable claim about The Lantern Heist and its session (Format 7.4, 8.6, 9, 10, 11.5)",
-  "note": "The session's mara fills the scenario's seat, so the cast is mara, elena and kai. trust is of the cast, with initial {\"*\": 50, \"elena\": 70, \"kai\": 40}. approach starts at its first value.",
+  "note": "The session's mara fills the scenario's seat, so the cast is mara, elena and kai. trust is per cast, with initial {\"*\": 50, \"elena\": 70, \"kai\": 40}. approach starts at its first value.",
   "storyFile": "../../../examples/lantern-heist/story.json",
   "sessionFile": "../../../examples/lantern-heist/sessions/heist.troupe-session.jsonl",
   "tests": [

@@ -24,11 +24,11 @@ One page for people and for LLMs asked to write Troupe files. Give it to a model
 }
 ```
 
-**Shapes.** IDs start with a lowercase letter and use only `a–z`, `0–9` and `_`, at most 64 characters. Openings belong to scenarios and are `{"id", "content"}`, or `{"id", "name"}` for one the model writes; `content` is an array of parts, `[{"speaker": "mira", "text": "…"}]`, never a string. `examples` is an array of exchanges, each an array of `{"speaker": "char" | "player" | id, "text"}`. Write text in Markdown, not HTML, and put a character's actions in italics in the speaker's own part.
+**Shapes.** IDs start with a lowercase letter and use only `a–z`, `0–9` and `_`, at most 64 characters. Openings belong to scenarios and are `{"id", "content"}`, or `{"id"}`, with an optional `name`, for one the model writes; `content` is an array of parts, `[{"speaker": "mira", "text": "…"}]`, never a string. `examples` is an array of exchanges, each an array of `{"speaker": "char" | "player" | id, "text"}`. Write text in Markdown, not HTML, and put a character's actions in italics in the speaker's own part.
 
 **Macros.** `{{char}}` is the character the text belongs to and `{{player}}` the player's character. `{{state.bell}}` and `{{own.nerve}}` show values: a value with a label shows its label, and a character or location ID shows its name. `{{scene.location}}` and `{{scene.present}}` show where the scene is and who is there, and `{{pick::a::b}}` picks one option at random. Macros work in descriptions, summaries, examples, premises, briefings, notes, entry texts, openings and image `alt`. Every other field, such as a name, title, label or keyword, is used as written, and so are conditions and what players and models write.
 
-**Entries:** `{"id", "text"}` is always on. Add `keywords` to activate on words, `position: "system"` for rules, or `depth: N` to place the text N messages from the end of the history instead; `knownBy: ["id"]` for secrets or one character's instructions, `when` for conditions, `chance` (a percent, 0–100), `priority` (0–100, 100 never left out). `sticky`, `cooldown` and `round` count rounds: one player message and the replies to it.
+**Entries:** `{"id", "text"}` is always on. Add `keywords` to activate on words, `position: "system"` for rules, or `depth: N` to place the text N messages from the end of the history instead; `knownBy: ["id"]` for secrets or one character's instructions, `when` for conditions, `chance` (a percent, 0–100), `priority` (0–100, 100 never left out). `sticky` and `cooldown` count rounds, as `round` in conditions does: one player message and the replies to it.
 
 **Scenarios** hold `openings` and, for larger stories, `cast` (an object without `character` is a player seat; the default is one seat and every character), `premise`, `entries` and `variables`. An opening's `set` gives starting values: `{"scene.location": "vault", "state.bell": 11}`.
 
@@ -46,4 +46,4 @@ One page for people and for LLMs asked to write Troupe files. Give it to a model
 8. Leave the player's character out unless the story defines it; then mark its cast member `player`.
 9. Don't write `null`, and don't write `""` or `[]` for a field without a value: leave it out.
 
-Validate the result against `https://docs.troupes.ai/schema/0.15/story.schema.json` and fix every error before returning it. The schema doesn't check that IDs are unique, conditions or references, so check by hand that IDs are unique, that every `when` and macro names declared variables, and that every ID named exists.
+Validate the result against `https://docs.troupes.ai/schema/0.15/story.schema.json` and fix every error before returning it. The schema doesn't check that IDs are unique, or check conditions, macros or references, so check by hand that IDs are unique, that every `when` and macro names declared variables, and that every ID named exists.

@@ -1,5 +1,5 @@
 {
-  "description": "Packages (Format 12.3, 15.2): story.json at the root, sessions anywhere under sessions/, subfolders included, which a story reader may leave unread; absolute paths, .. segments, backslashes, names equal when compared case-insensitively, encryption and symbolic links are UNREADABLE; a directory entry (a name ending in /) and an unreferenced file outside the path grammar aren't part of the package",
+  "description": "Packages (Format 12.3, 15.2, 15.3): story.json at the root, sessions anywhere under sessions/, subfolders included, which a story reader may leave unread, and a story.json or session of another version makes the package UNSUPPORTED_VERSION, without this version's checks of what it references; absolute paths, .. segments, backslashes, names equal when compared case-insensitively, encryption and symbolic links are UNREADABLE; a directory entry (a name ending in /) and an unreferenced file outside the path grammar aren't part of the package",
   "tests": [
     {
       "type": "parse",
@@ -30,6 +30,31 @@
       "expect": {
         "codes": [
           "UNREADABLE"
+        ]
+      }
+    },
+    {
+      "type": "parse",
+      "name": "a story.json of another version",
+      "note": "Its cover names no file of the package, which only this version's rules judge.",
+      "kind": "package",
+      "base64": "UEsDBBQAAAAIACgJYl3TRo7rMgAAADUAAAAKAAAAc3RvcnkuanNvbqtWKinKLy1IVbJSMtAzNFPSUcrOzEtRslIqLskvqlTSUUrOL0stUrKC0HrlqUkFSrUAUEsBAhQDFAAAAAgAKAliXdNGjusyAAAANQAAAAoAAAAAAAAAAAAAAIABAAAAAHN0b3J5Lmpzb25QSwUGAAAAAAEAAQA4AAAAWgAAAAAA",
+      "expect": {
+        "codes": [
+          "UNSUPPORTED_VERSION"
+        ]
+      }
+    },
+    {
+      "type": "parse",
+      "name": "a session of another version",
+      "note": "The package is UNSUPPORTED_VERSION as a whole (Format 15.3).",
+      "level": "session",
+      "kind": "package",
+      "base64": "UEsDBBQAAAAIAHUHYl17Aw1VOAAAADkAAAAKAAAAc3RvcnkuanNvbqtWKinKLy1IVbJSMtAzNFXSUcrOzEtRslIqLskvqlTSUSpOTs1LLMrML1ayiq5WygRLKdXG1gIAUEsDBBQAAAAIAHUHYl07QGnHXAAAAGgAAAAjAAAAc2Vzc2lvbnMvZmlyc3QudHJvdXBlLXNlc3Npb24uanNvbmwVyUEKwkAMQNF9j/HXQ7EbFzmBdxAXpUYIalJmIijD3F26fa+TNT67Ipzm5UzhaX5HaNqahVNom/paLQ5kTB07fqHwqPFG2F/rTyuFLTzVE7l2Ur+JcLGZcRvTH1BLAQIUAxQAAAAIAHUHYl17Aw1VOAAAADkAAAAKAAAAAAAAAAAAAACAAQAAAABzdG9yeS5qc29uUEsBAhQDFAAAAAgAdQdiXTtAacdcAAAAaAAAACMAAAAAAAAAAAAAAIABYAAAAHNlc3Npb25zL2ZpcnN0LnRyb3VwZS1zZXNzaW9uLmpzb25sUEsFBgAAAAACAAIAiQAAAP0AAAAAAA==",
+      "expect": {
+        "codes": [
+          "UNSUPPORTED_VERSION"
         ]
       }
     },

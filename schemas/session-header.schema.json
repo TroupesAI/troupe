@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://docs.troupes.ai/schema/0.15/session-header.schema.json",
   "title": "Troupe session header",
-  "description": "The first line of a Troupe session file.",
+  "description": "The first line of a Troupe session.",
   "type": "object",
   "required": [
     "troupe",

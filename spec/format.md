@@ -108,7 +108,7 @@ MUST, MUST NOT, SHOULD, SHOULD NOT and MAY are used as described in RFC 2119 and
 ### 2.2 Values
 
 - Documents are I-JSON (RFC 7493): UTF-8 without a byte order mark, no duplicate member names, no surrogate or noncharacter code points, written or escaped, and numbers within the range of an IEEE 754 double. Unlike RFC 7493, a number may have more precision than a double holds, and is rounded to the nearest double. Integer fields are within ±(2^53 − 1), which the schemas require, so a value outside it is `SCHEMA` (section 15.3). Writers write integers without a fraction or exponent, but a number with a zero fraction, such as `8.0`, is still an integer.
-- **Empty values.** `null` never appears in a field this spec defines or in a state value, and `""`, `[]` and `{}` never appear in an optional field other than `ext`: an optional field without a value is left out. State values are the exception: there `""`, `[]` and `{}` are values, and so is `[]` in `scenario.worlds` and a story's `warnings`. Names, variable descriptions and the strings in lists such as `tags`, `keywords` and `values` are never empty, and an example exchange has at least one line.
+- **Empty values.** `null` never appears in a field this spec defines or in a state value, and `""`, `[]` and `{}` never appear in an optional field other than `ext`: an optional field without a value is left out. The exceptions are state values, where `""`, `[]` and `{}` are values, and `[]` in `scenario.worlds` and a story's `warnings`. Names, variable descriptions and the strings in lists such as `tags`, `keywords` and `values` are never empty, and an example exchange has at least one line.
 - **Defaults are normative.** Every default stated in this document or its TypeScript comments applies when a field is absent. Every boolean defaults to `false`, and one written `false` is the same as an absent one.
 
 ### 2.3 Identifiers
@@ -179,7 +179,7 @@ interface Story {
 
 ## 4. Character
 
-A character is anyone who can take part in a scenario, played by a model or by a **player**, a person playing. `player` and `players` in conditions, a session's `players` and `{{player}}` name players' characters, not people. Everything a character needs travels with it: its entries and its own variables.
+A character is anyone who can take part in a scenario, played by a model or by a **player**, a person playing. `players`, and `player` wherever it names a character, as in conditions and `{{player}}`, name players' characters, not people. Everything a character needs travels with it: its entries and its own variables.
 
 ```ts
 interface Character {
@@ -275,7 +275,7 @@ interface Opening {
 ### 6.1 Cast
 
 - The default cast is one player seat followed by every story character, in story order. A cast may hold only seats. Characters outside the cast take no part in the scenario.
-- **Seats** are cast members without `character`, filled by a character the person brings, and members with `player`, which a person plays as written, filled when `players` lists their character (section 11.2). A seat that no player fills is left out of the cast.
+- **Seats** are cast members without `character`, filled by a character a player brings, and members with `player`, which a player plays as written, filled when `players` lists their character (section 11.2). A seat that no player fills is left out of the cast.
 - A **`spoiler`** cast member is a spoiler for players on a path until the state at a message on it, the root included, has the character in `scene.present` (section 8.6). The cast starts present, so it stays a spoiler only when the root's changes leave it out, such as through an opening's `set`.
 
 ### 6.2 Modes
@@ -544,7 +544,7 @@ interface SessionHeader {
   boundaries?: Boundaries;         // the players' lines and veils
   scenario: string;                // scenario ID
   characters?: Character[];        // players' and joiners' (section 11.2)
-  players?: string[];              // distinct characters people control, in order (section 11.2)
+  players?: string[];              // the players' characters, distinct, in order (section 11.2)
   worlds?: World[];                // worlds added to the session
   head?: string;                   // the last message on the current path; the last message line
   ext?: Ext;
@@ -664,7 +664,7 @@ A file's size and the work it asks for are bounded. Its text is Markdown, which 
 | Item | Size limit |
 | --- | --- |
 | Story JSON | 32 MiB |
-| Session file / messages | 256 MiB / 100,000 |
+| A session / its messages | 256 MiB / 100,000 |
 | ZIP entries in a package / unpacked size | 10,000 / 512 MiB |
 | JSON nesting depth | 64 |
 | Entries / variables in a story, all owners, and separately in the characters and worlds a session adds | 10,000 / 1,000 |
@@ -696,11 +696,11 @@ From 1.0, a reader also accepts the conforming files of older minor versions (se
 
 ### 15.3 Checks
 
-Each check has a code, for validators to report it with. Every check runs on the document as written, so one value can fail several. An input that is `UNREADABLE` or `UNSUPPORTED_VERSION`, a whole file or package, is reported with those codes only. Otherwise, a session whose `scenario` is missing or names no scenario is reported with `UNKNOWN_SCENARIO`, `SCHEMA` and `UNKNOWN_FIELD` only, since most of its other checks need its scenario; its story is checked as usual.
+Each check has a code, for validators to report it with. Every check runs on the document as written, so one value can fail several. Each story, and each session's header line, is read first: one that isn't I-JSON within the JSON nesting depth, or whose story or session is over its size limit (section 14), is `UNREADABLE` alone. One whose `troupe` is then a version section 13 doesn't accept is `UNSUPPORTED_VERSION`, and nothing else in it is judged: not its `kind`, its other limits or the paths it references, nor a session's later lines. A package is judged by its ZIP limits and section 12.3 as well, and each of its documents as above. An input that is `UNREADABLE` or `UNSUPPORTED_VERSION`, a whole file or package, is reported with those codes only. Otherwise, a session whose `scenario` is missing or names no scenario is reported with `UNKNOWN_SCENARIO`, `SCHEMA` and `UNKNOWN_FIELD` only; its story is checked as usual.
 
 | Code | Check |
 | --- | --- |
-| `UNREADABLE` | The input is I-JSON (section 2.2), or session lines of I-JSON (section 11), a Troupe document with the `kind` its form holds, not a missing or other one, unless it is `UNSUPPORTED_VERSION` (section 12.1), within the limits table of section 14 other than the value limits, with package paths only in a package (section 12.2), and a package follows section 12.3 |
+| `UNREADABLE` | The input is I-JSON (section 2.2), or session lines of I-JSON (section 11), a Troupe document with the `kind` its form holds (section 12.1), within the limits table of section 14 other than the value limits, with package paths only in a package (section 12.2), and a package follows section 12.3 |
 | `UNSUPPORTED_VERSION` | `troupe`, when present, is a version section 13 accepts; a missing `troupe`, or one that isn't `major.minor`, is only `SCHEMA` |
 | `SCHEMA` | The document validates against its schema, with `format` asserted, apart from unknown properties (section 13) |
 | `UNKNOWN_FIELD` | Every property is one this document defines (section 13) |
@@ -969,7 +969,7 @@ Two thieves hired by the player to steal a duke's storm lantern before the twelf
 | An entry with `keywords` and `retrievable` activates by either | Requiring both | Each is a way the entry becomes relevant, and `when` with `hit()` already makes retrieval need a keyword. SillyTavern's vectorized entries work the same. |
 | `chance` drawn for the entry its group chose | Drawing it first, so that another entry of the group stands in | `weight` already sets the odds within a group, so `chance` says how often the chosen entry shows. SillyTavern draws it the same way, so imported lorebooks keep their odds. |
 | Timing follows an entry's reference | Restarting it when a session entry is replaced, or removed and added again | Editing a memory doesn't reset its `once`, `sticky` or `cooldown`. |
-| Durations in rounds, read as `round` | Messages; `turn` | A story keeps its pace whether one character answers each player message or several, and a turn usually means one message. |
+| Durations in rounds, read as `round` | Messages; `turn` | Timing keeps its pace whether one character answers each player message or several, and a turn usually means one message. |
 | Timestamps keep their offset | UTC only, or a time zone name | `hour` and `weekday` read the writer's local time without a time zone database. |
 | `activated` may name a `disabled` story entry | `UNKNOWN_ENTRY` for it, as for a session entry a message removed | Sessions aren't pinned to a version of their story, so disabling an entry later doesn't invalidate a session that recorded it. A session entry's removal is part of the session, so recording it afterwards is an error. |
 | `activated` judged at the message's evaluation point | Judging it at the message, with its own `entries` | The entries that reached the model were chosen before it wrote, so a reply that retires a memory it used still records it, and a reply can't record an entry it adds. |
@@ -988,7 +988,7 @@ Two thieves hired by the player to steal a duke's storm lantern before the twelf
 | Limits checked on each document alone, such as a scenario's cast and the characters a session adds | Limits on what a session and its story make together | `UNREADABLE` is judged while reading one file, and a session file can be read without its story. |
 | Numbers within a double's range, rounded to the nearest; integer fields bounded by the schemas | RFC 7493's limit on precision; integer ranges checked while reading | Few JSON parsers can tell whether a number such as `0.1` has more precision than a double, and only the schemas know which fields are integers. |
 | An input that is `UNREADABLE` or `UNSUPPORTED_VERSION` reported with those codes only | Running every check on it | Other checks judge it against this version's rules, which mean nothing for a file that can't be read or is of another version. |
-| A document of another version not judged by its `kind` | `UNREADABLE` as well | Each version defines its own kinds, as 0.14 called a story a `bundle`, so an old file reads as old, not as unreadable. |
+| A document of another version judged only by being I-JSON within the size and nesting limits, a session only by its header line | Judging its `kind`, other limits and package paths too | Each version defines its own kinds, fields and limits, as 0.14 called a story a `bundle`, so an old story or session file reads as old, not as unreadable. A package is still read as this version's archive, so one without `story.json`, such as a 0.14 package, is `UNREADABLE`. |
 | From 1.0, a file of an older minor version checked as one of this version | `UNSUPPORTED_VERSION` for every other version | A minor version only adds, so an older file means the same under the newer rules, and one validator covers its whole major version. |
 | A session with an unknown or missing `scenario` reported with `UNKNOWN_SCENARIO`, `SCHEMA` and `UNKNOWN_FIELD` only | Running its other checks against no scenario | Without a scenario the cast, variables and openings a session refers to are undefined, so most other checks would report noise that implementations couldn't agree on; an unknown one usually means the wrong story. One short list keeps the result the same everywhere, and the rest is checked once the session names a scenario. |
 | Regex keywords written `/pattern/flags`, in forms ECMAScript and RE2 share | RE2 syntax, or whatever an engine accepts | Most SillyTavern regex keys work as written, every app can compile them and match them in linear time, and a keyword is valid or `REGEX_ERROR` alike everywhere. |

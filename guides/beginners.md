@@ -51,10 +51,10 @@ This is a complete Troupe file. It holds one character and one way to start play
 - **`troupe`** is the version of the format, and **`kind`** says the file is a **story**: the document an author publishes, holding characters, worlds and scenarios.
 - **`id`** is the short name other parts of the file use for Elena. IDs start with a lowercase letter and use only `a–z`, `0–9` and `_`.
 - **`description`** is what the model reads to play her: looks, personality, background, how she talks. Headings such as `## Personality` are fine.
-- A **scenario** is what people open. Each of its **openings** is a first message. Give a scenario several, and each is an alternative start.
+- A **scenario** is what people play. Each of its **openings** is a first message. Give a scenario several, and each is an alternative start.
 - **`content`** is a list of parts. A part with a `speaker` is that character's line; a part without one is narration. Put actions in italics, in the speaker's own part: `"*She doesn't look up.* You're late."`
 
-The scenario has no cast, so it gets the default: one seat for the person playing, plus every character in the story. The person brings their own character to that seat, called a persona in most apps.
+The scenario has no cast, so it gets the default: one seat for a **player**, a person playing, plus every character in the story. The player brings their own character to that seat, called a persona in most apps. In this guide, that character is Mara, a retired smuggler.
 
 Text can name people with **macros**. `{{player}}` is the player's character and `{{char}}` the character the text belongs to, so an opening can say `"You're late, {{player}}."` and work for every player.
 
@@ -97,7 +97,9 @@ Suppose the player has just written "Is the vault still where you drew it?":
 | `style` | yes | It has no keywords, so it is always on. |
 | `survey` | yes | `vault` appears in the last 4 messages. |
 
-Four messages later, if nobody has said "vault" or "survey" again, `survey` is no longer active. **`position`** says where an entry goes: `"system"` among standing direction, such as tone and rules, or `"context"` (the default) among what the model needs to know. **`depth`** instead places an entry inside the conversation, that many messages from its end.
+Four messages later, if nobody has said "vault" or "survey" again, `survey` is no longer active.
+
+**`position`** says where an entry goes: `"system"` among standing direction, such as tone and rules, or `"context"` (the default) among what the model needs to know. **`depth`** instead places an entry inside the conversation, that many messages from its end.
 
 A character's entries count only while the character is in the scene, or while a message is being written for them. Elena's lore leaves with her.
 
@@ -208,7 +210,7 @@ By default, the scenario's `mode` is `characters`: each character's messages are
 | Kai, thinking: *If the Duke's men are early, this ends badly.* (`knownBy: ["kai"]`) | no | yes |
 | Elena to Mara, after Kai has left: "Watch him." | yes | no |
 
-In `narrator` mode, the narrator writes the whole scene and knows everything but hidden messages. A **narrator** can also write messages in `characters` mode; an entry with `knownBy: ["narrator"]` is known only by the narrator, which is how a mystery's clues stay hidden from its suspects. Knowledge is about characters, never about what people can read in the file.
+In `narrator` mode, the **narrator** writes the whole scene and knows everything. A narrator can also write messages in `characters` mode; an entry with `knownBy: ["narrator"]` is known only by the narrator, which is how a mystery's clues stay hidden from its suspects. Knowledge is about characters, never about what people can read in the file.
 
 ## 6. Keeping score
 
@@ -260,7 +262,7 @@ A character can carry its own variables into any story. Kai declares `nerve`, an
 | --- | --- |
 | `state.bell >= 10` | the tenth bell or later has rung |
 | `scene.location == 'vault'` | the scene is in the vault (strings use single quotes) |
-| `state.trust.kai >= 80 && hour >= 0 && hour < 6` | Kai trusts the player and it is before 6 a.m. where they are |
+| `state.trust.kai >= 80 && hour >= 0 && hour < 6` | Kai trusts the player's character and it is before 6 a.m. where they are |
 | `opening == 'gates' && round == 0` | the session started at the manor gates and the player hasn't written yet |
 | `hit('glass') && !hit('guard')` | in an entry: "glass" was mentioned and "guard" wasn't |
 
@@ -291,7 +293,7 @@ And this to Elena's:
 { "id": "betrayed", "knownBy": ["elena"], "when": "state.kai_confessed", "text": "Elena knows Kai meant to lead the crew into the Duke's trap. She is furious with him." }
 ```
 
-- **`twelfth`** is direction: once the twelfth bell rings, it tells the model to end the story.
+- **`twelfth`** is direction: once the twelfth bell rings, it tells the model to end the heist.
 - **`chance`** is a percentage: while the crew is on the rooftops, the patrol comes up 30 times in 100, so it passes now and then.
 - **`betrayed`** changes how Elena plays from the moment Kai confesses.
 
@@ -299,7 +301,7 @@ The full story, with its secrets, variables and entries in place, is [Format App
 
 ## 8. Sessions
 
-Playing never changes the story. Play is saved as a **session**: a header line naming the scenario, then one message per line. Messages form a tree. Each opening tried is a root, alternative replies are siblings, and going back to an earlier message to try something else starts a **branch**:
+Playing never changes the story. Play is saved as a **session**: a header line naming the scenario, then one message per line. Messages form trees: each opening tried is a root, alternative replies are siblings, and going back to an earlier message to try something else starts a **branch**:
 
 ```mermaid
 flowchart TD
@@ -309,7 +311,7 @@ flowchart TD
   O2["Opening: at the manor gates"]
 ```
 
-Every change is written into the message where it happened: which values changed and who changed them, and which entries activated. Branches never share state: time lost on one branch is still there to spend on the other. Because every change is recorded, a saved session reopens with the same history and state, without replaying anything. [Format Appendix B.3](../spec/format.md#b3-session) shows the rooftop branch of this session as a file.
+Every change is written into the message where it happened: which values changed and who changed them, and which entries activated. Branches never share state: time lost on one branch is still there to spend on the other. Because every change is recorded, a saved session reopens with the same history and state, without replaying anything. [Format Appendix B.3](../spec/format.md#b3-session) shows the rooftop opening and both replies as a file.
 
 The player's character usually lives in the session, not the story, and so does anyone new who joins during the session. What players and models write is stored as written, so a `{{player}}` typed in a message stays as typed.
 
@@ -333,11 +335,11 @@ Her entries can react to it, such as `"when": "own.closeness >= 60"` for an entr
   "text": "Elena promised Mara they would walk the harbor wall together on the first dry night." }
 ```
 
-A memory added on a message holds from there on, on that branch only, so a reply that is swiped away takes its memories with it.
+A memory added on a message holds from there on, on that branch only, so an alternative reply doesn't see it.
 
 ## 10. Coming from Character Card V2/V3
 
-A V2/V3 card becomes a story with one character and a scenario: greetings become alternative openings, the scenario text becomes the `premise`, the system prompt and post-history instructions become entries known only by the character, and the lorebook becomes entries, with secondary keys written as `when` with `hit()`. A SillyTavern chat file becomes a session, with alternative replies as siblings. [Character Card V2/V3 and Troupe](character-cards.md) maps every field, in both directions.
+A V2/V3 card becomes a story with one character and a scenario: greetings become alternative openings, the scenario text becomes the `premise`, the system prompt and post-history instructions become entries known only by the character, and the lorebook becomes entries, with secondary keys written as `when` with `hit()`. A SillyTavern chat file becomes a session, with alternative replies as siblings. [Character Card V2/V3 and Troupe](character-cards.md) maps each field on import, and back where it can.
 
 ## 11. Where next
 
