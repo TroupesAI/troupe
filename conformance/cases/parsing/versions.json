@@ -1,5 +1,5 @@
 {
-  "description": "Versions (Format 13, 15.3), against this 0.15 document: a file of any other version, minor or major, is UNSUPPORTED_VERSION and reported with that code only, even when it also fails this version's schema; a troupe value that isn't major.minor fails the schema instead",
+  "description": "Versions (Format 13, 15.3), against this 0.15 document: a file of any other version, minor or major, is UNSUPPORTED_VERSION and reported with that code only, even when it also fails this version's kind or schema; a troupe value that isn't major.minor fails the schema instead",
   "tests": [
     {
       "type": "parse",
@@ -15,8 +15,9 @@
     {
       "type": "parse",
       "name": "an older minor",
+      "note": "0.14 called a story a bundle.",
       "kind": "story",
-      "text": "{\"troupe\":\"0.14\",\"kind\":\"story\"}",
+      "text": "{\"troupe\":\"0.14\",\"kind\":\"bundle\"}",
       "expect": {
         "codes": [
           "UNSUPPORTED_VERSION"
@@ -26,9 +27,9 @@
     {
       "type": "parse",
       "name": "an older minor that also fails this version's schema",
-      "note": "The empty tags would be SCHEMA and mystery an UNKNOWN_FIELD in a 0.15 story.",
+      "note": "The kind would be UNREADABLE, the empty tags SCHEMA and mystery an UNKNOWN_FIELD in a 0.15 story.",
       "kind": "story",
-      "text": "{\"troupe\":\"0.14\",\"kind\":\"story\",\"tags\":[],\"mystery\":true}",
+      "text": "{\"troupe\":\"0.14\",\"kind\":\"bundle\",\"tags\":[],\"mystery\":true}",
       "expect": {
         "codes": [
           "UNSUPPORTED_VERSION"

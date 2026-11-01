@@ -184,7 +184,7 @@ The weather entries show the timing and competition options:
 
 ## 5. Secrets
 
-Stories depend on people not knowing things. Elena still has the surveyor's master key to the vault and hasn't told anyone. Kai has taken the Duke's money to lead the crew into a trap. Each secret is an entry with **`knownBy`**:
+Roleplay depends on people not knowing things. Elena still has the surveyor's master key to the vault and hasn't told anyone. Kai has taken the Duke's money to lead the crew into a trap. Each secret is an entry with **`knownBy`**:
 
 ```json
 { "id": "master_key", "knownBy": ["elena"], "text": "Elena still has the surveyor's master key to the Duke's vault, and hasn't told anyone." }
@@ -275,7 +275,7 @@ A model changes a variable with `by: ["model"]` when its description says so: th
   "description": "Kai has confessed the Duke's deal to {{player}}." }
 ```
 
-A model sets it when it happens, and from then on it is a recorded fact. Entries with `when` turn such facts into story. Add these to the scenario's `entries`:
+A model sets it when it happens, and from then on it is a recorded fact. Entries with `when` make such facts matter. Add these to the scenario's `entries`:
 
 ```json
 { "id": "twelfth", "position": "system", "when": "state.bell >= 12", "text": "The twelfth bell has rung and the harbor gates are shut. Bring the story to its end." }

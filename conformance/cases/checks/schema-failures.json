@@ -35,11 +35,11 @@
             "text": "A secret."
           },
           {
-            "id": "badkey",
+            "id": "bad_keyword",
             "keywords": [
               ""
             ],
-            "text": "An empty key."
+            "text": "An empty keyword."
           },
           {
             "id": "sure",

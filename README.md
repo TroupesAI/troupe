@@ -1,6 +1,6 @@
 # Troupe
 
-An open file format for AI roleplay: characters, the worlds they live in, the scenarios that bring them together, the state they track, and sessions: scenarios as people played them, with every change recorded.
+An open file format for AI roleplay: characters, the worlds they live in, the scenarios that bring them together, and sessions: scenarios as people play them, with their state and every change recorded.
 
 **Status:** v0.15 draft. Breaking changes are allowed until 1.0, which is tagged once none is pending and the conformance suite covers the spec.
 

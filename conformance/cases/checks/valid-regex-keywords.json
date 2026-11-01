@@ -47,14 +47,14 @@
             "keywords": [
               "/r/ fans"
             ],
-            "text": "a plain key"
+            "text": "a plain keyword"
           },
           {
             "id": "words",
             "keywords": [
               "/\\b(sword|blade)s?\\b/i"
             ],
-            "text": "a SillyTavern-style key"
+            "text": "a SillyTavern-style keyword"
           },
           {
             "id": "classes",

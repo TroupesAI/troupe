@@ -32,7 +32,7 @@ One page for people and for LLMs asked to write Troupe files. Give it to a model
 
 **Scenarios** hold `openings` and, for larger stories, `cast` (an object without `character` is a player seat; the default is one seat and every character), `premise`, `entries` and `variables`. An opening's `set` gives starting values: `{"scene.location": "vault", "state.bell": 11}`.
 
-**Variables** need `id`, `type` (`bool`, `int`, `string`, `enum` with `values`, or `set`) and `description`. Numbers are integers, so use a scale such as 0–100. Give `by: ["model"]` for values the story should update and `by: ["player"]` for choices the players make, and `per: "cast"` for one value per character. Read a scenario's variable as `state.bell`, a character's own as `own.nerve`, another character's as `state.kai.nerve`, and one key as `state.trust.kai`.
+**Variables** need `id`, `type` (`bool`, `int`, `string`, `enum` with `values`, or `set`) and `description`. Numbers are integers, so use a scale such as 0–100. Give `by: ["model"]` for values the model should update and `by: ["player"]` for choices the players make, and `per: "cast"` for one value per character. Read a scenario's variable as `state.bell`, a character's own as `own.nerve`, another character's as `state.kai.nerve`, and one key as `state.trust.kai`.
 
 **Traps:**
 

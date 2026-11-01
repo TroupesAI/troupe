@@ -2,7 +2,7 @@
 
 **Version 0.15 (draft)** · November 1, 2026
 
-Troupe is an open file format for AI roleplay: characters, the worlds they live in, the scenarios that bring them together, the state they track, and sessions: scenarios as people played them, with every change recorded. A story can hold a single character or a full cast.
+Troupe is an open file format for AI roleplay: characters, the worlds they live in, the scenarios that bring them together, and sessions: scenarios as people play them, with their state and every change recorded. A story can hold a single character or a full cast.
 
 This document defines the files and what every field means.
 
@@ -179,7 +179,7 @@ interface Story {
 
 ## 4. Character
 
-A character is anyone who can take part in a scenario, played by a model or by a **player**, a person playing. `players`, `player` and `{{player}}` name players' characters, not people. Everything a character needs travels with it: its entries and its own variables.
+A character is anyone who can take part in a scenario, played by a model or by a **player**, a person playing. `player` and `players` in conditions, a session's `players` and `{{player}}` name players' characters, not people. Everything a character needs travels with it: its entries and its own variables.
 
 ```ts
 interface Character {
@@ -700,7 +700,7 @@ Each check has a code, for validators to report it with. Every check runs on the
 
 | Code | Check |
 | --- | --- |
-| `UNREADABLE` | The input is I-JSON (section 2.2), or session lines of I-JSON (section 11), a Troupe document with the `kind` its form holds, not a missing or other one (section 12.1), within the limits table of section 14 other than the value limits, with package paths only in a package (section 12.2), and a package follows section 12.3 |
+| `UNREADABLE` | The input is I-JSON (section 2.2), or session lines of I-JSON (section 11), a Troupe document with the `kind` its form holds, not a missing or other one, unless it is `UNSUPPORTED_VERSION` (section 12.1), within the limits table of section 14 other than the value limits, with package paths only in a package (section 12.2), and a package follows section 12.3 |
 | `UNSUPPORTED_VERSION` | `troupe`, when present, is a version section 13 accepts; a missing `troupe`, or one that isn't `major.minor`, is only `SCHEMA` |
 | `SCHEMA` | The document validates against its schema, with `format` asserted, apart from unknown properties (section 13) |
 | `UNKNOWN_FIELD` | Every property is one this document defines (section 13) |
@@ -988,9 +988,10 @@ Two thieves hired by the player to steal a duke's storm lantern before the twelf
 | Limits checked on each document alone, such as a scenario's cast and the characters a session adds | Limits on what a session and its story make together | `UNREADABLE` is judged while reading one file, and a session file can be read without its story. |
 | Numbers within a double's range, rounded to the nearest; integer fields bounded by the schemas | RFC 7493's limit on precision; integer ranges checked while reading | Few JSON parsers can tell whether a number such as `0.1` has more precision than a double, and only the schemas know which fields are integers. |
 | An input that is `UNREADABLE` or `UNSUPPORTED_VERSION` reported with those codes only | Running every check on it | Other checks judge it against this version's rules, which mean nothing for a file that can't be read or is of another version. |
+| A document of another version not judged by its `kind` | `UNREADABLE` as well | Each version defines its own kinds, as 0.14 called a story a `bundle`, so an old file reads as old, not as unreadable. |
 | From 1.0, a file of an older minor version checked as one of this version | `UNSUPPORTED_VERSION` for every other version | A minor version only adds, so an older file means the same under the newer rules, and one validator covers its whole major version. |
 | A session with an unknown or missing `scenario` reported with `UNKNOWN_SCENARIO`, `SCHEMA` and `UNKNOWN_FIELD` only | Running its other checks against no scenario | Without a scenario the cast, variables and openings a session refers to are undefined, so most other checks would report noise that implementations couldn't agree on; an unknown one usually means the wrong story. One short list keeps the result the same everywhere, and the rest is checked once the session names a scenario. |
-| Regex keywords written `/pattern/flags`, in forms ECMAScript and RE2 share | RE2 syntax, or whatever an engine accepts | Most SillyTavern regex keywords work as written, every app can compile them and match them in linear time, and a keyword is valid or `REGEX_ERROR` alike everywhere. |
+| Regex keywords written `/pattern/flags`, in forms ECMAScript and RE2 share | RE2 syntax, or whatever an engine accepts | Most SillyTavern regex keys work as written, every app can compile them and match them in linear time, and a keyword is valid or `REGEX_ERROR` alike everywhere. |
 | Every line break in the scanned text written as `\n` | ECMAScript's line terminators for `^`, `$` and `.`; `REGEX_ERROR` for a keyword naming `\r`, U+2028 or U+2029 | Under `m`, ECMAScript's `^` and `$` also match at `\r`, U+2028 and U+2029, which engines without lookbehind, such as RE2 in Go and Rust, can't express. With one line break, `^`, `$` and `.` agree across engines, and nothing a reader sees changes. A keyword naming `\r`, U+2028 or U+2029 simply never matches, like any keyword for text that isn't there. |
 
 ---
