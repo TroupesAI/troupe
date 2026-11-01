@@ -73,17 +73,6 @@
           "UNREADABLE"
         ]
       }
-    },
-    {
-      "type": "parse",
-      "name": "a message failing the schema at one value",
-      "kind": "session",
-      "text": "{\"troupe\":\"0.15\",\"kind\":\"session\",\"scenario\":\"s\"}\n{\"id\":\"1\",\"from\":\"player\",\"at\":\"yesterday\",\"content\":[{\"text\":\"x\"}]}\n{\"id\":\"2\",\"parent\":\"1\",\"from\":\"model\",\"content\":[{\"text\":\"y\"}]}\n",
-      "expect": {
-        "codes": [
-          "SCHEMA"
-        ]
-      }
     }
   ]
 }

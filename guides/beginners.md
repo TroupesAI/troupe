@@ -179,7 +179,7 @@ A heist needs a city, a target and a crew. A **world** is a setting that scenari
 
 The weather entries show the timing and competition options:
 
-- **`group`:** at most one entry of a group is active. Neither weather entry has keywords, so both always qualify, and one is chosen by `weight`: rain three times as often as fog.
+- **`group`:** at most one entry of a group is active. Neither weather entry has keywords, so both always qualify, and one is chosen by `weight`: rain is three times as likely as fog to come first.
 - **`sticky: 6`:** once chosen, the weather stays for 6 rounds. A **round** is one player message and the replies to it, so a story paces the same whether one character replies or several.
 - **`cooldown: 4`:** after that, it rests for 4 rounds, so fog gets a chance.
 - **`priority`** (0 to 100, default 50) is importance: when not everything fits, the lowest priority is left out first. The lantern's danger, at 80, outlasts ordinary lore.

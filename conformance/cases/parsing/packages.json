@@ -23,7 +23,7 @@
     {
       "type": "parse",
       "name": "a session in a subfolder of sessions/",
-      "note": "The session has an unreadable line, so it is UNREADABLE only because it is part of the package.",
+      "note": "The session has an unreadable line, so it is UNREADABLE only because it is a session of the package.",
       "level": "session",
       "kind": "package",
       "base64": "UEsDBBQAAAAIAAAAS117Aw1VOAAAADkAAAAKAAAAc3RvcnkuanNvbqtWKinKLy1IVbJSMtAzNFXSUcrOzEtRslIqLskvqlTSUSpOTs1LLMrML1ayiq5WygRLKdXG1gIAUEsDBBQAAAAIAAAAS11n+O6jXwAAAG8AAAAhAAAAc2Vzc2lvbnMvYS9iLnRyb3VwZS1zZXNzaW9uLmpzb25sNcsxCsJAEEDRPsf49RJMYTMn8A5iEeIEBnUm7I6gLLm7pLD9j9/JGu9NEU7jdKbwML8jNG3Nwim0RX2uFkdkHzp2+ERhrfFC2J7zVyuFJTzVE7l2Uj+JcLGR/fa/hh9QSwECFAMUAAAACAAAAEtdewMNVTgAAAA5AAAACgAAAAAAAAAAAAAAgIEAAAAAc3RvcnkuanNvblBLAQIUAxQAAAAIAAAAS11n+O6jXwAAAG8AAAAhAAAAAAAAAAAAAACAgWAAAABzZXNzaW9ucy9hL2IudHJvdXBlLXNlc3Npb24uanNvbmxQSwUGAAAAAAIAAgCHAAAA/gAAAAAA",

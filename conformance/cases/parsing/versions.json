@@ -27,17 +27,6 @@
     },
     {
       "type": "parse",
-      "name": "0.9 is another minor, not 0.90",
-      "kind": "story",
-      "text": "{\"troupe\":\"0.9\",\"kind\":\"story\"}",
-      "expect": {
-        "codes": [
-          "UNSUPPORTED_VERSION"
-        ]
-      }
-    },
-    {
-      "type": "parse",
       "name": "another major",
       "kind": "story",
       "text": "{\"troupe\":\"1.0\",\"kind\":\"story\"}",

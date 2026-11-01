@@ -407,7 +407,7 @@ A variable belongs to the scenario, world or character that declares it. Text, c
 | a scenario | `state.bell` | `state.bell` or `own.bell` |
 | a character or world | `state.kai.nerve` | `own.nerve` |
 
-Roots made from a scenario's openings use `own` as the scenario does. Session entries have no `own`: in their text `{{own.…}}` is left as written, and in their conditions `own` is a `CEL_ERROR`.
+Roots made from a scenario's openings use `own` as the scenario does. Session entries have no `own`: in their text `{{own.…}}` is left as written (`UNKNOWN_MACRO`), and in their conditions `own` is a `CEL_ERROR`.
 
 ### 8.3 Keyed variables
 
@@ -459,7 +459,7 @@ Macros are the only substitution in text.
 | --- | --- |
 | `{{char}}` | The name of the character the text belongs to (below) |
 | `{{player}}` | The name of the player's character being answered (below) |
-| `{{state.<path>}}`, `{{own.<path>}}` | A state value, e.g. `{{state.bell}}`, `{{own.nerve}}`, `{{state.trust.char}}` |
+| `{{state.<path>}}`, `{{own.<path>}}` | A state value, the path being author IDs, `char` and `player` joined by `.`, e.g. `{{state.bell}}`, `{{own.nerve}}`, `{{state.trust.char}}` |
 | `{{scene.location}}`, `{{scene.present}}` | The current location, or the characters present |
 | `{{pick::<a>::<b>…}}` | One of the options, chosen at random each time the text resolves, or once in a root (section 11.1) |
 | `{{// <comment>}}` | Nothing; a note for authors |
@@ -472,8 +472,8 @@ Macros are the only substitution in text.
 - **`{{player}}`** is the speaker of the first speaking part in the latest player message on the path that has a speaking part, else the first player's character; with neither, it is left as written.
 - In a state path, a `char` or `player` segment after the variable's name means the same character as the macro. When that is no character, the segment names no key, so the macro renders as nothing.
 - **Rendering.** A value with a label renders as its label, a string that is a character ID as that character's name, else one that is a location ID as that location's name. Numbers render as decimal integers, booleans as `true` or `false`, lists as items joined by `, ` (an empty list as nothing), and maps as `Name: value` pairs joined by `, `, each item and value rendered as above, with keys that are character IDs shown by name and other keys with underscores as spaces. Map keys render in the order of `per`: cast order for `"cast"`, list order for a list, and code point order for `"*"`. `{{scene.location}}` always renders as its location's name. A substituted value is never scanned for macros again.
-- **Parsing** is one left-to-right scan. At each `{{`, the longest form in the table, with no spaces outside comments and options, is a macro; otherwise the first `{` is kept and scanning resumes at the next character. A comment runs from `{{//` to the next `}}`. A pick ends at the first `}}`, and has at least two options, none empty or containing `::`. `\{{` produces a literal `{{`, and `\\` a literal `\`.
-- **Unresolved.** A `{{` that starts no macro is left as written, and is `UNKNOWN_MACRO` when the text from it to the next `}}` holds no macro the scan finds, such as `{{unknown}}`. In `{{{char}}` and `{{a{{char}}` the scan finds `{{char}}`, so they aren't. A macro naming a variable that isn't declared, as section 10.2 counts declarations, is also left as written (`UNKNOWN_MACRO`); an absent key of a declared variable, a path below a value that isn't a map, or a variable whose owner isn't in use renders as nothing.
+- **Parsing** is one left-to-right scan. At each `{{`, the longest form in the table, with no spaces outside comments and options, is a macro; otherwise the first `{` is kept and scanning resumes at the next character. A comment runs from `{{//` to the next `}}`. A pick ends at the first `}}`, and its options, split at each `::` from the left, are at least two, none empty. `\{{` produces a literal `{{`, and `\\` a literal `\`.
+- **Unresolved.** A `{{` that starts no macro is left as written, and is `UNKNOWN_MACRO` when the text from it to the next `}}` holds no macro the scan finds, such as `{{unknown}}`, and isn't when no `}}` follows. In `{{{char}}` and `{{a{{char}}` the scan finds `{{char}}`, so they aren't. A macro naming a variable that isn't declared, as section 10.2 counts declarations, is also left as written (`UNKNOWN_MACRO`); an absent key of a declared variable, a path below a value that isn't a map, or a variable whose owner isn't in use renders as nothing.
 - **Which state.** Macros in a message resolve at that message: against its state, with `{{player}}` from the path to it. Elsewhere they resolve at the evaluation point (section 10.1), or, with no message being written, at the session's head, or at the initial state (section 8.6) when there is no head.
 - **Where.** Macros resolve in descriptions, summaries, dialogue examples, premises, briefings, notes, entry texts, variable descriptions, openings' `content` and the roots made from it, and image `alt`, in the story and in a session's characters, worlds and entries. Player and model messages are used as written, and so is every other string, such as names, aliases, titles, labels, taglines, warnings, keywords, `boundaries` and expressions.
 - **Escaping.** A writer that puts a player's or a model's words in a session's characters, worlds or entries MUST write each `\` as `\\` and each `{{` as `\{{`, in one left-to-right pass, so that they resolve to exactly what was written.
@@ -517,11 +517,11 @@ state.trust[char] >= 80 && hour < 6
 
 ### 10.2 Rules
 
-- Every expression type-checks: `state` against the scenario's variables and the variables of every character and world of the story and session, and `own` against the expression owner's. A story is checked once for each scenario, with the expressions in use in it (section 6.4), and a session's characters, worlds and entries with its scenario; an expression in use in no scenario is checked once, against no scenario variables.
+- Every expression type-checks: `state` against the scenario's variables and the variables of every character and world of the story and, for a session's expressions, the session, and `own` against the expression owner's. A story is checked once for each scenario, with the expressions in use in it (section 6.4), and a session's characters, worlds and entries with its scenario; an expression in use in no scenario is checked once, against no scenario variables.
 - Conditions have type `bool`.
 - Evaluation follows the CEL language definition, including its errors, such as integer overflow and division by zero. A runtime error makes a condition false; `&&` and `||` absorb an error when their other operand decides the result.
-- `state`, `own` and `scene` are only selected from, as in `state.bell`: never indexed by computed strings or used as values. Keyed variables are maps, indexed with brackets (section 8.3); selecting `char` or `player` from one, as in `state.trust.char`, is a `CEL_ERROR`, since `state.trust[char]` is meant.
-- Expressions use only `bool`, `int`, `string`, list and map values, and list and map literals hold values of one type. `double`, `bytes`, `uint` and `null` literals and type names used as values are a `CEL_ERROR`.
+- `state`, `state.<owner>`, `own` and `scene` are only selected from, as in `state.bell`: never indexed by computed strings or used as values. Keyed variables are maps, indexed with brackets (section 8.3); selecting `char` or `player` from one, as in `state.trust.char`, is a `CEL_ERROR`, since `state.trust[char]` is meant.
+- Expressions use only `bool`, `int`, `string`, list and map values, list literals hold values of one type, and map literals keys of one type and values of one type. `double`, `bytes`, `uint` and `null` literals and type names used as values are a `CEL_ERROR`.
 - Expressions may use CEL's operators, `?:` included. The only functions and macros are `size`, `has`, `contains`, `startsWith`, `endsWith` and `hit()`, which takes a string literal keyword.
 - Selecting an absent value, such as a variable whose owner isn't in use or an absent key, is a runtime error. `has()` of such a selection is true exactly when selecting it isn't a runtime error, whatever the value, and is never an error itself.
 - An expression that breaks any of these rules is a `CEL_ERROR`, and so is a `hit()` keyword that is a regex but isn't valid (section 14).
@@ -606,7 +606,7 @@ A message may add entries, owned by `session`. They apply from that message onwa
 ### 11.4 Other message fields
 
 - **`activated`** lists, on a model message, the entries that reached the model for it, retrieved ones included. An entry whose text renders as nothing or only whitespace (section 9) reaches nothing and isn't listed. An entry kept active by `sticky` isn't listed again. It names entries in use at the message's evaluation point (section 10.1): not those its own `entries` add, but still those they remove. It may name a `disabled` story entry, but not a session entry removed by then (section 11.3), which is no longer in use.
-- **`hidden`** messages stay on the path, and their changes, activations and rounds count, but no character or the narrator knows their parts.
+- **`hidden`** messages stay on the path and count for changes, activations, rounds and `{{player}}`, but no character or the narrator knows their parts.
 - **Records-only messages.** A system message with empty `content` is a root made from an opening without `content`, or carries `changes`, such as a player's edits to state. It has no `activated` or `char`, and has `entries` only on a root.
 
 ### 11.5 Knowledge
@@ -634,7 +634,7 @@ Fields that hold a file (`cover`, `avatar`, location `image` and image parts) ho
 ### 12.3 Packages
 
 - `story.json` is at the root. Sessions are stored under `sessions/` with the `.troupe-session.jsonl` extension. Every path the story or sessions reference is a file of the package. A package may also hold files nothing in this document references, such as files an extension uses (section 13), and a writer that rewrites a package keeps them.
-- Every file anywhere under `sessions/`, subfolders included, with that extension is a session of the package. The package's files have paths matching `^[A-Za-z0-9_-][A-Za-z0-9._-]*(/[A-Za-z0-9_-][A-Za-z0-9._-]*)*$`, with segments of at most 255 bytes. Every other entry, such as a directory (a name ending in `/`) or a file an archiver adds, isn't part of the package.
+- Every file of the package anywhere under `sessions/`, subfolders included, with that extension is a session of the package. The package's files have paths matching `^[A-Za-z0-9_-][A-Za-z0-9._-]*(/[A-Za-z0-9_-][A-Za-z0-9._-]*)*$`, with segments of at most 255 bytes. Every other entry, such as a directory (a name ending in `/`) or a file an archiver adds, isn't part of the package.
 - No ZIP entry has an absolute path, a `..` segment or a backslash, is a symbolic link, is encrypted, uses a compression method other than store and deflate, or has the name of another entry compared ASCII case-insensitively.
 
 ---
@@ -643,7 +643,7 @@ Fields that hold a file (`cover`, `avatar`, location `image` and image parts) ho
 
 - **Extensions.** Every object of a story or session that this document defines with an interface MAY carry `ext`, keyed by an extension name matching `^[a-z0-9][a-z0-9.-]{0,63}$`, such as `risu.regex`. The `troupe.` prefix is reserved for this specification. Writers MUST NOT add fields anywhere else, and MUST keep every `ext` of a file they rewrite unchanged, as a JSON value.
 - **Unknown fields.** A property is unknown when its object's interface doesn't define it; for a part, the interface its `type` selects; a part of an unknown `type` is only `SCHEMA`. An unknown property carries no meaning, and is an `UNKNOWN_FIELD`; `SCHEMA` is judged with unknown properties removed.
-- **Versions** are `major.minor`, compared as two integers, so `0.10` is newer than `0.9`. From 1.0, minor versions only add what files of an older minor can do without; before 1.0, any minor version may break. A file of a version other than this document's is `UNSUPPORTED_VERSION`, except that from 1.0 a file of an older minor version of the same major is checked as one of this version.
+- **Versions** are `major.minor`, two integers without leading zeros, compared as integers, so `0.10` is newer than `0.9`. From 1.0, minor versions only add what files of an older minor can do without; before 1.0, any minor version may break. A file of a version other than this document's is `UNSUPPORTED_VERSION`, except that from 1.0 a file of an older minor version of the same major is checked as one of this version.
 
 ---
 
@@ -666,7 +666,7 @@ A file's size and the work it asks for are bounded. Its text is Markdown, which 
 | Story JSON | 32 MiB |
 | A session / its messages | 256 MiB / 100,000 |
 | ZIP entries in a package / unpacked size | 10,000 / 512 MiB |
-| JSON nesting depth | 64 |
+| JSON nesting depth, counting objects and arrays, the outermost as 1 | 64 |
 | Entries / variables in a story, all owners, and separately in the characters and worlds a session adds | 10,000 / 1,000 |
 | A text value: a part's `text`, an entry's `text` or a description, in UTF-8 | 1 MiB |
 | Session entries on a path, the latest per ID | 10,000 |
@@ -696,7 +696,7 @@ From 1.0, a reader also accepts the conforming files of older minor versions (se
 
 ### 15.3 Checks
 
-Each check has a code, for validators to report it with. Every check runs on the document as written, so one value can fail several. Each story, and each session's header line, is read first: one that isn't I-JSON within the JSON nesting depth, or whose story or session is over its size in bytes (section 14), is `UNREADABLE` alone. One whose `troupe` is then a version section 13 doesn't accept is `UNSUPPORTED_VERSION`, and nothing else in it is judged: not its `kind`, its other limits or the paths it references, nor a session's later lines. A package is judged by its ZIP limits and section 12.3 as well, and each of its documents as above. An input that is `UNREADABLE` or `UNSUPPORTED_VERSION`, a whole file or package, is reported with those codes only. Otherwise, a session whose `scenario` is missing or names no scenario is reported with `UNKNOWN_SCENARIO`, `SCHEMA` and `UNKNOWN_FIELD` only; its story is checked as usual.
+Each check has a code, for validators to report it with. A story's references resolve within the story, and a session's within the session and its story. Every check runs on the document as written, so one value can fail several. Each story, and each session's header line, is read first: one that isn't I-JSON within the JSON nesting depth, or whose story or session is over its size in bytes (section 14), is `UNREADABLE` alone. One whose `troupe` is then a version section 13 doesn't accept is `UNSUPPORTED_VERSION`, and nothing else in it is judged: not its `kind`, its other limits or the paths it references, nor a session's later lines. A package is judged by its ZIP limits and section 12.3 as well, and each of its documents as above. An input that is `UNREADABLE` or `UNSUPPORTED_VERSION`, a whole file or package, is reported with those codes only. Otherwise, a session whose `scenario` is missing or names no scenario is reported with `UNKNOWN_SCENARIO`, `SCHEMA` and `UNKNOWN_FIELD` only; its story is checked as usual.
 
 | Code | Check |
 | --- | --- |
@@ -963,6 +963,7 @@ Two thieves hired by the player to steal a duke's storm lantern before the twelf
 | Witness knowledge; `["narrator"]` for narrator-only | Everyone knows everything; `[]` | Offstage characters miss what happens, and `knownBy` is never empty. |
 | `boundaries` for the players' lines and veils | `limits` | `limits` already names section 14's limits, and tabletop safety tools call lines and veils boundaries. |
 | Player and model messages used as written | Resolving macros in them, or escaping them | Message text moves between apps unchanged, and no hidden state leaks through model output or prompt attacks. |
+| Hidden messages count for `{{player}}` | Only messages characters know | A reply to a hidden player message still answers that player, as its rounds and changes still count. |
 | Session characters can't reuse a story character's ID | Replacing the story character | A session character never takes over one of the story's by accident; an edited character travels in the package's story. |
 | A `sticky` entry stays active without its `keywords`, `when` or `chance`, while it applies and is known, and wins its `group` against equal priority | Checking them again each round; keeping it for characters who don't know it; a fresh `weight` draw each round | `sticky` keeps an entry for as long as it says, without showing a secret to a character who doesn't know it, and an entry of higher priority still takes the group. |
 | Retrieving a `retrievable` entry is its activation, under every rule of activation | Retrieval outside those rules; always-on entries and entries with keywords holding their group against retrieved ones | One set of rules for every kind of entry, and `priority` decides a group however its entries activate. SillyTavern's vectorized entries also compete in their group with entries activated by keywords. |
@@ -986,6 +987,7 @@ Two thieves hired by the player to steal a duke's storm lantern before the twelf
 | Writers leave out empty optional fields | Allowing `""` and `[]` anywhere | Two writers of the same story produce the same fields. |
 | Limits on files, on CEL and on values | Only a file size cap, or each app's own | Every conforming file is bounded in size and in the work it asks for. |
 | Limits checked on each document alone, such as a scenario's cast and the characters a session adds | Limits on what a session and its story make together | `UNREADABLE` is judged while reading one file, and a session file can be read without its story. |
+| A story's references resolved within the story | Within the story and the session it is checked with | A story is published once and played in many sessions, so whether it conforms can't depend on one of them. |
 | Numbers within a double's range, rounded to the nearest; integer fields bounded by the schemas | RFC 7493's limit on precision; integer ranges checked while reading | Few JSON parsers can tell whether a number such as `0.1` has more precision than a double, and only the schemas know which fields are integers. |
 | An input that is `UNREADABLE` or `UNSUPPORTED_VERSION` reported with those codes only | Running every check on it | Other checks judge it against this version's rules, which mean nothing for a file that can't be read or is of another version. |
 | A document of another version judged only by being I-JSON within the size and nesting limits, a session past its header only by its size | Judging its `kind`, other limits and package paths too | Each version defines its own kinds, fields and limits, as 0.14 called a story a `bundle`, so an old story or session file reads as old, not as unreadable. A package is still read as this version's archive, so one without `story.json`, such as a 0.14 package, is `UNREADABLE`. |

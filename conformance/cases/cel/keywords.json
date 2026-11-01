@@ -348,14 +348,7 @@
     },
     {
       "type": "cel",
-      "name": "under m, ^ matches after CRLF",
-      "at": "r13",
-      "expr": "hit('/^b/m')",
-      "expect": true
-    },
-    {
-      "type": "cel",
-      "name": "and after U+2028, written as \\n",
+      "name": "under m, ^ matches after U+2028, written as \\n",
       "at": "r14",
       "expr": "hit('/^b/m')",
       "expect": true

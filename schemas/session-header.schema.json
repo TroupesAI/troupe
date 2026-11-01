@@ -12,8 +12,7 @@
   "additionalProperties": false,
   "properties": {
     "$schema": {
-      "type": "string",
-      "minLength": 1
+      "$ref": "story.schema.json#/$defs/nonEmpty"
     },
     "troupe": {
       "$ref": "story.schema.json#/$defs/version"

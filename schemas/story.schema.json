@@ -11,8 +11,7 @@
   "additionalProperties": false,
   "properties": {
     "$schema": {
-      "type": "string",
-      "minLength": 1
+      "$ref": "#/$defs/nonEmpty"
     },
     "troupe": {
       "$ref": "#/$defs/version"
@@ -186,11 +185,21 @@
         "$ref": "#/$defs/stateKey"
       },
       "additionalProperties": {
-        "not": {
-          "type": "null"
-        }
+        "$ref": "#/$defs/stateValue"
       },
       "minProperties": 1
+    },
+    "stateValue": {
+      "description": "A state value, with no null at any depth (Format 2.2).",
+      "not": {
+        "type": "null"
+      },
+      "items": {
+        "$ref": "#/$defs/stateValue"
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/stateValue"
+      }
     },
     "nonEmpty": {
       "type": "string",
@@ -205,10 +214,6 @@
       "type": "string",
       "pattern": "^https://\\S+$",
       "format": "uri"
-    },
-    "cel": {
-      "type": "string",
-      "minLength": 1
     },
     "packagePath": {
       "description": "A relative path inside a package (Format 12.3).",
@@ -232,7 +237,10 @@
     },
     "extName": {
       "type": "string",
-      "pattern": "^[a-z0-9][a-z0-9.-]{0,63}$"
+      "pattern": "^[a-z0-9][a-z0-9.-]{0,63}$",
+      "not": {
+        "pattern": "^troupe\\."
+      }
     },
     "ext": {
       "description": "Extension data, keyed by extension name.",
@@ -415,15 +423,10 @@
           "$ref": "#/$defs/nonEmpty"
         },
         "keywords": {
-          "type": "array",
-          "items": {
-            "type": "string",
-            "minLength": 1
-          },
-          "minItems": 1
+          "$ref": "#/$defs/list"
         },
         "when": {
-          "$ref": "#/$defs/cel"
+          "$ref": "#/$defs/nonEmpty"
         },
         "scanDepth": {
           "type": "integer",
@@ -708,18 +711,11 @@
         },
         "initial": {
           "description": "Validity is checked against the declaration (INVALID_VALUE).",
-          "not": {
-            "type": "null"
-          },
+          "$ref": "#/$defs/stateValue",
           "if": {
             "type": "object"
           },
           "then": {
-            "additionalProperties": {
-              "not": {
-                "type": "null"
-              }
-            },
             "minProperties": 1
           }
         },

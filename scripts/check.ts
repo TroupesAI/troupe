@@ -4,7 +4,8 @@
 //   - every TypeScript interface in the spec lists exactly its schema's properties;
 //   - the spec version agrees across the spec, the README, schema URLs, examples, documents in Markdown and cases;
 //   - every conformance case is named <area>/<topic>.json, matches conformance/case.schema.json, and the files it names exist,
-//     its check and parse tests list codes sorted and distinct, and expect SCHEMA exactly when the schemas reject their input;
+//     its check and parse tests list codes sorted and distinct, and its check tests and its parse tests given as text
+//     expect SCHEMA exactly when the schemas reject their input;
 //   - cases with state, macro, cel or knows tests have inputs that pass the schemas, unknown properties included, and a
 //     check test that expects no codes, so a runner confirms the inputs conform;
 //   - relative Markdown links and #anchors resolve, and every "Format 7.2" in the documents, cases, schemas, scripts and

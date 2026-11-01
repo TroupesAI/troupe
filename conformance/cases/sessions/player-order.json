@@ -142,7 +142,7 @@
   "tests": [
     {
       "type": "cel",
-      "name": "every character people control, as listed",
+      "name": "every player's character, as listed",
       "expr": "players == ['p', 'a', 'q', 'b', 'r']",
       "expect": true
     },

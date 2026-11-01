@@ -1,5 +1,5 @@
 {
-  "description": "Rules in the schemas (Format 2.2, 2.3, 8, 8.1, 8.5, 11, 13): booleans written as false are defaults; empty optional fields, including {}, and null state values are SCHEMA; reserved IDs; bool labels; integers, with a zero fraction allowed (Format 2.2); integer weights of at least 1; state keys start with state. or scene.; a change is by opening, player or model, sets at least one state key, and is by opening only on a root made from an opening; an initial object has members; parts of an unknown type are SCHEMA; unknown properties are UNKNOWN_FIELD, not SCHEMA; message shapes",
+  "description": "Rules in the schemas (Format 2.2, 2.3, 8, 8.1, 8.5, 11, 13): booleans written as false are defaults; empty optional fields, including {}, and null in state values, at any depth, are SCHEMA; reserved IDs; bool labels; integers, with a zero fraction allowed (Format 2.2); integer weights of at least 1; state keys start with state. or scene.; a change is by opening, player or model, sets at least one state key, and is by opening only on a root made from an opening; an initial object has members; parts of an unknown type are SCHEMA; unknown properties are UNKNOWN_FIELD, not SCHEMA; message shapes; the troupe. extension prefix is reserved",
   "tests": [
     {
       "type": "parse",
@@ -46,6 +46,17 @@
       "name": "null as an initial value",
       "kind": "story",
       "text": "{\"troupe\": \"0.15\", \"kind\": \"story\", \"scenarios\": [{\"id\": \"s\", \"variables\": [{\"id\": \"v\", \"description\": \"d\", \"type\": \"int\", \"initial\": null}]}]}",
+      "expect": {
+        "codes": [
+          "SCHEMA"
+        ]
+      }
+    },
+    {
+      "type": "parse",
+      "name": "null inside a state value",
+      "kind": "story",
+      "text": "{\"troupe\": \"0.15\", \"kind\": \"story\", \"scenarios\": [{\"id\": \"s\", \"variables\": [{\"id\": \"v\", \"description\": \"d\", \"type\": \"set\", \"initial\": [\"a\", null]}]}]}",
       "expect": {
         "codes": [
           "SCHEMA"
@@ -237,7 +248,7 @@
     },
     {
       "type": "parse",
-      "name": "of characters",
+      "name": "per: \"characters\"",
       "kind": "story",
       "text": "{\"troupe\": \"0.15\", \"kind\": \"story\", \"scenarios\": [{\"id\": \"s\", \"variables\": [{\"id\": \"v\", \"description\": \"d\", \"type\": \"int\", \"per\": \"characters\"}]}]}",
       "expect": {
@@ -306,6 +317,17 @@
       "name": "a player listed twice",
       "kind": "session",
       "text": "{\"troupe\": \"0.15\", \"kind\": \"session\", \"scenario\": \"s\", \"players\": [\"p\", \"p\"]}\n",
+      "expect": {
+        "codes": [
+          "SCHEMA"
+        ]
+      }
+    },
+    {
+      "type": "parse",
+      "name": "an extension name with the reserved troupe. prefix",
+      "kind": "story",
+      "text": "{\"troupe\": \"0.15\", \"kind\": \"story\", \"ext\": {\"troupe.x\": 1}}",
       "expect": {
         "codes": [
           "SCHEMA"

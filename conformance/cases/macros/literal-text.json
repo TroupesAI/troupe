@@ -1,7 +1,8 @@
 {
-  "description": "Player and model text is used as written (Format 9): its macros never resolve and it holds no escapes. {{player}} is the speaker of the first speaking part of the latest player message on the path that has one (multiplayer)",
+  "description": "Player and model text is used as written (Format 9): its macros never resolve and it holds no escapes, and names, taglines and titles, used as written too, hold no UNKNOWN_MACRO. {{player}} is the speaker of the first speaking part of the latest player message on the path that has one (multiplayer)",
   "story": {
     "kind": "story",
+    "tagline": "Into the {{dark}}.",
     "characters": [
       {
         "id": "a",
@@ -17,6 +18,7 @@
     "scenarios": [
       {
         "id": "s",
+        "name": "The {{dark}}",
         "cast": [
           {},
           {},
@@ -25,6 +27,13 @@
           },
           {
             "character": "b"
+          }
+        ],
+        "entries": [
+          {
+            "id": "e",
+            "title": "{{nothing}}",
+            "text": "Plain."
           }
         ]
       }

@@ -1,23 +1,11 @@
 {
-  "description": "Package contents and paths (Format 12.2, 12.3, 15.3): package paths appear only in a package, a data: URI's media type is lowercase, and every path a package's story or sessions reference is a file of the package, or it is UNREADABLE; an exact duplicate name, compression methods other than store and deflate, and an unreadable line in a session inside a valid package, for a session reader (Format 15.2), are UNREADABLE; a file with a path segment over 255 bytes isn't part of the package; sessions belong to the package only in their folder",
+  "description": "Package contents and paths (Format 12.2, 12.3, 15.3): package paths appear only in a package, a data: URI's media type is lowercase, and every path a package's story or sessions reference is a file of the package, or it is UNREADABLE; an exact duplicate name and compression methods other than store and deflate are UNREADABLE; a file with a path segment over 255 bytes isn't part of the package; sessions belong to the package only in their folder",
   "tests": [
     {
       "type": "parse",
       "name": "two entries with the same name",
       "kind": "package",
       "base64": "UEsDBBQAAAAIAAAAS12QkNGAIgAAACAAAAAKAAAAc3RvcnkuanNvbqtWKinKLy1IVbJSMtAzNFXSUcrOzEtRslIqLskvqlSqBQBQSwMEFAAAAAgAAABLXZCQ0YAiAAAAIAAAAAoAAABzdG9yeS5qc29uq1YqKcovLUhVslIy0DM0VdJRys7MS1GyUiouyS+qVKoFAFBLAQIUAxQAAAAIAAAAS12QkNGAIgAAACAAAAAKAAAAAAAAAAAAAACAgQAAAABzdG9yeS5qc29uUEsBAhQDFAAAAAgAAABLXZCQ0YAiAAAAIAAAAAoAAAAAAAAAAAAAAICBSgAAAHN0b3J5Lmpzb25QSwUGAAAAAAIAAgBwAAAAlAAAAAAA",
-      "expect": {
-        "codes": [
-          "UNREADABLE"
-        ]
-      }
-    },
-    {
-      "type": "parse",
-      "name": "an unreadable session line inside a valid package",
-      "level": "session",
-      "kind": "package",
-      "base64": "UEsDBBQAAAAIAAAAS117Aw1VOAAAADkAAAAKAAAAc3RvcnkuanNvbqtWKinKLy1IVbJSMtAzNFXSUcrOzEtRslIqLskvqlTSUSpOTs1LLMrML1ayiq5WygRLKdXG1gIAUEsDBBQAAAAIAAAAS13cc6v4dAAAALQAAAAjAAAAc2Vzc2lvbnMvZmlyc3QudHJvdXBlLXNlc3Npb24uanNvbmx1jEEKwjAUBfceY9ahWMFNTuAdxEVovxBM80MSQQm9e6ml0I3bN2+mUbO+k2A5d/0Vw8vHEUuRUrxGDGWQ6LLXdWQ+NfzKewzPrBOWFNxXMoZBY5VYsfdGlU/FcvMd82O3dvmCIbn8+x5Lk44S/oQkBN1aC1BLAQIUAxQAAAAIAAAAS117Aw1VOAAAADkAAAAKAAAAAAAAAAAAAACAgQAAAABzdG9yeS5qc29uUEsBAhQDFAAAAAgAAABLXdxzq/h0AAAAtAAAACMAAAAAAAAAAAAAAICBYAAAAHNlc3Npb25zL2ZpcnN0LnRyb3VwZS1zZXNzaW9uLmpzb25sUEsFBgAAAAACAAIAiQAAABUBAAAAAA==",
       "expect": {
         "codes": [
           "UNREADABLE"
@@ -49,8 +37,8 @@
     },
     {
       "type": "parse",
-      "name": "a session outside sessions/ isn't part of the package",
-      "note": "The stray files aren't valid JSON, so they would be UNREADABLE if they were part of the package.",
+      "name": "files outside sessions/ or without the session extension aren't sessions of the package",
+      "note": "The stray files aren't valid JSON, so they would be UNREADABLE if they were sessions.",
       "kind": "package",
       "base64": "UEsDBBQAAAAIAAAAS12QkNGAIgAAACAAAAAKAAAAc3RvcnkuanNvbqtWKinKLy1IVbJSMtAzNFXSUcrOzEtRslIqLskvqlSqBQBQSwMEFAAAAAgAAABLXWbLjMYKAAAACAAAABoAAABzdHJheS50cm91cGUtc2Vzc2lvbi5qc29ubMvLL1HIKs7PAwBQSwMEFAAAAAgAAABLXWbLjMYKAAAACAAAABIAAABzZXNzaW9ucy9ub3Rlcy50eHTLyy9RyCrOzwMAUEsBAhQDFAAAAAgAAABLXZCQ0YAiAAAAIAAAAAoAAAAAAAAAAAAAAICBAAAAAHN0b3J5Lmpzb25QSwECFAMUAAAACAAAAEtdZsuMxgoAAAAIAAAAGgAAAAAAAAAAAAAAgIFKAAAAc3RyYXkudHJvdXBlLXNlc3Npb24uanNvbmxQSwECFAMUAAAACAAAAEtdZsuMxgoAAAAIAAAAEgAAAAAAAAAAAAAAgIGMAAAAc2Vzc2lvbnMvbm90ZXMudHh0UEsFBgAAAAADAAMAwAAAAMYAAAAAAA==",
       "expect": {

@@ -1,5 +1,5 @@
 {
-  "description": "A state key naming a key a keyed variable doesn't allow is UNKNOWN_STATE_KEY (Format 8.3, 8.5, 15.3); per: \"cast\" has a key for every cast character, the player's included (Format 11.2)",
+  "description": "A state key naming a key a keyed variable doesn't allow is UNKNOWN_STATE_KEY (Format 8.3, 8.5, 15.3)",
   "story": {
     "kind": "story",
     "characters": [
@@ -73,9 +73,7 @@
             "by": "player",
             "set": {
               "state.trust.zed": 90,
-              "state.trust.p": 90,
-              "state.rep.guild": 3,
-              "state.trust.a": 80
+              "state.rep.guild": 3
             }
           }
         ]

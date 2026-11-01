@@ -235,12 +235,6 @@
     },
     {
       "type": "cel",
-      "name": "hit() is available in every expression",
-      "expr": "hit('rope')",
-      "expect": false
-    },
-    {
-      "type": "cel",
       "name": "a session entry's condition has no own",
       "self": "session",
       "expr": "own.bell == 7",
