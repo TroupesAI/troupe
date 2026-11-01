@@ -1,7 +1,7 @@
 {
-  "description": "A session's characters and entries are checked as a bundle's are (Format 9, 10.2, 15.3): an unknown macro in a header character or a session entry is UNKNOWN_MACRO, and a session entry's condition is checked with its scenario, without own",
-  "bundle": {
-    "kind": "bundle",
+  "description": "A session's characters and entries are checked as a story's are (Format 9, 10.2, 15.3): an unknown macro in a header character or a session entry is UNKNOWN_MACRO, and a session entry's condition is checked with its scenario, without own",
+  "story": {
+    "kind": "story",
     "scenarios": [
       {
         "id": "s",

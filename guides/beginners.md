@@ -5,7 +5,7 @@ This guide teaches Troupe by building one story: a heist with two thieves, a sto
 The guide is informative; [Troupe Format](../spec/format.md) is the normative document.
 
 1. [How AI roleplay works](#1-how-ai-roleplay-works)
-2. [A first card](#2-a-first-card)
+2. [A first story](#2-a-first-story)
 3. [Lore that appears when it matters](#3-lore-that-appears-when-it-matters)
 4. [A world and a second character](#4-a-world-and-a-second-character)
 5. [Secrets](#5-secrets)
@@ -24,16 +24,16 @@ A model has no memory of its own. Each time it replies, it reads what it needs: 
 
 So a roleplay file mostly says what the model should read, and when. A Troupe file declares it; how each app puts it in front of a model is up to the app.
 
-Most shared characters today are Character Card V2 or V3 files. A card describes one character, its greetings and a lorebook of facts with keywords. That works for a single companion, but people now use cards for much more. Group stories have to pretend to be one character, stats and inventories are faked with text tricks, and every character in a group chat sees every secret. Troupe is designed to fix each of these, and the chapters below show how.
+Most shared characters today are Character Card V2 or V3 files. A card describes one character, its greetings and a lorebook of facts with keywords. That works for a single companion, but people now use cards for much more. Cards for several characters have to pretend to be one, stats and inventories are faked with text tricks, and when several characters share a scene, each sees every secret. Troupe is designed to fix each of these, and the chapters below show how.
 
-## 2. A first card
+## 2. A first story
 
-This is a complete Troupe file. It holds one character and one way to start a chat with her:
+This is a complete Troupe file. It holds one character and one way to start playing with her:
 
 ```json
 {
-  "troupe": "0.14",
-  "kind": "bundle",
+  "troupe": "0.15",
+  "kind": "story",
   "characters": [
     { "id": "elena", "name": "Elena Voss", "description": "A meticulous thief and mapmaker. Calm, exacting, dry humor." }
   ],
@@ -48,15 +48,15 @@ This is a complete Troupe file. It holds one character and one way to start a ch
 }
 ```
 
-- **`troupe`** is the version of the format, and **`kind`** says the file is a **bundle**: a file an author shares, holding characters, worlds and scenarios.
+- **`troupe`** is the version of the format, and **`kind`** says the file is a **story**: the document an author publishes, holding characters, worlds and scenarios.
 - **`id`** is the short name other parts of the file use for Elena. IDs start with a lowercase letter and use only `a–z`, `0–9` and `_`.
 - **`description`** is what the model reads to play her: looks, personality, background, how she talks. Headings such as `## Personality` are fine.
 - A **scenario** is what people open. Each of its **openings** is a first message. Give a scenario several, and each is an alternative start.
 - **`content`** is a list of parts. A part with a `speaker` is that character's line; a part without one is narration. Put actions in italics, in the speaker's own part: `"*She doesn't look up.* You're late."`
 
-The scenario has no cast, so it gets the default: one seat for the person playing, plus every character in the bundle. The person brings their own character to that seat, called a persona in most apps.
+The scenario has no cast, so it gets the default: one seat for the person playing, plus every character in the story. The person brings their own character to that seat, called a persona in most apps.
 
-Text can name people with **macros**. `{{user}}` is the player's character and `{{char}}` the character the text belongs to, so an opening can say `"You're late, {{user}}."` and work for every player.
+Text can name people with **macros**. `{{player}}` is the player's character and `{{char}}` the character the text belongs to, so an opening can say `"You're late, {{player}}."` and work for every player.
 
 ## 3. Lore that appears when it matters
 
@@ -64,8 +64,8 @@ An **entry** is any piece of text the model should read when its conditions hold
 
 ```json
 {
-  "troupe": "0.14",
-  "kind": "bundle",
+  "troupe": "0.15",
+  "kind": "story",
   "characters": [
     {
       "id": "elena",
@@ -73,31 +73,31 @@ An **entry** is any piece of text the model should read when its conditions hold
       "description": "A meticulous thief and mapmaker. Calm, exacting, dry humor.",
       "entries": [
         { "id": "style", "position": "system", "text": "Keep Elena's replies short, precise and dry." },
-        { "id": "survey", "keys": ["vault", "survey"], "text": "Elena mapped the Duke's vault as a royal surveyor, before she was dismissed." }
+        { "id": "survey", "keywords": ["vault", "survey"], "text": "Elena mapped the Duke's vault as a royal surveyor, before she was dismissed." }
       ]
     }
   ],
   "scenarios": [
-    { "id": "workshop", "openings": [{ "id": "late", "content": [{ "speaker": "elena", "text": "You're late, {{user}}. Sit down, and don't touch the maps." }] }] }
+    { "id": "workshop", "openings": [{ "id": "late", "content": [{ "speaker": "elena", "text": "You're late, {{player}}. Sit down, and don't touch the maps." }] }] }
   ]
 }
 ```
 
 When an entry is active:
 
-- **No `keys`:** always on. Rules, secrets and goals are written this way.
-- **With `keys`:** it activates when one of the words appears in the last 4 messages, speakers' names included. Keys match whole words and ignore case, so `vault` doesn't match `vaulted`. A key written `/pattern/flags`, such as `/vaults?/i`, is a pattern for plurals and partial words; it ignores case only with the flag `i`.
+- **No `keywords`:** always on. Rules, secrets and goals are written this way.
+- **With `keywords`:** it activates when one of the words appears in the last 4 messages, speakers' names included. Keywords match whole words and ignore case, so `vault` doesn't match `vaulted`. A keyword written `/pattern/flags`, such as `/vaults?/i`, is a pattern for plurals and partial words; it ignores case only with the flag `i`.
 - **With `when`:** a condition must hold too, such as "only after the tenth bell" (chapter 6).
-- **With `pull` and a `title`:** the entry is retrieved on demand, when it becomes relevant. Large lorebooks use this.
+- **With `retrievable` and a `title`:** the entry is retrieved on demand, when it becomes relevant. Large lorebooks use this.
 
 Suppose the player has just written "Is the vault still where you drew it?":
 
 | Entry | Active? | Why |
 | --- | --- | --- |
-| `style` | yes | It has no keys, so it is always on. |
+| `style` | yes | It has no keywords, so it is always on. |
 | `survey` | yes | `vault` appears in the last 4 messages. |
 
-Four messages later, if nobody has said "vault" or "survey" again, `survey` is no longer active. **`position`** says what kind of text an entry is: `"system"` for standing direction or `"context"` (the default) for knowledge. **`depth`** instead places an entry inside the conversation, that many messages from its end.
+Four messages later, if nobody has said "vault" or "survey" again, `survey` is no longer active. **`position`** says where an entry goes: `"system"` among standing direction, such as tone and rules, or `"context"` (the default) among what the model needs to know. **`depth`** instead places an entry inside the conversation, that many messages from its end.
 
 A character's entries count only while the character is in the scene, or while a message is being written for them. Elena's lore leaves with her.
 
@@ -107,8 +107,8 @@ A heist needs a city, a target and a crew. A **world** is a setting that scenari
 
 ```json
 {
-  "troupe": "0.14",
-  "kind": "bundle",
+  "troupe": "0.15",
+  "kind": "story",
   "name": "The Lantern Heist",
   "characters": [
     {
@@ -135,7 +135,7 @@ A heist needs a city, a target and a crew. A **world** is a setting that scenari
         { "id": "vault", "name": "Lantern vault", "description": "A half-flooded cellar.", "parent": "manor" }
       ],
       "entries": [
-        { "id": "storm_lantern", "keys": ["lantern"], "priority": 80, "text": "The lantern holds a captured storm. If its glass cracks, the harbor floods within the hour." },
+        { "id": "storm_lantern", "keywords": ["lantern"], "priority": 80, "text": "The lantern holds a captured storm. If its glass cracks, the harbor floods within the hour." },
         { "id": "weather_rain", "group": "weather", "weight": 3, "sticky": 6, "cooldown": 4, "text": "Rain keeps falling, slicking every roof and muffling footsteps." },
         { "id": "weather_fog", "group": "weather", "sticky": 6, "cooldown": 4, "text": "Fog rolls in from the harbor; nobody can see past ten paces." }
       ]
@@ -144,7 +144,7 @@ A heist needs a city, a target and a crew. A **world** is a setting that scenari
   "scenarios": [
     {
       "id": "heist",
-      "premise": "Port Veyra, the night of the Tide Festival. {{user}} has hired two thieves to steal the Duke's storm lantern before the harbor bells ring twelve.",
+      "premise": "Port Veyra, the night of the Tide Festival. {{player}} has hired two thieves to steal the Duke's storm lantern before the harbor bells ring twelve.",
       "briefing": "You are the crew's boss. Elena plans; Kai improvises.",
       "cast": [
         { "notes": "The crew's boss, who hired them both." },
@@ -154,22 +154,22 @@ A heist needs a city, a target and a crew. A **world** is a setting that scenari
       "openings": [
         {
           "id": "rooftop_briefing",
-          "title": "Rooftop briefing",
+          "name": "Rooftop briefing",
           "set": { "scene.location": "rooftops" },
           "content": [
             { "text": "Rain hammers the slate roofs above the Duke's manor." },
             { "speaker": "elena", "text": "*Elena unrolls a soaked map.* Two guards on the east stair. We go at the eighth bell." },
-            { "speaker": "kai", "text": "Or we go now, while they're drunk. *He grins at {{user}}.* Your call, boss." }
+            { "speaker": "kai", "text": "Or we go now, while they're drunk. *He grins at {{player}}.* Your call, boss." }
           ]
         },
-        { "id": "gates", "title": "At the manor gates", "set": { "scene.location": "manor" } }
+        { "id": "gates", "name": "At the manor gates", "set": { "scene.location": "manor" } }
       ]
     }
   ]
 }
 ```
 
-- **The cast** lists who takes part. `{}` is a **seat** for a person; `notes` add context for this story only. A cast with two seats has room for two players.
+- **The cast** lists who takes part. `{}` is a **seat** for a person; `notes` add context for this scenario only. A cast with two seats has room for two players.
 - **`premise`** is the situation. **`briefing`** is for the players, not the model.
 - **`set`** in an opening gives starting values, here the location. The location is state: text can name it, and conditions can test it (chapter 6).
 - **An opening without `content`**, like `gates`, lets the model write the first message. A list of these works as a menu of starting points.
@@ -177,9 +177,9 @@ A heist needs a city, a target and a crew. A **world** is a setting that scenari
 
 The weather entries show the timing and competition options:
 
-- **`group`:** at most one entry of a group is active. Neither weather entry has keys, so both always qualify, and one is chosen by `weight`: rain three times as often as fog.
-- **`sticky: 6`:** once chosen, the weather stays for 6 rounds. A **round** is one player message and the replies to it, so a story paces the same in a one-on-one chat and a busy group.
-- **`cooldown: 4`:** after that, it rests for 4 rounds, so fog gets its turn.
+- **`group`:** at most one entry of a group is active. Neither weather entry has keywords, so both always qualify, and one is chosen by `weight`: rain three times as often as fog.
+- **`sticky: 6`:** once chosen, the weather stays for 6 rounds. A **round** is one player message and the replies to it, so a story paces the same whether one character replies or several.
+- **`cooldown: 4`:** after that, it rests for 4 rounds, so fog gets a chance.
 - **`priority`** (0 to 100, default 50) is importance: when not everything fits, the lowest priority is left out first. The lantern's danger, at 80, outlasts ordinary lore.
 
 ## 5. Secrets
@@ -194,21 +194,21 @@ Stories depend on people not knowing things. Elena still has the surveyor's mast
 { "id": "deal", "knownBy": ["kai"], "text": "The Duke paid Kai to lead the crew into a trap at the vault door. He is starting to regret it." }
 ```
 
-The first goes in Elena's `entries`, the second in Kai's. Without `knownBy`, everyone knows a character's entries, so a secret always needs it. An instruction for one character's turns works the same way: Kai's way of talking is an entry known only by Kai.
+The first goes in Elena's `entries`, the second in Kai's. Without `knownBy`, everyone knows a character's entries, so a secret always needs it. An instruction for one character's messages works the same way: Kai's way of talking is an entry known only by Kai.
 
 ```json
 { "id": "voice", "knownBy": ["kai"], "depth": 4, "text": "{{char}} calls people 'boss' and talks in quick, joking bursts." }
 ```
 
-By default, the scenario's `mode` is `characters`: each character's turns are written for that character alone, from what it knows. The conversation follows the **witness rule**: a line is known by its speaker and by everyone present when it is said. A character who has left the scene doesn't hear what is said next. A part of a message can also carry `knownBy`, for a whisper or a private thought:
+By default, the scenario's `mode` is `characters`: each character's messages are written for that character alone, from what it knows. The conversation follows the **witness rule**: a line is known by its speaker and by everyone present when it is said. A character who has left the scene doesn't hear what is said next. A part of a message can also carry `knownBy`, for a whisper or a private thought:
 
-| Line in the chat | Elena knows it | Kai knows it |
+| Line in the scene | Elena knows it | Kai knows it |
 | --- | --- | --- |
 | Mara: "Kai, you take the east stair." | yes | yes |
 | Kai, thinking: *If the Duke's men are early, this ends badly.* (`knownBy: ["kai"]`) | no | yes |
 | Elena to Mara, after Kai has left: "Watch him." | yes | no |
 
-In `narrator` mode, the narrator writes the whole scene and knows everything but hidden messages. A **narrator** can also take turns in `characters` mode; an entry with `knownBy: ["narrator"]` is known only by the narrator, which is how a mystery's clues stay hidden from its suspects. Knowledge is about characters, never about what people can read in the file.
+In `narrator` mode, the narrator writes the whole scene and knows everything but hidden messages. A **narrator** can also write messages in `characters` mode; an entry with `knownBy: ["narrator"]` is known only by the narrator, which is how a mystery's clues stay hidden from its suspects. Knowledge is about characters, never about what people can read in the file.
 
 ## 6. Keeping score
 
@@ -220,21 +220,21 @@ The heist runs on a clock: the harbor bells. A **variable** holds state like thi
 ```
 
 ```json
-{ "id": "trust", "type": "int", "of": "cast", "initial": { "*": 50, "elena": 70, "kai": 40 }, "min": 0, "max": 100,
+{ "id": "trust", "type": "int", "per": "cast", "initial": { "*": 50, "elena": 70, "kai": 40 }, "min": 0, "max": 100,
   "by": ["model"], "maxStep": 20, "spoiler": true,
-  "description": "How much this character trusts {{user}}, from 0 to 100. Rises when promises are kept; falls on lies and reckless orders." }
+  "description": "How much this character trusts {{player}}, from 0 to 100. Rises when promises are kept; falls on lies and reckless orders." }
 ```
 
 ```json
 { "id": "approach", "type": "enum", "values": ["quiet", "loud"], "labels": { "quiet": "Slip in unseen", "loud": "Make a scene and grab it" },
-  "by": ["player"], "description": "How {{user}} wants the job done." }
+  "by": ["player"], "description": "How {{player}} wants the job done." }
 ```
 
 - **`type`** is `bool`, `int`, `string`, `enum` (one of `values`) or `set` (a list of distinct strings, such as an inventory). Numbers are whole numbers, so trust runs from 0 to 100.
 - **`description`** is written for authors and the model alike: what the value means and what moves it.
-- **`by`** says who changes the value: `["model"]` lets a model change it as the story goes, and `["player"]` leaves it to the people playing, like the plan for the job. Without `by`, only an opening is meant to set it.
+- **`by`** says who changes the value: `["model"]` lets a model change it as play goes on, and `["player"]` leaves it to the people playing, like the plan for the job. Without `by`, only an opening is meant to set it.
 - **`min` and `max`** keep the bell between 6 and 12. **`maxStep`** and **`oneWay`** tell a model that it moves at most 2 in a message and never goes back.
-- **`of: "cast"`** keeps one value per character in the cast, read as `state.trust.kai`. `initial` gives Elena and Kai their own starting values, and `*` everyone else's.
+- **`per: "cast"`** keeps one value per character in the cast, read as `state.trust.kai`. `initial` gives Elena and Kai their own starting values, and `*` everyone else's.
 - **`labels`** name the values for people.
 - **`spoiler`** marks the value and its changes as spoilers for the players.
 
@@ -261,18 +261,18 @@ A character can carry its own variables into any story. Kai declares `nerve`, an
 | `state.bell >= 10` | the tenth bell or later has rung |
 | `scene.location == 'vault'` | the scene is in the vault (strings use single quotes) |
 | `state.trust.kai >= 80 && hour >= 0 && hour < 6` | Kai trusts the player and it is before 6 a.m. where they are |
-| `opening == 'gates' && turn == 0` | the chat started at the manor gates and the player hasn't written yet |
+| `opening == 'gates' && round == 0` | the session started at the manor gates and the player hasn't written yet |
 | `hit('glass') && !hit('guard')` | in an entry: "glass" was mentioned and "guard" wasn't |
 
 ## 7. Making things happen
 
-A Troupe file holds no rules that run. The story moves when its state changes, and entries react to the state.
+A Troupe file holds no rules that run. Play moves on when state changes, and entries react to the state.
 
 A model changes a variable with `by: ["model"]` when its description says so: the bell goes up as story time passes, and trust rises and falls with what the player does. Some things are hard to test with a formula, like "Kai has confessed the Duke's deal". Make that a `bool` variable with `by: ["model"]` and `oneWay`, with that sentence as its description:
 
 ```json
 { "id": "kai_confessed", "type": "bool", "oneWay": true, "by": ["model"],
-  "description": "Kai has confessed the Duke's deal to {{user}}." }
+  "description": "Kai has confessed the Duke's deal to {{player}}." }
 ```
 
 A model sets it when it happens, and from then on it is a recorded fact. Entries with `when` turn such facts into story. Add these to the scenario's `entries`:
@@ -295,11 +295,11 @@ And this to Elena's:
 - **`chance`** is a percentage: while the crew is on the rooftops, the patrol comes up 30 times in 100, so it passes now and then.
 - **`betrayed`** changes how Elena plays from the moment Kai confesses.
 
-The full story, with its secrets, variables and entries in place, is [Format Appendix B.2](../spec/format.md#b2-a-story-the-lantern-heist), also in [`examples/lantern-heist/bundle.json`](../examples/lantern-heist/bundle.json); its second opening, `caught`, is written out in place of `gates`.
+The full story, with its secrets, variables and entries in place, is [Format Appendix B.2](../spec/format.md#b2-a-story-the-lantern-heist), also in [`examples/lantern-heist/story.json`](../examples/lantern-heist/story.json); its second opening, `caught`, is written out in place of `gates`.
 
 ## 8. Sessions
 
-Playing never changes the bundle. The chat is saved as a **session**: a header line naming the scenario, then one message per line. Messages form a tree. Each opening tried is a root, alternative replies are siblings, and going back to an earlier message to try something else starts a **branch**:
+Playing never changes the story. Play is saved as a **session**: a header line naming the scenario, then one message per line. Messages form a tree. Each opening tried is a root, alternative replies are siblings, and going back to an earlier message to try something else starts a **branch**:
 
 ```mermaid
 flowchart TD
@@ -309,27 +309,27 @@ flowchart TD
   O2["Opening: at the manor gates"]
 ```
 
-Every change is written into the message where it happened: which values changed and who changed them, and which entries activated. Branches never share state: time lost on one branch is still there to spend on the other. Because every change is recorded, a saved chat reopens with the same history and state, without replaying anything. [Format Appendix B.3](../spec/format.md#b3-session) shows the rooftop branch of this chat as a file.
+Every change is written into the message where it happened: which values changed and who changed them, and which entries activated. Branches never share state: time lost on one branch is still there to spend on the other. Because every change is recorded, a saved session reopens with the same history and state, without replaying anything. [Format Appendix B.3](../spec/format.md#b3-session) shows the rooftop branch of this session as a file.
 
-The player's character usually lives in the session, not the bundle, and so does anyone new who joins during the chat. What players and models write is stored as written, so a `{{user}}` typed in the chat stays as typed.
+The player's character usually lives in the session, not the story, and so does anyone new who joins during the session. What players and models write is stored as written, so a `{{player}}` typed in a message stays as typed.
 
-The people playing can set **limits**: `lines`, things never to show, and `veils`, things that may happen only offscreen. They hold for the whole chat.
+The people playing can set **boundaries**: `lines`, things never to show, and `veils`, things that may happen only offscreen. They hold for the whole session.
 
 ## 9. Companions who remember
 
-A companion needs only a character and a small scenario, like the first card in chapter 2. What makes a companion feel real is memory.
+A companion needs only a character and a small scenario, like the first story in chapter 2. What makes a companion feel real is memory.
 
 A variable for closeness goes in the character's own `variables`, so it travels with her into any story:
 
 ```json
 { "id": "closeness", "type": "int", "min": 0, "max": 100, "by": ["model"],
-  "description": "How close {{char}} feels to {{user}}." }
+  "description": "How close {{char}} feels to {{player}}." }
 ```
 
-Her entries can react to it, such as `"when": "own.closeness >= 60"` for an entry in which she teases the player gently. During a chat, memories are added as entries on a message, with `pull` and a `title` so each is retrieved only when it matters:
+Her entries can react to it, such as `"when": "own.closeness >= 60"` for an entry in which she teases the player gently. During a session, memories are added as entries on a message, with `retrievable` and a `title` so each is retrieved only when it matters:
 
 ```json
-{ "id": "harbor_wall", "title": "The promise about the harbor wall", "pull": true, "knownBy": ["elena"],
+{ "id": "harbor_wall", "title": "The promise about the harbor wall", "retrievable": true, "knownBy": ["elena"],
   "text": "Elena promised Mara they would walk the harbor wall together on the first dry night." }
 ```
 
@@ -337,11 +337,11 @@ A memory added on a message holds from there on, on that branch only, so a reply
 
 ## 10. Coming from Character Card V2/V3
 
-A V2/V3 card becomes a bundle with one character and a scenario: greetings become alternative openings, the scenario text becomes the `premise`, the system prompt and post-history instructions become entries known only by the character, and the lorebook becomes entries, with secondary keys written as `when` with `hit()`. A chat file becomes a session, with alternative replies as siblings. [Character Card V2/V3 and Troupe](character-cards.md) maps every field, in both directions.
+A V2/V3 card becomes a story with one character and a scenario: greetings become alternative openings, the scenario text becomes the `premise`, the system prompt and post-history instructions become entries known only by the character, and the lorebook becomes entries, with secondary keys written as `when` with `hit()`. A SillyTavern chat file becomes a session, with alternative replies as siblings. [Character Card V2/V3 and Troupe](character-cards.md) maps every field, in both directions.
 
 ## 11. Where next
 
-- [The authoring guide](authoring.md) has patterns for goals and arcs, relationships, inventories, companions, time awareness and group chats.
+- [The authoring guide](authoring.md) has patterns for goals and arcs, relationships, inventories, companions, time awareness and casts from several stories.
 - [The authoring brief](authoring-brief.md) is one page to give an LLM that writes Troupe files.
-- [Troupe Format](../spec/format.md) lists every field: Part I covers bundles, and Part II sessions.
-- [`examples/`](../examples/) holds the spec's examples as files, and [`schemas/bundle.schema.json`](../schemas/bundle.schema.json) lets editors check a bundle as you write it.
+- [Troupe Format](../spec/format.md) lists every field: Part I covers stories, and Part II sessions.
+- [`examples/`](../examples/) holds the spec's examples as files, and [`schemas/story.schema.json`](../schemas/story.schema.json) lets editors check a story as you write it.

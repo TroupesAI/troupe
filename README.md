@@ -1,17 +1,17 @@
 # Troupe
 
-An open file format for AI roleplay: characters, the worlds they live in, the scenarios that bring them together, the state a story tracks, and sessions: the chats people play, with every change recorded.
+An open file format for AI roleplay: characters, the worlds they live in, the scenarios that bring them together, the state they track, and sessions: scenarios as people played them, with every change recorded.
 
-**Status:** v0.14 draft. Breaking changes are allowed until 1.0, which is tagged once none is pending and the conformance suite covers the spec.
+**Status:** v0.15 draft. Breaking changes are allowed until 1.0, which is tagged once none is pending and the conformance suite covers the spec.
 
 ## A first look
 
-A complete Troupe file: one character, and a scenario that starts a chat with her.
+A complete Troupe story: one character, and a scenario to play with her.
 
 ```json
 {
-  "troupe": "0.14",
-  "kind": "bundle",
+  "troupe": "0.15",
+  "kind": "story",
   "characters": [
     { "id": "elena", "name": "Elena Voss", "description": "A meticulous thief and mapmaker. Calm, exacting, dry humor." }
   ],
@@ -26,11 +26,11 @@ A complete Troupe file: one character, and a scenario that starts a chat with he
 }
 ```
 
-The [beginner's guide](guides/beginners.md) grows this card into a full story, with lore, secrets and state.
+The [beginner's guide](guides/beginners.md) grows this into a full story, with lore, secrets and state.
 
 ## Specification
 
-- [Troupe Format](spec/format.md): the files and what every field means: bundles, characters, worlds, scenarios, entries, variables and sessions.
+- [Troupe Format](spec/format.md): the files and what every field means: stories, characters, worlds, scenarios, entries, variables and sessions.
 - [Schemas](schemas/): JSON Schemas, normative for structure (Format Appendix A).
 - [Conformance suite](conformance/): language-neutral test cases and the [protocol](conformance/README.md) a test runner follows.
 - [Examples](examples/): the spec's worked examples as files.
@@ -42,7 +42,7 @@ These are informative.
 - [Beginner's guide](guides/beginners.md): learn Troupe by building one story, step by step.
 - [Authoring guide](guides/authoring.md): patterns for common stories.
 - [Authoring brief](guides/authoring-brief.md): one page for people and LLMs writing Troupe files.
-- [Character Card V2/V3 and Troupe](guides/character-cards.md): importing and exporting cards.
+- [Character Card V2/V3 and Troupe](guides/character-cards.md): importing and exporting character cards.
 
 ## Contributing
 

@@ -4,7 +4,7 @@ This guide maps [Character Card V2](https://github.com/malfoyslastname/character
 
 ## Importing Character Card V2/V3
 
-Each card becomes a bundle with one character and a scenario `main` that holds its openings. Card data with no Troupe field is kept in the `ext` of the object it belongs to, under `card`.
+Each card becomes a story with one character and a scenario `main` that holds its openings. Card data with no Troupe field is kept in the `ext` of the object it belongs to, under `card`.
 
 | Source | Troupe |
 | --- | --- |
@@ -12,19 +12,19 @@ Each card becomes a bundle with one character and a scenario `main` that holds i
 | `description`, `personality` | `description`, with personality under `## Personality` |
 | `first_mes`, `alternate_greetings` | The scenario's `openings` `greeting_1`, `greeting_2`, … |
 | `scenario` | The scenario's `premise` |
-| `group_only_greetings` | Openings of a second scenario, `group`, whose cast the author completes |
+| `group_only_greetings` | Openings of a second scenario, `ensemble`, whose cast the author completes |
 | `mes_example` | `examples`, split at `<START>` and parsed by speaker |
 | `system_prompt` | An entry with `position: "system"` and `knownBy: ["<id>"]`; `{{original}}` is dropped |
 | `post_history_instructions` | An entry with `depth: 0` and `knownBy: ["<id>"]`; `{{original}}` is dropped |
 | `extensions.depth_prompt` | An entry with its `depth` and `knownBy: ["<id>"]`; the role is dropped |
 | `extensions.talkativeness` | `ext` |
-| `creator_notes`, `tags`, `creator`, `character_version` | The scenario's `briefing`; the bundle's `tags`, `authors`, `version` |
+| `creator_notes`, `tags`, `creator`, `character_version` | The scenario's `briefing`; the story's `tags`, `authors`, `version` |
 | `source` | Links in `credits` |
 | `assets` icon / background | `avatar` / a location `image`; other assets in `ext` |
 | Lorebook entries | Character entries, or a world named after the book |
-| `keys`, `constant`, `enabled` | `keys`, no keys, `disabled` |
-| SillyTavern regex keys `/p/flags` | The same key, keeping only the flags `i`, `m` and `s`; a key with other forms (Format 14), such as a lookahead or a backreference, is rewritten or kept in `ext` |
-| `case_sensitive`, `match_whole_words: false` | A regex key of the escaped key: `/key/` when case-sensitive, else `/key/i`, with `\b` before and after it for whole words, which suits keys in ASCII letters |
+| `keys`, `constant`, `enabled` | `keywords`, no keywords, `disabled` |
+| SillyTavern regex keys `/p/flags` | The same keyword, keeping only the flags `i`, `m` and `s`; a keyword with other forms (Format 14), such as a lookahead or a backreference, is rewritten or kept in `ext` |
+| `case_sensitive`, `match_whole_words: false` | A regex keyword of the escaped key: `/key/` when case-sensitive, else `/key/i`, with `\b` before and after it for whole words, which suits keys in ASCII letters |
 | `secondary_keys` AND ANY / NOT ANY / AND ALL / NOT ALL, `@@additional_keys`, `@@exclude_keys` | `when` with `hit()`: `hit('a') \|\| hit('b')`, `!hit('a') && !hit('b')`, `hit('a') && hit('b')`, `!(hit('a') && hit('b'))` |
 | `insertion_order` | the entry's place in `entries` |
 | `priority` (V2), importance | `priority`, rescaled to 0–100 |
@@ -33,27 +33,27 @@ Each card becomes a bundle with one character and a scenario `main` that holds i
 | `scan_depth`, `@@scan_depth` | `scanDepth` |
 | `probability` | `chance` = probability (0–100) |
 | `group`, `groupWeight`, `groupOverride` | `group`, `weight`, a higher `priority` |
-| `vectorized` | `pull`, with `title` from the entry's comment or first key |
-| `sticky`, `cooldown`, `delay` (in messages) | `sticky`, `cooldown`, `when: "turn >= N"`, counted in rounds (about half the messages) |
-| `@@activate_only_after N`, `@@activate_only_every N` | `when: "turn >= N"`, `when: "turn % N == 0"` |
+| `vectorized` | `retrievable`, with `title` from the entry's comment or first key |
+| `sticky`, `cooldown`, `delay` (in messages) | `sticky`, `cooldown`, `when: "round >= N"`, counted in rounds (about half the messages) |
+| `@@activate_only_after N`, `@@activate_only_every N` | `when: "round >= N"`, `when: "round % N == 0"` |
 | `@@is_greeting N` (0 is `first_mes`) | `when: "opening == 'greeting_<N+1>'"` |
 | `@@ignore_on_max_context` | `priority: 0` |
-| `{{char}}`, `{{user}}` in any case, such as `{{Char}}`; `{{// …}}` | `{{char}}`, `{{user}}`, `{{// …}}`, since SillyTavern macros ignore case |
-| `<bot>`, `<user>` | `{{char}}`, `{{user}}` |
+| `{{char}}`, `{{user}}` in any case, such as `{{Char}}`; `{{// …}}` | `{{char}}`, `{{player}}`, `{{// …}}`, since SillyTavern macros ignore case |
+| `<bot>`, `<user>` | `{{char}}`, `{{player}}` |
 | `{{pick::…}}`, `{{random::…}}` | `{{pick::…}}` |
 | Other macros, such as `{{time}}` and `{{roll:…}}` | Escaped as `\{{…}}`, or rewritten as plain text; the source is kept in `ext` |
-| Recursion, decorators, regex scripts | Not mapped; the source is kept in `ext`. To replace recursion, add to an entry the keys of the entries whose text mentions it. |
+| Recursion, decorators, regex scripts | Not mapped; the source is kept in `ext`. To replace recursion, add to an entry the keywords of the entries whose text mentions it. |
 | SillyTavern chat JSONL | A session. The chat's first character message, the greeting, becomes a root made from the matching opening: a system message with `opening`, and its swipes roots made from the other greetings. `is_user` lines become `player` messages spoken by the persona, a header character named after the chat's `user_name`, with a description the importer writes, listed in `players`; other lines `model` messages, with the character whose name matches `name` as `speaker` and `char`, and swipes become siblings. Player and model text is stored as written. |
 
 ## Exporting to Character Card V3
 
-A bundle's first character exports with a lossy mapping, the import table in reverse where it can be. The original bundle, exactly as it was, goes under `extensions.troupe`.
+A story's first character exports with a lossy mapping, the import table in reverse where it can be. The original story, exactly as it was, goes under `extensions.troupe`.
 
 | Troupe | Character Card V3 |
 | --- | --- |
 | `name`, the first alias, `description`, `examples`, `avatar` | `nickname` and `name`, or `name` alone without aliases; `description`, `mes_example`, the icon asset |
 | The openings with `content` of the first scenario whose cast includes it; its `premise`, `briefing` | `first_mes` and `alternate_greetings`; `scenario`, `creator_notes` |
-| The bundle's `authors`, `tags`, `version` | `creator`, `tags`, `character_version` |
+| The story's `authors`, `tags`, `version` | `creator`, `tags`, `character_version` |
 | Its own entry with `position: "system"`, known only by it | `system_prompt` |
 | Its own entry with `depth: 0`, known only by it | `post_history_instructions` |
 | Its other entries without `when` | `character_book` entries: keys, constant, position or depth, probability, sticky and cooldown in messages (about double the rounds), `enabled: false` for `disabled` |

@@ -1,7 +1,7 @@
 {
   "description": "Session lines (Format 11, 11.1): each line after the header is a message, in file order, and each parent names a message on an earlier line",
-  "bundle": {
-    "kind": "bundle",
+  "story": {
+    "kind": "story",
     "characters": [
       {
         "id": "a",
@@ -80,7 +80,7 @@
       "type": "cel",
       "name": "the lines form one path: two player messages",
       "at": "3",
-      "expr": "turn == 2",
+      "expr": "round == 2",
       "expect": true
     }
   ]

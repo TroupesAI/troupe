@@ -1,7 +1,7 @@
 {
   "description": "Session lines are validated with format asserted (Format 15.3): a malformed timestamp is SCHEMA, and an unknown message field is UNKNOWN_FIELD",
-  "bundle": {
-    "kind": "bundle",
+  "story": {
+    "kind": "story",
     "scenarios": [
       {
         "id": "s"

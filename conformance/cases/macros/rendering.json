@@ -1,7 +1,7 @@
 {
   "description": "Macro resolution and rendering (Format 9): undeclared variables are left as written, while absent keys, paths below non-maps and owners not in use render as nothing; map keys in declared order, cast order for characters, and \"*\" keys in code point order",
-  "bundle": {
-    "kind": "bundle",
+  "story": {
+    "kind": "story",
     "characters": [
       {
         "id": "a",
@@ -43,13 +43,13 @@
           {
             "id": "trust",
             "type": "int",
-            "of": "cast",
+            "per": "cast",
             "description": "d"
           },
           {
             "id": "rep",
             "type": "int",
-            "of": [
+            "per": [
               "watch",
               "guild",
               "crown"
@@ -59,7 +59,7 @@
           {
             "id": "inv",
             "type": "int",
-            "of": "*",
+            "per": "*",
             "description": "d"
           },
           {

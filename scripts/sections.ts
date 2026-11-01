@@ -9,7 +9,7 @@ export const slug = (heading: string) =>
     .trim()
     .replace(/\s/g, "-");
 
-// The number a heading starts with: "7.2 Activation", "1. Overview", "Appendix C: Design decisions", "B.1 A card with lore".
+// The number a heading starts with: "7.2 Activation", "1. Overview", "Appendix C: Design decisions", "B.1 A companion with lore".
 export const sectionNumber = (heading: string): string | undefined =>
   heading.match(/^(?:Appendix ([A-Z]):|(\d+(?:\.\d+)*)\.? |([A-Z]\.\d+(?:\.\d+)*) )/)?.slice(1).find(Boolean);
 

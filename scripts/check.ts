@@ -1,5 +1,5 @@
 // Checks the repository's documents and data:
-//   - the schemas compile, and the examples and every complete bundle and session header in a Markdown document validate;
+//   - the schemas compile, and the examples and every complete story and session header in a Markdown document validate;
 //   - examples/ and the first example of the README and the beginner's guide match the examples in spec/format.md, and examples/ holds no others (--write-examples rewrites examples/);
 //   - every TypeScript interface in the spec lists exactly its schema's properties;
 //   - the spec version agrees across the spec, the README, schema URLs, examples, documents in Markdown and cases;
@@ -51,9 +51,9 @@ const block = (heading: string, lang: string): string => {
   return format.slice(start, format.indexOf("\n```", start)) + "\n";
 };
 const examples: Record<string, string> = {
-  "elena-card.troupe.json": block("### 1.4 A first example", "json"),
-  "mira-card.troupe.json": block("### B.1 A card with lore", "json"),
-  "lantern-heist/bundle.json": block("### B.2 A story", "json"),
+  "elena.troupe.json": block("### 1.4 A first example", "json"),
+  "mira.troupe.json": block("### B.1 A companion with lore", "json"),
+  "lantern-heist/story.json": block("### B.2 A story", "json"),
   "lantern-heist/sessions/heist.troupe-session.jsonl": block("### B.3 Session", "text"),
 };
 const writeExamples = process.argv.includes("--write-examples");
@@ -64,23 +64,23 @@ for (const [name, text] of Object.entries(examples)) {
     writeFileSync(join(root, path), text);
   }
   else if (!existsSync(join(root, path)) || read(path) !== text) fail(`${path} differs from spec/format.md (bun run examples)`);
-  if (name.endsWith(".json")) validate("bundle.schema.json", JSON.parse(text), path);
+  if (name.endsWith(".json")) validate("story.schema.json", JSON.parse(text), path);
   else {
     const lines = text.trimEnd().split("\n").map((l) => JSON.parse(l));
     lines.forEach((line, i) => validate(i === 0 ? "session-header.schema.json" : "message.schema.json", line, `${path}:${i + 1}`));
   }
 }
 for (const doc of ["README.md", "guides/beginners.md"]) {
-  const card = read(doc).match(/```json\n([\s\S]*?\n)```/)?.[1];
-  if (card !== examples["elena-card.troupe.json"]) fail(`${doc}: the first example differs from Format 1.4's`);
+  const first = read(doc).match(/```json\n([\s\S]*?\n)```/)?.[1];
+  if (first !== examples["elena.troupe.json"]) fail(`${doc}: the first example differs from Format 1.4's`);
 }
 const extra = (readdirSync(join(root, "examples"), { recursive: true }) as string[]).filter(
   (f) => /\.jsonl?$/.test(f) && !(f in examples),
 );
 if (extra.length) fail(`examples/ has files the spec doesn't define: ${extra.join(", ")}`);
 
-// Every complete bundle written as a json block in a Markdown document; sessions there too, for their version
-const docBundles: { where: string; troupe?: string }[] = [];
+// Every complete story written as a json block in a Markdown document; sessions there too, for their version
+const docStories: { where: string; troupe?: string }[] = [];
 for (const doc of markdown) {
   const text = read(doc);
   for (const m of text.matchAll(/```json\n([\s\S]*?)\n```/g)) {
@@ -89,15 +89,15 @@ for (const doc of markdown) {
       value = JSON.parse(m[1]);
     } catch (e) {
       // fragments such as a single entry or variable aren't JSON documents; a document that fails to parse is an error
-      if (/"kind":\s*"(bundle|session)"/.test(m[1]))
+      if (/"kind":\s*"(story|session)"/.test(m[1]))
         fail(`${doc}:${text.slice(0, m.index).split("\n").length}: ${(e as Error).message}`);
       continue;
     }
     const kind = (value as { kind?: string })?.kind;
-    if (kind === "bundle" || kind === "session") {
+    if (kind === "story" || kind === "session") {
       const line = text.slice(0, m.index).split("\n").length;
       validate(`${kind === "session" ? "session-header" : kind}.schema.json`, value, `${doc}:${line}`);
-      docBundles.push({ where: `${doc}:${line}`, troupe: (value as { troupe?: string }).troupe });
+      docStories.push({ where: `${doc}:${line}`, troupe: (value as { troupe?: string }).troupe });
     }
   }
 }
@@ -113,7 +113,7 @@ for (const [name, text] of Object.entries(examples)) {
   const first = JSON.parse(text.split("\n")[0].startsWith("{\"") ? text.split("\n")[0] : text);
   if (first.troupe !== version) fail(`examples/${name}: troupe is ${first.troupe}, not ${version}`);
 }
-for (const b of docBundles) if (b.troupe !== version) fail(`${b.where}: troupe is ${b.troupe}, not ${version}`);
+for (const b of docStories) if (b.troupe !== version) fail(`${b.where}: troupe is ${b.troupe}, not ${version}`);
 if (!read("README.md").includes(`v${version} draft`)) fail(`README.md: the status line doesn't say v${version}`);
 for (const doc of [...markdown, ...Object.keys(examples).map((n) => `examples/${n}`)])
   for (const m of read(doc).matchAll(/troupes\.ai\/schema\/(\d+\.\d+)\//g))
@@ -123,17 +123,17 @@ for (const doc of [...markdown, ...Object.keys(examples).map((n) => `examples/${
 const schemaOf = (file: string, ...path: string[]) =>
   path.reduce((o: any, k) => o[k], JSON.parse(read(`schemas/${file}`))) as { properties?: Record<string, unknown> };
 const interfaces: Record<string, ReturnType<typeof schemaOf>> = {
-  Bundle: schemaOf("bundle.schema.json"),
-  Character: schemaOf("bundle.schema.json", "$defs", "character"),
-  Line: schemaOf("bundle.schema.json", "$defs", "line"),
-  World: schemaOf("bundle.schema.json", "$defs", "world"),
-  Location: schemaOf("bundle.schema.json", "$defs", "location"),
-  Scenario: schemaOf("bundle.schema.json", "$defs", "scenario"),
-  CastMember: schemaOf("bundle.schema.json", "$defs", "castMember"),
-  Opening: schemaOf("bundle.schema.json", "$defs", "opening"),
-  Entry: schemaOf("bundle.schema.json", "$defs", "entry"),
-  Variable: schemaOf("bundle.schema.json", "$defs", "variable"),
-  Limits: schemaOf("bundle.schema.json", "$defs", "limits"),
+  Story: schemaOf("story.schema.json"),
+  Character: schemaOf("story.schema.json", "$defs", "character"),
+  Line: schemaOf("story.schema.json", "$defs", "line"),
+  World: schemaOf("story.schema.json", "$defs", "world"),
+  Location: schemaOf("story.schema.json", "$defs", "location"),
+  Scenario: schemaOf("story.schema.json", "$defs", "scenario"),
+  CastMember: schemaOf("story.schema.json", "$defs", "castMember"),
+  Opening: schemaOf("story.schema.json", "$defs", "opening"),
+  Entry: schemaOf("story.schema.json", "$defs", "entry"),
+  Variable: schemaOf("story.schema.json", "$defs", "variable"),
+  Boundaries: schemaOf("story.schema.json", "$defs", "boundaries"),
   SessionHeader: schemaOf("session-header.schema.json"),
   Message: schemaOf("message.schema.json"),
   Change: schemaOf("message.schema.json", "$defs", "change"),
@@ -177,13 +177,13 @@ for (const f of cases) {
     if (Array.isArray(o)) return o.forEach(walk);
     if (!o || typeof o !== "object") return;
     const d = o as Record<string, unknown>;
-    if (typeof d.kind === "string" && ["bundle", "session"].includes(d.kind) && "troupe" in d && d.troupe !== version)
+    if (typeof d.kind === "string" && ["story", "session"].includes(d.kind) && "troupe" in d && d.troupe !== version)
       fail(`${path}: a ${d.kind} has troupe ${d.troupe}, not ${version}`);
     Object.values(d).forEach(walk);
   };
   walk(value);
   if (!validCase(value)) fail(`${path}: ${ajv.errorsText(validCase.errors, { dataVar: "" })}`);
-  for (const m of JSON.stringify(value).matchAll(/"(?:bundle|session)File":"([^"]+)"/g))
+  for (const m of JSON.stringify(value).matchAll(/"(?:story|session)File":"([^"]+)"/g))
     if (!existsSync(join(root, dirname(path), m[1]))) fail(`${path}: ${m[1]} doesn't exist`);
   schemaCodes(path, value);
 }
@@ -205,7 +205,7 @@ function schemaFails(name: string, value: unknown): boolean {
 }
 function schemaCodes(path: string, c: Record<string, any>) {
   const withVersion = (o: Record<string, unknown>) => ({ troupe: version, ...o });
-  const bundle = c.bundleFile ? JSON.parse(read(join(dirname(path), c.bundleFile))) : withVersion(c.bundle ?? { kind: "bundle" });
+  const story = c.storyFile ? JSON.parse(read(join(dirname(path), c.storyFile))) : withVersion(c.story ?? { kind: "story" });
   const lines = (text: string): unknown[] | undefined => {
     try {
       return text.split(/\r?\n/).filter((l) => l.trim()).map((l) => JSON.parse(l));
@@ -221,7 +221,7 @@ function schemaCodes(path: string, c: Record<string, any>) {
     const invalid = (name: string, value: unknown) => !validator(name)(value);
     if (c.sessionFile && session === undefined) fail(`${path}: ${c.sessionFile} has unreadable lines`);
     if (
-      invalid("bundle.schema.json", bundle) ||
+      invalid("story.schema.json", story) ||
       (session && (invalid("session-header.schema.json", session[0]) || session.slice(1).some((m) => invalid("message.schema.json", m))))
     )
       fail(`${path}: state, macro, cel and knows tests need inputs that pass the schemas, unknown properties included`);
@@ -236,10 +236,10 @@ function schemaCodes(path: string, c: Record<string, any>) {
     if (codes && codes.some((code, j) => j > 0 && codes[j - 1] >= code)) fail(`${where}: codes aren't sorted and distinct`);
     let fails: boolean | undefined;
     if (t.type === "check" && codes && (session !== undefined || !c.sessionFile))
-      fails = schemaFails("bundle.schema.json", bundle) || (session ? sessionFails(session) : false);
+      fails = schemaFails("story.schema.json", story) || (session ? sessionFails(session) : false);
     else if (t.type === "parse" && typeof t.text === "string" && t.kind !== "package") {
-      if (!codes || codes.some((code) => code === "PARSE" || code === "UNSUPPORTED_VERSION")) return;
-      const schema = t.kind === "bundle" ? "bundle.schema.json" : undefined;
+      if (!codes || codes.some((code) => code === "UNREADABLE" || code === "UNSUPPORTED_VERSION")) return;
+      const schema = t.kind === "story" ? "story.schema.json" : undefined;
       try {
         if (schema) fails = schemaFails(schema, JSON.parse(t.text));
       } catch {

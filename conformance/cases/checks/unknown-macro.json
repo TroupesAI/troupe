@@ -1,7 +1,7 @@
 {
   "description": "In every text where macros resolve, such as a briefing, cast notes, a variable's description and an image's alt, a {{ whose text up to the next }} holds no macro, such as {{original}}, and a macro naming an undeclared variable are UNKNOWN_MACRO (Format 9, 15.3); a pick needs at least two options, none empty. Names, taglines and titles are used as written, so they hold no UNKNOWN_MACRO",
-  "bundle": {
-    "kind": "bundle",
+  "story": {
+    "kind": "story",
     "tagline": "Into the {{dark}}.",
     "scenarios": [
       {

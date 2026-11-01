@@ -1,7 +1,7 @@
 {
   "description": "Checks on messages (Format 11.1, 15.3): a message's char and a part's knownBy name characters (UNKNOWN_CHARACTER); a parent names a message on an earlier line (UNKNOWN_MESSAGE); a recorded value has its variable's type (INVALID_VALUE)",
-  "bundle": {
-    "kind": "bundle",
+  "story": {
+    "kind": "story",
     "characters": [
       {
         "id": "a",

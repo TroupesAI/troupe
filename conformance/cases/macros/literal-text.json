@@ -1,7 +1,7 @@
 {
-  "description": "Player and model text is used as written (Format 9): its macros never resolve and it holds no escapes. {{user}} is the speaker of the first speaking part of the latest player message on the path that has one (multiplayer)",
-  "bundle": {
-    "kind": "bundle",
+  "description": "Player and model text is used as written (Format 9): its macros never resolve and it holds no escapes. {{player}} is the speaker of the first speaking part of the latest player message on the path that has one (multiplayer)",
+  "story": {
+    "kind": "story",
     "characters": [
       {
         "id": "a",
@@ -69,7 +69,7 @@
         "content": [
           {
             "speaker": "q",
-            "text": "Me too! \\{{user}} {{nope}}"
+            "text": "Me too! \\{{player}} {{nope}}"
           }
         ]
       },
@@ -91,7 +91,7 @@
         "content": [
           {
             "speaker": "a",
-            "text": "{{char}} smiles at {{user}}."
+            "text": "{{char}} smiles at {{player}}."
           }
         ]
       }
@@ -114,7 +114,7 @@
         "message": "2",
         "index": 0
       },
-      "expect": "Me too! \\{{user}} {{nope}}"
+      "expect": "Me too! \\{{player}} {{nope}}"
     },
     {
       "type": "macro",
@@ -123,13 +123,13 @@
         "message": "4",
         "index": 0
       },
-      "expect": "{{char}} smiles at {{user}}."
+      "expect": "{{char}} smiles at {{player}}."
     },
     {
       "type": "macro",
       "name": "before any player message: the first player",
       "char": "a",
-      "text": "{{char}} answers {{user}}.",
+      "text": "{{char}} answers {{player}}.",
       "expect": "Ann answers Pat."
     },
     {
@@ -137,7 +137,7 @@
       "name": "at Pat's message",
       "at": "1",
       "char": "a",
-      "text": "{{char}} answers {{user}}.",
+      "text": "{{char}} answers {{player}}.",
       "expect": "Ann answers Pat."
     },
     {
@@ -145,23 +145,23 @@
       "name": "at Quin's message, the latest player message",
       "at": "2",
       "char": "a",
-      "text": "{{char}} answers {{user}}.",
+      "text": "{{char}} answers {{player}}.",
       "expect": "Ann answers Quin."
     },
     {
       "type": "macro",
-      "name": "a player message without a speaking part doesn't change {{user}}",
+      "name": "a player message without a speaking part doesn't change {{player}}",
       "at": "3",
       "char": "a",
-      "text": "{{char}} answers {{user}}.",
+      "text": "{{char}} answers {{player}}.",
       "expect": "Ann answers Quin."
     },
     {
       "type": "cel",
-      "name": "players lists both, in its order; user follows the latest player message",
+      "name": "players lists both, in its order; player follows the latest player message",
       "at": "3",
       "char": "a",
-      "expr": "players == ['p', 'q'] && user == 'q'",
+      "expr": "players == ['p', 'q'] && player == 'q'",
       "expect": true
     },
     {

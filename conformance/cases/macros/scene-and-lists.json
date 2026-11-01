@@ -1,7 +1,7 @@
 {
   "description": "Macros (Format 9): {{scene.location}} renders the location's name and {{scene.present}} the names of those present; bool labels, an empty list as nothing, maps",
-  "bundle": {
-    "kind": "bundle",
+  "story": {
+    "kind": "story",
     "characters": [
       {
         "id": "a",
@@ -43,7 +43,7 @@
           {
             "id": "rep",
             "type": "int",
-            "of": [
+            "per": [
               "watch",
               "guild"
             ],

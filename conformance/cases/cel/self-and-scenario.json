@@ -1,7 +1,7 @@
 {
   "description": "self is the expression's owner, and the scenario's own expression has self equal to scenario (Format 10.1)",
-  "bundle": {
-    "kind": "bundle",
+  "story": {
+    "kind": "story",
     "characters": [
       {
         "id": "a",

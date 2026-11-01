@@ -1,7 +1,7 @@
 {
-  "description": "State macros (Format 9): labels, used as written; integers; booleans; lists; maps; char and user path segments; a string that is a character ID renders as the character's name, before a location of that ID; the state at a message",
-  "bundle": {
-    "kind": "bundle",
+  "description": "State macros (Format 9): labels, used as written; integers; booleans; lists; maps; char and player path segments; a string that is a character ID renders as the character's name, before a location of that ID; the state at a message",
+  "story": {
+    "kind": "story",
     "characters": [
       {
         "id": "a",
@@ -92,7 +92,7 @@
           {
             "id": "trust",
             "type": "int",
-            "of": [
+            "per": [
               "a",
               "b"
             ],
@@ -205,9 +205,9 @@
     },
     {
       "type": "macro",
-      "name": "user is Pat, whom trust has no key for: an absent key renders as nothing",
+      "name": "player is Pat, whom trust has no key for: an absent key renders as nothing",
       "char": "a",
-      "text": "{{state.trust.char}} {{state.trust.user}} {{state.trust.b}}",
+      "text": "{{state.trust.char}} {{state.trust.player}} {{state.trust.b}}",
       "expect": "70  50"
     },
     {
