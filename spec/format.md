@@ -203,7 +203,7 @@ interface Line {
 ```
 
 - **`description`** is everything the model needs to play the character, appearance included. Heading names carry no meaning.
-- **`examples`** show how the character talks. `char` is this character and `player` the player's. Examples are never part of history.
+- **`examples`** show how the character talks. A `char` or `player` speaker means what `{{char}}` or `{{player}}` would in this character's text (section 9). Examples are never part of history.
 
 ---
 
@@ -345,7 +345,7 @@ interface Entry {
 
 - An entry **without `keywords` or `retrievable`** is always on, subject to `when`.
 - An entry **with `keywords`** activates when one appears in its **scanned text**: the last `scanDepth` messages on the path that aren't hidden and have content, each text part known to whoever the message being written is for (section 11.5), each scanned separately as its speaker's name, `: ` and its text as shown, or as its text alone when it has no speaker. In the scanned text every line break, `\r\n`, a lone `\r`, U+2028 and U+2029, is written as `\n`, so `\r`, U+2028 and U+2029 in a regex keyword match nothing.
-- **Matching.** Keywords match whole words, ignoring case: no letter, mark or number (Unicode categories L, M and N) comes right before or after a match, and case is compared by Unicode simple case folding. A keyword containing Han, Hiragana, Katakana, Hangul, Thai, Lao, Khmer, Myanmar or Tibetan characters matches anywhere. A keyword that matches `^/.+/[a-z]*$` is a **regex keyword** (section 14), written `/pattern/flags`: its pattern is the text between the first and the last `/`, and its flags the letters after. It matches anywhere, and ignores case only with the flag `i`: `/dragons?/i`, `/\bKai\b/`.
+- **Matching.** Keywords match whole words, ignoring case: no letter, mark or number (Unicode categories L, M and N) comes right before or after a match, and case is compared by Unicode simple case folding. A keyword containing Han, Hiragana, Katakana, Hangul, Thai, Lao, Khmer, Myanmar or Tibetan characters matches anywhere. A keyword that is `/`, at least one character of any kind, line breaks included, then `/` and only letters `a`–`z` is a **regex keyword** (section 14), written `/pattern/flags`: its pattern is the text between the first and the last `/`, and its flags the letters after. It matches anywhere, and ignores case only with the flag `i`: `/dragons?/i`, `/\bKai\b/`.
 - An entry **with `retrievable`** activates when it is retrieved for being relevant, by its `title` or its text, or by a keyword when it also has `keywords`. Every rule below applies to it.
 - **`when`** narrows any kind. `hit("word")` checks the scanned text as keywords do, so `"when": "hit('glass') && !hit('guard')"` expresses AND and NOT; `hit('')` is false.
 - A **`disabled`** entry never activates.
@@ -635,7 +635,7 @@ Fields that hold a file (`cover`, `avatar`, location `image` and image parts) ho
 
 - `story.json` is at the root. Sessions are stored under `sessions/` with the `.troupe-session.jsonl` extension. Every path the story or sessions reference is a file of the package. A package may also hold files nothing in this document references, such as files an extension uses (section 13), and a writer that rewrites a package keeps them.
 - Every file of the package anywhere under `sessions/`, subfolders included, with that extension is a session of the package. The package's files have paths matching `^[A-Za-z0-9_-][A-Za-z0-9._-]*(/[A-Za-z0-9_-][A-Za-z0-9._-]*)*$`, with segments of at most 255 bytes. Every other entry, such as a directory (a name ending in `/`) or a file an archiver adds, isn't part of the package.
-- No ZIP entry has an absolute path, a `..` segment or a backslash, is a symbolic link, is encrypted, uses a compression method other than store and deflate, or has the name of another entry compared ASCII case-insensitively.
+- No ZIP entry has an absolute path, a `..` segment or a backslash, is a symbolic link, is encrypted, uses a compression method other than store and deflate, has data that doesn't decompress to its recorded size and CRC-32, or has the name of another entry compared ASCII case-insensitively.
 
 ---
 
@@ -669,7 +669,7 @@ A file's size and the work it asks for are bounded. Its text is Markdown, which 
 | JSON nesting depth, counting objects and arrays, the outermost as 1 | 64 |
 | Entries / variables in a story, all owners, and separately in the characters and worlds a session adds | 10,000 / 1,000 |
 | A text value: a part's `text`, an entry's `text` or a description, in UTF-8 | 1 MiB |
-| Session entries on a path, the latest per ID | 10,000 |
+| Session entry IDs on a path | 10,000 |
 | One CEL expression | 4 KiB |
 | Members of a scenario's `cast`, and separately the characters a session adds | 256 |
 | A string in a state value, a set's member included, in UTF-8 | 4 KiB |
@@ -991,6 +991,7 @@ Two thieves hired by the player to steal a duke's storm lantern before the twelf
 | Numbers within a double's range, rounded to the nearest; integer fields bounded by the schemas | RFC 7493's limit on precision; integer ranges checked while reading | Few JSON parsers can tell whether a number such as `0.1` has more precision than a double, and only the schemas know which fields are integers. |
 | An input that is `UNREADABLE` or `UNSUPPORTED_VERSION` reported with those codes only | Running every check on it | Other checks judge it against this version's rules, which mean nothing for a file that can't be read or is of another version. |
 | A document of another version judged only by being I-JSON within the size and nesting limits, a session past its header only by its size | Judging its `kind`, other limits and package paths too | Each version defines its own kinds, fields and limits, as 0.14 called a story a `bundle`, so an old story or session file reads as old, not as unreadable. A package is still read as this version's archive, so one without `story.json`, such as a 0.14 package, is `UNREADABLE`. |
+| Every ZIP entry's data intact, whether or not anything references it | Judging only the entries a reader opens | Validators agree whichever entries they open, and a writer that rewrites a package copies the files nothing references. |
 | A package entry that breaks section 12.3 is no document | Reading it anyway, such as a link's target or the first or last of two same-named entries | ZIP libraries differ on which of two same-named entries they return and on following links, so reading none gives every app one result, and nothing unsafe is followed. |
 | From 1.0, a file of an older minor version checked as one of this version | `UNSUPPORTED_VERSION` for every other version | A minor version only adds, so an older file means the same under the newer rules, and one validator covers its whole major version. |
 | A session with an unknown or missing `scenario` reported with `UNKNOWN_SCENARIO`, `SCHEMA` and `UNKNOWN_FIELD` only | Running its other checks against no scenario | Without a scenario the cast, variables and openings a session refers to are undefined, so most other checks would report noise that implementations couldn't agree on; an unknown one usually means the wrong story. One short list keeps the result the same everywhere, and the rest is checked once the session names a scenario. |
