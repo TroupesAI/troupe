@@ -633,7 +633,7 @@ Fields that hold a file (`cover`, `avatar`, location `image` and image parts) ho
 
 ### 12.3 Packages
 
-- `story.json` is at the root. Sessions are stored under `sessions/` with the `.troupe-session.jsonl` extension. Every path the story or sessions reference is a file of the package. A package may also hold files nothing in this document references, such as files an extension uses (section 13), and a writer that rewrites a package keeps them.
+- `story.json` is at the root. Sessions are stored under `sessions/` with the `.troupe-session.jsonl` extension. Every path the story or sessions reference is a file of the package. A package may also hold files nothing in this document references, such as files an extension uses (section 13), and a writer that rewrites a package keeps them, other than those of extensions it implements.
 - Every file of the package anywhere under `sessions/`, subfolders included, with that extension is a session of the package. The package's files have paths matching `^[A-Za-z0-9_-][A-Za-z0-9._-]*(/[A-Za-z0-9_-][A-Za-z0-9._-]*)*$`, with segments of at most 255 bytes. Every other entry, such as a directory (a name ending in `/`) or a file an archiver adds, isn't part of the package.
 - No ZIP entry has an absolute path, a `..` segment or a backslash, is a symbolic link, is encrypted, uses a compression method other than store and deflate, or has data that doesn't decompress to its recorded size and CRC-32. Compared ASCII case-insensitively, no two entry names are equal, and none followed by `/` starts another, so `a` can't be beside `A`, `A/` or `A/b`.
 
@@ -641,7 +641,7 @@ Fields that hold a file (`cover`, `avatar`, location `image` and image parts) ho
 
 ## 13. Extensions and versioning
 
-- **Extensions.** Every object of a story or session that this document defines with an interface MAY carry `ext`, keyed by an extension name matching `^[a-z0-9][a-z0-9.-]{0,63}$`, such as `risu.regex`. The `troupe.` prefix is reserved for this specification. Writers MUST NOT add fields anywhere else, and MUST keep every `ext` of a file they rewrite unchanged, as a JSON value.
+- **Extensions.** Every object of a story or session that this document defines with an interface MAY carry `ext`, keyed by an extension name matching `^[a-z0-9][a-z0-9.-]{0,63}$`, such as `risu.regex`. The `troupe.` prefix is reserved for this specification. Writers MUST NOT add fields anywhere else. When they rewrite a file, they MUST leave unchanged, as a JSON value, each `ext` member of every object they keep, other than members of extensions they implement.
 - **Unknown fields.** A property is unknown when its object's interface doesn't define it; for a part, the interface its `type` selects; a part of an unknown `type` is only `SCHEMA`. An unknown property carries no meaning, and is an `UNKNOWN_FIELD`; `SCHEMA` is judged with unknown properties removed.
 - **Versions** are `major.minor`, two integers without leading zeros, compared as integers, so `0.10` is newer than `0.9`. From 1.0, minor versions only add what files of an older minor can do without; before 1.0, any minor version may break. A file of a version other than this document's is `UNSUPPORTED_VERSION`, except that from 1.0 a file of an older minor version of the same major is checked as one of this version.
 
