@@ -6,7 +6,7 @@ const { id } = Astro.locals.starlightRoute.entry;
 ---
 
 <Default />
-{sources.some((s) => s.route === id) && <button data-markdown={`/${id}.md`}>Copy Markdown</button>}
+{sources.some((s) => s.route === id) && <button data-markdown={`/${id}.md`} data-pagefind-ignore>Copy Markdown</button>}
 
 <script>
   // The fetch goes inside the clipboard item, so Safari still counts the write as part of the click.
